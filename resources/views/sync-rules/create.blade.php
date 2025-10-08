@@ -3,115 +3,181 @@
 @section('title', 'Create Sync Rule')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm-px-6 lg:px-8">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">{{ __('messages.create_sync_rule') }}</h1>
-        <p class="mt-2 text-gray-600">{{ __('messages.create_sync_rule_description') }}</p>
+        <div class="flex items-center space-x-3 mb-4">
+            <a href="{{ route('sync-rules.index') }}" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+            </a>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {{ __('messages.create_sync_rule') }}
+            </h1>
+        </div>
+        <p class="text-lg text-gray-600">{{ __('messages.create_sync_rule_description') }}</p>
     </div>
     
-    <form action="{{ route('sync-rules.store') }}" method="POST" class="bg-white rounded-lg shadow p-6 space-y-6">
+    <form action="{{ route('sync-rules.store') }}" method="POST" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         @csrf
         
-        <!-- Source Calendar -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.source_calendar') }}</label>
-            <p class="text-sm text-gray-500 mb-3">{{ __('messages.source_calendar_description') }}</p>
-            
-            <select id="source_connection_select" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                <option value="">{{ __('messages.select_calendar') }}...</option>
+        <div class="p-6 lg:p-8 space-y-8">
+            <!-- Source Calendar -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <label class="block text-lg font-bold text-gray-900">{{ __('messages.source_calendar') }}</label>
+                        <p class="text-sm text-gray-600">{{ __('messages.source_calendar_description') }}</p>
+                    </div>
+                </div>
                 
-                @if($apiConnections->count() > 0)
-                <optgroup label="{{ __('messages.api_calendars') }}">
-                    @foreach($apiConnections as $connection)
-                    <option value="api-{{ $connection->id }}" 
-                            data-type="api"
-                            data-connection-id="{{ $connection->id }}"
-                            data-calendars='@json($connection->available_calendars)'>
-                        {{ ucfirst($connection->provider) }} - {{ $connection->provider_email }}
-                    </option>
-                    @endforeach
-                </optgroup>
-                @endif
+                <select id="source_connection_select" required class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white font-medium transition">
+                    <option value="">{{ __('messages.select_calendar') }}...</option>
+                    
+                    @if($apiConnections->count() > 0)
+                    <optgroup label="{{ __('messages.api_calendars') }}">
+                        @foreach($apiConnections as $connection)
+                        <option value="api-{{ $connection->id }}" 
+                                data-type="api"
+                                data-connection-id="{{ $connection->id }}"
+                                data-calendars='@json($connection->available_calendars)'>
+                            {{ ucfirst($connection->provider) }} - {{ $connection->provider_email }}
+                        </option>
+                        @endforeach
+                    </optgroup>
+                    @endif
+                    
+                    @if($emailConnections->count() > 0)
+                    <optgroup label="{{ __('messages.email_calendars') }}">
+                        @foreach($emailConnections as $connection)
+                        <option value="email-{{ $connection->id }}"
+                                data-type="email"
+                                data-connection-id="{{ $connection->id }}">
+                            📧 {{ $connection->name }} ({{ $connection->email_address }})
+                        </option>
+                        @endforeach
+                    </optgroup>
+                    @endif
+                </select>
                 
-                @if($emailConnections->count() > 0)
-                <optgroup label="{{ __('messages.email_calendars') }}">
-                    @foreach($emailConnections as $connection)
-                    <option value="email-{{ $connection->id }}"
-                            data-type="email"
-                            data-connection-id="{{ $connection->id }}">
-                        📧 {{ $connection->name }} ({{ $connection->email_address }})
-                    </option>
-                    @endforeach
-                </optgroup>
-                @endif
-            </select>
-            
-            <input type="hidden" name="source_type" id="source_type">
-            <input type="hidden" name="source_connection_id" id="source_connection_id">
-            <input type="hidden" name="source_email_connection_id" id="source_email_connection_id">
-            
-            <select name="source_calendar_id" id="source_calendar" required class="mt-3 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" disabled>
-                <option value="">{{ __('messages.first_select_connection') }}...</option>
-            </select>
-        </div>
-        
-        <!-- Target Calendars -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.target_calendars') }}</label>
-            <p class="text-sm text-gray-500 mb-3">{{ __('messages.target_calendars_description') }}</p>
-            
-            <div id="targets-container" class="space-y-3">
-                <!-- Target rows will be added here dynamically -->
+                <input type="hidden" name="source_type" id="source_type">
+                <input type="hidden" name="source_connection_id" id="source_connection_id">
+                <input type="hidden" name="source_email_connection_id" id="source_email_connection_id">
+                
+                <select name="source_calendar_id" id="source_calendar" required class="mt-3 w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white font-medium transition" disabled>
+                    <option value="">{{ __('messages.first_select_connection') }}...</option>
+                </select>
             </div>
             
-            <button type="button" id="add-target" class="mt-3 text-sm text-indigo-600 hover:text-indigo-700">
-                + {{ __('messages.add_target') }}
-            </button>
-        </div>
-        
-        <!-- Blocker Title -->
-        <div>
-            <label for="blocker_title" class="block text-sm font-medium text-gray-700">{{ __('messages.blocker_title') }}</label>
-            <input type="text" name="blocker_title" id="blocker_title" value="Busy — Sync" required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-            <p class="mt-1 text-sm text-gray-500">{{ __('messages.blocker_title_description') }}</p>
-        </div>
-        
-        <!-- Direction -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.sync_direction') }}</label>
-            <div class="space-y-2">
-                <label class="flex items-center">
-                    <input type="radio" name="direction" value="one_way" checked class="h-4 w-4 text-indigo-600">
-                    <span class="ml-2 text-sm text-gray-700">{{ __('messages.one_way') }}</span>
+            <!-- Target Calendars -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <label class="block text-lg font-bold text-gray-900">{{ __('messages.target_calendars') }}</label>
+                            <p class="text-sm text-gray-600">{{ __('messages.target_calendars_description') }}</p>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="add-target" class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 font-semibold rounded-lg hover:bg-purple-200 transition">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        {{ __('messages.add_target') }}
+                    </button>
+                </div>
+                
+                <div id="targets-container" class="space-y-4">
+                    <!-- Target rows will be added here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Blocker Title -->
+            <div>
+                <label for="blocker_title" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                    </svg>
+                    <span>{{ __('messages.blocker_title') }}</span>
                 </label>
-                <label class="flex items-center">
-                    <input type="radio" name="direction" value="two_way" class="h-4 w-4 text-indigo-600">
-                    <span class="ml-2 text-sm text-gray-700">{{ __('messages.two_way') }}</span>
+                <input type="text" name="blocker_title" id="blocker_title" value="Busy — Sync" required
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
+                <p class="mt-2 text-sm text-gray-500">{{ __('messages.blocker_title_description') }}</p>
+            </div>
+            
+            <!-- Direction -->
+            <div>
+                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-3">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                    </svg>
+                    <span>{{ __('messages.sync_direction') }}</span>
                 </label>
+                <div class="space-y-3">
+                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="radio" name="direction" value="one_way" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                        <div class="ml-3">
+                            <span class="block font-semibold text-gray-900">{{ __('messages.one_way') }}</span>
+                            <span class="block text-sm text-gray-600">Events sync from source to targets only</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="radio" name="direction" value="two_way" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                        <div class="ml-3">
+                            <span class="block font-semibold text-gray-900">{{ __('messages.two_way') }}</span>
+                            <span class="block text-sm text-gray-600">Events sync bidirectionally between calendars</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div>
+                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-3">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    <span>{{ __('messages.filters') }}</span>
+                </label>
+                <div class="space-y-3">
+                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="checkbox" name="filters[busy_only]" value="1" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <div class="ml-3">
+                            <span class="block font-semibold text-gray-900">{{ __('messages.only_busy_events') }}</span>
+                            <span class="block text-sm text-gray-600">Only sync events marked as "busy"</span>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="checkbox" name="filters[ignore_all_day]" value="1" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <div class="ml-3">
+                            <span class="block font-semibold text-gray-900">{{ __('messages.ignore_all_day') }}</span>
+                            <span class="block text-sm text-gray-600">Skip all-day events from syncing</span>
+                        </div>
+                    </label>
+                </div>
             </div>
         </div>
         
-        <!-- Filters -->
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('messages.filters') }}</label>
-            <div class="space-y-2">
-                <label class="flex items-center">
-                    <input type="checkbox" name="filters[busy_only]" value="1" checked class="h-4 w-4 text-indigo-600">
-                    <span class="ml-2 text-sm text-gray-700">{{ __('messages.only_busy_events') }}</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="checkbox" name="filters[ignore_all_day]" value="1" class="h-4 w-4 text-indigo-600">
-                    <span class="ml-2 text-sm text-gray-700">{{ __('messages.ignore_all_day') }}</span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="flex justify-end space-x-3">
-            <a href="{{ route('sync-rules.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+        <!-- Footer Actions -->
+        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+            <a href="{{ route('sync-rules.index') }}" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-100 transition">
                 {{ __('messages.cancel') }}
             </a>
-            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+            <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
                 {{ __('messages.create_rule') }}
             </button>
         </div>
@@ -133,7 +199,6 @@ document.getElementById('source_connection_select').addEventListener('change', f
     document.getElementById('source_type').value = type || '';
     
     if (type === 'api') {
-        // Show calendar selector for API calendars
         const calendars = JSON.parse(selectedOption.dataset.calendars || '[]');
         const calendarSelect = document.getElementById('source_calendar');
         calendarSelect.innerHTML = `<option value="">{{ __('messages.select_calendar') }}...</option>`;
@@ -148,7 +213,6 @@ document.getElementById('source_connection_select').addEventListener('change', f
         document.getElementById('source_email_connection_id').value = '';
         
     } else if (type === 'email') {
-        // Email calendars don't have sub-calendars - hide the calendar selector
         const calendarSelect = document.getElementById('source_calendar');
         calendarSelect.disabled = true;
         calendarSelect.required = false;
@@ -170,9 +234,14 @@ function addTargetRow() {
     const index = targetIndex++;
     
     const div = document.createElement('div');
-    div.className = 'target-row border border-gray-200 rounded-md p-3 space-y-2';
+    div.className = 'target-row bg-white rounded-xl p-4 space-y-3 border-2 border-purple-200 shadow-sm';
     div.innerHTML = `
-        <select class="target-connection-select w-full px-3 py-2 border border-gray-300 rounded-md" required>
+        <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-gray-700">Target ${index + 1}</span>
+            ${index > 0 ? `<button type="button" class="remove-target text-red-600 hover:text-red-700 font-medium text-sm">Remove</button>` : ''}
+        </div>
+        
+        <select class="target-connection-select w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white font-medium transition" required>
             <option value="">{{ __('messages.select_calendar') }}...</option>
             ${apiConnections.length > 0 ? `<optgroup label="{{ __('messages.api_calendars') }}">
                 ${apiConnections.map(conn => `
@@ -200,16 +269,13 @@ function addTargetRow() {
         <input type="hidden" name="target_connections[${index}][connection_id]" class="target-connection-id">
         <input type="hidden" name="target_connections[${index}][email_connection_id]" class="target-email-connection-id">
         
-        <select name="target_connections[${index}][calendar_id]" class="target-calendar w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
+        <select name="target_connections[${index}][calendar_id]" class="target-calendar w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white font-medium transition" disabled>
             <option value="">{{ __('messages.select_calendar') }}...</option>
         </select>
-        
-        ${index > 0 ? `<button type="button" class="remove-target text-sm text-red-600 hover:text-red-700">{{ __('messages.remove') }}</button>` : ''}
     `;
     
     container.appendChild(div);
     
-    // Attach event listeners
     const connectionSelect = div.querySelector('.target-connection-select');
     connectionSelect.addEventListener('change', function() {
         handleTargetChange(this);
@@ -231,7 +297,6 @@ function handleTargetChange(select) {
     row.querySelector('.target-type').value = type || '';
     
     if (type === 'api') {
-        // Show calendar selector for API calendars
         const calendars = JSON.parse(selectedOption.dataset.calendars || '[]');
         const calendarSelect = row.querySelector('.target-calendar');
         calendarSelect.innerHTML = `<option value="">{{ __('messages.select_calendar') }}...</option>`;
@@ -246,7 +311,6 @@ function handleTargetChange(select) {
         row.querySelector('.target-email-connection-id').value = '';
         
     } else if (type === 'email') {
-        // Email calendars - show target email in the calendar selector
         const targetEmail = selectedOption.dataset.targetEmail || 'No target email configured';
         const calendarSelect = row.querySelector('.target-calendar');
         calendarSelect.innerHTML = `<option value="" selected>${targetEmail}</option>`;

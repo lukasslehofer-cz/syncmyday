@@ -5,85 +5,303 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SyncMyDay - Keep Your Calendars in Sync</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-    <div class="min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="px-4 py-6 sm:px-6 lg:px-8">
-            <nav class="flex justify-between items-center max-w-7xl mx-auto">
-                <h1 class="text-2xl font-bold text-indigo-600">SyncMyDay</h1>
-                <div class="space-x-4">
-                    <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900">Login</a>
-                    <a href="{{ route('register') }}" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+<body class="bg-white antialiased">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold gradient-text">SyncMyDay</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Features</a>
+                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">How It Works</a>
+                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Pricing</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Sign in</a>
+                    <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 shadow-md">
                         Get Started
                     </a>
                 </div>
-            </nav>
-        </header>
-        
-        <!-- Hero -->
-        <main class="flex-grow flex items-center">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-                <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6">
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+            <div class="text-center">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Privacy-First Calendar Sync
+                </div>
+                
+                <h2 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
                     Never Double-Book<br>
-                    <span class="text-indigo-600">Across Calendars</span>
+                    <span class="gradient-text">Across Calendars</span>
                 </h2>
                 
-                <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                    Automatically sync busy times between your work and personal calendars. 
-                    Privacy-first • Simple • Reliable
+                <p class="text-xl sm:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+                    Automatically sync busy times between your work and personal calendars.<br>
+                    <span class="text-indigo-600 font-semibold">Simple • Secure • Real-time</span>
                 </p>
                 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('register') }}" class="px-8 py-3 bg-indigo-600 text-white text-lg font-medium rounded-lg hover:bg-indigo-700 shadow-lg">
-                        Start Free
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
+                        Get Started - It's Free
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
                     </a>
-                    <a href="#how-it-works" class="px-8 py-3 bg-white text-gray-700 text-lg font-medium rounded-lg hover:bg-gray-50 border border-gray-300">
+                    <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-gray-300 shadow-md transform hover:scale-105 transition">
                         Learn More
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
                     </a>
                 </div>
                 
-                <!-- Features -->
-                <div id="how-it-works" class="mt-20 grid md:grid-cols-3 gap-8 text-left">
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <div class="text-3xl mb-4">🔒</div>
-                        <h3 class="text-lg font-semibold mb-2">Privacy First</h3>
-                        <p class="text-gray-600">We store only event times, never titles or details. Encrypted at rest.</p>
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+                    <div>
+                        <div class="text-4xl font-bold gradient-text mb-2">Real-time</div>
+                        <div class="text-sm text-gray-600">Instant Sync</div>
                     </div>
-                    
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <div class="text-3xl mb-4">⚡</div>
-                        <h3 class="text-lg font-semibold mb-2">Instant Sync</h3>
-                        <p class="text-gray-600">Webhooks detect changes in real-time, creating blockers within minutes.</p>
+                    <div>
+                        <div class="text-4xl font-bold gradient-text mb-2">100%</div>
+                        <div class="text-sm text-gray-600">Privacy First</div>
                     </div>
-                    
-                    <div class="bg-white p-6 rounded-xl shadow-sm">
-                        <div class="text-3xl mb-4">🎯</div>
-                        <h3 class="text-lg font-semibold mb-2">Smart Rules</h3>
-                        <p class="text-gray-600">Filter by busy status, work hours, or all-day events.</p>
+                    <div class="col-span-2 md:col-span-1">
+                        <div class="text-4xl font-bold gradient-text mb-2">2 mins</div>
+                        <div class="text-sm text-gray-600">Setup Time</div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 -mr-40 -mt-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 left-0 -ml-40 -mb-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">Features</h3>
+                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">Everything you need to stay synchronized</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">Powerful features designed to keep your calendars in perfect harmony</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="relative p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Privacy First</h3>
+                    <p class="text-gray-600 leading-relaxed">We only store event start/end times. Never titles, descriptions, or attendees. All data encrypted at rest.</p>
                 </div>
                 
-                <!-- Supported Providers -->
-                <div class="mt-16">
-                    <p class="text-gray-500 text-sm mb-4">Supports:</p>
-                    <div class="flex justify-center gap-8 items-center">
-                        <span class="text-2xl font-semibold text-gray-700">Google Calendar</span>
-                        <span class="text-2xl font-semibold text-gray-700">Microsoft 365</span>
+                <!-- Feature 2 -->
+                <div class="relative p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Real-time Sync</h3>
+                    <p class="text-gray-600 leading-relaxed">Webhooks detect changes instantly. Blocker events created within minutes, automatically updated when events change.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="relative p-8 bg-gradient-to-br from-pink-50 to-indigo-50 rounded-2xl border border-pink-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Smart Rules</h3>
+                    <p class="text-gray-600 leading-relaxed">Filter by busy status, work hours (9-5), or exclude all-day events. Full control over what gets synced.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Email Calendars</h3>
+                    <p class="text-gray-600 leading-relaxed">Sync with email-based calendar services. Forward .ics invites and we'll create blocker events automatically.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Easy Integration</h3>
+                    <p class="text-gray-600 leading-relaxed">Connect Google Calendar and Microsoft 365 with OAuth. No API keys or technical setup required.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Duplicate Prevention</h3>
+                    <p class="text-gray-600 leading-relaxed">Smart detection prevents creating duplicate blockers for the same event across multiple sync rules.</p>
                 </div>
             </div>
-        </main>
-        
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 py-6">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500">
-                    &copy; {{ date('Y') }} SyncMyDay. Privacy-first calendar synchronization.
-                </p>
+        </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">How It Works</h3>
+                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">Get started in 3 simple steps</h2>
             </div>
-        </footer>
-    </div>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="relative text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">1</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Connect Calendars</h3>
+                    <p class="text-gray-600">Link your Google Calendar or Microsoft 365 accounts with secure OAuth authentication.</p>
+                </div>
+                
+                <div class="relative text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">2</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Create Sync Rules</h3>
+                    <p class="text-gray-600">Choose which calendars to sync and set filters for busy status, work hours, or all-day events.</p>
+                </div>
+                
+                <div class="relative text-center">
+                    <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">3</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Relax & Stay Synced</h3>
+                    <p class="text-gray-600">Blocker events are created automatically in real-time. No more double-bookings!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Supported Platforms -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-8">Works With Your Favorite Calendar Services</p>
+            <div class="flex flex-wrap justify-center items-center gap-12">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-semibold text-gray-900">Google Calendar</span>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.5,0 L23,6.5 L23,17.5 L11.5,24 L0,17.5 L0,6.5 L11.5,0 Z M11.5,2.5 L2,7.5 L2,16.5 L11.5,21.5 L21,16.5 L21,7.5 L11.5,2.5 Z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-semibold text-gray-900">Microsoft 365</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section id="pricing" class="py-20 gradient-bg">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-extrabold text-white mb-6">Ready to sync your calendars?</h2>
+            <p class="text-xl text-indigo-100 mb-10">Start free - no credit card required. Upgrade to Pro for unlimited sync rules and premium support.</p>
+            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-indigo-600 bg-white rounded-xl hover:bg-gray-100 shadow-xl transform hover:scale-105 transition">
+                Get Started Now - It's Free
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-lg font-bold">SyncMyDay</span>
+                    </div>
+                    <p class="text-sm text-gray-400">Privacy-first calendar synchronization made simple.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold mb-3">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-sm text-gray-400 hover:text-white">Features</a></li>
+                        <li><a href="#how-it-works" class="text-sm text-gray-400 hover:text-white">How It Works</a></li>
+                        <li><a href="#pricing" class="text-sm text-gray-400 hover:text-white">Pricing</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold mb-3">Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Documentation</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-semibold mb-3">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-gray-800 text-center">
+                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} SyncMyDay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
 

@@ -18,11 +18,8 @@ class EmailCalendarController extends Controller
      */
     public function index()
     {
-        $connections = EmailCalendarConnection::where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('email-calendars.index', compact('connections'));
+        // Email calendars are now shown on the main connections page
+        return redirect()->route('connections.index');
     }
 
     /**
