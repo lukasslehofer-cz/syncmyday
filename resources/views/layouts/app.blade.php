@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <title>@yield('title', 'SyncMyDay - Calendar Sync')</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>

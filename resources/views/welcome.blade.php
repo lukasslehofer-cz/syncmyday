@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SyncMyDay - Keep Your Calendars in Sync</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     
@@ -11,6 +12,24 @@
         [x-cloak] { display: none !important; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+        .animated-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body class="bg-white antialiased">
@@ -44,10 +63,10 @@
     </header>
     
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 relative z-10">
             <div class="text-center">
-                <div class="inline-flex items-center px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-semibold mb-6 shadow-lg">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
@@ -59,19 +78,19 @@
                     <span class="gradient-text">Across Calendars</span>
                 </h2>
                 
-                <p class="text-xl sm:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+                <p class="text-xl sm:text-2xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
                     Automatically sync busy times between your work and personal calendars.<br>
                     <span class="text-indigo-600 font-semibold">Simple • Secure • Real-time</span>
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
-                        Get Started - It's Free
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition">
+                        Začít s 1. měsícem zdarma
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
                     </a>
-                    <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-gray-300 shadow-md transform hover:scale-105 transition">
+                    <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-indigo-200 shadow-lg transform hover:scale-105 transition">
                         Learn More
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -81,17 +100,17 @@
                 
                 <!-- Stats -->
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-                    <div>
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-indigo-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">Real-time</div>
-                        <div class="text-sm text-gray-600">Instant Sync</div>
+                        <div class="text-sm text-gray-600 font-medium">Instant Sync</div>
                     </div>
-                    <div>
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">100%</div>
-                        <div class="text-sm text-gray-600">Privacy First</div>
+                        <div class="text-sm text-gray-600 font-medium">Privacy First</div>
                     </div>
-                    <div class="col-span-2 md:col-span-1">
+                    <div class="col-span-2 md:col-span-1 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-pink-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">2 mins</div>
-                        <div class="text-sm text-gray-600">Setup Time</div>
+                        <div class="text-sm text-gray-600 font-medium">Setup Time</div>
                     </div>
                 </div>
             </div>
