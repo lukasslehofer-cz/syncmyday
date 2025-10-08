@@ -1,0 +1,108 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: syncmyday_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - syncmyday
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - PHP_IDE_CONFIG=serverName=Docker
+
+  nginx:
+    image: nginx:alpine
+    container_name: syncmyday_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    networks:
+      - syncmyday
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: syncmyday_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: syncmyday
+      MYSQL_USER: syncmyday
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - syncmyday
+
+  redis:
+    image: redis:alpine
+    container_name: syncmyday_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    networks:
+      - syncmyday
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: syncmyday_worker
+    restart: unless-stopped
+    working_dir: /var/www
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    volumes:
+      - ./:/var/www
+    networks:
+      - syncmyday
+    depends_on:
+      - mysql
+      - redis
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: syncmyday_scheduler
+    restart: unless-stopped
+    working_dir: /var/www
+    command: /bin/sh -c "while true; do php artisan schedule:run --verbose --no-interaction & sleep 60; done"
+    volumes:
+      - ./:/var/www
+    networks:
+      - syncmyday
+    depends_on:
+      - mysql
+      - redis
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: syncmyday_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - syncmyday
+
+networks:
+  syncmyday:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

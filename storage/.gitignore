@@ -1,0 +1,9 @@
+*
+!.gitignore
+!framework/
+!logs/
+framework/*
+!framework/.gitignore
+logs/*
+!logs/.gitignore
+
