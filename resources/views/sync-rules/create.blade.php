@@ -3,6 +3,48 @@
 @section('title', 'Create Sync Rule')
 
 @section('content')
+<style>
+/* Custom select styling */
+.custom-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.5em 1.5em;
+    padding-right: 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.custom-select:disabled {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Safari fix: Don't use font-weight on options - causes Safari to use serif font */
+.custom-select option {
+    font-family: inherit;
+    font-weight: normal;
+}
+
+.custom-select optgroup {
+    font-family: inherit;
+    font-weight: normal;
+    color: #4b5563;
+    background-color: #f9fafb;
+}
+
+/* Blue select for source */
+.select-blue {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%233b82f6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Purple select for targets */
+.select-purple {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239333ea'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+</style>
+
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
@@ -37,7 +79,7 @@
                     </div>
                 </div>
                 
-                <select id="source_connection_select" required class="w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white font-medium transition">
+                <select id="source_connection_select" required class="custom-select select-blue w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition shadow-sm hover:border-blue-300">
                     <option value="">{{ __('messages.select_calendar') }}...</option>
                     
                     @if($apiConnections->count() > 0)
@@ -70,7 +112,7 @@
                 <input type="hidden" name="source_connection_id" id="source_connection_id">
                 <input type="hidden" name="source_email_connection_id" id="source_email_connection_id">
                 
-                <select name="source_calendar_id" id="source_calendar" required class="mt-3 w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white font-medium transition" disabled>
+                <select name="source_calendar_id" id="source_calendar" required class="custom-select select-blue mt-3 w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition shadow-sm hover:border-blue-300" disabled>
                     <option value="">{{ __('messages.first_select_connection') }}...</option>
                 </select>
             </div>
@@ -241,7 +283,7 @@ function addTargetRow() {
             ${index > 0 ? `<button type="button" class="remove-target text-red-600 hover:text-red-700 font-medium text-sm">Remove</button>` : ''}
         </div>
         
-        <select class="target-connection-select w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white font-medium transition" required>
+        <select class="target-connection-select custom-select select-purple w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white transition shadow-sm hover:border-purple-300" required>
             <option value="">{{ __('messages.select_calendar') }}...</option>
             ${apiConnections.length > 0 ? `<optgroup label="{{ __('messages.api_calendars') }}">
                 ${apiConnections.map(conn => `
@@ -269,7 +311,7 @@ function addTargetRow() {
         <input type="hidden" name="target_connections[${index}][connection_id]" class="target-connection-id">
         <input type="hidden" name="target_connections[${index}][email_connection_id]" class="target-email-connection-id">
         
-        <select name="target_connections[${index}][calendar_id]" class="target-calendar w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white font-medium transition" disabled>
+        <select name="target_connections[${index}][calendar_id]" class="target-calendar custom-select select-purple w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white transition shadow-sm hover:border-purple-300" disabled>
             <option value="">{{ __('messages.select_calendar') }}...</option>
         </select>
     `;
