@@ -21,7 +21,8 @@ Nejčistší a nejbezpečnější metoda.
 ### Předpoklady:
 
 - Máte Git repository (GitHub, GitLab, Bitbucket)
-- Server má přístup k vašemu repo (SSH klíč nebo HTTPS)
+- Server má přístup k vašemu repo (HTTPS s tokenem nebo SSH klíč)
+- Pro privátní repo: GitHub Personal Access Token
 
 ### Setup (jednorázově):
 
@@ -40,11 +41,52 @@ git branch -M main
 git push -u origin main
 ```
 
-#### 2. Nastavte SSH klíč na serveru (pro privátní repo)
+#### 2. Vytvořte Personal Access Token (pro privátní repo)
+
+**Pokud máte privátní repository**, budete potřebovat token pro autentizaci:
+
+1. Jděte na https://github.com/settings/tokens
+2. Klikněte **"Generate new token"** → **"Generate new token (classic)"**
+3. Nastavte:
+   - **Note**: `SyncMyDay Server`
+   - **Expiration**: 90 days (nebo No expiration)
+   - **Scopes**: Zaškrtněte ✅ **repo** (celý)
+4. Klikněte **"Generate token"**
+5. **ZKOPÍRUJTE TOKEN** (uvidíte ho jen jednou!)
+   - Vypadá jako: `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+**Pro veřejné repository tento krok přeskočte** - Git pull funguje bez autentizace.
+
+#### 3. Clone projektu na server
+
+**Poznámka:** Některé hostingy (např. cesky-hosting.cz) mají omezené chroot prostředí a **nepodporují SSH klíče**. V tom případě použijte HTTPS metodu.
+
+##### Varianta A: HTTPS (doporučeno pro omezené hostingy)
 
 ```bash
-# Na serveru přes SSH:
-ssh syncmyday_cz@ssh.syncmyday.cz
+# Na serveru:
+cd /
+git clone https://github.com/vase-jmeno/syncmyday.git syncmyday.cz
+
+# Pro veřejné repository to funguje bez autentizace
+# Pro privátní repo budete potřebovat Personal Access Token
+```
+
+Pro privátní repo při pull:
+- **Username**: váš-github-username
+- **Password**: Personal Access Token (ne heslo!)
+
+##### Varianta B: SSH klíče (pouze pro plné VPS s root přístupem)
+
+**Funguje pouze pokud máte:**
+- Plný přístup k domovskému adresáři
+- Možnost vytvořit `~/.ssh` složku
+- Standardní Linux prostředí (ne chroot)
+
+```bash
+# Na serveru (POUZE pokud máte plný přístup):
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
 
 # Vygenerujte SSH klíč:
 ssh-keygen -t ed25519 -C "syncmyday@server"
@@ -55,20 +97,16 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 Zkopírujte výstup a přidejte do GitHub/GitLab:
-
 - **GitHub**: Settings → SSH and GPG keys → New SSH key
 - **GitLab**: Preferences → SSH Keys
 
-#### 3. První clone na server
-
+Pak clone přes SSH:
 ```bash
-# Na serveru:
-cd ~
+cd /
 git clone git@github.com:vase-jmeno/syncmyday.git syncmyday.cz
-
-# Nebo přes HTTPS (pro veřejné repo):
-git clone https://github.com/vase-jmeno/syncmyday.git syncmyday.cz
 ```
+
+**⚠️ Pro cesky-hosting.cz a podobné hostingy s chroot: Použijte Variantu A (HTTPS)!**
 
 ---
 
@@ -103,11 +141,16 @@ bash ~/deploy.sh
 
 #### Krok 3: Deployment skript
 
-Vytvořte na serveru `~/deploy.sh`:
+Vytvořte na serveru deployment skript.
 
+**Pro standardní VPS:**
 ```bash
-# Na serveru:
 nano ~/deploy.sh
+```
+
+**Pro cesky-hosting.cz a podobné (kde `~` = `/`):**
+```bash
+nano /deploy.sh
 ```
 
 Vložte:
@@ -133,7 +176,10 @@ cd $PROJECT_PATH
 
 # 1. Udělat zálohu (pro případ problémů)
 echo -e "${YELLOW}📦 Vytvářím zálohu...${NC}"
-BACKUP_DIR="$HOME/backups"
+# Pro standardní VPS použijte $HOME/backups
+# Pro chroot (cesky-hosting) použijte /backups
+BACKUP_DIR="${HOME}/backups"
+[ "$HOME" = "/" ] && BACKUP_DIR="/backups"
 mkdir -p $BACKUP_DIR
 DATE=$(date +%Y%m%d_%H%M%S)
 tar -czf "$BACKUP_DIR/syncmyday_$DATE.tar.gz" \
@@ -141,7 +187,7 @@ tar -czf "$BACKUP_DIR/syncmyday_$DATE.tar.gz" \
     --exclude='node_modules' \
     --exclude='storage/logs/*' \
     --exclude='storage/framework/cache/*' \
-    .
+    . 2>/dev/null || true
 echo -e "${GREEN}✓ Záloha vytvořena: syncmyday_$DATE.tar.gz${NC}"
 
 # 2. Stáhnout nejnovější změny

@@ -15,7 +15,13 @@ NC='\033[0m'
 
 # Konfigurace
 PROJECT_PATH="/syncmyday.cz"
-BACKUP_DIR="$HOME/backups"
+
+# Detekce chroot prostředí (např. cesky-hosting.cz)
+if [ "$HOME" = "/" ]; then
+    BACKUP_DIR="/backups"
+else
+    BACKUP_DIR="$HOME/backups"
+fi
 
 echo -e "${BLUE}"
 cat << "EOF"
