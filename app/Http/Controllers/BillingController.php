@@ -170,9 +170,14 @@ class BillingController extends Controller
                 // Retrieve the subscription to get period end
                 $subscription = \Stripe\Subscription::retrieve($session->subscription);
                 
+                // Use trial_end for trialing subscriptions, otherwise current_period_end
+                $endsAt = $subscription->status === 'trialing' && $subscription->trial_end
+                    ? \Carbon\Carbon::createFromTimestamp($subscription->trial_end)
+                    : \Carbon\Carbon::createFromTimestamp($subscription->current_period_end);
+                
                 $user->update([
                     'subscription_tier' => 'pro',
-                    'subscription_ends_at' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end),
+                    'subscription_ends_at' => $endsAt,
                 ]);
 
                 Log::info('User subscribed to Pro', [
@@ -305,9 +310,14 @@ class BillingController extends Controller
         // Update subscription status
         $isActive = in_array($subscription->status, ['active', 'trialing']);
         
+        // Use trial_end for trialing subscriptions, otherwise current_period_end
+        $endsAt = $subscription->status === 'trialing' && $subscription->trial_end
+            ? \Carbon\Carbon::createFromTimestamp($subscription->trial_end)
+            : \Carbon\Carbon::createFromTimestamp($subscription->current_period_end);
+        
         $user->update([
             'subscription_tier' => $isActive ? 'pro' : 'free',
-            'subscription_ends_at' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end),
+            'subscription_ends_at' => $endsAt,
         ]);
 
         Log::info('Subscription updated', [
