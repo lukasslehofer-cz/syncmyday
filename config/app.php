@@ -6,6 +6,7 @@ return [
     'debug' => (bool) env('APP_DEBUG', false),
     'url' => env('APP_URL', 'http://localhost'),
     
+    'cron_secret' => env('CRON_SECRET'),
     'email_domain' => env('EMAIL_DOMAIN', 'syncmyday.local'),
     'asset_url' => env('ASSET_URL'),
     'timezone' => env('APP_TIMEZONE', 'UTC'),

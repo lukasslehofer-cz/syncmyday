@@ -66,38 +66,67 @@ php artisan config:cache
 
 ### Krok 5: Nastavit CRON JOB přes hosting panel
 
-**Většina hostingů má cPanel nebo DirectAdmin s možností nastavit Cron Jobs.**
+**🎯 TŘI MOŽNOSTI - vyberte podle vašeho hostingu:**
 
-#### V cPanel:
+---
+
+#### ✅ **Možnost 1: PHP soubor (DOPORUČENO)**
+
+Použijte připravený soubor `cron.php` v rootu projektu.
 
 1. Přihlaste se do cPanel
-2. Najděte sekci **"Cron Jobs"** nebo **"Naplánované úlohy"**
-3. Přidejte nový cron job:
+2. Najděte sekci **"Cron Jobs"**
+3. Přidejte:
 
-**Nastavení:**
+**Common Settings:** Once Per Minute
 
-- **Minuta:** `*` (každou minutu)
-- **Hodina:** `*`
-- **Den:** `*`
-- **Měsíc:** `*`
-- **Den v týdnu:** `*`
-- **Příkaz:**
-
+**Command:**
 ```bash
-cd /home/username/public_html/syncmyday && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
-```
-
-**Nebo jako jeden řádek:**
-
-```
-* * * * * cd /home/username/public_html/syncmyday && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+/usr/bin/php /home/username/public_html/syncmyday/cron.php
 ```
 
 **Poznámky:**
+- Upravte cestu podle vašeho hostingu
+- Cesta k PHP může být `/usr/bin/php80`, `/usr/bin/php82` apod.
 
-- Upravte cestu `/home/username/public_html/syncmyday` podle vašeho hostingu
-- Cesta k PHP může být `/usr/bin/php`, `/usr/local/bin/php` nebo `/usr/bin/php80` (podle verze)
-- Pokud nevíte cestu k PHP, spusťte v SSH: `which php`
+---
+
+#### ✅ **Možnost 2: HTTP endpoint**
+
+Pokud Možnost 1 nefunguje.
+
+**Krok A:** V `.env` přidejte:
+```env
+CRON_SECRET=vas-nahodny-tajny-token
+```
+
+Vygenerujte token:
+```bash
+php -r "echo bin2hex(random_bytes(32));"
+```
+
+**Krok B:** V cPanel Cron Jobs přidejte:
+```bash
+curl -s "https://syncmyday.cz/cron/run?token=vas-token" > /dev/null 2>&1
+```
+
+---
+
+#### ✅ **Možnost 3: Externí služba**
+
+Pokud hosting vůbec nemá cron jobs.
+
+1. Registrujte se na **cron-job.org**
+2. Vytvořte cron job:
+   - URL: `https://syncmyday.cz/cron/run?token=vas-token`
+   - Interval: Every minute
+3. Hotovo!
+
+---
+
+> 📚 **Podrobné návody:**
+> - `CRON_SETUP_OPTIONS.md` - všechny možnosti detailně
+> - `CPANEL_CRON_SETUP.md` - krok za krokem s obrázky
 
 ---
 

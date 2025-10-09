@@ -127,3 +127,6 @@ Route::post('/webhooks/stripe', [BillingController::class, 'webhook'])
 // Health check
 Route::get('/health', [AdminController::class, 'health'])->name('health');
 
+// Cron endpoint (for shared hosting)
+Route::get('/cron/run', [\App\Http\Controllers\CronController::class, 'run'])->name('cron.run');
+
