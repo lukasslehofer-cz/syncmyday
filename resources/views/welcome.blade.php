@@ -74,7 +74,7 @@
                 </div>
                 
                 <h2 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
-                    Never Double-Book<br>
+                    Never Double-Book Again<br>
                     <span class="gradient-text">Across Calendars</span>
                 </h2>
                 
