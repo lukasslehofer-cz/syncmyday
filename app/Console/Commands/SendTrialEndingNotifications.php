@@ -42,8 +42,8 @@ class SendTrialEndingNotifications extends Command
 
         foreach ($usersEndingIn3Days as $user) {
             try {
-                // TODO: Send trial ending notification email
-                $this->line("✓ Would send 3-day notification to: {$user->email}");
+                Mail::to($user->email)->send(new TrialEndingInSevenDaysMail($user));
+                $this->line("✓ Sent 3-day notification to: {$user->email}");
             } catch (\Exception $e) {
                 $this->error("✗ Failed to send to {$user->email}: {$e->getMessage()}");
             }
@@ -60,8 +60,8 @@ class SendTrialEndingNotifications extends Command
 
         foreach ($usersEndingIn1Day as $user) {
             try {
-                // TODO: Send urgent trial ending notification email
-                $this->line("✓ Would send 1-day notification to: {$user->email}");
+                Mail::to($user->email)->send(new TrialEndingTomorrowMail($user));
+                $this->line("✓ Sent 1-day notification to: {$user->email}");
             } catch (\Exception $e) {
                 $this->error("✗ Failed to send to {$user->email}: {$e->getMessage()}");
             }
