@@ -193,6 +193,16 @@ class EmailCalendarSyncService
         string $transactionId
     ): void {
         foreach ($syncRules as $rule) {
+            // Apply filters (including time filter)
+            if (!$rule->shouldSyncEvent($this->normalizeEventData($eventData))) {
+                Log::info('Email event skipped due to filters', [
+                    'connection_id' => $connection->id,
+                    'event_uid' => $eventData['uid'],
+                    'rule_id' => $rule->id,
+                ]);
+                continue;
+            }
+            
             foreach ($rule->targets as $target) {
                 // Determine if target is API calendar or email calendar
                 if ($target->isEmailTarget()) {
@@ -202,6 +212,21 @@ class EmailCalendarSyncService
                 }
             }
         }
+    }
+    
+    /**
+     * Normalize event data to match format expected by shouldSyncEvent
+     */
+    private function normalizeEventData(array $eventData): array
+    {
+        return [
+            'start' => $eventData['start'],
+            'end' => $eventData['end'],
+            'isAllDay' => ($eventData['start']->format('H:i:s') === '00:00:00' && 
+                          $eventData['end']->format('H:i:s') === '00:00:00'),
+            'showAs' => 'busy', // Email events are always considered busy
+            'busyStatus' => 'busy',
+        ];
     }
     
     /**

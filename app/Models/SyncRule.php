@@ -19,11 +19,18 @@ class SyncRule extends Model
         'blocker_title',
         'is_active',
         'last_triggered_at',
+        'time_filter_enabled',
+        'time_filter_type',
+        'time_filter_start',
+        'time_filter_end',
+        'time_filter_days',
     ];
 
     protected $casts = [
         'filters' => 'array',
+        'time_filter_days' => 'array',
         'is_active' => 'boolean',
+        'time_filter_enabled' => 'boolean',
         'last_triggered_at' => 'datetime',
     ];
 
@@ -99,15 +106,25 @@ class SyncRule extends Model
             }
         }
 
-        // Work hours filter (if set)
-        if ($workHours = $this->getFilter('work_hours')) {
-            // Parse work hours (e.g., "09:00-17:00")
-            [$start, $end] = explode('-', $workHours);
+        // Time filter (new advanced filter)
+        if ($this->time_filter_enabled) {
             $eventStart = \Carbon\Carbon::parse($event['start']);
-            $eventHour = $eventStart->format('H:i');
             
-            if ($eventHour < $start || $eventHour > $end) {
-                return false;
+            // Check day of week (1=Monday, 7=Sunday)
+            if (!empty($this->time_filter_days)) {
+                $dayOfWeek = $eventStart->dayOfWeekIso; // 1-7
+                if (!in_array($dayOfWeek, $this->time_filter_days)) {
+                    return false;
+                }
+            }
+            
+            // Check time range
+            if ($this->time_filter_start && $this->time_filter_end) {
+                $eventTime = $eventStart->format('H:i:s');
+                
+                if ($eventTime < $this->time_filter_start || $eventTime >= $this->time_filter_end) {
+                    return false;
+                }
             }
         }
 

@@ -207,9 +207,107 @@
                             <span class="block text-sm text-gray-600">Skip all-day events from syncing</span>
                         </div>
                     </label>
+                    
+                    <!-- Time & Day Filter -->
+                    <div class="p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="time_filter_enabled" name="time_filter_enabled" value="1" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <div class="ml-3">
+                                <span class="block font-semibold text-gray-900">{{ __('messages.enable_time_filter') }}</span>
+                                <span class="block text-sm text-gray-600">{{ __('messages.time_filter_description') }}</span>
+                            </div>
+                        </label>
+                        
+                        <div id="time_filter_options" class="mt-4 space-y-3 hidden">
+                    <!-- Filter Type Selection -->
+                    <div class="space-y-2">
+                        <label class="flex items-center p-3 bg-white rounded-lg border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                            <input type="radio" name="time_filter_type" value="workdays" class="time-filter-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                            <span class="ml-3 text-gray-900">{{ __('messages.workdays') }}</span>
+                        </label>
+                        
+                        <!-- Workdays Time Range -->
+                        <div id="workdays_time_options" class="ml-7 space-y-2 hidden">
+                            <label class="block text-xs font-semibold text-gray-700">{{ __('messages.time_range') }}</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">{{ __('messages.from') }}</label>
+                                    <input type="time" name="workdays_time_start" value="08:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">{{ __('messages.to') }}</label>
+                                    <input type="time" name="workdays_time_end" value="18:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                            <input type="radio" name="time_filter_type" value="weekends" class="time-filter-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                            <span class="ml-3 text-gray-900">{{ __('messages.weekends') }}</span>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                            <input type="radio" name="time_filter_type" value="custom" class="time-filter-radio h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                            <span class="ml-3 text-gray-900">{{ __('messages.custom') }}</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Custom Options (shown only when 'custom' is selected) -->
+                    <div id="custom_time_options" class="ml-7 space-y-3 hidden">
+                        <!-- Time Range -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">{{ __('messages.time_range') }}</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">{{ __('messages.from') }}</label>
+                                    <input type="time" name="time_filter_start" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">{{ __('messages.to') }}</label>
+                                    <input type="time" name="time_filter_end" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Days of Week -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">{{ __('messages.days_of_week') }}</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="1" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.monday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="2" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.tuesday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="3" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.wednesday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="4" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.thursday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="5" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.friday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="6" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.saturday') }}</span>
+                                </label>
+                                <label class="flex items-center p-2 bg-white rounded border border-gray-300 hover:border-indigo-400 cursor-pointer text-xs">
+                                    <input type="checkbox" name="time_filter_days[]" value="7" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <span class="ml-2">{{ __('messages.sunday') }}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
         
         <!-- Footer Actions -->
         <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
@@ -364,5 +462,38 @@ function handleTargetChange(select) {
         row.querySelector('.target-email-connection-id').value = connectionId;
     }
 }
+
+// Time filter toggle logic
+document.getElementById('time_filter_enabled').addEventListener('change', function() {
+    const options = document.getElementById('time_filter_options');
+    if (this.checked) {
+        options.classList.remove('hidden');
+    } else {
+        options.classList.add('hidden');
+        // Clear radio selection and hide all sub-options
+        document.querySelectorAll('.time-filter-radio').forEach(radio => radio.checked = false);
+        document.getElementById('custom_time_options').classList.add('hidden');
+        document.getElementById('workdays_time_options').classList.add('hidden');
+    }
+});
+
+// Time filter type selection logic
+document.querySelectorAll('.time-filter-radio').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const customOptions = document.getElementById('custom_time_options');
+        const workdaysOptions = document.getElementById('workdays_time_options');
+        
+        // Hide all sub-options first
+        customOptions.classList.add('hidden');
+        workdaysOptions.classList.add('hidden');
+        
+        // Show relevant options based on selection
+        if (this.value === 'custom') {
+            customOptions.classList.remove('hidden');
+        } else if (this.value === 'workdays') {
+            workdaysOptions.classList.remove('hidden');
+        }
+    });
+});
 </script>
 @endsection

@@ -23,7 +23,7 @@
                 <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Active</span>
             </div>
             <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.calendar_connections_stat') }}</p>
-            <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_connections'] }}<span class="text-xl text-gray-500">/{{ $stats['total_connections'] }}</span></p>
+            <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_connections'] }}</p>
             <p class="text-xs text-gray-500">{{ __('messages.connected_calendars') }}</p>
         </div>
         
@@ -38,7 +38,7 @@
                 <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">{{ __('messages.rules') }}</span>
             </div>
             <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.active_sync_rules') }}</p>
-            <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_rules'] }}<span class="text-xl text-gray-500">/{{ $stats['total_rules'] }}</span></p>
+            <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_rules'] }}</span></p>
             <p class="text-xs text-gray-500">{{ __('messages.configured_sync_rules') }}</p>
         </div>
         

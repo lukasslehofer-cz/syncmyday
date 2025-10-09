@@ -95,6 +95,14 @@ class SyncRulesController extends Controller
             'direction' => 'required|in:one_way,two_way',
             'blocker_title' => 'nullable|string|max:100',
             'filters' => 'nullable|array',
+            'time_filter_enabled' => 'nullable|boolean',
+            'time_filter_type' => 'nullable|in:workdays,weekends,custom',
+            'workdays_time_start' => 'nullable|date_format:H:i',
+            'workdays_time_end' => 'nullable|date_format:H:i',
+            'time_filter_start' => 'nullable|date_format:H:i',
+            'time_filter_end' => 'nullable|date_format:H:i',
+            'time_filter_days' => 'nullable|array',
+            'time_filter_days.*' => 'integer|between:1,7',
         ]);
 
         // Custom validation: ensure correct fields are filled based on type
@@ -117,6 +125,32 @@ class SyncRulesController extends Controller
         try {
             DB::beginTransaction();
 
+            // Process time filter based on type
+            $timeFilterEnabled = $validated['time_filter_enabled'] ?? false;
+            $timeFilterType = $validated['time_filter_type'] ?? null;
+            $timeFilterStart = null;
+            $timeFilterEnd = null;
+            $timeFilterDays = null;
+
+            if ($timeFilterEnabled && $timeFilterType) {
+                if ($timeFilterType === 'workdays') {
+                    // Monday-Friday with custom time range (default 8:00-18:00)
+                    $timeFilterDays = [1, 2, 3, 4, 5];
+                    $timeFilterStart = $request->input('workdays_time_start', '08:00') . ':00';
+                    $timeFilterEnd = $request->input('workdays_time_end', '18:00') . ':00';
+                } elseif ($timeFilterType === 'weekends') {
+                    // Saturday-Sunday, all day
+                    $timeFilterDays = [6, 7];
+                    $timeFilterStart = '00:00:00';
+                    $timeFilterEnd = '23:59:59';
+                } elseif ($timeFilterType === 'custom') {
+                    // Use custom values from form
+                    $timeFilterDays = $validated['time_filter_days'] ?? null;
+                    $timeFilterStart = $validated['time_filter_start'] ? $validated['time_filter_start'] . ':00' : null;
+                    $timeFilterEnd = $validated['time_filter_end'] ? $validated['time_filter_end'] . ':00' : null;
+                }
+            }
+
             // Create sync rule
             $rule = SyncRule::create([
                 'user_id' => auth()->id(),
@@ -129,6 +163,11 @@ class SyncRulesController extends Controller
                     'busy_only' => true,
                     'ignore_all_day' => false,
                 ],
+                'time_filter_enabled' => $timeFilterEnabled,
+                'time_filter_type' => $timeFilterType,
+                'time_filter_start' => $timeFilterStart,
+                'time_filter_end' => $timeFilterEnd,
+                'time_filter_days' => $timeFilterDays,
                 'is_active' => true,
             ]);
 
