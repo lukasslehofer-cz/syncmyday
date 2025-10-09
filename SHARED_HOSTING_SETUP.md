@@ -16,11 +16,11 @@ Všechny emaily se nyní posílají **synchronně** (přímo), není potřeba Qu
 # Lokálně
 git add .
 git commit -m "Production ready with sync emails"
-git push origin master
+git push origin main
 
 # Na serveru (přes SSH nebo Git deploy)
 cd /path/to/syncmyday
-git pull origin master
+git pull origin main
 ```
 
 ### Krok 2: Nastavit SMTP v .env na serveru
