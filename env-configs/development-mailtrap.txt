@@ -1,0 +1,12 @@
+# Development SMTP Configuration for Mailtrap
+# Use these settings on localhost for testing
+
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=a36fa5039c4baf
+MAIL_PASSWORD=7093378e706aff
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@syncmyday.app"
+MAIL_FROM_NAME="${APP_NAME}"
+

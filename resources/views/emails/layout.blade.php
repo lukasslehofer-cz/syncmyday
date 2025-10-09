@@ -111,6 +111,11 @@
 <body>
     <div class="email-container">
         <div class="email-header">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); border-radius: 12px; margin-bottom: 16px;">
+                <svg style="width: 28px; height: 28px; color: #ffffff;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
             <h1>{{ config('app.name') }}</h1>
         </div>
         
@@ -122,7 +127,7 @@
             <p>{{ __('emails.footer_message') }}</p>
             <p>
                 <a href="{{ route('home') }}">{{ __('emails.visit_website') }}</a> | 
-                <a href="{{ route('help_center') ?? route('home') }}">{{ __('emails.help_center') }}</a>
+                <a href="{{ route('home') }}">{{ __('emails.help_center') }}</a>
             </p>
             <p style="margin-top: 20px;">
                 &copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('messages.all_rights_reserved') }}

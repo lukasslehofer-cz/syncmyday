@@ -10,9 +10,11 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 
-class VerifyEmailNotification extends BaseVerifyEmail implements ShouldQueue
+class VerifyEmailNotification extends BaseVerifyEmail
 {
     use Queueable;
+    
+    // Note: Queue disabled for shared hosting compatibility
 
     /**
      * Get the mail representation of the notification.

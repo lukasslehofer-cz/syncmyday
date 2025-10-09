@@ -8,7 +8,7 @@
     <p>{{ __('emails.trial_ending_1day_intro') }}</p>
     
     <div class="highlight-box" style="background-color: #fef3c7; border-left-color: #f59e0b;">
-        <p style="color: #92400e;"><strong>⏰ {{ __('emails.trial_ending_1day_reminder', ['date' => $user->trial_ends_at->isoFormat('LL')]) }}</strong></p>
+        <p style="color: #92400e;"><strong>⏰ {{ __('emails.trial_ending_1day_reminder', ['date' => $user->subscription_ends_at->isoFormat('LL')]) }}</strong></p>
     </div>
     
     <p>{{ __('emails.trial_ending_1day_action_needed') }}</p>

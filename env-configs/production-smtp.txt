@@ -1,0 +1,12 @@
+# Production SMTP Configuration for Czech Hosting
+# Copy these lines to your .env file on VPS
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.cesky-hosting.cz
+MAIL_PORT=625
+MAIL_USERNAME=info@syncmyday.cz
+MAIL_PASSWORD=Login2025-
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="info@syncmyday.cz"
+MAIL_FROM_NAME="${APP_NAME}"
+

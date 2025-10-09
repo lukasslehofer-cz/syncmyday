@@ -8,9 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendWelcomeEmail implements ShouldQueue
+class SendWelcomeEmail
 {
-    use InteractsWithQueue;
+    // Note: Queue disabled for shared hosting compatibility
 
     /**
      * Create the event listener.

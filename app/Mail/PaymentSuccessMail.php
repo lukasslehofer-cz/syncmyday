@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TrialEndingTomorrowMail extends Mailable
+class PaymentSuccessMail extends Mailable
 {
     use Queueable, SerializesModels;
     
@@ -20,7 +20,9 @@ class TrialEndingTomorrowMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public User $user
+        public User $user,
+        public ?float $amount = null,
+        public ?string $nextBillingDate = null
     ) {
         $this->locale($user->locale);
     }
@@ -31,7 +33,7 @@ class TrialEndingTomorrowMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('emails.trial_ending_1day_subject'),
+            subject: __('emails.payment_success_subject'),
         );
     }
 
@@ -41,7 +43,7 @@ class TrialEndingTomorrowMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.trial-ending-1day',
+            view: 'emails.payment-success',
         );
     }
 

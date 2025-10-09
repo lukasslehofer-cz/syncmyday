@@ -10,9 +10,11 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TrialEndingInSevenDaysMail extends Mailable implements ShouldQueue
+class TrialEndingInSevenDaysMail extends Mailable
 {
     use Queueable, SerializesModels;
+    
+    // Note: Queue disabled for shared hosting compatibility
 
     /**
      * Create a new message instance.

@@ -8,7 +8,7 @@
     <p>{{ __('emails.trial_ending_7days_intro') }}</p>
     
     <div class="highlight-box">
-        <p><strong>{{ __('emails.trial_ending_7days_reminder', ['days' => 7, 'date' => $user->trial_ends_at->isoFormat('LL')]) }}</strong></p>
+        <p><strong>{{ __('emails.trial_ending_7days_reminder', ['days' => 7, 'date' => $user->subscription_ends_at->isoFormat('LL')]) }}</strong></p>
     </div>
     
     <p>{{ __('emails.trial_ending_benefits_intro') }}</p>

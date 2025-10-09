@@ -39,7 +39,7 @@
             </a>
         </li>
         <li style="margin: 10px 0;">
-            <a href="{{ route('help_center') ?? route('home') }}" style="color: #667eea; text-decoration: none;">
+            <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none;">
                 💬 {{ __('emails.welcome_help_center') }}
             </a>
         </li>
