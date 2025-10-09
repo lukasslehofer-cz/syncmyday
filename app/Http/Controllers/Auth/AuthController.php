@@ -50,6 +50,9 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
 
         // Create Stripe Checkout Session for trial
         try {
