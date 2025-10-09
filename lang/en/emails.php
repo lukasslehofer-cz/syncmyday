@@ -1,0 +1,81 @@
+<?php
+
+return [
+    // Email Layout
+    'footer_message' => 'Thank you for using SyncMyDay!',
+    'visit_website' => 'Visit Website',
+    'help_center' => 'Help Center',
+
+    // Email Verification
+    'verify_email_subject' => 'Verify Your Email Address',
+    'verify_email_title' => 'Verify Your Email',
+    'verify_email_message' => 'We sent you a verification email. Please check your inbox and click the verification link to activate your account.',
+    'verify_email_greeting' => 'Hello :name!',
+    'verify_email_intro' => 'Thank you for registering with SyncMyDay! Please click the button below to verify your email address and activate your account.',
+    'verify_email_button' => 'Verify Email Address',
+    'verify_email_alternative' => 'If the button doesn\'t work, copy and paste this link into your browser:',
+    'verify_email_footer' => 'If you did not create an account, no further action is required.',
+    'verification_link_sent' => 'A new verification link has been sent to your email address.',
+    'resend_verification_email' => 'Resend Verification Email',
+    'back_to_dashboard' => 'Back to Dashboard',
+    
+    // Email Verified Success
+    'email_verified_title' => 'Email Verified!',
+    'email_verified_message' => 'Your email address has been successfully verified. Your account is now fully activated!',
+    'email_verified_confirmation' => 'Your email address has been verified',
+    'email_verified_next_steps' => 'You can now access all features and start synchronizing your calendars.',
+    'go_to_dashboard' => 'Go to Dashboard',
+    'start_onboarding' => 'Start Setup Guide',
+
+    // Welcome Email
+    'welcome_subject' => 'Welcome to SyncMyDay!',
+    'welcome_greeting' => 'Hello :name!',
+    'welcome_intro' => 'Welcome to SyncMyDay! We\'re excited to have you on board. Your account is now active and ready to use.',
+    'welcome_trial_info' => '🎉 Your 30-day free trial has started! Full access to all features, no credit card required.',
+    'welcome_what_you_can_do' => 'What you can do with SyncMyDay:',
+    'welcome_feature_1' => 'Connect unlimited Google and Microsoft calendars',
+    'welcome_feature_2' => 'Create unlimited sync rules',
+    'welcome_feature_3' => 'Real-time synchronization with webhooks',
+    'welcome_feature_4' => 'Advanced filters (busy only, all-day events, etc.)',
+    'welcome_feature_5' => 'Full privacy - event details stay confidential',
+    'welcome_get_started_button' => 'Get Started',
+    'welcome_need_help' => 'Need Help Getting Started?',
+    'welcome_help_intro' => 'Check out these helpful resources:',
+    'welcome_documentation' => 'Documentation',
+    'welcome_help_center' => 'Help Center',
+    'welcome_signature' => 'Happy syncing!',
+    'welcome_team_name' => 'The SyncMyDay Team',
+
+    // Trial Ending - 7 Days
+    'trial_ending_7days_subject' => 'Your Trial Ends in 7 Days',
+    'trial_ending_greeting' => 'Hi :name,',
+    'trial_ending_7days_intro' => 'We hope you\'re enjoying SyncMyDay! This is a friendly reminder that your free trial period will end in one week.',
+    'trial_ending_7days_reminder' => 'Your trial ends in :days days on :date',
+    'trial_ending_benefits_intro' => 'Continue enjoying these benefits:',
+    'trial_benefit_1' => 'Unlimited calendar connections',
+    'trial_benefit_2' => 'Unlimited sync rules',
+    'trial_benefit_3' => 'Real-time synchronization',
+    'trial_benefit_4' => 'Priority support',
+    'trial_benefit_5' => 'All future updates included',
+    'trial_pricing_title' => 'Continue with Pro',
+    'trial_pricing_note' => 'Cancel anytime, no questions asked',
+    'trial_pricing_details' => 'Less than €2.50 per month!',
+    'trial_setup_payment_button' => 'Set Up Payment',
+    'trial_ending_footer_1' => 'If you don\'t set up payment, you can continue using SyncMyDay with limitations (1 sync rule).',
+    'trial_ending_footer_2' => 'We won\'t charge you without your explicit consent.',
+    'per_year' => 'year',
+
+    // Trial Ending - 1 Day
+    'trial_ending_1day_subject' => 'Your Trial Ends Tomorrow',
+    'trial_ending_1day_intro' => 'Your free trial period ends tomorrow! We hope you\'ve enjoyed using SyncMyDay.',
+    'trial_ending_1day_reminder' => 'Your trial ends tomorrow on :date',
+    'trial_ending_1day_action_needed' => 'To continue with full access to all features, please set up your payment method.',
+    'trial_activate_now_button' => 'Activate Pro Now',
+    'trial_ending_1day_what_happens' => 'What happens after trial ends?',
+    'trial_ending_1day_if_subscribe' => 'If you activate Pro:',
+    'trial_ending_1day_if_subscribe_text' => 'You\'ll continue to have full access to all features for just €29/year. Cancel anytime.',
+    'trial_ending_1day_if_not_subscribe' => 'If you don\'t activate Pro:',
+    'trial_ending_1day_if_not_subscribe_text' => 'Your account will remain active with basic features (1 sync rule). You can upgrade to Pro anytime.',
+    'trial_ending_1day_thanks' => 'Thank you for trying SyncMyDay!',
+];
+

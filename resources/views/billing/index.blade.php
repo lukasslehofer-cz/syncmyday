@@ -10,8 +10,8 @@
         <p class="text-lg text-gray-600">Simple pricing for powerful calendar sync</p>
     </div>
     
-    <!-- Current Plan Status (for Pro users) -->
-    @if($user->subscription_tier === 'pro')
+    <!-- Current Plan Status (for Pro users with active subscription) -->
+    @if($user->subscription_tier === 'pro' && $user->stripe_subscription_id)
     <div class="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
@@ -41,22 +41,68 @@
             @endif
         </div>
     </div>
-    @else
-    <!-- Trial Info Banner for non-Pro users -->
-    <div class="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 text-center">
-        <div class="flex items-center justify-center space-x-2 mb-3">
-            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <h3 class="text-2xl font-bold text-gray-900">Získejte 1. měsíc zdarma!</h3>
+    
+    <!-- Trial Status (for users in trial without payment method) -->
+    @elseif($user->isInTrial())
+    <div class="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xl font-bold text-gray-900">Zkušební období aktivní!</p>
+                    <p class="text-sm text-gray-600">
+                        Zbývá {{ $user->getRemainingTrialDays() }} {{ $user->getRemainingTrialDays() === 1 ? 'den' : ($user->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }} (do {{ $user->subscription_ends_at->format('j. F Y') }})
+                    </p>
+                    @if(!$user->stripe_subscription_id)
+                    <p class="text-sm font-medium text-amber-600 mt-1">⚠️ Platební metoda není nastavena</p>
+                    @else
+                    <p class="text-sm text-green-600 mt-1">✓ Platební metoda nastavena</p>
+                    @endif
+                </div>
+            </div>
+            
+            @if(!$user->stripe_subscription_id)
+            <form action="{{ route('billing.trial-checkout') }}" method="POST">
+                @csrf
+                <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-md transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    Nastavit platební kartu
+                </button>
+            </form>
+            @else
+            <a href="{{ route('billing.portal') }}" class="inline-flex items-center px-6 py-3 border-2 border-blue-600 text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Spravovat předplatné
+            </a>
+            @endif
         </div>
-        <p class="text-lg text-gray-600 mb-2">Vyzkoušejte plnou funkčnost bez jakýchkoli omezení</p>
-        <p class="text-sm text-gray-500">Není vyžadována platební karta • Kdykoliv zrušitelné</p>
+    </div>
+    
+    <!-- Expired trial banner -->
+    @elseif($user->subscription_tier === 'free')
+    <div class="mb-8 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-8 text-center">
+        <div class="flex items-center justify-center space-x-2 mb-3">
+            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <h3 class="text-2xl font-bold text-gray-900">Zkušební období vypršelo</h3>
+        </div>
+        <p class="text-lg text-gray-600 mb-2">Aktivujte předplatné a pokračujte v synchronizaci kalendářů</p>
+        <p class="text-sm text-gray-500">Pouze 249 Kč/rok • Kdykoliv zrušitelné</p>
     </div>
     @endif
     
     <!-- Pricing Card -->
-    @if($user->subscription_tier !== 'pro')
+    @if($user->subscription_tier === 'free' || ($user->isInTrial() && !$user->stripe_subscription_id))
     <div class="max-w-2xl mx-auto">
         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-2xl p-10 border-2 border-indigo-500 relative">
             <!-- Popular Badge -->
@@ -74,14 +120,16 @@
                 
                 <!-- Pricing -->
                 <div class="mb-6">
+                    @if($user->subscription_tier === 'free')
                     <div class="flex items-center justify-center space-x-3 mb-3">
                         <div class="inline-flex items-center px-4 py-2 bg-green-100 border-2 border-green-500 rounded-xl">
                             <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-lg font-bold text-green-700">1. měsíc ZDARMA</span>
+                            <span class="text-lg font-bold text-green-700">AKTIVOVAT PŘEDPLATNÉ</span>
                         </div>
                     </div>
+                    @endif
                     
                     <div class="flex items-baseline justify-center mb-2">
                         <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">249 Kč</span>
@@ -165,18 +213,33 @@
             </div>
             
             <!-- CTA -->
-            <form action="{{ route('billing.checkout') }}" method="POST">
+            @if($user->isInTrial() && !$user->stripe_subscription_id)
+            <form action="{{ route('billing.trial-checkout') }}" method="POST">
                 @csrf
-                <button type="submit" class="w-full py-5 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg rounded-xl font-bold hover:opacity-90 shadow-xl transform hover:scale-105 transition">
-                    Začít s 1. měsícem zdarma
+                <button type="submit" class="w-full py-5 px-6 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-lg rounded-xl font-bold hover:opacity-90 shadow-xl transform hover:scale-105 transition">
+                    Nastavit platební metodu pro automatické obnovení
                 </button>
             </form>
             
             <p class="text-center text-sm text-gray-600 mt-4">
-                ✓ Není vyžadována platební karta<br>
-                ✓ Kdykoliv zrušitelné<br>
-                ✓ Po měsíci pouze 249 Kč/rok
+                ✓ Platební karta nebude zatížena během zkušební doby<br>
+                ✓ Automatická platba po skončení trialu (249 Kč/rok)<br>
+                ✓ Kdykoliv zrušitelné přes Stripe portál
             </p>
+            @else
+            <form action="{{ route('billing.checkout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full py-5 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg rounded-xl font-bold hover:opacity-90 shadow-xl transform hover:scale-105 transition">
+                    Aktivovat předplatné (249 Kč/rok)
+                </button>
+            </form>
+            
+            <p class="text-center text-sm text-gray-600 mt-4">
+                ✓ Bezpečná platba přes Stripe<br>
+                ✓ Kdykoliv zrušitelné<br>
+                ✓ Automatické obnovení každý rok
+            </p>
+            @endif
         </div>
     </div>
     @endif
@@ -187,7 +250,7 @@
         <div class="space-y-4">
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
                 <h4 class="font-bold text-gray-900 mb-2">Jak funguje zkušební měsíc zdarma?</h4>
-                <p class="text-gray-600">První měsíc máte plný přístup ke všem funkcím SyncMyDay Pro zcela zdarma. Není vyžadována platební karta. Po uplynutí měsíce se můžete rozhodnout, zda chcete pokračovat s placeným předplatným (249 Kč/rok) nebo ne.</p>
+                <p class="text-gray-600">Po registraci máte 30 dní plný přístup ke všem funkcím SyncMyDay Pro zcela zdarma. Zadáte platební kartu, ale nebude z ní stržena žádná platba během zkušební doby. Po 30 dnech bude automaticky účtováno 249 Kč za rok předplatného.</p>
             </div>
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
                 <h4 class="font-bold text-gray-900 mb-2">Mohu předplatné kdykoliv zrušit?</h4>
@@ -199,7 +262,7 @@
             </div>
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
                 <h4 class="font-bold text-gray-900 mb-2">Co se stane po zkušebním měsíci?</h4>
-                <p class="text-gray-600">Po uplynutí prvního měsíce zdarma budete automaticky požádáni o nastavení platby. Pokud si nepřejete pokračovat, můžete jednoduše předplatné neaktivovat a aplikace zůstane funkční s omezeními.</p>
+                <p class="text-gray-600">Po uplynutí 30denní zkušební doby bude z vaší platební karty automaticky stržena roční platba 249 Kč. Pokud si nepřejete pokračovat, zrušte předplatné před koncem zkušebního období.</p>
             </div>
         </div>
     </div>

@@ -6,8 +6,8 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Dashboard</h1>
-        <p class="text-lg text-gray-600">Welcome back, <span class="font-semibold text-gray-900">{{ auth()->user()->name }}</span>! Here's your sync status.</p>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.dashboard') }}</h1>
+        <p class="text-lg text-gray-600">{{ __('messages.welcome_back_user', ['name' => auth()->user()->name]) }}</p>
     </div>
     
     <!-- Stats Grid -->
@@ -22,9 +22,9 @@
                 </div>
                 <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Active</span>
             </div>
-            <p class="text-sm font-medium text-gray-600 mb-2">Calendar Connections</p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.calendar_connections_stat') }}</p>
             <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_connections'] }}<span class="text-xl text-gray-500">/{{ $stats['total_connections'] }}</span></p>
-            <p class="text-xs text-gray-500">Connected calendars</p>
+            <p class="text-xs text-gray-500">{{ __('messages.connected_calendars') }}</p>
         </div>
         
         <!-- Sync Rules Card -->
@@ -35,11 +35,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">Rules</span>
+                <span class="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">{{ __('messages.rules') }}</span>
             </div>
-            <p class="text-sm font-medium text-gray-600 mb-2">Active Sync Rules</p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.active_sync_rules') }}</p>
             <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_rules'] }}<span class="text-xl text-gray-500">/{{ $stats['total_rules'] }}</span></p>
-            <p class="text-xs text-gray-500">Configured sync rules</p>
+            <p class="text-xs text-gray-500">{{ __('messages.configured_sync_rules') }}</p>
         </div>
         
         <!-- Recent Syncs Card -->
@@ -50,11 +50,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">Success</span>
+                <span class="text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">{{ __('messages.success') }}</span>
             </div>
-            <p class="text-sm font-medium text-gray-600 mb-2">Recent Syncs</p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.recent_syncs') }}</p>
             <p class="text-4xl font-bold text-green-600 mb-1">{{ $stats['recent_syncs'] }}</p>
-            <p class="text-xs text-gray-500">Last 20 sync actions</p>
+            <p class="text-xs text-gray-500">{{ __('messages.last_20_sync_actions') }}</p>
         </div>
         
         <!-- Errors Card -->
@@ -68,18 +68,18 @@
                 @if($stats['recent_errors'] > 0)
                 <span class="text-xs font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-full">Alert</span>
                 @else
-                <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">None</span>
+                <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{{ __('messages.none') }}</span>
                 @endif
             </div>
-            <p class="text-sm font-medium text-gray-600 mb-2">Recent Errors</p>
+            <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.recent_errors') }}</p>
             <p class="text-4xl font-bold {{ $stats['recent_errors'] > 0 ? 'text-red-600' : 'text-gray-400' }} mb-1">{{ $stats['recent_errors'] }}</p>
-            <p class="text-xs text-gray-500">Last 20 sync actions</p>
+            <p class="text-xs text-gray-500">{{ __('messages.last_20_sync_actions') }}</p>
         </div>
     </div>
     
     <!-- Quick Actions -->
     <div class="bg-white rounded-2xl shadow-lg mb-8 p-6 lg:p-8 border border-gray-100">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('messages.quick_actions') }}</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:shadow-lg hover:scale-105 transition transform">
                 <div class="flex items-center space-x-4">
@@ -92,8 +92,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-1">Connect Google</p>
-                        <p class="text-xs text-gray-600">Add Google Calendar</p>
+                        <p class="text-sm font-bold text-gray-900 mb-1">{{ __('messages.connect_google') }}</p>
+                        <p class="text-xs text-gray-600">{{ __('messages.add_google_calendar') }}</p>
                     </div>
                 </div>
             </a>
@@ -108,8 +108,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-1">Connect Microsoft</p>
-                        <p class="text-xs text-gray-600">Add Microsoft 365</p>
+                        <p class="text-sm font-bold text-gray-900 mb-1">{{ __('messages.connect_microsoft') }}</p>
+                        <p class="text-xs text-gray-600">{{ __('messages.add_microsoft_365') }}</p>
                     </div>
                 </div>
             </a>
@@ -124,8 +124,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-1">New Sync Rule</p>
-                        <p class="text-xs text-gray-600">Create sync rule</p>
+                        <p class="text-sm font-bold text-gray-900 mb-1">{{ __('messages.new_sync_rule') }}</p>
+                        <p class="text-xs text-gray-600">{{ __('messages.create_sync_rule_action') }}</p>
                     </div>
                 </div>
             </a>
@@ -134,7 +134,7 @@
     
     <!-- Recent Activity -->
     <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 border border-gray-100">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Recent Activity</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('messages.recent_activity') }}</h2>
         
         @if($recentLogs->isEmpty())
         <div class="text-center py-12">
@@ -143,13 +143,13 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
             </div>
-            <p class="text-gray-500 font-medium mb-2">No recent activity</p>
-            <p class="text-sm text-gray-400 mb-6">Create a sync rule to start synchronizing your calendars</p>
+            <p class="text-gray-500 font-medium mb-2">{{ __('messages.no_recent_activity') }}</p>
+            <p class="text-sm text-gray-400 mb-6">{{ __('messages.create_rule_to_start_syncing') }}</p>
             <a href="{{ route('sync-rules.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-md transform hover:scale-105 transition">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Create Your First Rule
+                {{ __('messages.create_your_first_rule') }}
             </a>
         </div>
         @else
@@ -186,15 +186,15 @@
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-semibold text-gray-900">
                             @if($log->action === 'created')
-                                Blocker Event Created
+                                {{ __('messages.blocker_event_created') }}
                             @elseif($log->action === 'updated')
-                                Blocker Event Updated
+                                {{ __('messages.blocker_event_updated') }}
                             @elseif($log->action === 'deleted')
-                                Blocker Event Removed
+                                {{ __('messages.blocker_event_removed') }}
                             @elseif($log->action === 'skipped')
-                                Event Skipped
+                                {{ __('messages.event_skipped') }}
                             @elseif($log->action === 'error')
-                                Sync Error Occurred
+                                {{ __('messages.sync_error_occurred') }}
                             @else
                                 {{ ucfirst($log->action) }}
                             @endif
@@ -212,11 +212,11 @@
                     
                     <div class="flex-shrink-0">
                         @if($log->action === 'created')
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Success</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">{{ __('messages.success') }}</span>
                         @elseif($log->action === 'error')
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Error</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">{{ __('messages.error') }}</span>
                         @else
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">Info</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">{{ __('messages.info') }}</span>
                         @endif
                     </div>
                 </div>

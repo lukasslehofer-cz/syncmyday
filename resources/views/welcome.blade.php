@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,13 +49,13 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Features</a>
                     <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">How It Works</a>
-                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Pricing</a>
+                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.billing') }}</a>
                 </div>
                 
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Sign in</a>
+                    <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">{{ __('messages.sign_in') }}</a>
                     <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 shadow-md">
-                        Get Started
+                        {{ __('messages.sign_up') }}
                     </a>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    Privacy-First Calendar Sync
+                    {{ __('messages.privacy_first') }}
                 </div>
                 
                 <h2 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
@@ -85,7 +85,7 @@
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                     <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition">
-                        Začít s 1. měsícem zdarma
+                        {{ __('messages.start_with_first_month_free') }}
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
@@ -106,11 +106,11 @@
                     </div>
                     <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">100%</div>
-                        <div class="text-sm text-gray-600 font-medium">Privacy First</div>
+                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.privacy_first') }}</div>
                     </div>
                     <div class="col-span-2 md:col-span-1 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-pink-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">2 mins</div>
-                        <div class="text-sm text-gray-600 font-medium">Setup Time</div>
+                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.easy_setup') }}</div>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Privacy First</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.privacy_first') }}</h3>
                     <p class="text-gray-600 leading-relaxed">We only store event start/end times. Never titles, descriptions, or attendees. All data encrypted at rest.</p>
                 </div>
                 
@@ -149,7 +149,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Real-time Sync</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.real_time_synchronization') }}</h3>
                     <p class="text-gray-600 leading-relaxed">Webhooks detect changes instantly. Blocker events created within minutes, automatically updated when events change.</p>
                 </div>
                 
@@ -171,7 +171,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Email Calendars</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.email_calendars_support') }}</h3>
                     <p class="text-gray-600 leading-relaxed">Sync with email-based calendar services. Forward .ics invites and we'll create blocker events automatically.</p>
                 </div>
                 
@@ -182,7 +182,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Easy Integration</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.easy_setup') }}</h3>
                     <p class="text-gray-600 leading-relaxed">Connect Google Calendar and Microsoft 365 with OAuth. No API keys or technical setup required.</p>
                 </div>
                 
@@ -211,13 +211,13 @@
             <div class="grid md:grid-cols-3 gap-12">
                 <div class="relative text-center">
                     <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">1</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Connect Calendars</h3>
-                    <p class="text-gray-600">Link your Google Calendar or Microsoft 365 accounts with secure OAuth authentication.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.calendar_connections') }}</h3>
+                    <p class="text-gray-600">{{ __('messages.connect_calendars_to_start_syncing') }}</p>
                 </div>
                 
                 <div class="relative text-center">
                     <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">2</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Create Sync Rules</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.create_sync_rule') }}</h3>
                     <p class="text-gray-600">Choose which calendars to sync and set filters for busy status, work hours, or all-day events.</p>
                 </div>
                 
@@ -244,7 +244,7 @@
                             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-semibold text-gray-900">Google Calendar</span>
+                    <span class="text-xl font-semibold text-gray-900">{{ __('messages.google_calendar') }}</span>
                 </div>
                 
                 <div class="flex items-center space-x-3">
@@ -253,7 +253,7 @@
                             <path d="M11.5,0 L23,6.5 L23,17.5 L11.5,24 L0,17.5 L0,6.5 L11.5,0 Z M11.5,2.5 L2,7.5 L2,16.5 L11.5,21.5 L21,16.5 L21,7.5 L11.5,2.5 Z"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-semibold text-gray-900">Microsoft 365</span>
+                    <span class="text-xl font-semibold text-gray-900">{{ __('messages.microsoft_365') }}</span>
                 </div>
             </div>
         </div>
@@ -263,8 +263,8 @@
     <section id="pricing" class="py-20 gradient-bg">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold text-white mb-4">Jednoduchá cena</h2>
-                <p class="text-xl text-indigo-100">Bez skrytých poplatků. Bez omezení.</p>
+                <h2 class="text-4xl font-extrabold text-white mb-4">{{ __('messages.simple_pricing_for_powerful_sync') }}</h2>
+                <p class="text-xl text-indigo-100">{{ __('messages.full_functionality_no_limits') }}</p>
             </div>
             
             <div class="max-w-2xl mx-auto">
@@ -285,16 +285,16 @@
                             <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-lg font-bold text-green-700">1. měsíc ZDARMA</span>
+                            <span class="text-lg font-bold text-green-700">{{ __('messages.first_month_free') }}</span>
                         </div>
                         
                         <!-- Price -->
                         <div class="mb-6">
                             <div class="flex items-baseline justify-center mb-2">
                                 <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">249 Kč</span>
-                                <span class="text-2xl text-gray-700 ml-3">/ rok</span>
+                                <span class="text-2xl text-gray-700 ml-3">{{ __('messages.per_year') }}</span>
                             </div>
-                            <p class="text-gray-600">Po zkušebním měsíci</p>
+                            <p class="text-gray-600">{{ __('messages.after_trial_month') }}</p>
                         </div>
                         
                         <!-- Key Features -->
@@ -303,7 +303,7 @@
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span class="text-gray-900 font-medium">Neomezená pravidla</span>
+                                <span class="text-gray-900 font-medium">{{ __('messages.unlimited_sync_rules') }}</span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -315,26 +315,26 @@
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span class="text-gray-900 font-medium">Všechny kalendáře</span>
+                                <span class="text-gray-900 font-medium">{{ __('messages.unlimited_connected_calendars') }}</span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span class="text-gray-900 font-medium">Prioritní podpora</span>
+                                <span class="text-gray-900 font-medium">{{ __('messages.priority_support') }}</span>
                             </div>
                         </div>
                         
                         <!-- CTA Button -->
                         <a href="{{ route('register') }}" class="inline-flex items-center justify-center w-full px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition mb-4">
-                            Začít s 1. měsícem zdarma
+                            {{ __('messages.start_with_first_month_free') }}
                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                         </a>
                         
                         <p class="text-sm text-gray-600">
-                            ✓ Není vyžadována platební karta • ✓ Kdykoliv zrušitelné
+                            ✓ {{ __('messages.no_credit_card_required') }} • ✓ {{ __('messages.cancel_anytime') }}
                         </p>
                     </div>
                 </div>
@@ -359,37 +359,36 @@
                 </div>
                 
                 <div>
-                    <h3 class="text-sm font-semibold mb-3">Product</h3>
+                    <h3 class="text-sm font-semibold mb-3">{{ __('messages.product') }}</h3>
                     <ul class="space-y-2">
                         <li><a href="#features" class="text-sm text-gray-400 hover:text-white">Features</a></li>
                         <li><a href="#how-it-works" class="text-sm text-gray-400 hover:text-white">How It Works</a></li>
-                        <li><a href="#pricing" class="text-sm text-gray-400 hover:text-white">Pricing</a></li>
+                        <li><a href="#pricing" class="text-sm text-gray-400 hover:text-white">{{ __('messages.billing') }}</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 class="text-sm font-semibold mb-3">Support</h3>
+                    <h3 class="text-sm font-semibold mb-3">{{ __('messages.support') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Documentation</a></li>
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Help Center</a></li>
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.documentation') }}</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.help_center') }}</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.contact_us') }}</a></li>
                     </ul>
                 </div>
                 
                 <div>
-                    <h3 class="text-sm font-semibold mb-3">Legal</h3>
+                    <h3 class="text-sm font-semibold mb-3">{{ __('messages.legal') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.privacy_policy') }}</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.terms_of_service') }}</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="pt-8 border-t border-gray-800 text-center">
-                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} SyncMyDay. All rights reserved.</p>
+                <p class="text-sm text-gray-400">&copy; {{ date('Y') }} SyncMyDay. {{ __('messages.all_rights_reserved') }}.</p>
             </div>
         </div>
     </footer>
 </body>
 </html>
-

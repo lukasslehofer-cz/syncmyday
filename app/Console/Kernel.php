@@ -24,6 +24,12 @@ class Kernel extends ConsoleKernel
 
         // Check for stale connections and notify users
         $schedule->command('connections:check')->hourly();
+
+        // Send trial ending notifications (3 days and 1 day before trial ends)
+        $schedule->command('trial:send-ending-notifications')->dailyAt('09:00');
+
+        // Expire trials for users without active subscriptions
+        $schedule->command('trial:expire')->dailyAt('00:00');
     }
 
     /**

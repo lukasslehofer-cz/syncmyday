@@ -80,9 +80,6 @@
                         <a href="{{ route('sync-rules.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                             Sync Rules
                         </a>
-                        <a href="{{ route('email-calendars.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('email-calendars.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            Email Calendars
-                        </a>
                     </div>
                 </div>
                 
@@ -155,6 +152,47 @@
     
     <!-- Alpine.js for interactivity -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    @endauth
+    
+    <!-- Trial Banner -->
+    @auth
+    @if(auth()->user()->isInTrial())
+    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-b-2 border-amber-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-amber-900">
+                            @if(auth()->user()->isTrialExpiringSoon())
+                                <strong>⚠️ Zkušební období brzy končí!</strong> Zbývá vám {{ auth()->user()->getRemainingTrialDays() }} {{ auth()->user()->getRemainingTrialDays() === 1 ? 'den' : (auth()->user()->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }}.
+                            @else
+                                <strong>🎉 Zkušební období aktivní!</strong> Máte plný přístup k SyncMyDay Pro ještě {{ auth()->user()->getRemainingTrialDays() }} {{ auth()->user()->getRemainingTrialDays() === 1 ? 'den' : (auth()->user()->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }}.
+                            @endif
+                        </p>
+                        @if(!auth()->user()->stripe_subscription_id)
+                        <p class="text-xs text-amber-700 mt-0.5">
+                            Nezapomeňte nastavit platební metodu, aby nedošlo k přerušení služby.
+                        </p>
+                        @endif
+                    </div>
+                </div>
+                @if(!auth()->user()->stripe_subscription_id)
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow-sm transition">
+                    Nastavit platbu
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                @endif
+            </div>
+        </div>
+    </div>
+    @endif
     @endauth
     
     <!-- Flash Messages -->

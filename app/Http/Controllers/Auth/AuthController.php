@@ -7,7 +7,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class AuthController extends Controller
 {
@@ -42,12 +45,65 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'locale' => app()->getLocale(),
             'timezone' => $request->timezone ?? 'UTC',
+            'subscription_tier' => 'pro',
+            'subscription_ends_at' => now()->addDays(30),
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('onboarding.start')
-            ->with('success', __('messages.registration_success'));
+        // Create Stripe Checkout Session for trial
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            // Create Stripe customer
+            $customer = \Stripe\Customer::create([
+                'email' => $user->email,
+                'name' => $user->name,
+                'metadata' => [
+                    'user_id' => $user->id,
+                ],
+            ]);
+
+            $user->update(['stripe_customer_id' => $customer->id]);
+
+            // Calculate trial end timestamp
+            $trialEnd = $user->subscription_ends_at->timestamp;
+
+            // Create Checkout Session with trial
+            $session = Session::create([
+                'customer' => $customer->id,
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price' => config('services.stripe.pro_price_id'),
+                    'quantity' => 1,
+                ]],
+                'mode' => 'subscription',
+                'subscription_data' => [
+                    'trial_end' => $trialEnd,
+                    'metadata' => [
+                        'user_id' => $user->id,
+                    ],
+                ],
+                'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}&redirect=onboarding',
+                'cancel_url' => route('dashboard'),
+                'metadata' => [
+                    'user_id' => $user->id,
+                    'is_trial' => true,
+                ],
+            ]);
+
+            return redirect($session->url);
+
+        } catch (\Exception $e) {
+            Log::error('Stripe trial checkout session creation failed during registration', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            // If Stripe fails, still let user in but show them billing page
+            return redirect()->route('billing')
+                ->with('warning', __('messages.setup_payment_method'));
+        }
     }
 
     /**

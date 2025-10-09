@@ -29,7 +29,73 @@ class BillingController extends Controller
     }
 
     /**
-     * Create Stripe Checkout session for Pro subscription
+     * Create Stripe Checkout session for trial (used after registration)
+     */
+    public function createTrialCheckoutSession(Request $request)
+    {
+        $user = auth()->user();
+
+        // Only allow trial checkout for users in trial without payment method
+        if (!$user->isInTrial()) {
+            return redirect()->route('billing')
+                ->with('error', 'Trial checkout is only available for new users.');
+        }
+
+        try {
+            // Create or retrieve Stripe customer
+            if (!$user->stripe_customer_id) {
+                $customer = \Stripe\Customer::create([
+                    'email' => $user->email,
+                    'name' => $user->name,
+                    'metadata' => [
+                        'user_id' => $user->id,
+                    ],
+                ]);
+
+                $user->update(['stripe_customer_id' => $customer->id]);
+            }
+
+            // Calculate trial end timestamp
+            $trialEnd = $user->subscription_ends_at->timestamp;
+
+            // Create Checkout Session with trial
+            $session = Session::create([
+                'customer' => $user->stripe_customer_id,
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price' => config('services.stripe.pro_price_id'),
+                    'quantity' => 1,
+                ]],
+                'mode' => 'subscription',
+                'subscription_data' => [
+                    'trial_end' => $trialEnd,
+                    'metadata' => [
+                        'user_id' => $user->id,
+                    ],
+                ],
+                'success_url' => route('onboarding.start') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('register'),
+                'metadata' => [
+                    'user_id' => $user->id,
+                    'is_trial' => true,
+                ],
+            ]);
+
+            return redirect($session->url);
+
+        } catch (\Exception $e) {
+            Log::error('Stripe trial checkout session creation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Create Stripe Checkout session for Pro subscription (for expired trials)
      */
     public function createCheckoutSession(Request $request)
     {
@@ -49,7 +115,7 @@ class BillingController extends Controller
                 $user->update(['stripe_customer_id' => $customer->id]);
             }
 
-            // Create Checkout Session
+            // Create Checkout Session (no trial)
             $session = Session::create([
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
@@ -94,12 +160,33 @@ class BillingController extends Controller
             
             // Update user subscription
             $user = auth()->user();
-            $user->update([
-                'subscription_tier' => 'pro',
-                'stripe_subscription_id' => $session->subscription,
-            ]);
+            
+            // Store subscription ID
+            if ($session->subscription) {
+                $user->update([
+                    'stripe_subscription_id' => $session->subscription,
+                ]);
 
-            Log::info('User subscribed to Pro', ['user_id' => $user->id]);
+                // Retrieve the subscription to get period end
+                $subscription = \Stripe\Subscription::retrieve($session->subscription);
+                
+                $user->update([
+                    'subscription_tier' => 'pro',
+                    'subscription_ends_at' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end),
+                ]);
+
+                Log::info('User subscribed to Pro', [
+                    'user_id' => $user->id,
+                    'is_trial' => $subscription->status === 'trialing',
+                    'subscription_id' => $session->subscription,
+                ]);
+            }
+
+            // Check if we should redirect to onboarding (for new registrations)
+            if ($request->query('redirect') === 'onboarding') {
+                return redirect()->route('onboarding.start')
+                    ->with('success', __('messages.registration_success'));
+            }
 
             return redirect()->route('dashboard')
                 ->with('success', __('messages.subscription_activated'));
@@ -135,6 +222,10 @@ class BillingController extends Controller
 
         // Handle the event
         switch ($event->type) {
+            case 'checkout.session.completed':
+                $this->handleCheckoutSessionCompleted($event->data->object);
+                break;
+
             case 'customer.subscription.updated':
             case 'customer.subscription.created':
                 $this->handleSubscriptionUpdated($event->data->object);
@@ -142,6 +233,10 @@ class BillingController extends Controller
 
             case 'customer.subscription.deleted':
                 $this->handleSubscriptionDeleted($event->data->object);
+                break;
+
+            case 'invoice.payment_succeeded':
+                $this->handlePaymentSucceeded($event->data->object);
                 break;
 
             case 'invoice.payment_failed':
@@ -156,6 +251,38 @@ class BillingController extends Controller
     }
 
     /**
+     * Handle checkout session completed
+     */
+    private function handleCheckoutSessionCompleted($session)
+    {
+        $userId = $session->metadata->user_id ?? null;
+        
+        if (!$userId) {
+            Log::warning('No user_id in checkout session metadata');
+            return;
+        }
+
+        $user = \App\Models\User::find($userId);
+        
+        if (!$user) {
+            Log::warning('User not found for checkout session', ['user_id' => $userId]);
+            return;
+        }
+
+        // Update subscription ID
+        if ($session->subscription) {
+            $user->update([
+                'stripe_subscription_id' => $session->subscription,
+            ]);
+
+            Log::info('Checkout completed, subscription linked', [
+                'user_id' => $user->id,
+                'subscription_id' => $session->subscription,
+            ]);
+        }
+    }
+
+    /**
      * Handle subscription updated/created
      */
     private function handleSubscriptionUpdated($subscription)
@@ -163,16 +290,49 @@ class BillingController extends Controller
         $user = \App\Models\User::where('stripe_subscription_id', $subscription->id)->first();
         
         if (!$user) {
-            Log::warning('User not found for subscription', ['subscription_id' => $subscription->id]);
-            return;
+            // Try to find by customer ID
+            $user = \App\Models\User::where('stripe_customer_id', $subscription->customer)->first();
+            
+            if (!$user) {
+                Log::warning('User not found for subscription', ['subscription_id' => $subscription->id]);
+                return;
+            }
+
+            // Link the subscription
+            $user->update(['stripe_subscription_id' => $subscription->id]);
         }
 
+        // Update subscription status
+        $isActive = in_array($subscription->status, ['active', 'trialing']);
+        
         $user->update([
-            'subscription_tier' => 'pro',
+            'subscription_tier' => $isActive ? 'pro' : 'free',
             'subscription_ends_at' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end),
         ]);
 
-        Log::info('Subscription updated', ['user_id' => $user->id]);
+        Log::info('Subscription updated', [
+            'user_id' => $user->id,
+            'status' => $subscription->status,
+        ]);
+    }
+
+    /**
+     * Handle payment succeeded
+     */
+    private function handlePaymentSucceeded($invoice)
+    {
+        $customerId = $invoice->customer;
+        $user = \App\Models\User::where('stripe_customer_id', $customerId)->first();
+        
+        if (!$user) {
+            return;
+        }
+
+        Log::info('Payment succeeded', [
+            'user_id' => $user->id,
+            'amount' => $invoice->amount_paid / 100,
+            'currency' => $invoice->currency,
+        ]);
     }
 
     /**

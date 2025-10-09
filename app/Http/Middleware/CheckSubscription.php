@@ -18,7 +18,10 @@ class CheckSubscription
             return redirect()->route('login');
         }
 
-        if ($request->user()->subscription_tier !== 'pro') {
+        $user = $request->user();
+
+        // Check if user has active subscription (including trial)
+        if (!$user->hasActiveSubscription()) {
             return redirect()
                 ->route('billing')
                 ->with('error', __('messages.subscription_required'));

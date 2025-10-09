@@ -1,0 +1,81 @@
+<?php
+
+return [
+    // Email Layout
+    'footer_message' => 'Ďakujeme, že používate SyncMyDay!',
+    'visit_website' => 'Navštíviť web',
+    'help_center' => 'Centrum pomoci',
+
+    // Email Verification
+    'verify_email_subject' => 'Overte svoj e-mail',
+    'verify_email_title' => 'Overte svoj e-mail',
+    'verify_email_message' => 'Poslali sme vám overovací e-mail. Prosím skontrolujte svoju schránku a kliknite na overovací odkaz pre aktiváciu účtu.',
+    'verify_email_greeting' => 'Ahoj :name!',
+    'verify_email_intro' => 'Ďakujeme za registráciu v SyncMyDay! Prosím kliknite na tlačidlo nižšie pre overenie vašej e-mailovej adresy a aktiváciu účtu.',
+    'verify_email_button' => 'Overiť e-mailovú adresu',
+    'verify_email_alternative' => 'Ak tlačidlo nefunguje, skopírujte a vložte tento odkaz do prehliadača:',
+    'verify_email_footer' => 'Ak ste nevytvárali účet, nie je nutná žiadna ďalšia akcia.',
+    'verification_link_sent' => 'Nový overovací odkaz bol odoslaný na vašu e-mailovú adresu.',
+    'resend_verification_email' => 'Znovu odoslať overovací e-mail',
+    'back_to_dashboard' => 'Späť na prehľad',
+    
+    // Email Verified Success
+    'email_verified_title' => 'E-mail overený!',
+    'email_verified_message' => 'Vaša e-mailová adresa bola úspešne overená. Váš účet je teraz plne aktívny!',
+    'email_verified_confirmation' => 'Vaša e-mailová adresa bola overená',
+    'email_verified_next_steps' => 'Teraz môžete používať všetky funkcie a začať synchronizovať svoje kalendáre.',
+    'go_to_dashboard' => 'Prejsť na prehľad',
+    'start_onboarding' => 'Spustiť sprievodcu nastavením',
+
+    // Welcome Email
+    'welcome_subject' => 'Vitajte v SyncMyDay!',
+    'welcome_greeting' => 'Ahoj :name!',
+    'welcome_intro' => 'Vitajte v SyncMyDay! Sme radi, že ste s nami. Váš účet je teraz aktívny a pripravený na použitie.',
+    'welcome_trial_info' => '🎉 Vaše 30-dňové skúšobné obdobie zadarmo začalo! Plný prístup ku všetkým funkciám, nie je vyžadovaná platobná karta.',
+    'welcome_what_you_can_do' => 'Čo môžete s SyncMyDay robiť:',
+    'welcome_feature_1' => 'Pripojiť neobmedzený počet Google a Microsoft kalendárov',
+    'welcome_feature_2' => 'Vytvoriť neobmedzený počet synchronizačných pravidiel',
+    'welcome_feature_3' => 'Synchronizácia v reálnom čase pomocou webhookov',
+    'welcome_feature_4' => 'Pokročilé filtre (iba zaneprázdnený, celodenné udalosti, atď.)',
+    'welcome_feature_5' => 'Plné súkromie - detaily udalostí zostávajú dôverné',
+    'welcome_get_started_button' => 'Začať',
+    'welcome_need_help' => 'Potrebujete pomoc so začiatkom?',
+    'welcome_help_intro' => 'Pozrite si tieto užitočné zdroje:',
+    'welcome_documentation' => 'Dokumentácia',
+    'welcome_help_center' => 'Centrum pomoci',
+    'welcome_signature' => 'Šťastnú synchronizáciu!',
+    'welcome_team_name' => 'Tím SyncMyDay',
+
+    // Trial Ending - 7 Days
+    'trial_ending_7days_subject' => 'Vaše skúšobné obdobie končí o 7 dní',
+    'trial_ending_greeting' => 'Ahoj :name,',
+    'trial_ending_7days_intro' => 'Dúfame, že si SyncMyDay užívate! Toto je priateľská pripomienka, že vaše bezplatné skúšobné obdobie sa skončí o týždeň.',
+    'trial_ending_7days_reminder' => 'Vaše skúšobné obdobie končí o :days dní, dňa :date',
+    'trial_ending_benefits_intro' => 'Pokračujte v užívaní týchto výhod:',
+    'trial_benefit_1' => 'Neobmedzené pripojenia kalendárov',
+    'trial_benefit_2' => 'Neobmedzené synchronizačné pravidlá',
+    'trial_benefit_3' => 'Synchronizácia v reálnom čase',
+    'trial_benefit_4' => 'Prioritná podpora',
+    'trial_benefit_5' => 'Všetky budúce aktualizácie zahrnuté',
+    'trial_pricing_title' => 'Pokračovať s Pro',
+    'trial_pricing_note' => 'Zrušiť kedykoľvek, bez otázok',
+    'trial_pricing_details' => 'Menej ako 2,50 € mesačne!',
+    'trial_setup_payment_button' => 'Nastaviť platbu',
+    'trial_ending_footer_1' => 'Ak nenastavíte platbu, môžete pokračovať v používaní SyncMyDay s obmedzeniami (1 synchronizačné pravidlo).',
+    'trial_ending_footer_2' => 'Bez vášho výslovného súhlasu vás nebudeme účtovať.',
+    'per_year' => 'rok',
+
+    // Trial Ending - 1 Day
+    'trial_ending_1day_subject' => 'Vaše skúšobné obdobie končí zajtra',
+    'trial_ending_1day_intro' => 'Vaše bezplatné skúšobné obdobie končí zajtra! Dúfame, že ste si užili používanie SyncMyDay.',
+    'trial_ending_1day_reminder' => 'Vaše skúšobné obdobie končí zajtra, dňa :date',
+    'trial_ending_1day_action_needed' => 'Pre pokračovanie s plným prístupom ku všetkým funkciám prosím nastavte svoj spôsob platby.',
+    'trial_activate_now_button' => 'Aktivovať Pro teraz',
+    'trial_ending_1day_what_happens' => 'Čo sa stane po skončení skúšobného obdobia?',
+    'trial_ending_1day_if_subscribe' => 'Ak aktivujete Pro:',
+    'trial_ending_1day_if_subscribe_text' => 'Budete mať naďalej plný prístup ku všetkým funkciám za len 29 € ročne. Zrušiť kedykoľvek.',
+    'trial_ending_1day_if_not_subscribe' => 'Ak neaktivujete Pro:',
+    'trial_ending_1day_if_not_subscribe_text' => 'Váš účet zostane aktívny so základnými funkciami (1 synchronizačné pravidlo). Môžete upgradovať na Pro kedykoľvek.',
+    'trial_ending_1day_thanks' => 'Ďakujeme za vyskúšanie SyncMyDay!',
+];
+
