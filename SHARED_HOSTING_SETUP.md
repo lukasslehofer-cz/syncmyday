@@ -81,11 +81,13 @@ Použijte připravený soubor `cron.php` v rootu projektu.
 **Common Settings:** Once Per Minute
 
 **Command:**
+
 ```bash
 /usr/bin/php /home/username/public_html/syncmyday/cron.php
 ```
 
 **Poznámky:**
+
 - Upravte cestu podle vašeho hostingu
 - Cesta k PHP může být `/usr/bin/php80`, `/usr/bin/php82` apod.
 
@@ -96,16 +98,19 @@ Použijte připravený soubor `cron.php` v rootu projektu.
 Pokud Možnost 1 nefunguje.
 
 **Krok A:** V `.env` přidejte:
+
 ```env
 CRON_SECRET=vas-nahodny-tajny-token
 ```
 
 Vygenerujte token:
+
 ```bash
 php -r "echo bin2hex(random_bytes(32));"
 ```
 
 **Krok B:** V cPanel Cron Jobs přidejte:
+
 ```bash
 curl -s "https://syncmyday.cz/cron/run?token=vas-token" > /dev/null 2>&1
 ```
@@ -125,6 +130,7 @@ Pokud hosting vůbec nemá cron jobs.
 ---
 
 > 📚 **Podrobné návody:**
+>
 > - `CRON_SETUP_OPTIONS.md` - všechny možnosti detailně
 > - `CPANEL_CRON_SETUP.md` - krok za krokem s obrázky
 
