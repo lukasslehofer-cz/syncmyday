@@ -73,12 +73,14 @@ git clone https://github.com/vase-jmeno/syncmyday.git syncmyday.cz
 ```
 
 Pro privátní repo při pull:
+
 - **Username**: váš-github-username
 - **Password**: Personal Access Token (ne heslo!)
 
 ##### Varianta B: SSH klíče (pouze pro plné VPS s root přístupem)
 
 **Funguje pouze pokud máte:**
+
 - Plný přístup k domovskému adresáři
 - Možnost vytvořit `~/.ssh` složku
 - Standardní Linux prostředí (ne chroot)
@@ -97,10 +99,12 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 Zkopírujte výstup a přidejte do GitHub/GitLab:
+
 - **GitHub**: Settings → SSH and GPG keys → New SSH key
 - **GitLab**: Preferences → SSH Keys
 
 Pak clone přes SSH:
+
 ```bash
 cd /
 git clone git@github.com:vase-jmeno/syncmyday.git syncmyday.cz
@@ -144,11 +148,13 @@ bash ~/deploy.sh
 Vytvořte na serveru deployment skript.
 
 **Pro standardní VPS:**
+
 ```bash
 nano ~/deploy.sh
 ```
 
 **Pro cesky-hosting.cz a podobné (kde `~` = `/`):**
+
 ```bash
 nano /deploy.sh
 ```

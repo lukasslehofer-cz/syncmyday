@@ -18,7 +18,7 @@ PROJECT_PATH="/syncmyday.cz"
 
 # Detekce chroot prostředí (např. cesky-hosting.cz)
 if [ "$HOME" = "/" ]; then
-    BACKUP_DIR="/backups"
+    BACKUP_DIR="$PROJECT_PATH/backups"
 else
     BACKUP_DIR="$HOME/backups"
 fi
