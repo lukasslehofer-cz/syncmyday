@@ -48,7 +48,15 @@ else
     echo -e "${YELLOW}⏭  Záloha přeskočena (pro zálohu: bash deploy.sh backup)${NC}"
 fi
 
-# ... zbytek skriptu pokračuje stejně
+# 2. GIT PULL
+echo -e "${YELLOW}📥 Stahuji změny z Gitu...${NC}"
+if [ -d ".git" ]; then
+    git fetch --prune origin 2>/dev/null || true
+    git reset --hard origin/main 2>/dev/null || true
+    echo -e "${GREEN}✓ Změny staženy${NC}"
+else
+    echo -e "${RED}⚠  Git není inicializován v ${PROJECT_PATH} (přeskakuji pull)${NC}"
+fi
 
 # 3. COMPOSER - PŘESKOČENO (proc_open zakázán na cesky-hosting)
 echo -e "${YELLOW}⚠  Composer přeskočen - nahrajte vendor lokálně přes rsync${NC}"
@@ -82,9 +90,13 @@ echo -e "${GREEN}✓ Oprávnění nastavena${NC}"
 
 # 8. ČIŠTĚNÍ STARÝCH ZÁLOH
 echo -e "${YELLOW}🧹 Čistím staré zálohy (>7 dní)...${NC}"
-find $BACKUP_DIR -name "syncmyday_*.tar.gz" -mtime +7 -delete 2>/dev/null || true
-BACKUP_COUNT=$(ls -1 $BACKUP_DIR/syncmyday_*.tar.gz 2>/dev/null | wc -l)
-echo -e "${GREEN}✓ Zálohy: $BACKUP_COUNT souborů${NC}"
+if [ -n "${BACKUP_DIR}" ] && [ -d "${BACKUP_DIR}" ]; then
+    find "${BACKUP_DIR}" -name "syncmyday_*.tar.gz" -mtime +7 -delete 2>/dev/null || true
+    BACKUP_COUNT=$(ls -1 "${BACKUP_DIR}"/syncmyday_*.tar.gz 2>/dev/null | wc -l)
+    echo -e "${GREEN}✓ Zálohy: $BACKUP_COUNT souborů${NC}"
+else
+    echo -e "${YELLOW}⏭  Žádné zálohy k čištění${NC}"
+fi
 
 # SHRNUTÍ
 echo ""
