@@ -31,3 +31,8 @@ Thumbs.db
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/views/*
+
+# Deployment artifacts
+.env.shared-hosting
+*.tar.gz
+install.php
