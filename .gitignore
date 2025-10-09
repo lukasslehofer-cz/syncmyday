@@ -36,3 +36,6 @@ Thumbs.db
 .env.shared-hosting
 *.tar.gz
 install.php
+
+# Backup soubory
+.env.backup*
