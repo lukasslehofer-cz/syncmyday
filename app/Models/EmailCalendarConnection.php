@@ -63,7 +63,7 @@ class EmailCalendarConnection extends Model
         $maxAttempts = 10;
         
         for ($i = 0; $i < $maxAttempts; $i++) {
-            $token = Str::random(8); // Short, easy to type
+            $token = strtolower(Str::random(8)); // Short, easy to type, always lowercase
             $emailAddress = $token . '@' . config('app.email_domain', 'syncmyday.com');
             
             if (!self::where('email_address', $emailAddress)->exists()) {
@@ -78,11 +78,14 @@ class EmailCalendarConnection extends Model
     }
 
     /**
-     * Find connection by email token
+     * Find connection by email token (case-insensitive for backwards compatibility)
      */
     public static function findByToken(string $token): ?self
     {
-        return self::where('email_token', $token)
+        // Normalize to lowercase for search (backwards compatible with old mixed-case tokens)
+        $token = strtolower($token);
+        
+        return self::whereRaw('LOWER(email_token) = ?', [$token])
             ->where('status', 'active')
             ->first();
     }
