@@ -196,6 +196,7 @@ https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_SECRET
 ### Problém: "No valid recipient found" nebo "Email calendar not found for token"
 
 **Příčiny:**
+
 1. Token v email adrese neodpovídá žádnému emailovému kalendáři v databázi
 2. ~~Case sensitivity problém s velkými/malými písmeny~~ ✅ **VYŘEŠENO** (od verze 3ec50743)
 

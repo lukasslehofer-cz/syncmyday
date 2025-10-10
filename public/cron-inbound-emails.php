@@ -148,6 +148,11 @@ try {
             
             $emailDomain = config('app.email_domain');
             
+            // DEBUG: Log all recipients
+            $output[] = "Email: {$message->getSubject()}";
+            $output[] = "  Recipients: " . implode(', ', $toAddresses);
+            $output[] = "  Looking for domain: @{$emailDomain}";
+            
             // Find matching email calendar token
             $token = null;
             foreach ($toAddresses as $address) {
@@ -158,10 +163,12 @@ try {
             }
             
             if (!$token) {
-                $output[] = "No valid recipient found in email: {$message->getSubject()}";
+                $output[] = "  ✗ No valid recipient found (no @{$emailDomain} address)";
                 $message->setFlag('Seen');
                 continue;
             }
+            
+            $output[] = "  ✓ Found token: {$token}";
             
             // Find email calendar connection
             $connection = \App\Models\EmailCalendarConnection::findByToken($token);
