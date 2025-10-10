@@ -41,8 +41,21 @@ class SocialAuthController extends Controller
      */
     public function handleGoogleCallback(Request $request)
     {
+        // Debug logging
+        Log::info('Google OAuth callback received', [
+            'has_code' => $request->has('code'),
+            'has_error' => $request->has('error'),
+            'state_from_request' => $request->state,
+            'state_from_session' => session('oauth_state'),
+            'session_id' => session()->getId(),
+        ]);
+
         // Verify state
         if ($request->state !== session('oauth_state')) {
+            Log::warning('OAuth state mismatch', [
+                'expected' => session('oauth_state'),
+                'received' => $request->state,
+            ]);
             return redirect()->route('login')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
