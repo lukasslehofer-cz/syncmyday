@@ -2,14 +2,14 @@
 <?php
 
 /**
- * Cron Job Runner for Inbound Email Processing
+ * Cron Job Runner for Inbound Email Processing (Shared Hosting Compatible)
  * 
  * This script processes inbound calendar emails via IMAP polling.
- * It can be called directly from cron or via HTTP request.
+ * Compatible with shared hosting where proc_open is disabled.
  * 
  * Usage:
- * 1. Via cron: /usr/bin/php /path/to/syncmyday/public/cron-inbound-emails.php
- * 2. Via HTTP: https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_CRON_SECRET
+ * 1. Via HTTP: https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_CRON_SECRET
+ * 2. Via cron: /usr/bin/php /path/to/syncmyday/public/cron-inbound-emails.php
  * 
  * Security: Requires CRON_SECRET token to prevent unauthorized access
  */
@@ -22,11 +22,12 @@ require __DIR__.'/../vendor/autoload.php';
 // Bootstrap Laravel application (one level up from public/)
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// Make kernel instance
+// Boot the application
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
 
 // Security check - require CRON_SECRET token
-$cronSecret = env('CRON_SECRET');
+$cronSecret = config('app.cron_secret');
 
 // If accessed via HTTP, verify token
 if (php_sapi_name() !== 'cli') {
@@ -54,29 +55,199 @@ if (php_sapi_name() !== 'cli') {
     header('Content-Type: application/json');
 }
 
-// Run the command
-$output = new \Symfony\Component\Console\Output\BufferedOutput();
-$status = $kernel->call('app:process-inbound-emails', [], $output);
-
-// Get command output
-$commandOutput = $output->fetch();
-
-// Prepare response
-$response = [
-    'status' => $status === 0 ? 'success' : 'error',
-    'exit_code' => $status,
-    'output' => $commandOutput,
-    'time' => date('Y-m-d H:i:s'),
-];
-
-// Output for logging
-if (php_sapi_name() === 'cli') {
-    echo "[" . date('Y-m-d H:i:s') . "] Inbound email processing completed with status: {$status}\n";
-    echo $commandOutput . "\n";
-} else {
-    echo json_encode($response, JSON_PRETTY_PRINT);
+// Direct execution without artisan command (proc_open not needed)
+try {
+    $startTime = microtime(true);
+    $output = [];
+    
+    // Check if enabled
+    if (!config('inbound_email.enabled')) {
+        $output[] = 'Inbound email processing is disabled. Set INBOUND_EMAIL_ENABLED=true in .env';
+        
+        $response = [
+            'status' => 'disabled',
+            'output' => implode("\n", $output),
+            'time' => date('Y-m-d H:i:s'),
+        ];
+        
+        if (php_sapi_name() === 'cli') {
+            echo implode("\n", $output) . "\n";
+        } else {
+            echo json_encode($response, JSON_PRETTY_PRINT);
+        }
+        exit(0);
+    }
+    
+    $output[] = 'Starting inbound email processing...';
+    
+    // Get IMAP configuration
+    $config = config('inbound_email.imap');
+    
+    $output[] = "Connecting to IMAP: {$config['host']}:{$config['port']}";
+    
+    // Connect to IMAP using webklex/php-imap
+    $cm = new \Webklex\PHPIMAP\ClientManager();
+    $client = $cm->make([
+        'host' => $config['host'],
+        'port' => $config['port'],
+        'encryption' => $config['encryption'],
+        'validate_cert' => $config['validate_cert'],
+        'username' => $config['username'],
+        'password' => $config['password'],
+        'protocol' => 'imap'
+    ]);
+    
+    $client->connect();
+    $output[] = 'Connected successfully';
+    
+    // Get mailbox
+    $folder = $client->getFolder($config['mailbox'] ?? 'INBOX');
+    
+    // Get unread emails
+    $messages = $folder->query()->unseen()->get();
+    
+    if ($messages->count() === 0) {
+        $output[] = 'No new emails to process';
+        
+        $response = [
+            'status' => 'success',
+            'processed' => 0,
+            'failed' => 0,
+            'output' => implode("\n", $output),
+            'duration' => round(microtime(true) - $startTime, 2) . 's',
+            'time' => date('Y-m-d H:i:s'),
+        ];
+        
+        if (php_sapi_name() === 'cli') {
+            echo implode("\n", $output) . "\n";
+        } else {
+            echo json_encode($response, JSON_PRETTY_PRINT);
+        }
+        exit(0);
+    }
+    
+    $limit = 10; // Process max 10 emails per run
+    $processed = 0;
+    $failed = 0;
+    
+    // Get sync service
+    $syncService = app(\App\Services\Email\EmailCalendarSyncService::class);
+    
+    foreach ($messages->take($limit) as $message) {
+        try {
+            // Extract recipient addresses
+            $toAddresses = [];
+            
+            foreach ($message->getTo() as $to) {
+                $toAddresses[] = strtolower($to->mail);
+            }
+            
+            foreach ($message->getCc() as $cc) {
+                $toAddresses[] = strtolower($cc->mail);
+            }
+            
+            $emailDomain = config('app.email_domain');
+            
+            // Find matching email calendar token
+            $token = null;
+            foreach ($toAddresses as $address) {
+                if (str_ends_with($address, '@' . $emailDomain)) {
+                    $token = explode('@', $address)[0];
+                    break;
+                }
+            }
+            
+            if (!$token) {
+                $output[] = "No valid recipient found in email: {$message->getSubject()}";
+                $message->setFlag('Seen');
+                continue;
+            }
+            
+            // Find email calendar connection
+            $connection = \App\Models\EmailCalendarConnection::findByToken($token);
+            
+            if (!$connection) {
+                $output[] = "Email calendar not found for token: {$token}";
+                $message->setFlag('Seen');
+                continue;
+            }
+            
+            // Get raw email
+            $rawEmail = $message->getRawBody();
+            
+            // Process email
+            $output[] = "Processing email for: {$connection->name}";
+            $output[] = "  Subject: {$message->getSubject()}";
+            
+            $result = $syncService->processIncomingEmail($token, $rawEmail);
+            
+            $output[] = "  ✓ Processed {$result['ics_count']} .ics attachments, {$result['events_processed']} events";
+            
+            // Mark as read
+            $message->setFlag('Seen');
+            
+            // Optionally move to processed folder
+            $processedFolder = $config['processed_folder'] ?? null;
+            if ($processedFolder) {
+                try {
+                    $message->move($processedFolder);
+                } catch (\Exception $e) {
+                    $output[] = "  Could not move email to '{$processedFolder}'";
+                }
+            }
+            
+            $processed++;
+            
+        } catch (\Exception $e) {
+            $failed++;
+            $output[] = "Failed to process email: " . $e->getMessage();
+            \Illuminate\Support\Facades\Log::error('Inbound email processing failed', [
+                'subject' => $message->getSubject(),
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+    
+    $output[] = "Processed: {$processed}, Failed: {$failed}";
+    
+    $response = [
+        'status' => 'success',
+        'processed' => $processed,
+        'failed' => $failed,
+        'output' => implode("\n", $output),
+        'duration' => round(microtime(true) - $startTime, 2) . 's',
+        'time' => date('Y-m-d H:i:s'),
+    ];
+    
+    if (php_sapi_name() === 'cli') {
+        echo "[" . date('Y-m-d H:i:s') . "] Inbound email processing completed\n";
+        echo implode("\n", $output) . "\n";
+    } else {
+        echo json_encode($response, JSON_PRETTY_PRINT);
+    }
+    
+    exit(0);
+    
+} catch (\Exception $e) {
+    $error = 'IMAP processing error: ' . $e->getMessage();
+    
+    \Illuminate\Support\Facades\Log::error('IMAP processing error', [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
+    ]);
+    
+    $response = [
+        'status' => 'error',
+        'error' => $error,
+        'time' => date('Y-m-d H:i:s'),
+    ];
+    
+    if (php_sapi_name() === 'cli') {
+        echo $error . "\n";
+    } else {
+        http_response_code(500);
+        echo json_encode($response, JSON_PRETTY_PRINT);
+    }
+    
+    exit(1);
 }
-
-// Exit with status code
-exit($status);
-

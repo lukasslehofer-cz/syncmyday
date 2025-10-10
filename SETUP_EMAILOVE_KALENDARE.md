@@ -54,15 +54,26 @@ V administraci cesky-hosting.cz:
 
 ### 4. Nastavit Cron Job
 
-V crontabu na serveru (nebo v administraci webhostingu):
+V administraci webhostingu (nebo crontabu):
 
+**URL pro cron:**
+```
+https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET
+```
+
+**Nebo curl příkaz:**
 ```bash
 * * * * * curl -s "https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET" > /dev/null 2>&1
 ```
 
+**Nebo wget příkaz:**
+```bash
+* * * * * wget -q -O - "https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET" > /dev/null 2>&1
+```
+
 **Nahraďte `VÁŠ_CRON_SECRET`** hodnotou z `.env` proměnné `CRON_SECRET`.
 
-Toto spustí příkaz každou minutu a zkontroluje nové emaily.
+**Poznámka**: Script je optimalizován pro shared hosting (nepotřebuje `proc_open`), takže funguje i s omezeními hostingu.
 
 ### 5. Clear Cache na serveru
 
@@ -143,6 +154,17 @@ php artisan app:process-inbound-emails --limit=5
 ```
 
 ## 🔧 Možné problémy a řešení
+
+### Problém: "proc_open not available"
+
+**Příčina:** Shared hosting má zakázanou funkci `proc_open` z bezpečnostních důvodů.
+
+**Řešení:** ✅ **VYŘEŠENO** - `public/cron-inbound-emails.php` byl přepsán tak, aby **nepotřeboval** `proc_open`. Spouští IMAP polling přímo bez artisan commandu.
+
+Stačí použít URL nebo curl/wget v cronu:
+```
+https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_SECRET
+```
 
 ### Problém: "IMAP connection failed"
 
