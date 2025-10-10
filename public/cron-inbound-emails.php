@@ -233,28 +233,123 @@ try {
             $output[] = "Processing email for: {$connection->name}";
             $output[] = "  Subject: {$message->getSubject()}";
             
-            // DEBUG: Check for .ics attachments using webklex parser
-            $attachmentInfo = [];
+            // Extract .ics attachments using webklex parser (better than raw parsing)
+            $icsAttachments = [];
             foreach ($message->getAttachments() as $attachment) {
-                $attachmentInfo[] = sprintf(
-                    "%s (type: %s, size: %d)",
-                    $attachment->name ?? 'unnamed',
-                    $attachment->content_type ?? 'unknown',
-                    strlen($attachment->getContent())
-                );
+                $contentType = strtolower($attachment->content_type ?? '');
+                $filename = strtolower($attachment->name ?? '');
+                
+                // Check if it's a calendar file
+                if (str_contains($contentType, 'calendar') || 
+                    str_contains($contentType, 'ics') || 
+                    str_ends_with($filename, '.ics')) {
+                    
+                    $content = $attachment->getContent();
+                    if (str_contains($content, 'BEGIN:VCALENDAR')) {
+                        $icsAttachments[] = $content;
+                        $output[] = "  Found .ics: {$attachment->name} ({$contentType}, " . strlen($content) . " bytes)";
+                    }
+                }
             }
             
-            if (!empty($attachmentInfo)) {
-                $output[] = "  Attachments found: " . implode(', ', $attachmentInfo);
-            } else {
-                $output[] = "  No attachments found";
+            if (empty($icsAttachments)) {
+                $output[] = "  No .ics attachments found";
+                $message->setFlag('Seen');
+                continue;
             }
             
-            // Get raw email and process
-            $rawEmail = $message->getRawBody();
-            $result = $syncService->processIncomingEmail($token, $rawEmail);
+            // Process .ics attachments directly
+            $connection->incrementEmailReceived();
             
-            $output[] = "  ✓ Processed {$result['ics_count']} .ics attachments, {$result['events_processed']} events";
+            $icsParser = app(\App\Services\Email\IcsParserService::class);
+            $syncEngine = app(\App\Services\Sync\SyncEngine::class);
+            
+            $totalEventsProcessed = 0;
+            
+            foreach ($icsAttachments as $icsContent) {
+                try {
+                    $events = $icsParser->parseIcsFile($icsContent);
+                    $output[] = "  Parsed " . count($events) . " event(s) from .ics";
+                    
+                    // Get sync rules for this email calendar
+                    $syncRules = $connection->getAllSyncRules();
+                    
+                    if ($syncRules->isEmpty()) {
+                        $output[] = "  ⚠ No sync rules configured for this email calendar";
+                        break;
+                    }
+                    
+                    foreach ($events as $eventData) {
+                        // Process through each sync rule
+                        foreach ($syncRules as $rule) {
+                            if (!$rule->is_active) {
+                                continue;
+                            }
+                            
+                            // Apply rule filters
+                            if (!$rule->shouldSyncEvent($eventData)) {
+                                $output[] = "  Skipped event (filtered out by sync rule)";
+                                continue;
+                            }
+                            
+                            // Create blockers in target calendars
+                            foreach ($rule->targets as $target) {
+                                try {
+                                    if ($target->isEmailTarget()) {
+                                        // Send iMIP to email target
+                                        $targetEmail = $target->targetEmailConnection;
+                                        if ($targetEmail && $targetEmail->target_email) {
+                                            $imipService = app(\App\Services\Email\ImipEmailService::class);
+                                            $imipService->sendBlockerInvitation(
+                                                $targetEmail,
+                                                $targetEmail->target_email,
+                                                'syncmyday-' . $rule->id . '-' . md5($eventData['uid']),
+                                                $rule->blocker_title,
+                                                $eventData['start'],
+                                                $eventData['end']
+                                            );
+                                            $output[] = "  ✓ Sent blocker to email: {$targetEmail->target_email}";
+                                        }
+                                    } else {
+                                        // Create blocker in API calendar (Google/Microsoft)
+                                        $targetConnection = $target->targetConnection;
+                                        if ($targetConnection && $targetConnection->status === 'active') {
+                                            $service = $targetConnection->provider === 'google'
+                                                ? app(\App\Services\Calendar\GoogleCalendarService::class)
+                                                : app(\App\Services\Calendar\MicrosoftCalendarService::class);
+                                            
+                                            $service->initializeWithConnection($targetConnection);
+                                            $blockerId = $service->createBlocker(
+                                                $target->target_calendar_id,
+                                                $rule->blocker_title,
+                                                $eventData['start'],
+                                                $eventData['end'],
+                                                \Illuminate\Support\Str::uuid()->toString()
+                                            );
+                                            
+                                            $output[] = "  ✓ Created blocker in {$targetConnection->provider}: {$targetConnection->account_email}";
+                                        }
+                                    }
+                                    
+                                    $totalEventsProcessed++;
+                                    
+                                } catch (\Exception $e) {
+                                    $output[] = "  ✗ Error creating blocker: " . $e->getMessage();
+                                }
+                            }
+                        }
+                    }
+                    
+                } catch (\Exception $e) {
+                    $output[] = "  ✗ Error parsing .ics: " . $e->getMessage();
+                }
+            }
+            
+            if ($totalEventsProcessed > 0) {
+                $connection->incrementEventProcessed();
+            }
+            
+            $output[] = "  ✓ Processed " . count($icsAttachments) . " .ics attachment(s), {$totalEventsProcessed} blocker(s) created";
             
             // Mark as read
             $message->setFlag('Seen');
