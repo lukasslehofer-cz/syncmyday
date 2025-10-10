@@ -52,6 +52,8 @@ class EmailCalendarSyncService
             
             return [
                 'success' => false,
+                'ics_count' => 0,
+                'events_processed' => 0,
                 'error' => 'Unknown email address',
             ];
         }
@@ -69,6 +71,8 @@ class EmailCalendarSyncService
                 
                 return [
                     'success' => false,
+                    'ics_count' => 0,
+                    'events_processed' => 0,
                     'error' => 'Sender not whitelisted',
                 ];
             }
@@ -86,12 +90,14 @@ class EmailCalendarSyncService
                 return [
                     'success' => true,
                     'message' => 'No calendar attachments found',
+                    'ics_count' => 0,
                     'events_processed' => 0,
                 ];
             }
 
             // Process each .ics attachment
             $totalEventsProcessed = 0;
+            $icsCount = count($emailData['ics_attachments']);
             
             foreach ($emailData['ics_attachments'] as $icsContent) {
                 $eventsProcessed = $this->processIcsAttachment($connection, $icsContent, $transactionId);
@@ -103,12 +109,14 @@ class EmailCalendarSyncService
 
             Log::info('Email processed successfully', [
                 'connection_id' => $connection->id,
+                'ics_count' => $icsCount,
                 'events_processed' => $totalEventsProcessed,
                 'transaction_id' => $transactionId,
             ]);
 
             return [
                 'success' => true,
+                'ics_count' => $icsCount,
                 'events_processed' => $totalEventsProcessed,
                 'transaction_id' => $transactionId,
             ];
@@ -125,6 +133,8 @@ class EmailCalendarSyncService
 
             return [
                 'success' => false,
+                'ics_count' => 0,
+                'events_processed' => 0,
                 'error' => $e->getMessage(),
                 'transaction_id' => $transactionId,
             ];
