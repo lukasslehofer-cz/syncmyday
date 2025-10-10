@@ -229,13 +229,29 @@ try {
                 continue;
             }
             
-            // Get raw email
-            $rawEmail = $message->getRawBody();
-            
             // Process email
             $output[] = "Processing email for: {$connection->name}";
             $output[] = "  Subject: {$message->getSubject()}";
             
+            // DEBUG: Check for .ics attachments using webklex parser
+            $attachmentInfo = [];
+            foreach ($message->getAttachments() as $attachment) {
+                $attachmentInfo[] = sprintf(
+                    "%s (type: %s, size: %d)",
+                    $attachment->name ?? 'unnamed',
+                    $attachment->content_type ?? 'unknown',
+                    strlen($attachment->getContent())
+                );
+            }
+            
+            if (!empty($attachmentInfo)) {
+                $output[] = "  Attachments found: " . implode(', ', $attachmentInfo);
+            } else {
+                $output[] = "  No attachments found";
+            }
+            
+            // Get raw email and process
+            $rawEmail = $message->getRawBody();
             $result = $syncService->processIncomingEmail($token, $rawEmail);
             
             $output[] = "  ✓ Processed {$result['ics_count']} .ics attachments, {$result['events_processed']} events";
