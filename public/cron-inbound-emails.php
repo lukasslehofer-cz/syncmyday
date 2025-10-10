@@ -148,6 +148,19 @@ try {
                 $toAddresses[] = strtolower($cc->mail);
             }
             
+            // Fallback: Parse To header directly if getTo() returns empty
+            if (empty($toAddresses)) {
+                $rawTo = $message->getHeader()->get('to');
+                if ($rawTo) {
+                    $rawToString = is_array($rawTo) ? implode(', ', $rawTo) : $rawTo;
+                    if (preg_match_all('/([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i', $rawToString, $matches)) {
+                        foreach ($matches[1] as $addr) {
+                            $toAddresses[] = strtolower($addr);
+                        }
+                    }
+                }
+            }
+            
             // For forwarded emails, check Delivered-To, X-Original-To, Envelope-To headers
             $deliveredTo = $message->getHeader()->get('delivered-to');
             if ($deliveredTo) {
