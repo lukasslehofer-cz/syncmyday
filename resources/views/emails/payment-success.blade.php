@@ -3,82 +3,145 @@
 @section('title', __('emails.payment_success_subject'))
 
 @section('content')
-    <h2>{{ __('emails.payment_success_greeting', ['name' => $user->name]) }}</h2>
+    <h2 style="margin: 0 0 20px 0; padding: 0; color: #1f2937; font-size: 24px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_greeting', ['name' => $user->name]) }}
+    </h2>
     
-    <p>{{ __('emails.payment_success_intro') }}</p>
+    <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_intro') }}
+    </p>
     
-    <div style="background-color: #f0fdf4; border: 2px solid #10b981; border-radius: 12px; padding: 24px; margin: 30px 0; text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
-        <p style="font-size: 20px; color: #065f46; margin: 0 0 8px 0; font-weight: bold;">{{ __('emails.payment_success_confirmed') }}</p>
-        @if($amount)
-            <p style="font-size: 32px; color: #059669; margin: 12px 0; font-weight: bold;">€{{ number_format($amount, 2) }}</p>
-        @endif
-        <p style="font-size: 14px; color: #047857; margin: 8px 0 0 0;">{{ __('emails.payment_success_receipt') }}</p>
-    </div>
+    <!-- Success Box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 30px 0;">
+        <tr>
+            <td align="center" style="background-color: #f0fdf4; border: 2px solid #10b981; border-radius: 12px; padding: 24px;">
+                <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+                <p style="margin: 0 0 8px 0; font-size: 20px; color: #065f46; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.payment_success_confirmed') }}
+                </p>
+                @if($amount)
+                    <p style="margin: 12px 0; font-size: 32px; color: #059669; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                        €{{ number_format($amount, 2) }}
+                    </p>
+                @endif
+                <p style="margin: 8px 0 0 0; font-size: 14px; color: #047857; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.payment_success_receipt') }}
+                </p>
+            </td>
+        </tr>
+    </table>
     
-    <h3 style="color: #1f2937; margin-top: 30px;">{{ __('emails.payment_success_whats_next') }}</h3>
+    <h3 style="margin: 30px 0 20px 0; padding: 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_whats_next') }}
+    </h3>
     
-    <div class="highlight-box">
-        <p style="margin: 0;"><strong>🎉 {{ __('emails.payment_success_full_access') }}</strong></p>
-        <p style="margin: 8px 0 0 0;">{{ __('emails.payment_success_full_access_text') }}</p>
-    </div>
+    <!-- Highlight Box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="background-color: #eff6ff; border-left: 4px solid #667eea; padding: 20px; border-radius: 4px;">
+                <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 16px; font-weight: bold; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    🎉 {{ __('emails.payment_success_full_access') }}
+                </p>
+                <p style="margin: 0; color: #1e40af; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.payment_success_full_access_text') }}
+                </p>
+            </td>
+        </tr>
+    </table>
     
-    <ul class="feature-list" style="margin-top: 20px;">
-        <li>{{ __('emails.payment_benefit_1') }}</li>
-        <li>{{ __('emails.payment_benefit_2') }}</li>
-        <li>{{ __('emails.payment_benefit_3') }}</li>
-        <li>{{ __('emails.payment_benefit_4') }}</li>
-        <li>{{ __('emails.payment_benefit_5') }}</li>
-    </ul>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top: 20px;">
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.payment_benefit_1') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.payment_benefit_2') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.payment_benefit_3') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.payment_benefit_4') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.payment_benefit_5') }}</td></tr>
+    </table>
     
-    <div class="divider"></div>
+    <!-- Divider -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="padding: 30px 0;"><div style="border-top: 1px solid #e5e7eb;"></div></td></tr>
+    </table>
     
-    <h3 style="color: #1f2937;">{{ __('emails.payment_success_renewal_title') }}</h3>
+    <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_renewal_title') }}
+    </h3>
     
-    <div style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 20px 0; border-radius: 4px;">
-        <p style="margin: 0; color: #1e40af;"><strong>📅 {{ __('emails.payment_success_next_payment') }}</strong></p>
-        <p style="margin: 8px 0; color: #1e3a8a;">
-            @if($nextBillingDate)
-                {{ __('emails.payment_success_next_payment_date', ['date' => $nextBillingDate]) }}
-            @else
-                {{ __('emails.payment_success_next_payment_year') }}
-            @endif
-        </p>
-        <p style="margin: 8px 0 0 0; color: #1e40af; font-size: 14px;">{{ __('emails.payment_success_reminder_promise') }}</p>
-    </div>
+    <!-- Renewal Info Box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 4px;">
+                <p style="margin: 0 0 8px 0; color: #1e40af; font-size: 16px; font-weight: bold; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    📅 {{ __('emails.payment_success_next_payment') }}
+                </p>
+                <p style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    @if($nextBillingDate)
+                        {{ __('emails.payment_success_next_payment_date', ['date' => $nextBillingDate]) }}
+                    @else
+                        {{ __('emails.payment_success_next_payment_year') }}
+                    @endif
+                </p>
+                <p style="margin: 0; color: #1e40af; font-size: 14px; line-height: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.payment_success_reminder_promise') }}
+                </p>
+            </td>
+        </tr>
+    </table>
     
-    <p>{{ __('emails.payment_success_manage_info') }}</p>
+    <p style="margin: 20px 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_manage_info') }}
+    </p>
     
-    <div style="text-align: center; margin: 30px 0;">
-        <a href="{{ route('billing') }}" class="btn">
-            {{ __('emails.payment_success_manage_subscription') }}
-        </a>
-    </div>
+    <!-- Button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 30px 0;">
+                <a href="{{ route('billing') }}" style="background-color: #667eea; border: 2px solid #667eea; border-radius: 8px; color: #ffffff; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; line-height: 48px; text-align: center; text-decoration: none; width: 250px; -webkit-text-size-adjust: none; mso-hide: all;">
+                    {{ __('emails.payment_success_manage_subscription') }}
+                </a>
+            </td>
+        </tr>
+    </table>
     
-    <div class="divider"></div>
+    <!-- Divider -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="padding: 30px 0;"><div style="border-top: 1px solid #e5e7eb;"></div></td></tr>
+    </table>
     
-    <h3 style="color: #1f2937;">{{ __('emails.payment_success_need_help') }}</h3>
-    <p>{{ __('emails.payment_success_help_text') }}</p>
+    <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_need_help') }}
+    </h3>
+    <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_help_text') }}
+    </p>
     
-    <ul style="list-style: none; padding: 0;">
-        <li style="margin: 10px 0;">
-            <a href="{{ route('dashboard') }}" style="color: #667eea; text-decoration: none;">
-                🏠 {{ __('emails.payment_success_dashboard') }}
-            </a>
-        </li>
-        <li style="margin: 10px 0;">
-            <a href="{{ route('billing') }}" style="color: #667eea; text-decoration: none;">
-                💳 {{ __('emails.payment_success_billing') }}
-            </a>
-        </li>
-        <li style="margin: 10px 0;">
-            <a href="{{ config('app.url') }}/docs" style="color: #667eea; text-decoration: none;">
-                📚 {{ __('emails.welcome_documentation') }}
-            </a>
-        </li>
-    </ul>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="{{ route('dashboard') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    🏠 {{ __('emails.payment_success_dashboard') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="{{ route('billing') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    💳 {{ __('emails.payment_success_billing') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="{{ config('app.url') }}/docs" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    📚 {{ __('emails.welcome_documentation') }}
+                </a>
+            </td>
+        </tr>
+    </table>
     
-    <p style="margin-top: 30px;">{{ __('emails.payment_success_thank_you') }}</p>
-    <p><strong>{{ __('emails.welcome_team_name') }}</strong></p>
+    <p style="margin: 30px 0 10px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.payment_success_thank_you') }}
+    </p>
+    <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_team_name') }}
+    </p>
 @endsection
-

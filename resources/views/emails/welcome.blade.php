@@ -3,49 +3,82 @@
 @section('title', __('emails.welcome_subject'))
 
 @section('content')
-    <h2>{{ __('emails.welcome_greeting', ['name' => $user->name]) }}</h2>
+    <h2 style="margin: 0 0 20px 0; padding: 0; color: #1f2937; font-size: 24px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_greeting', ['name' => $user->name]) }}
+    </h2>
     
-    <p>{{ __('emails.welcome_intro') }}</p>
+    <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_intro') }}
+    </p>
     
-    <div class="highlight-box">
-        <p><strong>{{ __('emails.welcome_trial_info') }}</strong></p>
-    </div>
+    <!-- Highlight Box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="background-color: #eff6ff; border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <p style="margin: 0; color: #1e40af; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    <strong>{{ __('emails.welcome_trial_info') }}</strong>
+                </p>
+            </td>
+        </tr>
+    </table>
     
-    <h3 style="color: #1f2937; margin-top: 30px;">{{ __('emails.welcome_what_you_can_do') }}</h3>
+    <h3 style="margin: 30px 0 20px 0; padding: 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_what_you_can_do') }}
+    </h3>
     
-    <ul class="feature-list">
-        <li>{{ __('emails.welcome_feature_1') }}</li>
-        <li>{{ __('emails.welcome_feature_2') }}</li>
-        <li>{{ __('emails.welcome_feature_3') }}</li>
-        <li>{{ __('emails.welcome_feature_4') }}</li>
-        <li>{{ __('emails.welcome_feature_5') }}</li>
-    </ul>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.welcome_feature_1') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.welcome_feature_2') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.welcome_feature_3') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.welcome_feature_4') }}</td></tr>
+        <tr><td style="padding: 8px 0; padding-left: 30px; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"><span style="color: #667eea; font-weight: bold; margin-right: 10px;">✓</span>{{ __('emails.welcome_feature_5') }}</td></tr>
+    </table>
     
-    <div style="text-align: center; margin: 30px 0;">
-        <a href="{{ route('dashboard') }}" class="btn">
-            {{ __('emails.welcome_get_started_button') }}
-        </a>
-    </div>
+    <!-- Button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 30px 0;">
+                <a href="{{ route('dashboard') }}" style="background-color: #667eea; border: 2px solid #667eea; border-radius: 8px; color: #ffffff; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; line-height: 48px; text-align: center; text-decoration: none; width: 200px; -webkit-text-size-adjust: none; mso-hide: all;">
+                    {{ __('emails.welcome_get_started_button') }}
+                </a>
+            </td>
+        </tr>
+    </table>
     
-    <div class="divider"></div>
+    <!-- Divider -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="padding: 30px 0;"><div style="border-top: 1px solid #e5e7eb;"></div></td></tr>
+    </table>
     
-    <h3 style="color: #1f2937;">{{ __('emails.welcome_need_help') }}</h3>
-    <p>{{ __('emails.welcome_help_intro') }}</p>
+    <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_need_help') }}
+    </h3>
+    <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_help_intro') }}
+    </p>
     
-    <ul style="list-style: none; padding: 0;">
-        <li style="margin: 10px 0;">
-            <a href="{{ config('app.url') }}/docs" style="color: #667eea; text-decoration: none;">
-                📚 {{ __('emails.welcome_documentation') }}
-            </a>
-        </li>
-        <li style="margin: 10px 0;">
-            <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none;">
-                💬 {{ __('emails.welcome_help_center') }}
-            </a>
-        </li>
-    </ul>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="{{ config('app.url') }}/docs" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    📚 {{ __('emails.welcome_documentation') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    💬 {{ __('emails.welcome_help_center') }}
+                </a>
+            </td>
+        </tr>
+    </table>
     
-    <p style="margin-top: 30px;">{{ __('emails.welcome_signature') }}</p>
-    <p><strong>{{ __('emails.welcome_team_name') }}</strong></p>
+    <p style="margin: 30px 0 10px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_signature') }}
+    </p>
+    <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.welcome_team_name') }}
+    </p>
 @endsection
 
