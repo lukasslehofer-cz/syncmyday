@@ -13,6 +13,7 @@ use App\Http\Controllers\OAuth\OAuthController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\SyncRulesController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\EmailWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -173,6 +174,14 @@ Route::post('/webhooks/microsoft/{connectionId}', [WebhookController::class, 'mi
 // Stripe webhooks
 Route::post('/webhooks/stripe', [BillingController::class, 'webhook'])
     ->name('webhooks.stripe');
+
+// Email webhooks (for inbound calendar emails)
+Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun'])
+    ->name('webhooks.email.mailgun');
+Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid'])
+    ->name('webhooks.email.sendgrid');
+Route::post('/webhooks/email/postmark', [EmailWebhookController::class, 'postmark'])
+    ->name('webhooks.email.postmark');
 
 // Health check
 Route::get('/health', [AdminController::class, 'health'])->name('health');
