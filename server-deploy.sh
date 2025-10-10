@@ -60,14 +60,10 @@ else
     echo -e "${RED}⚠  Git není inicializován - přeskakuji pull${NC}"
 fi
 
-# 3. COMPOSER
-if git diff HEAD@{1} --name-only 2>/dev/null | grep -q "composer"; then
-    echo -e "${YELLOW}📦 Aktualizuji Composer závislosti...${NC}"
-    composer install --no-dev --optimize-autoloader --no-interaction 2>&1 | grep -v "Nothing to"
-    echo -e "${GREEN}✓ Composer aktualizován${NC}"
-else
-    echo -e "${GREEN}⏭  Composer beze změn${NC}"
-fi
+# 3. COMPOSER (SKIPPED - vendor is in git for shared hosting)
+echo -e "${GREEN}⏭  Composer skipped (vendor in git)${NC}"
+# Note: vendor/ is committed to git for shared hosting without composer access
+# If composer.json changes, update locally and commit vendor/ changes
 
 # 4. MIGRACE
 echo -e "${YELLOW}🗄️  Spouštím databázové migrace...${NC}"
