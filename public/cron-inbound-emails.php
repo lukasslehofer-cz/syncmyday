@@ -135,22 +135,59 @@ try {
     
     foreach ($messages->take($limit) as $message) {
         try {
-            // Extract recipient addresses
+            // Extract recipient addresses from multiple sources
             $toAddresses = [];
             
+            // Standard To field
             foreach ($message->getTo() as $to) {
                 $toAddresses[] = strtolower($to->mail);
             }
             
+            // CC field
             foreach ($message->getCc() as $cc) {
                 $toAddresses[] = strtolower($cc->mail);
             }
+            
+            // For forwarded emails, check Delivered-To, X-Original-To, Envelope-To headers
+            $deliveredTo = $message->getHeader()->get('delivered-to');
+            if ($deliveredTo) {
+                $addresses = is_array($deliveredTo) ? $deliveredTo : [$deliveredTo];
+                foreach ($addresses as $addr) {
+                    if (preg_match('/([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i', $addr, $matches)) {
+                        $toAddresses[] = strtolower($matches[1]);
+                    }
+                }
+            }
+            
+            $originalTo = $message->getHeader()->get('x-original-to');
+            if ($originalTo) {
+                $addresses = is_array($originalTo) ? $originalTo : [$originalTo];
+                foreach ($addresses as $addr) {
+                    if (preg_match('/([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i', $addr, $matches)) {
+                        $toAddresses[] = strtolower($matches[1]);
+                    }
+                }
+            }
+            
+            $envelopeTo = $message->getHeader()->get('envelope-to');
+            if ($envelopeTo) {
+                $addresses = is_array($envelopeTo) ? $envelopeTo : [$envelopeTo];
+                foreach ($addresses as $addr) {
+                    if (preg_match('/([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i', $addr, $matches)) {
+                        $toAddresses[] = strtolower($matches[1]);
+                    }
+                }
+            }
+            
+            // Remove duplicates
+            $toAddresses = array_unique($toAddresses);
             
             $emailDomain = config('app.email_domain');
             
             // DEBUG: Log all recipients
             $output[] = "Email: {$message->getSubject()}";
-            $output[] = "  Recipients: " . implode(', ', $toAddresses);
+            $output[] = "  From: " . ($message->getFrom()[0]->mail ?? 'unknown');
+            $output[] = "  Recipients (To/CC): " . implode(', ', array_slice($toAddresses, 0, 5));
             $output[] = "  Looking for domain: @{$emailDomain}";
             
             // Find matching email calendar token
