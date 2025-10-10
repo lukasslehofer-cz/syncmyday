@@ -109,6 +109,7 @@
                                 <p class="text-xs text-gray-500">Signed in as</p>
                                 <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->email }}</p>
                             </div>
+                            <a href="{{ route('account.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Account Settings</a>
                             <a href="{{ route('billing') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Billing</a>
                             @can('admin')
                             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin Panel</a>
@@ -142,6 +143,9 @@
                 </a>
                 <a href="{{ route('email-calendars.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('email-calendars.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
                     Email Calendars
+                </a>
+                <a href="{{ route('account.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('account.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
+                    Account Settings
                 </a>
                 <a href="{{ route('billing') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">
                     Billing

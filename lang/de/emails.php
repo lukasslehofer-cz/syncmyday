@@ -104,5 +104,18 @@ return [
     'payment_success_dashboard' => 'Dashboard',
     'payment_success_billing' => 'Abrechnung & Abonnement',
     'payment_success_thank_you' => 'Vielen Dank, dass Sie sich für SyncMyDay entschieden haben! Wir freuen uns darauf, Ihnen zu helfen, Ihre Kalender perfekt synchron zu halten.',
+
+    // Password Reset
+    'password_reset_subject' => 'Passwort zurücksetzen',
+    'password_reset_greeting' => 'Hallo :name!',
+    'password_reset_intro' => 'Sie haben kürzlich eine Passwort-Zurücksetzung für Ihr SyncMyDay-Konto angefordert. Klicken Sie auf die Schaltfläche unten, um fortzufahren.',
+    'password_reset_button' => 'Passwort zurücksetzen',
+    'password_reset_expiry_title' => 'Dieser Link läuft in 1 Stunde ab',
+    'password_reset_expiry_info' => 'Aus Sicherheitsgründen läuft dieser Link zum Zurücksetzen des Passworts in 1 Stunde ab. Falls Sie einen neuen Link benötigen, können Sie einen weiteren anfordern.',
+    'password_reset_alternative' => 'Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:',
+    'password_reset_security_title' => 'Haben Sie dies nicht angefordert?',
+    'password_reset_security_info' => 'Wenn Sie keine Passwort-Zurücksetzung angefordert haben, ignorieren Sie diese E-Mail oder kontaktieren Sie den Support, wenn Sie Bedenken bezüglich der Sicherheit Ihres Kontos haben.',
+    'password_reset_signature' => 'Mit freundlichen Grüßen,',
+    'password_reset_team_name' => 'Das SyncMyDay Team',
 ];
 

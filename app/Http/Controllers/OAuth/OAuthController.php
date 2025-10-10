@@ -18,7 +18,14 @@ class OAuthController extends Controller
     public function redirectToGoogle(GoogleCalendarService $service)
     {
         $state = Str::random(40);
-        session(['oauth_state' => $state]);
+        
+        // Check if coming from account settings (for connecting as backup login method)
+        $fromAccountSettings = request()->is('account/connect/*');
+        
+        session([
+            'oauth_state' => $state,
+            'oauth_from_account' => $fromAccountSettings
+        ]);
         
         return redirect($service->getAuthUrl($state));
     }
@@ -34,15 +41,21 @@ class OAuthController extends Controller
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
 
+        // Check if this is from account settings (backup login method)
+        $fromAccountSettings = session('oauth_from_account', false);
+
         // Check if user denied access
         if ($request->has('error')) {
             Log::info('Google OAuth cancelled by user', [
                 'error' => $request->error,
                 'error_description' => $request->error_description,
                 'user_id' => auth()->id(),
+                'from_account' => $fromAccountSettings,
             ]);
             
-            return redirect()->route('connections.index')
+            $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
+            
+            return redirect()->route($redirectRoute)
                 ->with('warning', __('messages.oauth_cancelled'));
         }
 
@@ -51,9 +64,12 @@ class OAuthController extends Controller
             Log::error('Google OAuth callback missing code', [
                 'request' => $request->all(),
                 'user_id' => auth()->id(),
+                'from_account' => $fromAccountSettings,
             ]);
             
-            return redirect()->route('connections.index')
+            $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
+            
+            return redirect()->route($redirectRoute)
                 ->with('error', __('messages.oauth_failed'));
         }
 
@@ -166,7 +182,28 @@ class OAuthController extends Controller
             Log::info('Google calendar connected', [
                 'user_id' => auth()->id(),
                 'connection_id' => $connection->id,
+                'from_account' => $fromAccountSettings,
             ]);
+
+            // If from account settings, update oauth_provider for backup login
+            if ($fromAccountSettings && auth()->check()) {
+                $user = auth()->user();
+                if (!$user->oauth_provider) {
+                    // User doesn't have OAuth yet, add Google as OAuth provider
+                    $user->update([
+                        'oauth_provider' => 'google',
+                        'oauth_provider_id' => $accountInfo['id'],
+                        'oauth_provider_email' => $accountInfo['email'],
+                    ]);
+                    
+                    Log::info('Added Google OAuth to password-only account', [
+                        'user_id' => $user->id,
+                    ]);
+                }
+                
+                return redirect()->route('account.index')
+                    ->with('success', 'Google connected successfully! You can now login with Google.');
+            }
 
             return redirect()->route('connections.index')
                 ->with('success', __('messages.calendar_connected'));
@@ -189,7 +226,14 @@ class OAuthController extends Controller
     public function redirectToMicrosoft(MicrosoftCalendarService $service)
     {
         $state = Str::random(40);
-        session(['oauth_state' => $state]);
+        
+        // Check if coming from account settings (for connecting as backup login method)
+        $fromAccountSettings = request()->is('account/connect/*');
+        
+        session([
+            'oauth_state' => $state,
+            'oauth_from_account' => $fromAccountSettings
+        ]);
         
         return redirect($service->getAuthUrl($state));
     }
@@ -205,15 +249,21 @@ class OAuthController extends Controller
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
 
+        // Check if this is from account settings (backup login method)
+        $fromAccountSettings = session('oauth_from_account', false);
+
         // Check if user denied access
         if ($request->has('error')) {
             Log::info('Microsoft OAuth cancelled by user', [
                 'error' => $request->error,
                 'error_description' => $request->error_description,
                 'user_id' => auth()->id(),
+                'from_account' => $fromAccountSettings,
             ]);
             
-            return redirect()->route('connections.index')
+            $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
+            
+            return redirect()->route($redirectRoute)
                 ->with('warning', __('messages.oauth_cancelled'));
         }
 
@@ -222,9 +272,12 @@ class OAuthController extends Controller
             Log::error('Microsoft OAuth callback missing code', [
                 'request' => $request->all(),
                 'user_id' => auth()->id(),
+                'from_account' => $fromAccountSettings,
             ]);
             
-            return redirect()->route('connections.index')
+            $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
+            
+            return redirect()->route($redirectRoute)
                 ->with('error', __('messages.oauth_failed'));
         }
 
@@ -355,7 +408,28 @@ class OAuthController extends Controller
             Log::info('Microsoft calendar connected', [
                 'user_id' => auth()->id(),
                 'connection_id' => $connection->id,
+                'from_account' => $fromAccountSettings,
             ]);
+
+            // If from account settings, update oauth_provider for backup login
+            if ($fromAccountSettings && auth()->check()) {
+                $user = auth()->user();
+                if (!$user->oauth_provider) {
+                    // User doesn't have OAuth yet, add Microsoft as OAuth provider
+                    $user->update([
+                        'oauth_provider' => 'microsoft',
+                        'oauth_provider_id' => $accountInfo['id'],
+                        'oauth_provider_email' => $accountInfo['email'],
+                    ]);
+                    
+                    Log::info('Added Microsoft OAuth to password-only account', [
+                        'user_id' => $user->id,
+                    ]);
+                }
+                
+                return redirect()->route('account.index')
+                    ->with('success', 'Microsoft connected successfully! You can now login with Microsoft.');
+            }
 
             return redirect()->route('connections.index')
                 ->with('success', __('messages.calendar_connected'));

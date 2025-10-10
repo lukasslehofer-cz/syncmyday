@@ -16,6 +16,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'oauth_provider',
+        'oauth_provider_id',
+        'oauth_provider_email',
         'locale',
         'timezone',
         'subscription_tier',
@@ -121,6 +124,30 @@ class User extends Authenticatable implements MustVerifyEmail
             'subscription_tier' => 'free',
             'subscription_ends_at' => now(),
         ]);
+    }
+
+    /**
+     * Check if user is an OAuth user
+     */
+    public function isOAuthUser(): bool
+    {
+        return !empty($this->oauth_provider) && !empty($this->oauth_provider_id);
+    }
+
+    /**
+     * Get OAuth provider name for display
+     */
+    public function getOAuthProviderName(): ?string
+    {
+        if (!$this->oauth_provider) {
+            return null;
+        }
+
+        return match($this->oauth_provider) {
+            'google' => 'Google',
+            'microsoft' => 'Microsoft',
+            default => ucfirst($this->oauth_provider),
+        };
     }
 
 }

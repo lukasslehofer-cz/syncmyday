@@ -25,6 +25,10 @@ return [
         ],
     ],
 
+    // Note: For OAuth login, we use the same credentials but different callback routes:
+    // - Login/Register: /auth/{provider}/callback
+    // - Calendar Connect (authenticated): /oauth/{provider}/callback
+
     // Stripe
     'stripe' => [
         'key' => env('STRIPE_KEY'),

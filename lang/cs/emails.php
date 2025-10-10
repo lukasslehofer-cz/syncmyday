@@ -104,5 +104,18 @@ return [
     'payment_success_dashboard' => 'Přehled',
     'payment_success_billing' => 'Fakturace a předplatné',
     'payment_success_thank_you' => 'Děkujeme, že jste si vybrali SyncMyDay! Těšíme se, že vám pomůžeme udržet vaše kalendáře dokonale synchronizované.',
+
+    // Password Reset
+    'password_reset_subject' => 'Reset hesla',
+    'password_reset_greeting' => 'Ahoj :name!',
+    'password_reset_intro' => 'Nedávno jste požádali o reset hesla k vašemu účtu SyncMyDay. Klikněte na tlačítko níže a pokračujte.',
+    'password_reset_button' => 'Resetovat heslo',
+    'password_reset_expiry_title' => 'Tento odkaz vyprší za 1 hodinu',
+    'password_reset_expiry_info' => 'Z bezpečnostních důvodů tento odkaz pro reset hesla vyprší za 1 hodinu. Pokud budete potřebovat nový odkaz, můžete si jej vyžádat znovu.',
+    'password_reset_alternative' => 'Pokud tlačítko nefunguje, zkopírujte a vložte tento odkaz do prohlížeče:',
+    'password_reset_security_title' => 'Nepožadovali jste to?',
+    'password_reset_security_info' => 'Pokud jste nepožadovali reset hesla, ignorujte tento email nebo kontaktujte podporu, pokud máte obavy o bezpečnost vašeho účtu.',
+    'password_reset_signature' => 'S pozdravem,',
+    'password_reset_team_name' => 'Tým SyncMyDay',
 ];
 

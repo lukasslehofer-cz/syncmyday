@@ -127,6 +127,15 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        // Check if user exists and is OAuth user WITHOUT password
+        $user = User::where('email', $credentials['email'])->first();
+        
+        if ($user && $user->isOAuthUser() && !$user->password) {
+            return back()->withErrors([
+                'email' => 'This account uses ' . $user->getOAuthProviderName() . ' login. Please use the "Continue with ' . $user->getOAuthProviderName() . '" button above, or add a password in Account Settings.',
+            ])->onlyInput('email');
+        }
+
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard'));

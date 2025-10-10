@@ -104,5 +104,18 @@ return [
     'payment_success_dashboard' => 'Dashboard',
     'payment_success_billing' => 'Billing & Subscription',
     'payment_success_thank_you' => 'Thank you for choosing SyncMyDay! We\'re excited to help you keep your calendars perfectly in sync.',
+
+    // Password Reset
+    'password_reset_subject' => 'Reset Your Password',
+    'password_reset_greeting' => 'Hello :name!',
+    'password_reset_intro' => 'You recently requested to reset your password for your SyncMyDay account. Click the button below to proceed.',
+    'password_reset_button' => 'Reset Password',
+    'password_reset_expiry_title' => 'This link expires in 1 hour',
+    'password_reset_expiry_info' => 'For security reasons, this password reset link will expire in 1 hour. If you need a new link, you can request another one.',
+    'password_reset_alternative' => 'If the button doesn\'t work, copy and paste this link into your browser:',
+    'password_reset_security_title' => 'Didn\'t request this?',
+    'password_reset_security_info' => 'If you did not request a password reset, please ignore this email or contact support if you have concerns about your account security.',
+    'password_reset_signature' => 'Best regards,',
+    'password_reset_team_name' => 'The SyncMyDay Team',
 ];
 

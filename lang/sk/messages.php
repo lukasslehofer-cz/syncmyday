@@ -236,6 +236,11 @@ return [
     'faq_after_trial_a' => 'Po uplynutí prvého mesiaca zadarmo budete automaticky požiadaní o nastavenie platby. Ak si neželáte pokračovať, môžete jednoducho predplatné neaktivovať a aplikácia zostane funkčná s obmedzeniami.',
     'secure_payments_via' => 'Bezpečné platby zabezpečené cez',
     
+    // Password Reset
+    'password_reset_link_sent' => 'Odkaz na reset hesla bol odoslaný na váš email!',
+    'password_reset_token_invalid' => 'Tento odkaz na reset hesla je neplatný alebo vypršal. Vyžiadajte si prosím nový.',
+    'password_reset_success' => 'Vaše heslo bolo úspešne zmenené!',
+
     // General
     'error' => 'Chyba',
     'warning' => 'Varovanie',

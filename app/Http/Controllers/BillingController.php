@@ -187,12 +187,15 @@ class BillingController extends Controller
                 ]);
             }
 
-            // Check if we should redirect to onboarding (for new registrations)
-            if ($request->query('redirect') === 'onboarding') {
+            // Check redirect parameter
+            $redirect = $request->query('redirect');
+            
+            if ($redirect === 'onboarding') {
                 return redirect()->route('onboarding.start')
                     ->with('success', __('messages.registration_success'));
             }
-
+            
+            // Default to dashboard (also handles redirect=dashboard explicitly)
             return redirect()->route('dashboard')
                 ->with('success', __('messages.subscription_activated'));
 

@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\BillingController;
@@ -29,6 +32,18 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    
+    // OAuth Login/Registration (Google & Microsoft)
+    Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+    Route::get('/auth/microsoft', [SocialAuthController::class, 'redirectToMicrosoft'])->name('auth.microsoft');
+    Route::get('/auth/microsoft/callback', [SocialAuthController::class, 'handleMicrosoftCallback'])->name('auth.microsoft.callback');
+    
+    // Password Reset
+    Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -102,6 +117,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/portal', [BillingController::class, 'portal'])->name('portal');
     });
     Route::get('/billing', [BillingController::class, 'index'])->name('billing'); // Shorthand
+
+    // Account Settings
+    Route::prefix('account')->name('account.')->group(function () {
+        Route::get('/', [AccountController::class, 'index'])->name('index');
+        Route::put('/info', [AccountController::class, 'updateInfo'])->name('update-info');
+        Route::put('/password', [AccountController::class, 'updatePassword'])->name('update-password');
+        Route::post('/add-password', [AccountController::class, 'addPassword'])->name('add-password');
+        Route::post('/disconnect-oauth', [AccountController::class, 'disconnectOAuth'])->name('disconnect-oauth');
+        Route::delete('/delete', [AccountController::class, 'destroy'])->name('destroy');
+        
+        // OAuth connection from account settings (for adding backup login methods)
+        Route::get('/connect/google', [OAuthController::class, 'redirectToGoogle'])->name('connect.google');
+        Route::get('/connect/microsoft', [OAuthController::class, 'redirectToMicrosoft'])->name('connect.microsoft');
+    });
 
     // Admin routes
     Route::middleware('can:admin')->prefix('admin')->name('admin.')->group(function () {

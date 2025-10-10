@@ -104,5 +104,18 @@ return [
     'payment_success_dashboard' => 'Panel',
     'payment_success_billing' => 'Rozliczenia i subskrypcja',
     'payment_success_thank_you' => 'Dziękujemy za wybranie SyncMyDay! Cieszymy się, że możemy pomóc Ci utrzymać kalendarz idealnie zsynchronizowane.',
+
+    // Password Reset
+    'password_reset_subject' => 'Zresetuj hasło',
+    'password_reset_greeting' => 'Witaj :name!',
+    'password_reset_intro' => 'Niedawno zażądałeś zresetowania hasła do swojego konta SyncMyDay. Kliknij poniższy przycisk, aby kontynuować.',
+    'password_reset_button' => 'Zresetuj hasło',
+    'password_reset_expiry_title' => 'Ten link wygasa za 1 godzinę',
+    'password_reset_expiry_info' => 'Ze względów bezpieczeństwa ten link do resetowania hasła wygaśnie za 1 godzinę. Jeśli potrzebujesz nowego linku, możesz poprosić o kolejny.',
+    'password_reset_alternative' => 'Jeśli przycisk nie działa, skopiuj i wklej ten link do przeglądarki:',
+    'password_reset_security_title' => 'Nie prosiłeś o to?',
+    'password_reset_security_info' => 'Jeśli nie prosiłeś o zresetowanie hasła, zignoruj tę wiadomość lub skontaktuj się z pomocą techniczną, jeśli masz obawy dotyczące bezpieczeństwa swojego konta.',
+    'password_reset_signature' => 'Pozdrowienia,',
+    'password_reset_team_name' => 'Zespół SyncMyDay',
 ];
 

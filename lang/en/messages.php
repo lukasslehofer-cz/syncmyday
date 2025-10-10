@@ -244,6 +244,11 @@ return [
     'trial_expired' => 'Trial period expired.',
     'setup_payment_method' => 'Setup payment method',
     
+    // Password Reset
+    'password_reset_link_sent' => 'Password reset link has been sent to your email!',
+    'password_reset_token_invalid' => 'This password reset link is invalid or has expired. Please request a new one.',
+    'password_reset_success' => 'Your password has been successfully reset!',
+
     // General
     'error' => 'Error',
     'warning' => 'Warning',

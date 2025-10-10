@@ -218,6 +218,11 @@ return [
     'faq_after_trial_a' => 'Nach Ablauf des ersten Monats werden Sie automatisch aufgefordert, die Zahlung einzurichten. Wenn Sie nicht fortfahren möchten, können Sie das Abonnement einfach nicht aktivieren und die App bleibt mit Einschränkungen funktionsfähig.',
     'secure_payments_via' => 'Sichere Zahlungen über',
     
+    // Password Reset
+    'password_reset_link_sent' => 'Der Link zum Zurücksetzen des Passworts wurde an Ihre E-Mail gesendet!',
+    'password_reset_token_invalid' => 'Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen. Bitte fordern Sie einen neuen an.',
+    'password_reset_success' => 'Ihr Passwort wurde erfolgreich zurückgesetzt!',
+
     // General
     'error' => 'Fehler',
     'warning' => 'Warnung',

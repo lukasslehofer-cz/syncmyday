@@ -236,6 +236,11 @@ return [
     'faq_after_trial_a' => 'Po upływie pierwszego miesiąca za darmo zostaniesz automatycznie poproszony o skonfigurowanie płatności. Jeśli nie chcesz kontynuować, możesz po prostu nie aktywować subskrypcji, a aplikacja pozostanie funkcjonalna z ograniczeniami.',
     'secure_payments_via' => 'Bezpieczne płatności za pośrednictwem',
     
+    // Password Reset
+    'password_reset_link_sent' => 'Link do resetowania hasła został wysłany na Twój e-mail!',
+    'password_reset_token_invalid' => 'Ten link do resetowania hasła jest nieprawidłowy lub wygasł. Poproś o nowy.',
+    'password_reset_success' => 'Twoje hasło zostało pomyślnie zresetowane!',
+
     // General
     'error' => 'Błąd',
     'warning' => 'Ostrzeżenie',

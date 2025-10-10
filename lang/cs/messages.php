@@ -244,6 +244,11 @@ return [
     'trial_expired' => 'Zkušební období vypršelo.',
     'setup_payment_method' => 'Nastavit platební metodu',
     
+    // Password Reset
+    'password_reset_link_sent' => 'Odkaz pro reset hesla byl odeslán na váš email!',
+    'password_reset_token_invalid' => 'Tento odkaz pro reset hesla je neplatný nebo vypršel. Vyžádejte si prosím nový.',
+    'password_reset_success' => 'Vaše heslo bylo úspěšně změněno!',
+
     // General
     'error' => 'Chyba',
     'warning' => 'Varování',
