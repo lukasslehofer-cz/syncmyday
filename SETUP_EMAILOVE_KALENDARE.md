@@ -4,7 +4,7 @@
 
 1. **IMAP Polling Command**: `php artisan app:process-inbound-emails`
 2. **Cron URL Script**: `public/cron-inbound-emails.php`
-3. **Webhook Endpointy**: 
+3. **Webhook Endpointy**:
    - `/webhooks/email/mailgun`
    - `/webhooks/email/sendgrid`
    - `/webhooks/email/postmark`
@@ -15,6 +15,7 @@
 ### 1. Nastavit EMAIL_DOMAIN v .env
 
 V produkčním `.env` změnit:
+
 ```bash
 # BYLO:
 EMAIL_DOMAIN=syncmyday.local
@@ -26,6 +27,7 @@ EMAIL_DOMAIN=syncmyday.cz
 ### 2. Ověřit IMAP konfiguraci
 
 V produkčním `.env` už máte nastaveno:
+
 ```bash
 INBOUND_EMAIL_ENABLED=true
 INBOUND_EMAIL_HOST=imap.cesky-hosting.cz
@@ -65,6 +67,7 @@ Toto spustí příkaz každou minutu a zkontroluje nové emaily.
 ### 5. Clear Cache na serveru
 
 Po změnách v `.env`:
+
 ```bash
 php artisan config:cache
 ```
@@ -144,11 +147,13 @@ php artisan app:process-inbound-emails --limit=5
 ### Problém: "IMAP connection failed"
 
 **Možné příčiny:**
+
 - Špatné heslo
 - Firewall blokuje port 993
 - SSL certifikát problém
 
 **Řešení:**
+
 1. Ověřte credentials v `.env`
 2. Zkuste `INBOUND_EMAIL_VALIDATE_CERT=false` (ne doporučeno pro produkci)
 3. Zkontrolujte, zda server umožňuje odchozí spojení na port 993
@@ -158,6 +163,7 @@ php artisan app:process-inbound-emails --limit=5
 **Příčina:** Email nebyl poslán na adresu `*@syncmyday.cz`, nebo catch-all není správně nastaven.
 
 **Řešení:**
+
 1. Ověřte catch-all nastavení
 2. Zkuste poslat email přímo na `events@syncmyday.cz` a zkontrolujte, zda dorazí
 
@@ -166,17 +172,20 @@ php artisan app:process-inbound-emails --limit=5
 **Příčina:** Token v email adrese neodpovídá žádnému emailovému kalendáři v databázi.
 
 **Řešení:**
+
 - Zkontrolujte databázovou tabulku `email_calendar_connections`
 - Ověřte, že EMAIL_DOMAIN je správně nastaveno
 
 ### Problém: Emaily se zpracovávají, ale blockery se nevytvářejí
 
 **Možné příčiny:**
+
 - Není vytvořeno sync rule
 - Target kalendář není správně připojený
 - .ics soubor je nevalidní
 
 **Řešení:**
+
 1. Zkontrolujte sync rules v databázi
 2. Ověřte logy: `grep "iMIP\|blocker" storage/logs/sync.log`
 
@@ -185,15 +194,17 @@ php artisan app:process-inbound-emails --limit=5
 Po úspěšném nastavení můžete sledovat:
 
 1. **V aplikaci**: `/email-calendars` → Detail kalendáře
+
    - Kolik emailů bylo přijato
    - Kolik eventů bylo zpracováno
    - Poslední email
 
 2. **V logách**:
+
    ```bash
    # Kolikrát za den se spouští cron
    grep "Inbound email processing completed" storage/logs/laravel.log | grep "$(date +%Y-%m-%d)" | wc -l
-   
+
    # Úspěšnost
    grep "Processed:" storage/logs/laravel.log | tail -20
    ```
@@ -210,4 +221,3 @@ Po úspěšném nastavení můžete sledovat:
 **Hotovo!** 🎉
 
 Emailové kalendáře by teď měly fungovat. Pokud něco nefunguje, zkontrolujte logy a dejte vědět.
-
