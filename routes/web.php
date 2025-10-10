@@ -26,6 +26,27 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+// Debug routes for session testing (REMOVE IN PRODUCTION!)
+Route::get('/debug-session', function () {
+    return response()->json([
+        'session_id' => session()->getId(),
+        'session_driver' => config('session.driver'),
+        'session_secure' => config('session.secure'),
+        'session_domain' => config('session.domain'),
+        'session_same_site' => config('session.same_site'),
+        'app_url' => config('app.url'),
+        'app_env' => config('app.env'),
+        'https' => request()->secure(),
+        'test_value' => session('test_key', 'not_set'),
+        'storage_writable' => is_writable(storage_path('framework/sessions')),
+    ]);
+});
+
+Route::get('/debug-session-set', function () {
+    session(['test_key' => 'session_works_' . now()]);
+    return 'Session value set. Visit /debug-session to verify.';
+});
+
 // Authentication
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
