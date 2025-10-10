@@ -193,14 +193,18 @@ https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_SECRET
 1. Ověřte catch-all nastavení
 2. Zkuste poslat email přímo na `events@syncmyday.cz` a zkontrolujte, zda dorazí
 
-### Problém: "Email calendar not found for token"
+### Problém: "No valid recipient found" nebo "Email calendar not found for token"
 
-**Příčina:** Token v email adrese neodpovídá žádnému emailovému kalendáři v databázi.
+**Příčiny:**
+1. Token v email adrese neodpovídá žádnému emailovému kalendáři v databázi
+2. ~~Case sensitivity problém s velkými/malými písmeny~~ ✅ **VYŘEŠENO** (od verze 3ec50743)
 
 **Řešení:**
 
 - Zkontrolujte databázovou tabulku `email_calendar_connections`
-- Ověřte, že EMAIL_DOMAIN je správně nastaveno
+- Ověřte, že `EMAIL_DOMAIN` je správně nastaveno (`syncmyday.cz`)
+- Od října 2025 jsou všechny tokeny generovány jako lowercase (např. `abc12345@syncmyday.cz`)
+- Staré tokeny s velkými písmeny budou automaticky převedeny migrací na lowercase
 
 ### Problém: Emaily se zpracovávají, ale blockery se nevytvářejí
 
