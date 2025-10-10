@@ -110,7 +110,12 @@ class IcsParserService
     private function parseDateTime($dtProperty): \DateTime
     {
         try {
-            return $dtProperty->getDateTime();
+            $dt = $dtProperty->getDateTime();
+            // Convert DateTimeImmutable to DateTime if needed
+            if ($dt instanceof \DateTimeImmutable) {
+                return \DateTime::createFromImmutable($dt);
+            }
+            return $dt;
         } catch (\Exception $e) {
             // Fallback: try to parse as string
             $dateString = (string) $dtProperty;
