@@ -20,11 +20,6 @@ return new class extends Migration
             // Add unique index for oauth provider + id combination
             $table->unique(['oauth_provider', 'oauth_provider_id'], 'oauth_provider_unique');
         });
-        
-        // Update email_verified_at for OAuth users (they're pre-verified)
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable()->change();
-        });
     }
 
     public function down(): void

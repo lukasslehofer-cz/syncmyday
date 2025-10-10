@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable()->after('email');
+            // email_verified_at is already added in create_users_table migration
             $table->timestamp('trial_ends_at')->nullable()->after('subscription_ends_at');
         });
     }
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['email_verified_at', 'trial_ends_at']);
+            $table->dropColumn('trial_ends_at');
         });
     }
 };
