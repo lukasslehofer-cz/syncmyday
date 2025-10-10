@@ -57,16 +57,19 @@ V administraci cesky-hosting.cz:
 V administraci webhostingu (nebo crontabu):
 
 **URL pro cron:**
+
 ```
 https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET
 ```
 
 **Nebo curl příkaz:**
+
 ```bash
 * * * * * curl -s "https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET" > /dev/null 2>&1
 ```
 
 **Nebo wget příkaz:**
+
 ```bash
 * * * * * wget -q -O - "https://syncmyday.cz/cron-inbound-emails.php?token=VÁŠ_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -162,6 +165,7 @@ php artisan app:process-inbound-emails --limit=5
 **Řešení:** ✅ **VYŘEŠENO** - `public/cron-inbound-emails.php` byl přepsán tak, aby **nepotřeboval** `proc_open`. Spouští IMAP polling přímo bez artisan commandu.
 
 Stačí použít URL nebo curl/wget v cronu:
+
 ```
 https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_SECRET
 ```
