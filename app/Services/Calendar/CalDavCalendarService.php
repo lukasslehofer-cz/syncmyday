@@ -674,13 +674,32 @@ class CalDavCalendarService
     public function isOurBlocker($event): bool
     {
         if (is_array($event)) {
-            return isset($event['x-syncmyday-blocker']) || isset($event['X-SYNCMYDAY-BLOCKER']);
+            $hasBlockerLower = isset($event['x-syncmyday-blocker']) && $event['x-syncmyday-blocker'];
+            $hasBlockerUpper = isset($event['X-SYNCMYDAY-BLOCKER']) && $event['X-SYNCMYDAY-BLOCKER'];
+            $result = $hasBlockerLower || $hasBlockerUpper;
+            
+            Log::channel('sync')->info('CalDAV: isOurBlocker (array)', [
+                'event_id' => $event['id'] ?? 'unknown',
+                'has_x_syncmyday_blocker_lower' => $hasBlockerLower,
+                'has_X_SYNCMYDAY_BLOCKER_upper' => $hasBlockerUpper,
+                'x_syncmyday_blocker_value' => $event['x-syncmyday-blocker'] ?? 'not set',
+                'result' => $result,
+            ]);
+            
+            return $result;
         }
         
         // VObject event
         if (isset($event->{'X-SYNCMYDAY-BLOCKER'})) {
+            Log::channel('sync')->info('CalDAV: isOurBlocker (VObject) - HAS BLOCKER', [
+                'event_type' => get_class($event),
+            ]);
             return true;
         }
+        
+        Log::channel('sync')->info('CalDAV: isOurBlocker (VObject) - NO BLOCKER', [
+            'event_type' => get_class($event),
+        ]);
         
         return false;
     }
@@ -976,6 +995,11 @@ XML;
         
         // Check for X-SYNCMYDAY-BLOCKER
         $isSyncMyDayBlocker = isset($vevent->{'X-SYNCMYDAY-BLOCKER'});
+        
+        Log::channel('sync')->info('CalDAV: parseVEvent - blocker check', [
+            'uid' => $uid,
+            'has_x_syncmyday_blocker' => $isSyncMyDayBlocker,
+        ]);
         
         return [
             'id' => $uid,
