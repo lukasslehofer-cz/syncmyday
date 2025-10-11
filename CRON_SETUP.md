@@ -13,11 +13,13 @@ CRON_SECRET=your_random_secret_token_here
 ## 📋 Available Cron Jobs
 
 ### 1. **Inbound Email Processing** (Every minute)
+
 Processes incoming calendar emails via IMAP polling.
 
 **URL:** `https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 * * * * * curl -s "https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -25,11 +27,13 @@ Processes incoming calendar emails via IMAP polling.
 ---
 
 ### 2. **Calendar Sync** (Every 5 minutes)
+
 Syncs calendars according to active sync rules.
 
 **URL:** `https://syncmyday.cz/cron-calendars-sync.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 */5 * * * * curl -s "https://syncmyday.cz/cron-calendars-sync.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -37,11 +41,13 @@ Syncs calendars according to active sync rules.
 ---
 
 ### 3. **Webhook Renewal** (Every 6 hours)
+
 Renews expiring webhook subscriptions for Google/Microsoft calendars.
 
 **URL:** `https://syncmyday.cz/cron-webhooks-renew.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 0 */6 * * * curl -s "https://syncmyday.cz/cron-webhooks-renew.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -49,11 +55,13 @@ Renews expiring webhook subscriptions for Google/Microsoft calendars.
 ---
 
 ### 4. **Queue Processing** (Every 5 minutes)
+
 Processes queued jobs (background tasks).
 
 **URL:** `https://syncmyday.cz/cron-queue.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 */5 * * * * curl -s "https://syncmyday.cz/cron-queue.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -61,11 +69,13 @@ Processes queued jobs (background tasks).
 ---
 
 ### 5. **Connections Health Check** (Every hour)
+
 Checks calendar connections for expired tokens.
 
 **URL:** `https://syncmyday.cz/cron-connections-check.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 0 * * * * curl -s "https://syncmyday.cz/cron-connections-check.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -73,11 +83,13 @@ Checks calendar connections for expired tokens.
 ---
 
 ### 6. **Logs Cleanup** (Daily at midnight)
+
 Cleans up old sync logs (30 days retention).
 
 **URL:** `https://syncmyday.cz/cron-logs-clean.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 0 0 * * * curl -s "https://syncmyday.cz/cron-logs-clean.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -85,11 +97,13 @@ Cleans up old sync logs (30 days retention).
 ---
 
 ### 7. **Trial Ending Notifications** (Daily at 9:00)
+
 Sends email notifications to users whose trial is ending soon.
 
 **URL:** `https://syncmyday.cz/cron-trial-notifications.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 0 9 * * * curl -s "https://syncmyday.cz/cron-trial-notifications.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -97,11 +111,13 @@ Sends email notifications to users whose trial is ending soon.
 ---
 
 ### 8. **Trial Expiration** (Daily at midnight)
+
 Expires trial periods for users without active subscriptions.
 
 **URL:** `https://syncmyday.cz/cron-trial-expire.php?token=YOUR_CRON_SECRET`
 
 **Cron syntax:**
+
 ```
 0 0 * * * curl -s "https://syncmyday.cz/cron-trial-expire.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
 ```
@@ -152,13 +168,14 @@ curl "https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_CRON_SECRET"
 ```
 
 Expected response:
+
 ```json
 {
-    "status": "success",
-    "processed": 0,
-    "output": "...",
-    "duration": "0.23s",
-    "time": "2025-10-10 23:45:00"
+  "status": "success",
+  "processed": 0,
+  "output": "...",
+  "duration": "0.23s",
+  "time": "2025-10-10 23:45:00"
 }
 ```
 
@@ -167,12 +184,14 @@ Expected response:
 ## 📝 Monitoring
 
 All cron scripts:
+
 - ✅ Return JSON responses when called via HTTP
 - ✅ Return plain text when called via CLI
 - ✅ Log errors to `storage/logs/laravel.log`
 - ✅ Return appropriate HTTP status codes (200/401/500)
 
 To monitor cron execution, check your Laravel logs:
+
 ```bash
 tail -f /path/to/syncmyday/storage/logs/laravel.log
 ```
@@ -182,15 +201,18 @@ tail -f /path/to/syncmyday/storage/logs/laravel.log
 ## 🔧 Troubleshooting
 
 ### 401 Unauthorized
+
 - Check that `CRON_SECRET` is set in `.env`
 - Verify you're using the correct token in the URL
 
 ### 500 Internal Server Error
+
 - Check Laravel logs: `storage/logs/laravel.log`
 - Verify all `.env` variables are set correctly
 - Check file permissions (775 for directories, 664 for files)
 
 ### Cron jobs not running
+
 - Verify crontab syntax with `crontab -l`
 - Check server time: `date`
 - Test manually first via browser/curl
@@ -214,4 +236,3 @@ If you want to start with only the most important cron jobs:
 ```
 
 You can add other jobs later as needed.
-

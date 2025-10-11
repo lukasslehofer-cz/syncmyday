@@ -196,6 +196,24 @@ class SyncRulesController extends Controller
                 'rule_id' => $rule->id,
             ]);
 
+            // Trigger initial sync immediately (only for API calendars)
+            if ($validated['source_type'] === 'api' && $rule->sourceConnection) {
+                try {
+                    $syncEngine = app(\App\Services\Sync\SyncEngine::class);
+                    $syncEngine->syncRule($rule, $rule->sourceConnection);
+                    
+                    Log::info('Initial sync triggered for new rule', [
+                        'rule_id' => $rule->id,
+                    ]);
+                } catch (\Exception $e) {
+                    // Don't fail rule creation if initial sync fails
+                    Log::warning('Initial sync failed for new rule', [
+                        'rule_id' => $rule->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
             return redirect()->route('sync-rules.index')
                 ->with('success', __('messages.sync_rule_created'));
 

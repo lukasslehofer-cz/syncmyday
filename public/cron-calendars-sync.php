@@ -91,13 +91,23 @@ try {
     
     foreach ($rules as $rule) {
         try {
-            $output[] = "Syncing rule #{$rule->id}: {$rule->name}";
+            // Get source connection
+            $sourceConnection = $rule->sourceConnection;
             
-            // Generate a unique transaction ID for this sync operation
-            $transactionId = \Illuminate\Support\Str::uuid()->toString();
+            if (!$sourceConnection) {
+                $output[] = "Skipping rule #{$rule->id}: No source connection (might be email calendar)";
+                continue;
+            }
             
-            // Sync this rule
-            $syncEngine->syncRule($rule, $transactionId);
+            if ($sourceConnection->status !== 'active') {
+                $output[] = "Skipping rule #{$rule->id}: Connection not active";
+                continue;
+            }
+            
+            $output[] = "Syncing rule #{$rule->id}: {$sourceConnection->provider_email}";
+            
+            // Sync this rule with proper parameters
+            $syncEngine->syncRule($rule, $sourceConnection);
             
             $synced++;
             $output[] = "  ✓ Synced successfully";
