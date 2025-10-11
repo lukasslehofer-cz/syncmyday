@@ -63,9 +63,9 @@
                     @if($renewDate)
                     <p class="text-sm @if($isCancelling) text-orange-700 @else text-gray-600 @endif">
                         @if($isCancelling)
-                            {{ __('messages.ends_on', ['date' => $renewDate]) }}
+                            {{ __('messages.ends_on') }} {{ $renewDate }}
                         @else
-                            {{ __('messages.renews_on', ['date' => $renewDate]) }}
+                            {{ __('messages.renews_on') }} {{ $renewDate }}
                         @endif
                     </p>
                     @endif
