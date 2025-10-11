@@ -18,15 +18,41 @@
         
         // Get end/renew date based on subscription status
         $endTimestamp = null;
-        if ($isCancelling && $subscription->cancel_at) {
+        if ($isCancelling && isset($subscription->cancel_at)) {
             $endTimestamp = $subscription->cancel_at;
-        } elseif ($subscription->current_period_end) {
+        } elseif (isset($subscription->current_period_end)) {
             $endTimestamp = $subscription->current_period_end;
         }
         
-        $renewDate = $endTimestamp 
-            ? \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y')
-            : ($user->subscription_ends_at ? $user->subscription_ends_at->format('j. F Y') : '');
+        // Format date
+        $renewDate = '';
+        if ($endTimestamp) {
+            try {
+                $renewDate = \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y');
+            } catch (\Exception $e) {
+                \Log::error('Failed to format subscription date', [
+                    'timestamp' => $endTimestamp,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
+        // Fallback to DB date if Stripe date not available
+        if (empty($renewDate) && $user->subscription_ends_at) {
+            $renewDate = $user->subscription_ends_at->format('j. F Y');
+        }
+        
+        // Debug logging
+        \Log::info('Billing page subscription display', [
+            'user_id' => $user->id,
+            'has_subscription' => isset($subscription),
+            'subscription_status' => $subscription->status ?? 'N/A',
+            'current_period_end' => $subscription->current_period_end ?? 'N/A',
+            'cancel_at' => $subscription->cancel_at ?? 'N/A',
+            'cancel_at_period_end' => $subscription->cancel_at_period_end ?? false,
+            'endTimestamp' => $endTimestamp,
+            'renewDate' => $renewDate,
+        ]);
     @endphp
     
     <div class="mb-8 bg-gradient-to-r @if($isCancelling) from-orange-50 to-amber-50 border-orange-300 @else from-green-50 to-emerald-50 border-green-200 @endif border-2 rounded-2xl p-6">
