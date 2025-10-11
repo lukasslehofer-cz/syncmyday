@@ -267,7 +267,7 @@ class GoogleCalendarService
             $optParams['timeMin'] = now()->subDays($pastDays)->toRfc3339String();
             $optParams['timeMax'] = now()->addMonths($futureMonths)->toRfc3339String();
             
-            Log::channel('sync')->info('Google full sync with time range', [
+            Log::channel('sync')->debug('Google full sync with time range', [
                 'calendar_id' => $calendarId,
                 'time_min' => $optParams['timeMin'],
                 'time_max' => $optParams['timeMax'],

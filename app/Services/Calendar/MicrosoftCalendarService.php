@@ -328,7 +328,7 @@ class MicrosoftCalendarService
             $startDateTime = now()->subDays($pastDays)->format('Y-m-d\TH:i:s');
             $endDateTime = now()->addMonths($futureMonths)->format('Y-m-d\TH:i:s');
             
-            Log::channel('sync')->info('Microsoft full sync with time range', [
+            Log::channel('sync')->debug('Microsoft full sync with time range', [
                 'calendar_id' => $calendarId,
                 'start_date_time' => $startDateTime,
                 'end_date_time' => $endDateTime,
