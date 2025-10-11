@@ -24,14 +24,14 @@
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Account Settings</h1>
-        <p class="text-lg text-gray-600">Manage your account information and preferences</p>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.account_settings') }}</h1>
+        <p class="text-lg text-gray-600">{{ __('messages.manage_account_info') }}</p>
     </div>
 
     <!-- Account Information -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
         <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">Account Information</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.account_information') }}</h2>
         </div>
         <div class="p-6 lg:p-8">
             @if($user->isOAuthUser())
@@ -43,7 +43,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-blue-800">Signed in with {{ $user->getOAuthProviderName() }}</p>
+                        <p class="text-sm font-bold text-blue-800">{{ __('messages.signed_in_with') }} {{ $user->getOAuthProviderName() }}</p>
                         <p class="text-xs text-blue-600">{{ $user->oauth_provider_email }}</p>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                 </div>
 
                 <div>
-                    <label for="locale" class="block text-sm font-bold text-gray-900 mb-2">Language</label>
+                    <label for="locale" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.locale') }}</label>
                     <select 
                         name="locale" 
                         id="locale" 
@@ -126,7 +126,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        Save Changes
+                        {{ __('messages.save_changes') }}
                     </button>
                 </div>
             </form>
@@ -137,7 +137,7 @@
     @if($user->isOAuthUser() && !$user->password)
     <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl border-2 border-amber-200 mb-6">
         <div class="px-6 py-5 border-b border-amber-200">
-            <h2 class="text-xl font-bold text-gray-900">Add Backup Password</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.add_backup_password') }}</h2>
         </div>
         <div class="p-6 lg:p-8">
             <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 mb-6">
@@ -148,8 +148,8 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-1">Recommended: Add a backup login method</p>
-                        <p class="text-sm text-gray-600">You currently login with {{ $user->getOAuthProviderName() }}. Add a password so you can also login with email if needed.</p>
+                        <p class="text-sm font-bold text-gray-900 mb-1">{{ __('messages.recommended_backup_login') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.backup_login_description', ['provider' => $user->getOAuthProviderName()]) }}</p>
                     </div>
                 </div>
             </div>
@@ -158,7 +158,7 @@
                 @csrf
 
                 <div>
-                    <label for="add_password" class="block text-sm font-bold text-gray-900 mb-2">New Password</label>
+                    <label for="add_password" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.new_password') }}</label>
                     <input 
                         type="password" 
                         name="password" 
@@ -166,14 +166,14 @@
                         required
                         class="w-full px-4 py-3 border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
                     >
-                    <p class="mt-2 text-xs text-gray-500">Minimum 8 characters</p>
+                    <p class="mt-2 text-xs text-gray-500">{{ __('messages.minimum_8_characters') }}</p>
                     @error('password')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="add_password_confirmation" class="block text-sm font-bold text-gray-900 mb-2">Confirm Password</label>
+                    <label for="add_password_confirmation" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.confirm_password') }}</label>
                     <input 
                         type="password" 
                         name="password_confirmation" 
@@ -191,7 +191,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Add Password
+                        {{ __('messages.add_password') }}
                     </button>
                 </div>
             </form>
@@ -203,7 +203,7 @@
     @if($user->password)
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
         <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">Change Password</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.change_password') }}</h2>
         </div>
         <div class="p-6 lg:p-8">
             <form method="POST" action="{{ route('account.update-password') }}" class="space-y-6">
@@ -211,7 +211,7 @@
                 @method('PUT')
 
                 <div>
-                    <label for="current_password" class="block text-sm font-bold text-gray-900 mb-2">Current Password</label>
+                    <label for="current_password" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.current_password') }}</label>
                     <input 
                         type="password" 
                         name="current_password" 
@@ -225,7 +225,7 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-bold text-gray-900 mb-2">New Password</label>
+                    <label for="password" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.new_password') }}</label>
                     <input 
                         type="password" 
                         name="password" 
@@ -233,14 +233,14 @@
                         required
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                     >
-                    <p class="mt-2 text-xs text-gray-500">Minimum 8 characters</p>
+                    <p class="mt-2 text-xs text-gray-500">{{ __('messages.minimum_8_characters') }}</p>
                     @error('password')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-bold text-gray-900 mb-2">Confirm New Password</label>
+                    <label for="password_confirmation" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.confirm_new_password') }}</label>
                     <input 
                         type="password" 
                         name="password_confirmation" 
@@ -258,7 +258,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Update Password
+                        {{ __('messages.update_password') }}
                     </button>
                 </div>
             </form>
@@ -269,10 +269,10 @@
     <!-- Connected Login Methods -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
         <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">Login Methods</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.login_methods') }}</h2>
         </div>
         <div class="p-6 lg:p-8">
-            <p class="text-sm text-gray-600 mb-6">Manage how you can login to your account</p>
+            <p class="text-sm text-gray-600 mb-6">{{ __('messages.manage_login_methods') }}</p>
             
             <div class="space-y-4">
                 <!-- Email/Password -->
@@ -284,7 +284,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="font-bold text-gray-900">Email & Password</p>
+                            <p class="font-bold text-gray-900">{{ __('messages.email_and_password') }}</p>
                             <p class="text-xs text-gray-500">{{ $user->email }}</p>
                         </div>
                     </div>
@@ -293,10 +293,10 @@
                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
-                        Active
+                        {{ __('messages.active') }}
                     </span>
                     @else
-                    <span class="text-xs text-gray-400">Not set up</span>
+                    <span class="text-xs text-gray-400">{{ __('messages.not_set_up') }}</span>
                     @endif
                 </div>
 
@@ -316,7 +316,7 @@
                             @if($user->oauth_provider === 'google')
                             <p class="text-xs text-gray-500">{{ $user->oauth_provider_email }}</p>
                             @else
-                            <p class="text-xs text-gray-500">Not connected</p>
+                            <p class="text-xs text-gray-500">{{ __('messages.not_connected') }}</p>
                             @endif
                         </div>
                     </div>
@@ -326,21 +326,21 @@
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                Connected
+                                {{ __('messages.connected') }}
                             </span>
                             @if($user->password)
                             <form method="POST" action="{{ route('account.disconnect-oauth') }}" class="inline">
                                 @csrf
-                                <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">Disconnect</button>
+                                <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">{{ __('messages.disconnect') }}</button>
                             </form>
                             @else
-                            <span class="text-xs text-gray-400" title="Add a password first to enable disconnect">Can't disconnect</span>
+                            <span class="text-xs text-gray-400" title="{{ __('messages.add_password_first') }}">{{ __('messages.cant_disconnect') }}</span>
                             @endif
                         </div>
                     @elseif(!$user->oauth_provider)
-                        <a href="{{ route('account.connect.google') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Connect</a>
+                        <a href="{{ route('account.connect.google') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.connect') }}</a>
                     @else
-                        <span class="text-xs text-gray-400">Connect {{ $user->getOAuthProviderName() }} first</span>
+                        <span class="text-xs text-gray-400">{{ __('messages.disconnect_other_first', ['provider' => $user->getOAuthProviderName()]) }}</span>
                     @endif
                 </div>
 
@@ -360,7 +360,7 @@
                             @if($user->oauth_provider === 'microsoft')
                             <p class="text-xs text-gray-500">{{ $user->oauth_provider_email }}</p>
                             @else
-                            <p class="text-xs text-gray-500">Not connected</p>
+                            <p class="text-xs text-gray-500">{{ __('messages.not_connected') }}</p>
                             @endif
                         </div>
                     </div>
@@ -370,21 +370,21 @@
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                Connected
+                                {{ __('messages.connected') }}
                             </span>
                             @if($user->password)
                             <form method="POST" action="{{ route('account.disconnect-oauth') }}" class="inline">
                                 @csrf
-                                <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">Disconnect</button>
+                                <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">{{ __('messages.disconnect') }}</button>
                             </form>
                             @else
-                            <span class="text-xs text-gray-400" title="Add a password first to enable disconnect">Can't disconnect</span>
+                            <span class="text-xs text-gray-400" title="{{ __('messages.add_password_first') }}">{{ __('messages.cant_disconnect') }}</span>
                             @endif
                         </div>
                     @elseif(!$user->oauth_provider)
-                        <a href="{{ route('account.connect.microsoft') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Connect</a>
+                        <a href="{{ route('account.connect.microsoft') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.connect') }}</a>
                     @else
-                        <span class="text-xs text-gray-400">Disconnect {{ $user->getOAuthProviderName() }} first</span>
+                        <span class="text-xs text-gray-400">{{ __('messages.disconnect_other_first', ['provider' => $user->getOAuthProviderName()]) }}</span>
                     @endif
                 </div>
             </div>
