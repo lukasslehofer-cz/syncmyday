@@ -198,7 +198,7 @@ class ImipEmailService
     ): void {
         Mail::send([], [], function ($message) use ($toEmail, $subject, $textBody, $icsContent, $method) {
             $message->to($toEmail)
-                ->subject("Calendar: {$subject}")
+                ->subject($subject)
                 ->from(config('mail.from.address'), config('mail.from.name'));
             
             // Access underlying Symfony message to build multipart
