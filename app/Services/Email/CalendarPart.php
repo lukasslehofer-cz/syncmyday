@@ -58,7 +58,12 @@ class CalendarPart extends AbstractPart
     {
         $headers = parent::getPreparedHeaders();
 
-        // Set Content-Type with method parameter
+        // Remove default Content-Type added by parent
+        if ($headers->has('Content-Type')) {
+            $headers->remove('Content-Type');
+        }
+
+        // Add proper Content-Type with method parameter
         $headers->addParameterizedHeader(
             'Content-Type',
             'text/calendar',
