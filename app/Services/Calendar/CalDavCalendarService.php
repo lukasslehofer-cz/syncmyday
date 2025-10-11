@@ -279,7 +279,16 @@ class CalDavCalendarService
                 continue;
             }
             
-            $resourceType = $props['{DAV:}resourcetype']->getValue();
+            // Get resourceType value (could be object or already an array)
+            $resourceTypeProp = $props['{DAV:}resourcetype'];
+            if (is_object($resourceTypeProp) && method_exists($resourceTypeProp, 'getValue')) {
+                $resourceType = $resourceTypeProp->getValue();
+            } elseif (is_array($resourceTypeProp)) {
+                $resourceType = $resourceTypeProp;
+            } else {
+                $resourceType = [$resourceTypeProp];
+            }
+            
             $isCalendar = false;
             
             // Normalize resourceType to array
@@ -289,7 +298,7 @@ class CalDavCalendarService
                     'type' => gettype($resourceType),
                     'value' => $resourceType,
                 ]);
-                $resourceType = [];
+                $resourceType = [$resourceType];
             }
             
             Log::debug('CalDAV: Checking resourceType', [
@@ -358,7 +367,15 @@ class CalDavCalendarService
             // Check if calendar supports VEVENT
             $supportsEvents = false;
             if (isset($props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set'])) {
-                $components = $props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set']->getValue();
+                // Get components value (could be object or already an array)
+                $componentsProp = $props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set'];
+                if (is_object($componentsProp) && method_exists($componentsProp, 'getValue')) {
+                    $components = $componentsProp->getValue();
+                } elseif (is_array($componentsProp)) {
+                    $components = $componentsProp;
+                } else {
+                    $components = [$componentsProp];
+                }
                 
                 // Normalize components to array
                 if (!is_array($components)) {
@@ -367,7 +384,7 @@ class CalDavCalendarService
                         'type' => gettype($components),
                         'value' => $components,
                     ]);
-                    $components = [];
+                    $components = [$components];
                 }
                 
                 Log::debug('CalDAV: Checking supported components', [
@@ -430,13 +447,29 @@ class CalDavCalendarService
             
             Log::info('CalDAV: Calendar supports VEVENT!', ['url' => $url]);
             
-            $displayName = isset($props['{DAV:}displayname']) 
-                ? $props['{DAV:}displayname']->getValue() 
-                : basename($url);
+            // Get display name
+            if (isset($props['{DAV:}displayname'])) {
+                $displayNameProp = $props['{DAV:}displayname'];
+                if (is_object($displayNameProp) && method_exists($displayNameProp, 'getValue')) {
+                    $displayName = $displayNameProp->getValue();
+                } else {
+                    $displayName = is_string($displayNameProp) ? $displayNameProp : basename($url);
+                }
+            } else {
+                $displayName = basename($url);
+            }
             
-            $color = isset($props['{http://apple.com/ns/ical/}calendar-color']) 
-                ? $props['{http://apple.com/ns/ical/}calendar-color']->getValue() 
-                : null;
+            // Get calendar color
+            if (isset($props['{http://apple.com/ns/ical/}calendar-color'])) {
+                $colorProp = $props['{http://apple.com/ns/ical/}calendar-color'];
+                if (is_object($colorProp) && method_exists($colorProp, 'getValue')) {
+                    $color = $colorProp->getValue();
+                } else {
+                    $color = is_string($colorProp) ? $colorProp : null;
+                }
+            } else {
+                $color = null;
+            }
             
             $calendars[] = [
                 'id' => $url,
