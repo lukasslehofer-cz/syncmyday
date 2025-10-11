@@ -259,11 +259,23 @@ class CalDavCalendarService
             '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set',
         ], 1);
         
+        Log::info('CalDAV: Found resources in calendar home', [
+            'calendar_home_url' => $calendarHomeUrl,
+            'resource_count' => count($response),
+        ]);
+        
         $calendars = [];
         
         foreach ($response as $url => $props) {
+            Log::debug('CalDAV: Processing resource', [
+                'url' => $url,
+                'has_resourcetype' => isset($props['{DAV:}resourcetype']),
+                'props_keys' => array_keys($props),
+            ]);
+            
             // Check if this is a calendar
             if (!isset($props['{DAV:}resourcetype'])) {
+                Log::debug('CalDAV: Skipping - no resourcetype', ['url' => $url]);
                 continue;
             }
             
@@ -273,15 +285,27 @@ class CalDavCalendarService
             // Normalize resourceType to array
             if (!is_array($resourceType)) {
                 Log::debug('CalDAV: resourceType is not array', [
+                    'url' => $url,
                     'type' => gettype($resourceType),
                     'value' => $resourceType,
                 ]);
                 $resourceType = [];
             }
             
+            Log::debug('CalDAV: Checking resourceType', [
+                'url' => $url,
+                'resourceType_count' => count($resourceType),
+                'resourceType_dump' => print_r($resourceType, true),
+            ]);
+            
             foreach ($resourceType as $type) {
                 // Handle both array and object types
                 if (is_array($type)) {
+                    Log::debug('CalDAV: resourceType element is array', [
+                        'url' => $url,
+                        'type' => $type,
+                    ]);
+                    
                     if (isset($type['name']) && $type['name'] === 'calendar' && 
                         isset($type['namespaceURI']) && $type['namespaceURI'] === 'urn:ietf:params:xml:ns:caldav') {
                         $isCalendar = true;
@@ -292,6 +316,14 @@ class CalDavCalendarService
                     $name = property_exists($type, 'name') ? $type->name : null;
                     $namespace = property_exists($type, 'namespaceURI') ? $type->namespaceURI : null;
                     
+                    Log::debug('CalDAV: resourceType element is object', [
+                        'url' => $url,
+                        'class' => get_class($type),
+                        'name' => $name,
+                        'namespace' => $namespace,
+                        'object_dump' => print_r($type, true),
+                    ]);
+                    
                     if ($name === 'calendar' && $namespace === 'urn:ietf:params:xml:ns:caldav') {
                         $isCalendar = true;
                         break;
@@ -300,8 +332,14 @@ class CalDavCalendarService
             }
             
             if (!$isCalendar) {
+                Log::info('CalDAV: Skipping - not a calendar', [
+                    'url' => $url,
+                    'resourceType_count' => count($resourceType),
+                ]);
                 continue;
             }
+            
+            Log::info('CalDAV: Found calendar resource!', ['url' => $url]);
             
             // Check if calendar supports VEVENT
             $supportsEvents = false;
@@ -311,32 +349,57 @@ class CalDavCalendarService
                 // Normalize components to array
                 if (!is_array($components)) {
                     Log::debug('CalDAV: components is not array', [
+                        'url' => $url,
                         'type' => gettype($components),
                         'value' => $components,
                     ]);
                     $components = [];
                 }
                 
+                Log::debug('CalDAV: Checking supported components', [
+                    'url' => $url,
+                    'components_count' => count($components),
+                    'components_dump' => print_r($components, true),
+                ]);
+                
                 foreach ($components as $component) {
                     // Handle both array and object types
                     if (is_array($component)) {
+                        Log::debug('CalDAV: Component is array', [
+                            'url' => $url,
+                            'component' => $component,
+                        ]);
+                        
                         if (isset($component['name']) && $component['name'] === 'VEVENT') {
                             $supportsEvents = true;
                             break;
                         }
                     } elseif (is_object($component)) {
                         $name = property_exists($component, 'name') ? $component->name : null;
+                        
+                        Log::debug('CalDAV: Component is object', [
+                            'url' => $url,
+                            'class' => get_class($component),
+                            'name' => $name,
+                            'object_dump' => print_r($component, true),
+                        ]);
+                        
                         if ($name === 'VEVENT') {
                             $supportsEvents = true;
                             break;
                         }
                     }
                 }
+            } else {
+                Log::debug('CalDAV: No supported-calendar-component-set property', ['url' => $url]);
             }
             
             if (!$supportsEvents) {
+                Log::info('CalDAV: Skipping calendar - does not support VEVENT', ['url' => $url]);
                 continue;
             }
+            
+            Log::info('CalDAV: Calendar supports VEVENT!', ['url' => $url]);
             
             $displayName = isset($props['{DAV:}displayname']) 
                 ? $props['{DAV:}displayname']->getValue() 
