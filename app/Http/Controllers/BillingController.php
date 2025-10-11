@@ -99,10 +99,6 @@ class BillingController extends Controller
                     'user_id' => $user->id,
                     'is_trial' => true,
                 ],
-                // Don't create invoice for trial period
-                'invoice_creation' => [
-                    'enabled' => false,
-                ],
             ]);
 
             return redirect($session->url);

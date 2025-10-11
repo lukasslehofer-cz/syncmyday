@@ -99,10 +99,6 @@ class AuthController extends Controller
                     'is_trial' => true,
                     'locale' => $user->locale,
                 ],
-                // Don't create invoice for trial period
-                'invoice_creation' => [
-                    'enabled' => false,
-                ],
             ]);
 
             return redirect($session->url);
