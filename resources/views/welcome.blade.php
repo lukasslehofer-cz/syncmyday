@@ -250,7 +250,7 @@
                 <div class="flex items-center space-x-3">
                     <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center">
                         <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M11.5,0 L23,6.5 L23,17.5 L11.5,24 L0,17.5 L0,6.5 L11.5,0 Z M11.5,2.5 L2,7.5 L2,16.5 L11.5,21.5 L21,16.5 L21,7.5 L11.5,2.5 Z"/>
+                            <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
                         </svg>
                     </div>
                     <span class="text-xl font-semibold text-gray-900">{{ __('messages.microsoft_365') }}</span>
