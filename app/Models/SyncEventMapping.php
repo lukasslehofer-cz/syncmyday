@@ -16,6 +16,7 @@ class SyncEventMapping extends Model
         'email_connection_id',
         'source_calendar_id',
         'source_event_id',
+        'original_event_uid',
         'target_connection_id',
         'target_email_connection_id',
         'target_calendar_id',

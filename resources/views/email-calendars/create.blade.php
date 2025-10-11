@@ -87,20 +87,22 @@
                 <p class="mt-2 text-sm text-gray-500">Give this calendar a descriptive name</p>
             </div>
 
-            <!-- Target Email -->
+            <!-- Source/Target Email -->
             <div>
                 <label for="target_email" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
                     <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
-                    <span>Target Email Address (optional)</span>
+                    <span>Source Email Address</span>
+                    <span class="text-red-600">*</span>
                 </label>
                 <input 
                     type="email" 
                     name="target_email" 
                     id="target_email" 
                     value="{{ old('target_email') }}" 
-                    placeholder="e.g., calendar@company.com" 
+                    placeholder="e.g., your.name@company.com" 
+                    required
                     class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-medium transition"
                 >
                 @error('target_email')
@@ -108,7 +110,7 @@
                 @enderror
                 <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p class="text-sm text-blue-800">
-                        <strong>💡 Tip:</strong> If you plan to use this email calendar as a <strong>target</strong> in sync rules, specify where iMIP invitations should be sent.
+                        <strong>💡 Important:</strong> This is the email address that will forward calendar invitations to us. Only emails from this address will be processed for security. This address also serves as the identifier for this calendar in sync rules.
                     </p>
                 </div>
             </div>

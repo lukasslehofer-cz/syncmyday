@@ -37,7 +37,7 @@ class EmailCalendarController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'target_email' => 'nullable|email|max:255',
+            'target_email' => 'required|email|max:255',
             'description' => 'nullable|string|max:1000',
             'sender_whitelist' => 'nullable|string',
         ]);
@@ -62,7 +62,7 @@ class EmailCalendarController extends Controller
                 'email_address' => $emailData['email_address'],
                 'email_token' => $emailData['email_token'],
                 'name' => $validated['name'],
-                'target_email' => $validated['target_email'] ?? null,
+                'target_email' => $validated['target_email'],
                 'description' => $validated['description'] ?? null,
                 'sender_whitelist' => $senderWhitelist,
                 'status' => 'active',

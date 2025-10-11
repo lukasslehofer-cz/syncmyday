@@ -135,7 +135,7 @@ try {
     
     foreach ($messages->take($limit) as $message) {
         try {
-            // Extract recipient addresses from multiple sources
+            // Extract recipient addresses and from address
             $toAddresses = [];
             
             // Standard To field
@@ -195,11 +195,14 @@ try {
             // Remove duplicates
             $toAddresses = array_unique($toAddresses);
             
+            // Get sender email
+            $fromEmail = strtolower($message->getFrom()[0]->mail ?? 'unknown');
+            
             $emailDomain = config('app.email_domain');
             
             // DEBUG: Log all recipients
             $output[] = "Email: {$message->getSubject()}";
-            $output[] = "  From: " . ($message->getFrom()[0]->mail ?? 'unknown');
+            $output[] = "  From: {$fromEmail}";
             $output[] = "  Recipients (To/CC): " . implode(', ', array_slice($toAddresses, 0, 5));
             $output[] = "  Looking for domain: @{$emailDomain}";
             
@@ -224,10 +227,19 @@ try {
             $connection = \App\Models\EmailCalendarConnection::findByToken($token);
             
             if (!$connection) {
-                $output[] = "Email calendar not found for token: {$token}";
+                $output[] = "  ✗ Email calendar not found for token: {$token}";
                 $message->setFlag('Seen');
                 continue;
             }
+            
+            // SECURITY: Check that the sender matches the target_email (source address)
+            if ($fromEmail !== strtolower($connection->target_email)) {
+                $output[] = "  ✗ Security check failed: sender '{$fromEmail}' does not match source email '{$connection->target_email}'";
+                $message->setFlag('Seen');
+                continue;
+            }
+            
+            $output[] = "  ✓ Security check passed: sender matches source email";
             
             // Process email
             $output[] = "Processing email for: {$connection->name}";
@@ -477,20 +489,21 @@ try {
                                         if ($existingMapping) {
                                             $existingMapping->update([
                                                 'target_event_id' => $blockerId,
-                                                'last_synced_at' => now(),
                                             ]);
                                         } else {
                                             \App\Models\SyncEventMapping::create([
                                                 'sync_rule_id' => $rule->id,
                                                 'source_type' => 'email',
+                                                'source_connection_id' => null, // Not applicable for email calendars
+                                                'source_calendar_id' => $connection->target_email, // The email address is the calendar ID
+                                                'source_event_id' => $eventData['uid'], // Original .ics UID
                                                 'email_connection_id' => $connection->id,
-                                                'original_event_uid' => $eventData['uid'],
+                                                'original_event_uid' => $eventData['uid'], // For cancellation lookups
                                                 'target_connection_id' => $target->target_connection_id,
                                                 'target_email_connection_id' => $target->target_email_connection_id,
                                                 'target_calendar_id' => $target->target_calendar_id,
                                                 'target_event_id' => $blockerId,
                                                 'sequence' => 0,
-                                                'last_synced_at' => now(),
                                             ]);
                                         }
                                         
