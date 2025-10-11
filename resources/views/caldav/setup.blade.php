@@ -31,14 +31,14 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Apple iCloud -->
-            <label class="relative cursor-pointer block">
+            <label class="relative cursor-pointer block" id="label-icloud">
                 <input 
                     type="radio" 
                     name="provider_type" 
                     value="icloud" 
                     checked
                     class="peer/icloud absolute opacity-0"
-                    onchange="toggleProviderFields()"
+                    onchange="toggleProviderFields(); updateRadioStyles();"
                 >
                 <div class="h-full bg-gray-50 peer-checked/icloud:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/icloud:border-purple-500 peer-checked/icloud:shadow-lg hover:border-purple-400 transition-all">
                     <div class="flex items-center justify-between mb-3">
@@ -50,8 +50,8 @@
                             </div>
                             <h4 class="font-bold text-gray-900">Apple iCloud</h4>
                         </div>
-                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked/icloud:border-purple-600 peer-checked/icloud:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-4 h-4 text-white opacity-0 peer-checked/icloud:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                        <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-purple-600 bg-purple-600 flex items-center justify-center transition-all shadow-sm">
+                            <svg class="radio-check w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
                                 <path d="M3 8l4 4 6-8"/>
                             </svg>
                         </div>
@@ -65,13 +65,13 @@
             </label>
             
             <!-- Other CalDAV -->
-            <label class="relative cursor-pointer block">
+            <label class="relative cursor-pointer block" id="label-other">
                 <input 
                     type="radio" 
                     name="provider_type" 
                     value="other" 
                     class="peer/other absolute opacity-0"
-                    onchange="toggleProviderFields()"
+                    onchange="toggleProviderFields(); updateRadioStyles();"
                 >
                 <div class="h-full bg-gray-50 peer-checked/other:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/other:border-purple-500 peer-checked/other:shadow-lg hover:border-purple-400 transition-all">
                     <div class="flex items-center justify-between mb-3">
@@ -83,8 +83,8 @@
                             </div>
                             <h4 class="font-bold text-gray-900">Other CalDAV</h4>
                         </div>
-                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked/other:border-purple-600 peer-checked/other:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-4 h-4 text-white opacity-0 peer-checked/other:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                        <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 flex items-center justify-center transition-all shadow-sm">
+                            <svg class="radio-check w-4 h-4 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
                                 <path d="M3 8l4 4 6-8"/>
                             </svg>
                         </div>
@@ -98,6 +98,45 @@
                 </div>
             </label>
         </div>
+        
+        <script>
+        function updateRadioStyles() {
+            // Get all radio indicators
+            const indicators = document.querySelectorAll('.radio-indicator');
+            const checks = document.querySelectorAll('.radio-check');
+            
+            // Get radio buttons
+            const icloudRadio = document.querySelector('input[value="icloud"]');
+            const otherRadio = document.querySelector('input[value="other"]');
+            
+            // Reset all to unchecked state
+            indicators.forEach(indicator => {
+                indicator.classList.remove('border-purple-600', 'bg-purple-600');
+                indicator.classList.add('border-gray-300');
+            });
+            checks.forEach(check => {
+                check.classList.add('opacity-0');
+            });
+            
+            // Apply checked state to selected radio
+            if (icloudRadio.checked) {
+                const icloudIndicator = document.querySelector('#label-icloud .radio-indicator');
+                const icloudCheck = document.querySelector('#label-icloud .radio-check');
+                icloudIndicator.classList.remove('border-gray-300');
+                icloudIndicator.classList.add('border-purple-600', 'bg-purple-600');
+                icloudCheck.classList.remove('opacity-0');
+            } else if (otherRadio.checked) {
+                const otherIndicator = document.querySelector('#label-other .radio-indicator');
+                const otherCheck = document.querySelector('#label-other .radio-check');
+                otherIndicator.classList.remove('border-gray-300');
+                otherIndicator.classList.add('border-purple-600', 'bg-purple-600');
+                otherCheck.classList.remove('opacity-0');
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', updateRadioStyles);
+        </script>
     </div>
 
     <!-- Form -->
