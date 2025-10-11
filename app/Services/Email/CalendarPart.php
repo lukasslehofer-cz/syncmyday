@@ -63,19 +63,28 @@ class CalendarPart extends AbstractPart
             $headers->remove('Content-Type');
         }
 
-        // Add proper Content-Type with method parameter
+        // Add proper Content-Type with method and component parameters
+        // component=VEVENT is required by some Outlook versions
         $headers->addParameterizedHeader(
             'Content-Type',
             'text/calendar',
             [
                 'method' => $this->method,
+                'component' => 'VEVENT',
                 'name' => 'invite.ics',
                 'charset' => 'UTF-8'
             ]
         );
 
-        // Set as inline
-        $headers->addTextHeader('Content-Disposition', 'inline; filename=invite.ics');
+        // Set as inline with method parameter
+        $headers->addTextHeader('Content-Disposition', 'inline; method=' . $this->method . '; filename=invite.ics');
+
+        // Add Exchange/Outlook specific Content-Class header
+        // This signals to Outlook that this is a calendar message
+        $headers->addTextHeader('Content-Class', 'urn:content-classes:calendarmessage');
+
+        // Force base64 encoding for better Outlook compatibility
+        $headers->addTextHeader('Content-Transfer-Encoding', 'base64');
 
         return $headers;
     }
