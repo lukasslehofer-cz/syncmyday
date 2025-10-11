@@ -7,6 +7,7 @@ Po OAuth callbacku (Google/Microsoft) se uživatel vrací na login formulář m�
 ### Příčina
 
 Když Google přesměruje zpět na tvůj callback URL, prohlížeč považuje tento request za "cross-site" a kvůli `SameSite=lax` cookie policy **neposílá session cookie**. Proto:
+
 1. Session state není dostupný
 2. State verification selže
 3. OAuth callback skončí chybou "state mismatch"
@@ -21,6 +22,7 @@ Změnit SameSite policy na 'none', což umožní posílání cookies i z cross-s
 **Implementace**:
 
 Přidej do `.env`:
+
 ```env
 SESSION_SAME_SITE=none
 SESSION_SECURE_COOKIE=true
@@ -31,6 +33,7 @@ SESSION_SECURE_COOKIE=true
 Používat Laravel Cache místo Session pro ukládání OAuth state. Cache je sdílená napříč všemi requesty a není závislá na cookies.
 
 **Výhody**:
+
 - ✅ Bezpečnější (zachová SameSite=lax)
 - ✅ Funguje pro všechny domény
 - ✅ Automatické vypršení (TTL)
@@ -43,4 +46,3 @@ Používat Laravel Cache místo Session pro ukládání OAuth state. Cache je sd
 ## Doporučení
 
 **Použij Řešení B (Cache)** - je bezpečnější a elegantní.
-

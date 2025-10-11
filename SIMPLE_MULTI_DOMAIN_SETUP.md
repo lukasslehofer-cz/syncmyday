@@ -174,7 +174,7 @@ Nyní:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**🔑 Klíč k řešení**: OAuth state je v **Cache**, ne v Session. Proto funguje i když 
+**🔑 Klíč k řešení**: OAuth state je v **Cache**, ne v Session. Proto funguje i když
 cross-site cookies jsou blokovány SameSite=lax policy během OAuth redirectu.
 
 ## 📈 Přidání další země
@@ -226,6 +226,7 @@ Když budeš chtít přidat novou zemi:
 **Už vyřešeno!** ✅ OAuth state se ukládá do Cache místo Session, takže funguje bez problémů s cross-site cookies.
 
 Pokud by se problém přesto objevil:
+
 - Zkontroluj, že cache funguje (`php artisan cache:clear`)
 - Zkontroluj logy: `tail -f storage/logs/laravel.log`
 

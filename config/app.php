@@ -17,7 +17,7 @@ return [
     'cipher' => 'AES-256-CBC',
     
     // Domain-based locale mapping
-    'domain_locales' => json_decode(env('DOMAIN_LOCALES', '{}'), true),
+    'domain_locales' => json_decode(env('DOMAIN_LOCALES') ?: '{}', true) ?: [],
 
     'providers' => [
         Illuminate\Auth\AuthServiceProvider::class,
