@@ -259,7 +259,13 @@ class MicrosoftCalendarService
      */
     public function isOurBlocker($event): bool
     {
-        $categories = $event->getCategories() ?? [];
+        // Handle both array and object responses
+        if (is_array($event)) {
+            $categories = $event['categories'] ?? [];
+        } else {
+            $categories = $event->getCategories() ?? [];
+        }
+        
         return in_array('SyncMyDay', $categories);
     }
 
