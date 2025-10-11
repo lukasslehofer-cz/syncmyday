@@ -6,8 +6,6 @@ namespace Sabre\Xml\Element;
 
 use Sabre\Xml;
 
-use function Sabre\Uri\resolve;
-
 /**
  * Uri element.
  *
@@ -28,13 +26,17 @@ class Uri implements Xml\Element
 {
     /**
      * Uri element value.
+     *
+     * @var string
      */
-    protected string $value;
+    protected $value;
 
     /**
      * Constructor.
+     *
+     * @param string $value
      */
-    public function __construct(string $value)
+    public function __construct($value)
     {
         $this->value = $value;
     }
@@ -55,11 +57,11 @@ class Uri implements Xml\Element
      *
      * If you are opening new elements, you must also close them again.
      */
-    public function xmlSerialize(Xml\Writer $writer): void
+    public function xmlSerialize(Xml\Writer $writer)
     {
         $writer->text(
-            resolve(
-                $writer->contextUri ?? '',
+            \Sabre\Uri\resolve(
+                $writer->contextUri,
                 $this->value
             )
         );
@@ -86,7 +88,7 @@ class Uri implements Xml\Element
     public static function xmlDeserialize(Xml\Reader $reader)
     {
         return new self(
-            resolve(
+            \Sabre\Uri\resolve(
                 (string) $reader->contextUri,
                 $reader->readText()
             )

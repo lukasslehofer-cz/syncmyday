@@ -30,8 +30,10 @@ class Reader extends \XMLReader
      * Or if no namespace is defined: "{}feed".
      *
      * This method returns null if we're not currently on an element.
+     *
+     * @return string|null
      */
-    public function getClark(): ?string
+    public function getClark()
     {
         if (!$this->localName) {
             return null;
@@ -50,8 +52,6 @@ class Reader extends \XMLReader
      *
      * This function will also disable the standard libxml error handler (which
      * usually just results in PHP errors), and throw exceptions instead.
-     *
-     * @return array<string, mixed>
      */
     public function parse(): array
     {
@@ -102,10 +102,6 @@ class Reader extends \XMLReader
      *
      * If the $elementMap argument is specified, the existing elementMap will
      * be overridden while parsing the tree, and restored after this process.
-     *
-     * @param array<string, mixed>|null $elementMap
-     *
-     * @return array<int,array<string, mixed>>
      */
     public function parseGetElements(?array $elementMap = null): array
     {
@@ -128,9 +124,7 @@ class Reader extends \XMLReader
      * If the $elementMap argument is specified, the existing elementMap will
      * be overridden while parsing the tree, and restored after this process.
      *
-     * @param array<string, mixed>|null $elementMap
-     *
-     * @return array<int,array<string, mixed>>|string|null
+     * @return array|string|null
      */
     public function parseInnerTree(?array $elementMap = null)
     {
@@ -199,7 +193,7 @@ class Reader extends \XMLReader
             }
         }
 
-        return $elements ?: $text;
+        return $elements ? $elements : $text;
     }
 
     /**
@@ -226,8 +220,6 @@ class Reader extends \XMLReader
      *   * name - A clark-notation XML element name.
      *   * value - The parsed value.
      *   * attributes - A key-value list of attributes.
-     *
-     * @return array <string, mixed>
      */
     public function parseCurrentElement(): array
     {
@@ -258,8 +250,6 @@ class Reader extends \XMLReader
      * If the attributes are part of the same namespace, they will simply be
      * short keys. If they are defined on a different namespace, the attribute
      * name will be returned in clark-notation.
-     *
-     * @return array<string, mixed>
      */
     public function parseAttributes(): array
     {
@@ -298,18 +288,18 @@ class Reader extends \XMLReader
         }
 
         $deserializer = $this->elementMap[$name];
-        if (is_callable($deserializer)) {
-            return $deserializer;
-        }
-
         if (is_subclass_of($deserializer, 'Sabre\\Xml\\XmlDeserializable')) {
             return [$deserializer, 'xmlDeserialize'];
         }
 
+        if (is_callable($deserializer)) {
+            return $deserializer;
+        }
+
         $type = gettype($deserializer);
-        if (is_string($deserializer)) {
+        if ('string' === $type) {
             $type .= ' ('.$deserializer.')';
-        } elseif (is_object($deserializer)) {
+        } elseif ('object' === $type) {
             $type .= ' ('.get_class($deserializer).')';
         }
         throw new \LogicException('Could not use this type as a deserializer: '.$type.' for element: '.$name);

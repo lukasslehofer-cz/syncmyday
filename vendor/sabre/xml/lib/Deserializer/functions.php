@@ -54,8 +54,6 @@ use Sabre\Xml\Reader;
  *
  * Attributes will be removed from the top-level elements. If elements with
  * the same name appear twice in the list, only the last one will be kept.
- *
- * @phpstan-return array<string, mixed>
  */
 function keyValue(Reader $reader, ?string $namespace = null): array
 {
@@ -145,8 +143,6 @@ function keyValue(Reader $reader, ?string $namespace = null): array
  * ];
  *
  * @return string[]
- *
- * @phpstan-return list<string>
  */
 function enum(Reader $reader, ?string $namespace = null): array
 {
@@ -187,19 +183,15 @@ function enum(Reader $reader, ?string $namespace = null): array
 }
 
 /**
- * The valueObject deserializer turns an XML element into a PHP object of
+ * The valueObject deserializer turns an xml element into a PHP object of
  * a specific class.
  *
  * This is primarily used by the mapValueObject function from the Service
  * class, but it can also easily be used for more specific situations.
  *
- * @template C of object
- *
- * @param class-string<C> $className
- *
- * @phpstan-return C
+ * @return object
  */
-function valueObject(Reader $reader, string $className, string $namespace): object
+function valueObject(Reader $reader, string $className, string $namespace)
 {
     $valueObject = new $className();
     if ($reader->isEmptyElement) {
@@ -259,10 +251,8 @@ function valueObject(Reader $reader, string $className, string $namespace): obje
  *
  * The repeatingElements deserializer simply returns everything as an array.
  *
- * $childElementName must either be a clark-notation element name, or if no
+ * $childElementName must either be a a clark-notation element name, or if no
  * namespace is used, the bare element name.
- *
- * @phpstan-return list<mixed>
  */
 function repeatingElements(Reader $reader, string $childElementName): array
 {
@@ -281,9 +271,9 @@ function repeatingElements(Reader $reader, string $childElementName): array
 }
 
 /**
- * This deserializer helps you to deserialize structures which contain mixed content.
+ * This deserializer helps you to deserialize structures which contain mixed content like this:.
  *
- * <p>some text <extref>and an inline tag</extref>and even more text</p>
+ * <p>some text <extref>and a inline tag</extref>and even more text</p>
  *
  * The above example will return
  *
@@ -291,15 +281,13 @@ function repeatingElements(Reader $reader, string $childElementName): array
  *     'some text',
  *     [
  *         'name'       => '{}extref',
- *         'value'      => 'and an inline tag',
+ *         'value'      => 'and a inline tag',
  *         'attributes' => []
  *     ],
  *     'and even more text'
  * ]
  *
- * In strict XML documents you won't find this kind of markup but in html this is a quite common pattern.
- *
- * @return array<mixed>
+ * In strict XML documents you wont find this kind of markup but in html this is a quite common pattern.
  */
 function mixedContent(Reader $reader): array
 {
@@ -333,14 +321,10 @@ function mixedContent(Reader $reader): array
 }
 
 /**
- * The functionCaller deserializer turns an XML element into whatever your callable returns.
+ * The functionCaller deserializer turns an xml element into whatever your callable return.
  *
  * You can use, e.g., a named constructor (factory method) to create an object using
  * this function.
- *
- * @return mixed whatever the 'func' callable returns
- *
- * @throws \InvalidArgumentException|\ReflectionException
  */
 function functionCaller(Reader $reader, callable $func, string $namespace)
 {
@@ -351,20 +335,8 @@ function functionCaller(Reader $reader, callable $func, string $namespace)
     }
 
     $funcArgs = [];
-    if (is_array($func)) {
-        $ref = new \ReflectionMethod($func[0], $func[1]);
-    } elseif (is_string($func) && false !== strpos($func, '::')) {
-        // We have a string that should refer to a method that exists, like "MyClass::someMethod"
-        // ReflectionMethod knows how to handle that as-is
-        $ref = new \ReflectionMethod($func);
-    } elseif ($func instanceof \Closure || is_string($func)) {
-        // We have an actual Closure (a real function) or a string that is the name of a function
-        // ReflectionFunction can take either of those
-        $ref = new \ReflectionFunction($func);
-    } else {
-        throw new \InvalidArgumentException(__METHOD__.' unable to use func parameter with ReflectionMethod or ReflectionFunction.');
-    }
-
+    $func = is_string($func) && false !== strpos($func, '::') ? explode('::', $func) : $func;
+    $ref = is_array($func) ? new \ReflectionMethod($func[0], $func[1]) : new \ReflectionFunction($func);
     foreach ($ref->getParameters() as $parameter) {
         $funcArgs[$parameter->getName()] = null;
     }

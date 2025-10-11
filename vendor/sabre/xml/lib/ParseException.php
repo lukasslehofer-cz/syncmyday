@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Sabre\Xml;
 
+use Exception;
+
 /**
  * This is a base exception for any exception related to parsing xml files.
  *

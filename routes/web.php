@@ -10,6 +10,7 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ConnectionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OAuth\OAuthController;
+use App\Http\Controllers\CalDavController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\SyncRulesController;
 use App\Http\Controllers\WebhookController;
@@ -88,6 +89,14 @@ Route::middleware('auth')->prefix('oauth')->group(function () {
     Route::get('/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('oauth.google.callback');
     Route::get('/microsoft', [OAuthController::class, 'redirectToMicrosoft'])->name('oauth.microsoft');
     Route::get('/microsoft/callback', [OAuthController::class, 'handleMicrosoftCallback'])->name('oauth.microsoft.callback');
+});
+
+// CalDAV
+Route::middleware('auth')->prefix('caldav')->name('caldav.')->group(function () {
+    Route::get('/setup', [CalDavController::class, 'showSetup'])->name('setup');
+    Route::post('/test', [CalDavController::class, 'testConnection'])->name('test');
+    Route::post('/complete', [CalDavController::class, 'complete'])->name('complete');
+    Route::delete('/{connection}/disconnect', [CalDavController::class, 'disconnect'])->name('disconnect');
 });
 
 // Authenticated routes

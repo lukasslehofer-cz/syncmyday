@@ -1,0 +1,622 @@
+<?php
+
+namespace App\Services\Calendar;
+
+use App\Models\CalendarConnection;
+use App\Services\Encryption\TokenEncryptionService;
+use Illuminate\Support\Facades\Log;
+use Sabre\DAV\Client;
+use Sabre\VObject;
+
+/**
+ * CalDAV Calendar Service
+ * 
+ * Provides integration with CalDAV servers (Apple iCloud, Nextcloud, etc.)
+ * Implements the same interface as Google/Microsoft services for consistency.
+ */
+class CalDavCalendarService
+{
+    private ?Client $client = null;
+    private ?CalendarConnection $connection = null;
+    private TokenEncryptionService $encryptionService;
+    
+    public function __construct(TokenEncryptionService $encryptionService)
+    {
+        $this->encryptionService = $encryptionService;
+    }
+    
+    /**
+     * Initialize service with a calendar connection
+     */
+    public function initializeWithConnection(CalendarConnection $connection): void
+    {
+        $this->connection = $connection;
+        
+        if ($connection->provider !== 'caldav') {
+            throw new \Exception('Connection is not a CalDAV connection');
+        }
+        
+        // Decrypt password
+        $password = $this->encryptionService->decrypt($connection->caldav_password_encrypted);
+        
+        // Create Sabre DAV client
+        $this->client = new Client([
+            'baseUri' => $connection->caldav_url,
+            'userName' => $connection->caldav_username,
+            'password' => $password,
+        ]);
+        
+        Log::channel('sync')->debug('CalDAV client initialized', [
+            'connection_id' => $connection->id,
+            'url' => $connection->caldav_url,
+            'username' => $connection->caldav_username,
+        ]);
+    }
+    
+    /**
+     * Test connection and discover CalDAV server
+     * Returns principal URL and available calendars
+     */
+    public static function testConnection(
+        string $url,
+        string $username,
+        string $password
+    ): array {
+        try {
+            $client = new Client([
+                'baseUri' => $url,
+                'userName' => $username,
+                'password' => $password,
+            ]);
+            
+            // Try to discover principal URL
+            $response = $client->propfind('', [
+                '{DAV:}current-user-principal',
+            ], 0);
+            
+            if (!isset($response['{DAV:}current-user-principal'])) {
+                throw new \Exception('Could not discover CalDAV principal');
+            }
+            
+            $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+            
+            // Get calendar home set
+            $response = $client->propfind($principalUrl, [
+                '{urn:ietf:params:xml:ns:caldav}calendar-home-set',
+            ], 0);
+            
+            if (!isset($response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'])) {
+                throw new \Exception('Could not discover calendar home');
+            }
+            
+            $calendarHomeUrl = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set']->getHref();
+            
+            // List calendars
+            $calendars = self::listCalendarsFromUrl($client, $calendarHomeUrl);
+            
+            return [
+                'success' => true,
+                'principal_url' => $principalUrl,
+                'calendar_home_url' => $calendarHomeUrl,
+                'calendars' => $calendars,
+            ];
+            
+        } catch (\Exception $e) {
+            Log::error('CalDAV connection test failed', [
+                'url' => $url,
+                'username' => $username,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+    
+    /**
+     * List calendars from a calendar home URL
+     */
+    private static function listCalendarsFromUrl(Client $client, string $calendarHomeUrl): array
+    {
+        $response = $client->propfind($calendarHomeUrl, [
+            '{DAV:}resourcetype',
+            '{DAV:}displayname',
+            '{http://apple.com/ns/ical/}calendar-color',
+            '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set',
+        ], 1);
+        
+        $calendars = [];
+        
+        foreach ($response as $url => $props) {
+            // Check if this is a calendar
+            if (!isset($props['{DAV:}resourcetype'])) {
+                continue;
+            }
+            
+            $resourceType = $props['{DAV:}resourcetype']->getValue();
+            $isCalendar = false;
+            
+            foreach ($resourceType as $type) {
+                if ($type['name'] === 'calendar' && $type['namespaceURI'] === 'urn:ietf:params:xml:ns:caldav') {
+                    $isCalendar = true;
+                    break;
+                }
+            }
+            
+            if (!$isCalendar) {
+                continue;
+            }
+            
+            // Check if calendar supports VEVENT
+            $supportsEvents = false;
+            if (isset($props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set'])) {
+                $components = $props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set']->getValue();
+                foreach ($components as $component) {
+                    if (isset($component['name']) && $component['name'] === 'VEVENT') {
+                        $supportsEvents = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!$supportsEvents) {
+                continue;
+            }
+            
+            $displayName = isset($props['{DAV:}displayname']) 
+                ? $props['{DAV:}displayname']->getValue() 
+                : basename($url);
+            
+            $color = isset($props['{http://apple.com/ns/ical/}calendar-color']) 
+                ? $props['{http://apple.com/ns/ical/}calendar-color']->getValue() 
+                : null;
+            
+            $calendars[] = [
+                'id' => $url,
+                'name' => $displayName,
+                'color' => $color,
+            ];
+        }
+        
+        return $calendars;
+    }
+    
+    /**
+     * Get list of available calendars for this connection
+     */
+    public function getCalendars(): array
+    {
+        if (!$this->client || !$this->connection) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        $calendarHomeUrl = $this->connection->caldav_principal_url;
+        
+        if (!$calendarHomeUrl) {
+            throw new \Exception('Calendar home URL not set');
+        }
+        
+        return self::listCalendarsFromUrl($this->client, $calendarHomeUrl);
+    }
+    
+    /**
+     * Get account information
+     */
+    public function getAccountInfo(): array
+    {
+        if (!$this->connection) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        return [
+            'id' => $this->connection->caldav_username,
+            'email' => $this->connection->account_email ?? $this->connection->caldav_username,
+        ];
+    }
+    
+    /**
+     * Create a busy blocker event in CalDAV calendar
+     */
+    public function createBlocker(
+        string $calendarId,
+        string $title,
+        \DateTime $start,
+        \DateTime $end,
+        string $transactionId
+    ): string {
+        if (!$this->client) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        // Generate unique event ID
+        $eventUid = \Str::uuid()->toString();
+        $eventUrl = rtrim($calendarId, '/') . '/' . $eventUid . '.ics';
+        
+        // Create VEVENT using Sabre VObject
+        $vcalendar = new VObject\Component\VCalendar();
+        $vevent = $vcalendar->add('VEVENT', [
+            'SUMMARY' => $title,
+            'DTSTART' => $start,
+            'DTEND' => $end,
+            'UID' => $eventUid,
+            'DTSTAMP' => new \DateTime(),
+            'STATUS' => 'CONFIRMED',
+            'TRANSP' => 'OPAQUE', // Shows as busy
+            'CLASS' => 'PRIVATE',
+            'DESCRIPTION' => 'Auto-synced by SyncMyDay',
+        ]);
+        
+        // Add custom property to mark as our blocker
+        $vevent->add('X-SYNCMYDAY-BLOCKER', 'true');
+        $vevent->add('X-SYNCMYDAY-TRANSACTION-ID', $transactionId);
+        
+        // Convert to iCalendar format
+        $icsContent = $vcalendar->serialize();
+        
+        // PUT to CalDAV server
+        $this->client->request('PUT', $eventUrl, $icsContent, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+        ]);
+        
+        Log::channel('sync')->info('CalDAV blocker created', [
+            'calendar_id' => $calendarId,
+            'event_uid' => $eventUid,
+            'event_url' => $eventUrl,
+            'transaction_id' => $transactionId,
+        ]);
+        
+        return $eventUid;
+    }
+    
+    /**
+     * Update a blocker event
+     */
+    public function updateBlocker(
+        string $calendarId,
+        string $eventId,
+        string $title,
+        \DateTime $start,
+        \DateTime $end,
+        string $transactionId
+    ): void {
+        if (!$this->client) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        $eventUrl = rtrim($calendarId, '/') . '/' . $eventId . '.ics';
+        
+        // Get existing event
+        $response = $this->client->request('GET', $eventUrl);
+        $vcalendar = VObject\Reader::read($response['body']);
+        $vevent = $vcalendar->VEVENT;
+        
+        // Update properties
+        $vevent->SUMMARY = $title;
+        $vevent->DTSTART = $start;
+        $vevent->DTEND = $end;
+        $vevent->{'LAST-MODIFIED'} = new \DateTime();
+        
+        // Increment sequence
+        if (isset($vevent->SEQUENCE)) {
+            $vevent->SEQUENCE = $vevent->SEQUENCE->getValue() + 1;
+        } else {
+            $vevent->add('SEQUENCE', 1);
+        }
+        
+        // Convert to iCalendar format
+        $icsContent = $vcalendar->serialize();
+        
+        // PUT updated event
+        $this->client->request('PUT', $eventUrl, $icsContent, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+        ]);
+        
+        Log::channel('sync')->info('CalDAV blocker updated', [
+            'calendar_id' => $calendarId,
+            'event_id' => $eventId,
+            'transaction_id' => $transactionId,
+        ]);
+    }
+    
+    /**
+     * Delete a blocker event
+     */
+    public function deleteBlocker(string $calendarId, string $eventId): void
+    {
+        if (!$this->client) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        $eventUrl = rtrim($calendarId, '/') . '/' . $eventId . '.ics';
+        
+        // DELETE from CalDAV server
+        $this->client->request('DELETE', $eventUrl);
+        
+        Log::channel('sync')->info('CalDAV blocker deleted', [
+            'calendar_id' => $calendarId,
+            'event_id' => $eventId,
+        ]);
+    }
+    
+    /**
+     * Check if event is a SyncMyDay blocker
+     */
+    public function isOurBlocker($event): bool
+    {
+        if (is_array($event)) {
+            return isset($event['x-syncmyday-blocker']) || isset($event['X-SYNCMYDAY-BLOCKER']);
+        }
+        
+        // VObject event
+        if (isset($event->{'X-SYNCMYDAY-BLOCKER'})) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Get events changed since last sync (polling-based)
+     * Returns events with their metadata
+     */
+    public function getChangedEvents(string $calendarId, ?string $syncToken = null): array
+    {
+        if (!$this->client) {
+            throw new \Exception('Service not initialized');
+        }
+        
+        // For initial sync or if no sync token, get all events in time range
+        if (!$syncToken) {
+            return $this->getEventsInRange($calendarId);
+        }
+        
+        // Use sync-collection for incremental sync (if supported)
+        try {
+            return $this->getSyncCollection($calendarId, $syncToken);
+        } catch (\Exception $e) {
+            Log::channel('sync')->warning('sync-collection not supported, falling back to full sync', [
+                'calendar_id' => $calendarId,
+                'error' => $e->getMessage(),
+            ]);
+            
+            return $this->getEventsInRange($calendarId);
+        }
+    }
+    
+    /**
+     * Get all events in a time range (for initial sync)
+     */
+    private function getEventsInRange(string $calendarId): array
+    {
+        $pastDays = config('sync.time_range.past_days', 7);
+        $futureMonths = config('sync.time_range.future_months', 6);
+        
+        $start = now()->subDays($pastDays)->format('Ymd\THis\Z');
+        $end = now()->addMonths($futureMonths)->format('Ymd\THis\Z');
+        
+        // CalDAV calendar-query
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8" ?>
+<C:calendar-query xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
+    <D:prop>
+        <D:getetag/>
+        <C:calendar-data/>
+    </D:prop>
+    <C:filter>
+        <C:comp-filter name="VCALENDAR">
+            <C:comp-filter name="VEVENT">
+                <C:time-range start="{$start}" end="{$end}"/>
+            </C:comp-filter>
+        </C:comp-filter>
+    </C:filter>
+</C:calendar-query>
+XML;
+        
+        $response = $this->client->request('REPORT', $calendarId, $xml, [
+            'Content-Type' => 'application/xml; charset=utf-8',
+            'Depth' => '1',
+        ]);
+        
+        $events = $this->parseMultistatusResponse($response['body']);
+        
+        // Get new sync token (ctag)
+        $newSyncToken = $this->getCalendarCtag($calendarId);
+        
+        return [
+            'events' => $events,
+            'sync_token' => $newSyncToken,
+        ];
+    }
+    
+    /**
+     * Get calendar ctag (change tag) for sync tracking
+     */
+    private function getCalendarCtag(string $calendarId): string
+    {
+        $response = $this->client->propfind($calendarId, [
+            '{http://calendarserver.org/ns/}getctag',
+        ], 0);
+        
+        if (isset($response['{http://calendarserver.org/ns/}getctag'])) {
+            return $response['{http://calendarserver.org/ns/}getctag']->getValue();
+        }
+        
+        // Fallback to current timestamp
+        return (string) time();
+    }
+    
+    /**
+     * Get sync-collection (incremental changes)
+     */
+    private function getSyncCollection(string $calendarId, string $syncToken): array
+    {
+        $xml = <<<XML
+<?xml version="1.0" encoding="utf-8" ?>
+<D:sync-collection xmlns:D="DAV:">
+    <D:sync-token>{$syncToken}</D:sync-token>
+    <D:sync-level>1</D:sync-level>
+    <D:prop>
+        <D:getetag/>
+    </D:prop>
+</D:sync-collection>
+XML;
+        
+        $response = $this->client->request('REPORT', $calendarId, $xml, [
+            'Content-Type' => 'application/xml; charset=utf-8',
+        ]);
+        
+        // Parse response and fetch full calendar data for changed events
+        $changedUrls = $this->parseSyncCollectionResponse($response['body']);
+        $events = [];
+        
+        foreach ($changedUrls as $eventUrl) {
+            try {
+                $eventResponse = $this->client->request('GET', $eventUrl);
+                $vcalendar = VObject\Reader::read($eventResponse['body']);
+                
+                if (isset($vcalendar->VEVENT)) {
+                    $events[] = $this->parseVEvent($vcalendar->VEVENT, $eventUrl);
+                }
+            } catch (\Exception $e) {
+                Log::channel('sync')->warning('Failed to fetch changed event', [
+                    'url' => $eventUrl,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
+        // Get new sync token
+        $newSyncToken = $this->extractSyncToken($response['body']);
+        
+        return [
+            'events' => $events,
+            'sync_token' => $newSyncToken ?? $this->getCalendarCtag($calendarId),
+        ];
+    }
+    
+    /**
+     * Parse multistatus response from calendar-query
+     */
+    private function parseMultistatusResponse(string $xml): array
+    {
+        $reader = new \Sabre\Xml\Reader();
+        $reader->xml($xml);
+        $result = $reader->parse();
+        
+        $events = [];
+        
+        // Find all response elements
+        if (isset($result['value']) && is_array($result['value'])) {
+            foreach ($result['value'] as $response) {
+                if (!isset($response['value'])) {
+                    continue;
+                }
+                
+                $href = null;
+                $calendarData = null;
+                
+                foreach ($response['value'] as $prop) {
+                    if ($prop['name'] === '{DAV:}href') {
+                        $href = $prop['value'];
+                    } elseif (isset($prop['value'][0]['value'])) {
+                        foreach ($prop['value'] as $innerProp) {
+                            if ($innerProp['name'] === '{urn:ietf:params:xml:ns:caldav}calendar-data') {
+                                $calendarData = $innerProp['value'];
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if ($calendarData) {
+                    try {
+                        $vcalendar = VObject\Reader::read($calendarData);
+                        
+                        if (isset($vcalendar->VEVENT)) {
+                            $events[] = $this->parseVEvent($vcalendar->VEVENT, $href);
+                        }
+                    } catch (\Exception $e) {
+                        Log::channel('sync')->warning('Failed to parse calendar data', [
+                            'href' => $href,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+            }
+        }
+        
+        return $events;
+    }
+    
+    /**
+     * Parse VEVENT component to array
+     */
+    private function parseVEvent($vevent, ?string $href = null): array
+    {
+        $uid = (string) $vevent->UID;
+        $summary = isset($vevent->SUMMARY) ? (string) $vevent->SUMMARY : 'Untitled';
+        $description = isset($vevent->DESCRIPTION) ? (string) $vevent->DESCRIPTION : null;
+        $location = isset($vevent->LOCATION) ? (string) $vevent->LOCATION : null;
+        $status = isset($vevent->STATUS) ? strtolower((string) $vevent->STATUS) : 'confirmed';
+        
+        // Parse dates
+        $dtstart = $vevent->DTSTART->getDateTime();
+        $dtend = isset($vevent->DTEND) ? $vevent->DTEND->getDateTime() : clone $dtstart;
+        
+        // Check if all-day
+        $isAllDay = !$vevent->DTSTART->hasTime();
+        
+        // Get transparency (TRANSP)
+        $transp = isset($vevent->TRANSP) ? strtolower((string) $vevent->TRANSP) : 'opaque';
+        $showAs = $transp === 'transparent' ? 'free' : 'busy';
+        
+        // Check for X-SYNCMYDAY-BLOCKER
+        $isSyncMyDayBlocker = isset($vevent->{'X-SYNCMYDAY-BLOCKER'});
+        
+        return [
+            'id' => $uid,
+            'uid' => $uid,
+            'href' => $href,
+            'summary' => $summary,
+            'description' => $description,
+            'location' => $location,
+            'start' => $dtstart,
+            'end' => $dtend,
+            'isAllDay' => $isAllDay,
+            'status' => $status,
+            'showAs' => $showAs,
+            'busyStatus' => $showAs,
+            'x-syncmyday-blocker' => $isSyncMyDayBlocker,
+        ];
+    }
+    
+    /**
+     * Parse sync-collection response
+     */
+    private function parseSyncCollectionResponse(string $xml): array
+    {
+        // Simple parsing - extract hrefs of changed resources
+        $urls = [];
+        
+        if (preg_match_all('/<D:href>([^<]+)<\/D:href>/', $xml, $matches)) {
+            $urls = $matches[1];
+        }
+        
+        return $urls;
+    }
+    
+    /**
+     * Extract sync-token from response
+     */
+    private function extractSyncToken(string $xml): ?string
+    {
+        if (preg_match('/<D:sync-token>([^<]+)<\/D:sync-token>/', $xml, $matches)) {
+            return $matches[1];
+        }
+        
+        return null;
+    }
+}
+

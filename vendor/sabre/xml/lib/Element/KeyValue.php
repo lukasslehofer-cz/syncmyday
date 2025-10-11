@@ -40,14 +40,12 @@ class KeyValue implements Xml\Element
     /**
      * Value to serialize.
      *
-     * @var array<string, mixed>
+     * @var array
      */
-    protected array $value;
+    protected $value;
 
     /**
      * Constructor.
-     *
-     * @param array<string, mixed> $value
      */
     public function __construct(array $value = [])
     {
@@ -70,7 +68,7 @@ class KeyValue implements Xml\Element
      *
      * If you are opening new elements, you must also close them again.
      */
-    public function xmlSerialize(Xml\Writer $writer): void
+    public function xmlSerialize(Xml\Writer $writer)
     {
         $writer->write($this->value);
     }
@@ -92,8 +90,6 @@ class KeyValue implements Xml\Element
      *
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
-     *
-     * @return array<string, mixed>
      */
     public static function xmlDeserialize(Xml\Reader $reader)
     {

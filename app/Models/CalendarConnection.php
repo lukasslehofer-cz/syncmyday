@@ -15,6 +15,7 @@ class CalendarConnection extends Model
         'provider',
         'provider_account_id',
         'provider_email',
+        'account_email',
         'access_token_encrypted',
         'refresh_token_encrypted',
         'token_expires_at',
@@ -22,6 +23,11 @@ class CalendarConnection extends Model
         'status',
         'last_error',
         'last_sync_at',
+        'caldav_url',
+        'caldav_username',
+        'caldav_password_encrypted',
+        'caldav_principal_url',
+        'sync_token',
     ];
 
     protected $casts = [
@@ -33,6 +39,7 @@ class CalendarConnection extends Model
     protected $hidden = [
         'access_token_encrypted',
         'refresh_token_encrypted',
+        'caldav_password_encrypted',
     ];
 
     /**

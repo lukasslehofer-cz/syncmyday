@@ -40,14 +40,12 @@ class Elements implements Xml\Element
     /**
      * Value to serialize.
      *
-     * @var array<int, mixed>
+     * @var array
      */
-    protected array $value;
+    protected $value;
 
     /**
      * Constructor.
-     *
-     * @param array<int, mixed> $value
      */
     public function __construct(array $value = [])
     {
@@ -70,7 +68,7 @@ class Elements implements Xml\Element
      *
      * If you are opening new elements, you must also close them again.
      */
-    public function xmlSerialize(Xml\Writer $writer): void
+    public function xmlSerialize(Xml\Writer $writer)
     {
         Serializer\enum($writer, $this->value);
     }
@@ -92,8 +90,6 @@ class Elements implements Xml\Element
      *
      * $reader->parseSubTree() will parse the entire sub-tree, and advance to
      * the next element.
-     *
-     * @return string[]
      */
     public static function xmlDeserialize(Xml\Reader $reader)
     {
