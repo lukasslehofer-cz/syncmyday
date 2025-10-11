@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PricingHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
@@ -25,6 +26,8 @@ class BillingController extends Controller
         return view('billing.index', [
             'user' => $user,
             'proPriceId' => config('services.stripe.pro_price_id'),
+            'currency' => PricingHelper::getCurrency(),
+            'formattedPrice' => PricingHelper::formatPrice(),
         ]);
     }
 
@@ -58,12 +61,15 @@ class BillingController extends Controller
             // Calculate trial end timestamp
             $trialEnd = $user->subscription_ends_at->timestamp;
 
+            // Get correct Price ID based on user's locale
+            $priceId = PricingHelper::getPriceId($user->locale);
+
             // Create Checkout Session with trial
             $session = Session::create([
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
-                    'price' => config('services.stripe.pro_price_id'),
+                    'price' => $priceId,
                     'quantity' => 1,
                 ]],
                 'mode' => 'subscription',
@@ -115,12 +121,15 @@ class BillingController extends Controller
                 $user->update(['stripe_customer_id' => $customer->id]);
             }
 
+            // Get correct Price ID based on user's locale
+            $priceId = PricingHelper::getPriceId($user->locale);
+
             // Create Checkout Session (no trial)
             $session = Session::create([
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
-                    'price' => config('services.stripe.pro_price_id'),
+                    'price' => $priceId,
                     'quantity' => 1,
                 ]],
                 'mode' => 'subscription',
