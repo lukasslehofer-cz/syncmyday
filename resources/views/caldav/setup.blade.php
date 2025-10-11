@@ -67,98 +67,257 @@
         @csrf
 
         <div class="p-6 lg:p-8 space-y-6">
-            <!-- CalDAV URL -->
+            <!-- Provider Type Selection -->
             <div>
-                <label for="url" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-4">
                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
-                    <span>CalDAV Server URL <span class="text-red-500">*</span></span>
+                    <span>Choose Your Calendar Provider</span>
                 </label>
-                <input 
-                    type="url" 
-                    name="url" 
-                    id="url" 
-                    value="{{ old('url') }}" 
-                    required
-                    placeholder="https://caldav.icloud.com"
-                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition font-mono text-sm"
-                >
-                @error('url')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Apple iCloud -->
+                    <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition">
+                        <input 
+                            type="radio" 
+                            name="provider_type" 
+                            value="icloud" 
+                            checked
+                            class="w-5 h-5 text-purple-600 border-2 border-gray-300 focus:ring-purple-500"
+                            onchange="toggleProviderFields()"
+                        >
+                        <div class="ml-4 flex-1">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
+                                    <span class="text-white font-bold text-xs"></span>
+                                </div>
+                                <span class="font-bold text-gray-900">Apple iCloud</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Easy setup - we'll find everything automatically</p>
+                        </div>
+                    </label>
+                    
+                    <!-- Other CalDAV -->
+                    <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition">
+                        <input 
+                            type="radio" 
+                            name="provider_type" 
+                            value="other" 
+                            class="w-5 h-5 text-purple-600 border-2 border-gray-300 focus:ring-purple-500"
+                            onchange="toggleProviderFields()"
+                        >
+                        <div class="ml-4 flex-1">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                                    <span class="text-white font-bold text-xs">N</span>
+                                </div>
+                                <span class="font-bold text-gray-900">Other CalDAV</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">Nextcloud, etc. - manual configuration</p>
+                        </div>
+                    </label>
+                </div>
             </div>
 
-            <!-- Username -->
-            <div>
-                <label for="username" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                    <span>Username <span class="text-red-500">*</span></span>
-                </label>
-                <input 
-                    type="text" 
-                    name="username" 
-                    id="username" 
-                    value="{{ old('username') }}" 
-                    required
-                    placeholder="your.email@icloud.com"
-                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
-                >
-                @error('username')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+            <!-- Apple iCloud Fields -->
+            <div id="icloud-fields">
+                <!-- Apple ID Wizard -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
+                    <h4 class="font-bold text-gray-900 mb-4 flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        How to get App-Specific Password
+                    </h4>
+                    <ol class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mr-3">1</span>
+                            <span class="text-gray-700">Go to <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-blue-600 hover:text-blue-700 underline font-medium">appleid.apple.com</a> and sign in</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mr-3">2</span>
+                            <span class="text-gray-700">Enable <strong>Two-Factor Authentication</strong> (if not already enabled)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mr-3">3</span>
+                            <span class="text-gray-700">In <strong>Sign-In and Security</strong> section, click <strong>App-Specific Passwords</strong></span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mr-3">4</span>
+                            <span class="text-gray-700">Click <strong>+</strong> and create a password with name <code class="bg-white px-2 py-1 rounded border border-blue-200 font-mono text-xs">SyncMyDay</code></span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mr-3">5</span>
+                            <span class="text-gray-700">Copy the generated password and paste it below</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Apple ID -->
+                <div class="mb-6">
+                    <label for="apple_id" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Your Apple ID <span class="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="email" 
+                        name="apple_id" 
+                        id="apple_id" 
+                        value="{{ old('apple_id') }}" 
+                        placeholder="your.email@icloud.com"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
+                    >
+                    @error('apple_id')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- App-Specific Password -->
+                <div>
+                    <label for="app_password" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>App-Specific Password <span class="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="app_password" 
+                        id="app_password" 
+                        placeholder="xxxx-xxxx-xxxx-xxxx"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition font-mono"
+                    >
+                    <p class="mt-2 text-sm text-gray-600">
+                        The 16-character password you generated (with dashes)
+                    </p>
+                    @error('app_password')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
-            <!-- Password -->
-            <div>
-                <label for="password" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                    <span>Password <span class="text-red-500">*</span></span>
-                </label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    id="password" 
-                    required
-                    placeholder="••••••••••••••••"
-                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
-                >
-                <p class="mt-2 text-sm text-gray-600">
-                    For Apple iCloud, use an <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-purple-600 hover:text-purple-700 underline">app-specific password</a>
-                </p>
-                @error('password')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+            <!-- Other CalDAV Fields (hidden by default) -->
+            <div id="other-fields" style="display: none;">
+                <!-- CalDAV URL -->
+                <div class="mb-6">
+                    <label for="url" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                        </svg>
+                        <span>CalDAV Server URL <span class="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="url" 
+                        name="url" 
+                        id="url" 
+                        value="{{ old('url') }}" 
+                        placeholder="https://your.nextcloud.com/remote.php/dav"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition font-mono text-sm"
+                    >
+                    @error('url')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            <!-- Email (optional) -->
-            <div>
-                <label for="email" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Email Address <span class="text-gray-500">(Optional)</span></span>
-                </label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    id="email" 
-                    value="{{ old('email') }}" 
-                    placeholder="your.email@example.com"
-                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
-                >
-                <p class="mt-2 text-sm text-gray-600">
-                    If different from username, provide your email for display purposes
-                </p>
-                @error('email')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                <!-- Username -->
+                <div class="mb-6">
+                    <label for="username" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        <span>Username <span class="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="username" 
+                        id="username" 
+                        value="{{ old('username') }}" 
+                        placeholder="your-username"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
+                    >
+                    @error('username')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Password -->
+                <div class="mb-6">
+                    <label for="password" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                        <span>Password <span class="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" 
+                        placeholder="••••••••••••••••"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
+                    >
+                    @error('password')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Email (optional) -->
+                <div>
+                    <label for="email" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Email Address <span class="text-gray-500">(Optional)</span></span>
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        value="{{ old('email') }}" 
+                        placeholder="your.email@example.com"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition"
+                    >
+                    <p class="mt-2 text-sm text-gray-600">
+                        If different from username, provide your email for display purposes
+                    </p>
+                    @error('email')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
         </div>
+
+        <script>
+        function toggleProviderFields() {
+            const providerType = document.querySelector('input[name="provider_type"]:checked').value;
+            const icloudFields = document.getElementById('icloud-fields');
+            const otherFields = document.getElementById('other-fields');
+            
+            if (providerType === 'icloud') {
+                icloudFields.style.display = 'block';
+                otherFields.style.display = 'none';
+                // Set required for iCloud fields
+                document.getElementById('apple_id').required = true;
+                document.getElementById('app_password').required = true;
+                // Remove required from other fields
+                document.getElementById('url').required = false;
+                document.getElementById('username').required = false;
+                document.getElementById('password').required = false;
+            } else {
+                icloudFields.style.display = 'none';
+                otherFields.style.display = 'block';
+                // Remove required from iCloud fields
+                document.getElementById('apple_id').required = false;
+                document.getElementById('app_password').required = false;
+                // Set required for other fields
+                document.getElementById('url').required = true;
+                document.getElementById('username').required = true;
+                document.getElementById('password').required = true;
+            }
+        }
+        </script>
 
         <!-- Footer -->
         <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 lg:px-8 flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">

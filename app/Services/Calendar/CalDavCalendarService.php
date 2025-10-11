@@ -54,6 +54,104 @@ class CalDavCalendarService
     }
     
     /**
+     * Automatic discovery for Apple iCloud
+     * User only provides Apple ID + app-specific password
+     */
+    public static function discoverICloud(
+        string $appleId,
+        string $appPassword
+    ): array {
+        try {
+            // iCloud CalDAV base URL
+            $baseUrl = 'https://caldav.icloud.com';
+            
+            $client = new Client([
+                'baseUri' => $baseUrl,
+                'userName' => $appleId,
+                'password' => $appPassword,
+            ]);
+            
+            Log::info('iCloud discovery: Step 1 - Finding principal', [
+                'apple_id' => $appleId,
+            ]);
+            
+            // Try .well-known/caldav first for discovery
+            try {
+                $response = $client->propfind('/.well-known/caldav', [
+                    '{DAV:}current-user-principal',
+                ], 0);
+                
+                if (isset($response['{DAV:}current-user-principal'])) {
+                    $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+                    Log::info('iCloud discovery: Found principal via .well-known', [
+                        'principal_url' => $principalUrl,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // If .well-known fails, try root
+                $response = $client->propfind('/', [
+                    '{DAV:}current-user-principal',
+                ], 0);
+                
+                if (!isset($response['{DAV:}current-user-principal'])) {
+                    throw new \Exception('Could not discover CalDAV principal for iCloud');
+                }
+                
+                $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+                Log::info('iCloud discovery: Found principal via root', [
+                    'principal_url' => $principalUrl,
+                ]);
+            }
+            
+            // Get calendar home set
+            Log::info('iCloud discovery: Step 2 - Finding calendar home', [
+                'principal_url' => $principalUrl,
+            ]);
+            
+            $response = $client->propfind($principalUrl, [
+                '{urn:ietf:params:xml:ns:caldav}calendar-home-set',
+            ], 0);
+            
+            if (!isset($response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'])) {
+                throw new \Exception('Could not discover calendar home for iCloud');
+            }
+            
+            $calendarHomeUrl = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set']->getHref();
+            
+            Log::info('iCloud discovery: Step 3 - Listing calendars', [
+                'calendar_home_url' => $calendarHomeUrl,
+            ]);
+            
+            // List calendars
+            $calendars = self::listCalendarsFromUrl($client, $calendarHomeUrl);
+            
+            Log::info('iCloud discovery: Success!', [
+                'calendars_found' => count($calendars),
+            ]);
+            
+            return [
+                'success' => true,
+                'url' => $baseUrl,
+                'principal_url' => $principalUrl,
+                'calendar_home_url' => $calendarHomeUrl,
+                'calendars' => $calendars,
+            ];
+            
+        } catch (\Exception $e) {
+            Log::error('iCloud discovery failed', [
+                'apple_id' => $appleId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+    
+    /**
      * Test connection and discover CalDAV server
      * Returns principal URL and available calendars
      */
