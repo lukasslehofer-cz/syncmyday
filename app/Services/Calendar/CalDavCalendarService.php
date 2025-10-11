@@ -210,7 +210,7 @@ class CalDavCalendarService
                 throw new \Exception('Could not discover CalDAV principal');
             }
             
-            $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+            $principalUrl = self::extractUrlFromPropfindResponse($response['{DAV:}current-user-principal']);
             
             // Get calendar home set
             $response = $client->propfind($principalUrl, [
@@ -221,7 +221,7 @@ class CalDavCalendarService
                 throw new \Exception('Could not discover calendar home');
             }
             
-            $calendarHomeUrl = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set']->getHref();
+            $calendarHomeUrl = self::extractUrlFromPropfindResponse($response['{urn:ietf:params:xml:ns:caldav}calendar-home-set']);
             
             // List calendars
             $calendars = self::listCalendarsFromUrl($client, $calendarHomeUrl);
@@ -270,10 +270,32 @@ class CalDavCalendarService
             $resourceType = $props['{DAV:}resourcetype']->getValue();
             $isCalendar = false;
             
+            // Normalize resourceType to array
+            if (!is_array($resourceType)) {
+                Log::debug('CalDAV: resourceType is not array', [
+                    'type' => gettype($resourceType),
+                    'value' => $resourceType,
+                ]);
+                $resourceType = [];
+            }
+            
             foreach ($resourceType as $type) {
-                if ($type['name'] === 'calendar' && $type['namespaceURI'] === 'urn:ietf:params:xml:ns:caldav') {
-                    $isCalendar = true;
-                    break;
+                // Handle both array and object types
+                if (is_array($type)) {
+                    if (isset($type['name']) && $type['name'] === 'calendar' && 
+                        isset($type['namespaceURI']) && $type['namespaceURI'] === 'urn:ietf:params:xml:ns:caldav') {
+                        $isCalendar = true;
+                        break;
+                    }
+                } elseif (is_object($type)) {
+                    // For Sabre XML objects
+                    $name = property_exists($type, 'name') ? $type->name : null;
+                    $namespace = property_exists($type, 'namespaceURI') ? $type->namespaceURI : null;
+                    
+                    if ($name === 'calendar' && $namespace === 'urn:ietf:params:xml:ns:caldav') {
+                        $isCalendar = true;
+                        break;
+                    }
                 }
             }
             
@@ -285,10 +307,29 @@ class CalDavCalendarService
             $supportsEvents = false;
             if (isset($props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set'])) {
                 $components = $props['{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set']->getValue();
+                
+                // Normalize components to array
+                if (!is_array($components)) {
+                    Log::debug('CalDAV: components is not array', [
+                        'type' => gettype($components),
+                        'value' => $components,
+                    ]);
+                    $components = [];
+                }
+                
                 foreach ($components as $component) {
-                    if (isset($component['name']) && $component['name'] === 'VEVENT') {
-                        $supportsEvents = true;
-                        break;
+                    // Handle both array and object types
+                    if (is_array($component)) {
+                        if (isset($component['name']) && $component['name'] === 'VEVENT') {
+                            $supportsEvents = true;
+                            break;
+                        }
+                    } elseif (is_object($component)) {
+                        $name = property_exists($component, 'name') ? $component->name : null;
+                        if ($name === 'VEVENT') {
+                            $supportsEvents = true;
+                            break;
+                        }
                     }
                 }
             }
