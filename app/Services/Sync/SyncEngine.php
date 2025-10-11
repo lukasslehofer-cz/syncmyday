@@ -627,11 +627,10 @@ class SyncEngine
                         'sequence' => $sequence + 1,
                     ]);
                     
-                    Log::channel('sync')->info('Email blocker updated due to time change', [
+                    Log::channel('sync')->info('Email blocker updated', [
                         'event_id' => $sourceEventId,
                         'target_email' => $targetEmailConnection->target_email,
-                        'old_start' => $mappingStart?->format('Y-m-d H:i:s'),
-                        'new_start' => $start->format('Y-m-d H:i:s'),
+                        'event_uid' => $eventUid,
                     ]);
                 } else {
                     // Create new mapping
@@ -646,6 +645,12 @@ class SyncEngine
                         'event_start' => $startToStore,
                         'event_end' => $endToStore,
                         'sequence' => 1,
+                    ]);
+                    
+                    Log::channel('sync')->info('Email blocker created', [
+                        'event_id' => $sourceEventId,
+                        'target_email' => $targetEmailConnection->target_email,
+                        'event_uid' => $eventUid,
                     ]);
                 }
 
@@ -708,6 +713,12 @@ class SyncEngine
                         $end,
                         $mapping->sequence ?? 0
                     );
+                    
+                    Log::channel('sync')->info('Email blocker deleted', [
+                        'event_id' => $sourceEventId,
+                        'target_email' => $targetEmailConnection->target_email,
+                        'event_uid' => $mapping->target_event_id,
+                    ]);
                     
                     SyncLog::logSync(
                         $rule->user_id,
