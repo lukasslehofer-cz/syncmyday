@@ -742,7 +742,7 @@ class CalDavCalendarService
 </C:calendar-query>
 XML;
         
-        Log::channel('sync')->debug('CalDAV: Requesting events', [
+        Log::channel('sync')->info('CalDAV: Requesting events', [
             'calendar_id' => $calendarId,
             'time_range' => "{$start} to {$end}",
         ]);
@@ -752,7 +752,7 @@ XML;
             'Depth' => '1',
         ]);
         
-        Log::channel('sync')->debug('CalDAV: Response received', [
+        Log::channel('sync')->info('CalDAV: Response received', [
             'calendar_id' => $calendarId,
             'status_code' => $response['statusCode'] ?? 'unknown',
             'body_length' => strlen($response['body'] ?? ''),
@@ -853,7 +853,7 @@ XML;
      */
     private function parseMultistatusResponse(string $xml): array
     {
-        Log::channel('sync')->debug('CalDAV: Parsing multistatus response', [
+        Log::channel('sync')->info('CalDAV: Parsing multistatus response', [
             'xml_length' => strlen($xml),
         ]);
         
@@ -861,7 +861,7 @@ XML;
         $reader->xml($xml);
         $result = $reader->parse();
         
-        Log::channel('sync')->debug('CalDAV: Parsed XML structure', [
+        Log::channel('sync')->info('CalDAV: Parsed XML structure', [
             'has_value' => isset($result['value']),
             'value_type' => isset($result['value']) ? gettype($result['value']) : 'N/A',
             'value_count' => isset($result['value']) && is_array($result['value']) ? count($result['value']) : 0,
@@ -872,10 +872,6 @@ XML;
         // Find all response elements
         if (isset($result['value']) && is_array($result['value'])) {
             foreach ($result['value'] as $index => $response) {
-                Log::channel('sync')->debug('CalDAV: Processing response element', [
-                    'index' => $index,
-                    'has_value' => isset($response['value']),
-                ]);
                 if (!isset($response['value'])) {
                     continue;
                 }
@@ -896,7 +892,7 @@ XML;
                     }
                 }
                 
-                Log::channel('sync')->debug('CalDAV: Extracted data from response', [
+                Log::channel('sync')->info('CalDAV: Extracted data from response', [
                     'href' => $href,
                     'has_calendar_data' => !empty($calendarData),
                     'calendar_data_length' => strlen($calendarData ?? ''),
@@ -907,12 +903,12 @@ XML;
                         $vcalendar = VObject\Reader::read($calendarData);
                         
                         if (isset($vcalendar->VEVENT)) {
-                            Log::channel('sync')->debug('CalDAV: Found VEVENT in calendar data', [
+                            Log::channel('sync')->info('CalDAV: Found VEVENT in calendar data', [
                                 'href' => $href,
                             ]);
                             $events[] = $this->parseVEvent($vcalendar->VEVENT, $href);
                         } else {
-                            Log::channel('sync')->debug('CalDAV: No VEVENT in calendar data', [
+                            Log::channel('sync')->info('CalDAV: No VEVENT in calendar data', [
                                 'href' => $href,
                                 'components' => array_keys((array) $vcalendar),
                             ]);
@@ -931,7 +927,7 @@ XML;
             ]);
         }
         
-        Log::channel('sync')->debug('CalDAV: Finished parsing multistatus', [
+        Log::channel('sync')->info('CalDAV: Finished parsing multistatus', [
             'total_events' => count($events),
         ]);
         
