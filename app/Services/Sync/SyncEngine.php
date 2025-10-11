@@ -770,23 +770,44 @@ class SyncEngine
     private function normalizeEvent($event, string $provider): array
     {
         if ($provider === 'google') {
+            $isAllDay = $event->getStart()->getDate() !== null;
+            $transparency = $event->getTransparency();
+            
+            // All-day events should always be considered 'busy' by default
+            // This allows users to control them via the 'ignore_all_day' filter
+            // Only non-all-day events respect the transparency setting
+            if ($isAllDay) {
+                $showAs = 'busy';
+            } else {
+                $showAs = $transparency === 'transparent' ? 'free' : 'busy';
+            }
+            
             return [
                 'id' => $event->getId(),
                 'start' => $event->getStart()->getDateTime() ?? $event->getStart()->getDate(),
                 'end' => $event->getEnd()->getDateTime() ?? $event->getEnd()->getDate(),
-                'isAllDay' => $event->getStart()->getDate() !== null,
-                'busyStatus' => $event->getTransparency() === 'transparent' ? 'free' : 'busy',
-                'showAs' => $event->getTransparency() === 'transparent' ? 'free' : 'busy',
+                'isAllDay' => $isAllDay,
+                'busyStatus' => $showAs,
+                'showAs' => $showAs,
             ];
         } else {
             // Microsoft
+            $isAllDay = $event['isAllDay'] ?? false;
+            
+            // Same logic for Microsoft: all-day events are 'busy' by default
+            if ($isAllDay) {
+                $showAs = 'busy';
+            } else {
+                $showAs = $event['showAs'] ?? 'busy';
+            }
+            
             return [
                 'id' => $event['id'],
                 'start' => $event['start']['dateTime'],
                 'end' => $event['end']['dateTime'],
-                'isAllDay' => $event['isAllDay'] ?? false,
-                'busyStatus' => $event['showAs'] ?? 'busy',
-                'showAs' => $event['showAs'] ?? 'busy',
+                'isAllDay' => $isAllDay,
+                'busyStatus' => $showAs,
+                'showAs' => $showAs,
             ];
         }
     }
