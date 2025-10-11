@@ -17,7 +17,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \App\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SetLocaleFromDomain::class,
-        \App\Http\Middleware\OAuthProxyRedirect::class,
     ];
 
     /**

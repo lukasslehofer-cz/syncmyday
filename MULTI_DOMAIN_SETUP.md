@@ -85,6 +85,7 @@ MICROSOFT_TENANT=common
 ```
 
 **Important Notes**:
+
 - OAuth redirect URIs are now **hardcoded in `config/services.php`** using the `OAUTH_PRIMARY_DOMAIN`
 - You **no longer need** `GOOGLE_REDIRECT_URI` or `MICROSOFT_REDIRECT_URI` environment variables
 - `APP_URL` can be any domain - it won't affect OAuth redirects

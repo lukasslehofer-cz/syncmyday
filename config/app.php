@@ -18,9 +18,6 @@ return [
     
     // Domain-based locale mapping
     'domain_locales' => json_decode(env('DOMAIN_LOCALES', '{}'), true),
-    
-    // Primary domain for OAuth callbacks (where OAuth apps are configured)
-    'oauth_primary_domain' => env('OAUTH_PRIMARY_DOMAIN', 'syncmyday.cz'),
 
     'providers' => [
         Illuminate\Auth\AuthServiceProvider::class,
