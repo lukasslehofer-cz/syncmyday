@@ -956,9 +956,16 @@ XML;
         $location = isset($vevent->LOCATION) ? (string) $vevent->LOCATION : null;
         $status = isset($vevent->STATUS) ? strtolower((string) $vevent->STATUS) : 'confirmed';
         
-        // Parse dates
-        $dtstart = $vevent->DTSTART->getDateTime();
-        $dtend = isset($vevent->DTEND) ? $vevent->DTEND->getDateTime() : clone $dtstart;
+        // Parse dates (convert DateTimeImmutable to DateTime)
+        $dtstartImmutable = $vevent->DTSTART->getDateTime();
+        $dtstart = \DateTime::createFromImmutable($dtstartImmutable);
+        
+        if (isset($vevent->DTEND)) {
+            $dtendImmutable = $vevent->DTEND->getDateTime();
+            $dtend = \DateTime::createFromImmutable($dtendImmutable);
+        } else {
+            $dtend = clone $dtstart;
+        }
         
         // Check if all-day
         $isAllDay = !$vevent->DTSTART->hasTime();
