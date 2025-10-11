@@ -171,14 +171,14 @@
                         <input type="radio" name="direction" value="one_way" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
                         <div class="ml-3">
                             <span class="block font-semibold text-gray-900">{{ __('messages.one_way') }}</span>
-                            <span class="block text-sm text-gray-600">Events sync from source to targets only</span>
+                            <span class="block text-sm text-gray-600">{{ __('messages.one_way_description') }}</span>
                         </div>
                     </label>
                     <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
                         <input type="radio" name="direction" value="two_way" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
                         <div class="ml-3">
                             <span class="block font-semibold text-gray-900">{{ __('messages.two_way') }}</span>
-                            <span class="block text-sm text-gray-600">Events sync bidirectionally between calendars</span>
+                            <span class="block text-sm text-gray-600">{{ __('messages.two_way_description') }}</span>
                         </div>
                     </label>
                 </div>
@@ -197,14 +197,14 @@
                         <input type="checkbox" name="filters[busy_only]" value="1" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <div class="ml-3">
                             <span class="block font-semibold text-gray-900">{{ __('messages.only_busy_events') }}</span>
-                            <span class="block text-sm text-gray-600">Only sync events marked as "busy"</span>
+                            <span class="block text-sm text-gray-600">{{ __('messages.only_busy_events_description') }}</span>
                         </div>
                     </label>
                     <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
                         <input type="checkbox" name="filters[ignore_all_day]" value="1" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                         <div class="ml-3">
                             <span class="block font-semibold text-gray-900">{{ __('messages.ignore_all_day') }}</span>
-                            <span class="block text-sm text-gray-600">Skip all-day events from syncing</span>
+                            <span class="block text-sm text-gray-600">{{ __('messages.skip_all_day_description') }}</span>
                         </div>
                     </label>
                     
@@ -377,7 +377,7 @@ function addTargetRow() {
     div.className = 'target-row bg-white rounded-xl p-4 space-y-3 border-2 border-purple-200 shadow-sm';
     div.innerHTML = `
         <div class="flex items-center justify-between">
-            <span class="text-sm font-semibold text-gray-700">Target ${index + 1}</span>
+            <span class="text-sm font-semibold text-gray-700">{{ __('messages.target') }} ${index + 1}</span>
             ${index > 0 ? `<button type="button" class="remove-target text-red-600 hover:text-red-700 font-medium text-sm">Remove</button>` : ''}
         </div>
         

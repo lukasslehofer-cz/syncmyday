@@ -5,13 +5,13 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-8">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Calendar Connections</h1>
-        <p class="text-lg text-gray-600">Connect your calendars to start synchronizing your schedule</p>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.calendar_connections') }}</h1>
+        <p class="text-lg text-gray-600">{{ __('messages.calendar_connections_description') }}</p>
     </div>
     
     <!-- Add New Connection -->
     <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8 border border-gray-100">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Calendar</h2>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('messages.add_new_calendar') }}</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Google Calendar -->
             <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
@@ -27,8 +27,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900 mb-2">Google Calendar</p>
-                        <p class="text-sm text-gray-600">Connect via OAuth</p>
+                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.google_calendar') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -49,8 +49,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900 mb-2">Microsoft 365</p>
-                        <p class="text-sm text-gray-600">Connect via OAuth</p>
+                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.microsoft_365') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -71,8 +71,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900 mb-2">Apple / CalDAV</p>
-                        <p class="text-sm text-gray-600">iCloud, Nextcloud, etc.</p>
+                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.apple_caldav') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.caldav_description') }}</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -93,8 +93,8 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900 mb-2">Email Calendar</p>
-                        <p class="text-sm text-gray-600">Forward via email</p>
+                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.email_calendar') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.forward_via_email') }}</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -114,14 +114,14 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">No Calendars Connected</h3>
-        <p class="text-gray-500 mb-8">Connect your first calendar to start syncing your schedule</p>
-        <p class="text-sm text-gray-400">Choose from Google Calendar, Microsoft 365, or Email Calendar above</p>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.no_calendars_connected') }}</h3>
+        <p class="text-gray-500 mb-8">{{ __('messages.connect_first_calendar') }}</p>
+        <p class="text-sm text-gray-400">{{ __('messages.choose_calendar_type') }}</p>
     </div>
     @else
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
         <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-200">
-            <h2 class="text-xl font-bold text-gray-900">Your Connected Calendars</h2>
+            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.your_connected_calendars') }}</h2>
         </div>
         
         <ul class="divide-y divide-gray-200">
@@ -194,7 +194,7 @@
                                 <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                 </svg>
-                                Refresh
+                                {{ __('messages.refresh') }}
                             </button>
                         </form>
                         
@@ -295,7 +295,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            View Details
+                                {{ __('messages.view_details') }}
                         </a>
                         
                         <form action="{{ route('email-calendars.destroy', $emailCalendar) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this email calendar?')">

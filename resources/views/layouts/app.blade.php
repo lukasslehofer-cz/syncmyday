@@ -72,13 +72,13 @@
                     <!-- Desktop Navigation -->
                     <div class="hidden md:ml-10 md:flex md:space-x-1">
                         <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            Dashboard
+                            {{ __('messages.dashboard') }}
                         </a>
                         <a href="{{ route('connections.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('connections.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            Calendars
+                            {{ __('messages.calendars') }}
                         </a>
                         <a href="{{ route('sync-rules.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            Sync Rules
+                            {{ __('messages.sync_rules') }}
                         </a>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
-                        Upgrade Pro
+                        {{ __('messages.upgrade_pro') }}
                     </a>
                     @endif
                     
@@ -106,18 +106,18 @@
                         
                         <div x-show="open" @click.away="open = false" x-cloak class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 border border-gray-100">
                             <div class="px-4 py-2 border-b border-gray-100">
-                                <p class="text-xs text-gray-500">Signed in as</p>
+                                <p class="text-xs text-gray-500">{{ __('messages.signed_in_as') }}</p>
                                 <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->email }}</p>
                             </div>
-                            <a href="{{ route('account.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Account Settings</a>
-                            <a href="{{ route('billing') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Billing</a>
+                            <a href="{{ route('account.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.account_settings') }}</a>
+                            <a href="{{ route('billing') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.billing') }}</a>
                             @can('admin')
-                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin Panel</a>
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.admin_panel') }}</a>
                             @endcan
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                    Logout
+                                    {{ __('messages.logout') }}
                                 </button>
                             </form>
                         </div>
@@ -129,26 +129,26 @@
         <!-- Mobile Navigation -->
         <div class="md:hidden border-t border-gray-100" x-data="{ open: false }">
             <button @click="open = !open" class="w-full px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-gray-50">
-                Menu
+                {{ __('messages.menu') }}
             </button>
             <div x-show="open" x-cloak class="pb-3 space-y-1">
                 <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Dashboard
+                    {{ __('messages.dashboard') }}
                 </a>
                 <a href="{{ route('connections.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('connections.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Calendars
+                    {{ __('messages.calendars') }}
                 </a>
                 <a href="{{ route('sync-rules.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Sync Rules
+                    {{ __('messages.sync_rules') }}
                 </a>
                 <a href="{{ route('email-calendars.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('email-calendars.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Email Calendars
+                    {{ __('messages.email_calendars') }}
                 </a>
                 <a href="{{ route('account.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('account.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    Account Settings
+                    {{ __('messages.account_settings') }}
                 </a>
                 <a href="{{ route('billing') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">
-                    Billing
+                    {{ __('messages.billing') }}
                 </a>
             </div>
         </div>
@@ -187,7 +187,7 @@
                 </div>
                 @if(!auth()->user()->stripe_subscription_id)
                 <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow-sm transition">
-                    Nastavit platbu
+                    {{ __('messages.set_payment') }}
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
@@ -284,38 +284,38 @@
                             </div>
                             <span class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SyncMyDay</span>
                         </div>
-                        <p class="text-sm text-gray-600">Privacy-first calendar synchronization made simple.</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.footer_tagline') }}</p>
                     </div>
                     
                     <!-- Product -->
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900 mb-3">Product</h3>
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ __('messages.product') }}</h3>
                         <ul class="space-y-2">
-                            <li><a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-indigo-600">Dashboard</a></li>
-                            <li><a href="{{ route('connections.index') }}" class="text-sm text-gray-600 hover:text-indigo-600">Calendars</a></li>
-                            <li><a href="{{ route('sync-rules.index') }}" class="text-sm text-gray-600 hover:text-indigo-600">Sync Rules</a></li>
-                            <li><a href="{{ route('billing') }}" class="text-sm text-gray-600 hover:text-indigo-600">Pricing</a></li>
+                            <li><a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.dashboard') }}</a></li>
+                            <li><a href="{{ route('connections.index') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.calendars') }}</a></li>
+                            <li><a href="{{ route('sync-rules.index') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.sync_rules') }}</a></li>
+                            <li><a href="{{ route('billing') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.pricing') }}</a></li>
                         </ul>
                     </div>
                     
                     <!-- Support -->
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900 mb-3">Support</h3>
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ __('messages.support') }}</h3>
                         <ul class="space-y-2">
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">Documentation</a></li>
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">Help Center</a></li>
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">Contact Us</a></li>
+                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.documentation') }}</a></li>
+                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.help_center') }}</a></li>
+                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.contact_us') }}</a></li>
                         </ul>
                     </div>
                     
                     <!-- Legal -->
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900 mb-3">Legal</h3>
+                        <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ __('messages.legal') }}</h3>
                         <ul class="space-y-2">
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">Privacy Policy</a></li>
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">Terms of Service</a></li>
+                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.privacy_policy') }}</a></li>
+                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.terms_of_service') }}</a></li>
                             @can('admin')
-                            <li><a href="{{ route('admin.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Admin Panel</a></li>
+                            <li><a href="{{ route('admin.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.admin_panel') }}</a></li>
                             @endcan
                         </ul>
                     </div>

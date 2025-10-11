@@ -21,10 +21,10 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-xl font-bold text-gray-900">Pro Subscription Active</p>
+                    <p class="text-xl font-bold text-gray-900">{{ __('messages.pro_subscription_active') }}</p>
                     @if($user->subscription_ends_at)
                     <p class="text-sm text-gray-600">
-                        Renews on {{ $user->subscription_ends_at->format('j. F Y') }}
+                        {{ __('messages.renews_on', ['date' => $user->subscription_ends_at->format('j. F Y')]) }}
                     </p>
                     @endif
                 </div>
@@ -36,7 +36,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                Manage Subscription
+                {{ __('messages.manage_subscription') }}
             </a>
             @endif
         </div>
@@ -53,14 +53,14 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-xl font-bold text-gray-900">Zkušební období aktivní!</p>
+                    <p class="text-xl font-bold text-gray-900">{{ __('messages.trial_period_active') }}</p>
                     <p class="text-sm text-gray-600">
-                        Zbývá {{ $user->getRemainingTrialDays() }} {{ $user->getRemainingTrialDays() === 1 ? 'den' : ($user->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }} (do {{ $user->subscription_ends_at->format('j. F Y') }})
+                        {{ __('messages.trial_remaining_days', ['days' => $user->getRemainingTrialDays(), 'date' => $user->subscription_ends_at->format('j. F Y')]) }}
                     </p>
                     @if(!$user->stripe_subscription_id)
-                    <p class="text-sm font-medium text-amber-600 mt-1">⚠️ Platební metoda není nastavena</p>
+                    <p class="text-sm font-medium text-amber-600 mt-1">{{ __('messages.payment_method_not_set') }}</p>
                     @else
-                    <p class="text-sm text-green-600 mt-1">✓ Platební metoda nastavena</p>
+                    <p class="text-sm text-green-600 mt-1">{{ __('messages.payment_method_set') }}</p>
                     @endif
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                     </svg>
-                    Nastavit platební kartu
+                    {{ __('messages.set_payment_card') }}
                 </button>
             </form>
             @else
@@ -81,7 +81,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
-                Spravovat předplatné
+                {{ __('messages.manage_subscription') }}
             </a>
             @endif
         </div>
@@ -94,10 +94,10 @@
             <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
             </svg>
-            <h3 class="text-2xl font-bold text-gray-900">Zkušební období vypršelo</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ __('messages.trial_period_expired') }}</h3>
         </div>
-        <p class="text-lg text-gray-600 mb-2">Aktivujte předplatné a pokračujte v synchronizaci kalendářů</p>
-        <p class="text-sm text-gray-500">Pouze 249 Kč/rok • Kdykoliv zrušitelné</p>
+        <p class="text-lg text-gray-600 mb-2">{{ __('messages.activate_subscription_continue') }}</p>
+        <p class="text-sm text-gray-500">{{ __('messages.pricing_yearly_cancelable') }}</p>
     </div>
     @endif
     
@@ -116,7 +116,7 @@
             </div>
             
             <div class="text-center mb-8 mt-4">
-                <h3 class="text-3xl font-bold text-gray-900 mb-4">Jeden plán pro všechny</h3>
+                <h3 class="text-3xl font-bold text-gray-900 mb-4">{{ __('messages.one_plan_for_all') }}</h3>
                 
                 <!-- Pricing -->
                 <div class="mb-6">
@@ -126,7 +126,7 @@
                             <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-lg font-bold text-green-700">AKTIVOVAT PŘEDPLATNÉ</span>
+                            <span class="text-lg font-bold text-green-700">{{ __('messages.activate_subscription') }}</span>
                         </div>
                     </div>
                     @endif
@@ -135,15 +135,15 @@
                         <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">249 Kč</span>
                         <span class="text-2xl text-gray-700 ml-3">/ rok</span>
                     </div>
-                    <p class="text-gray-600">Po uplynutí zkušebního měsíce</p>
+                    <p class="text-gray-600">{{ __('messages.after_trial_month') }}</p>
                 </div>
                 
-                <p class="text-lg text-gray-700 mb-8">Plná funkčnost, žádná omezení, kdykoliv zrušitelné</p>
+                <p class="text-lg text-gray-700 mb-8">{{ __('messages.full_features_no_limits') }}</p>
             </div>
             
             <!-- Features -->
             <div class="bg-white/70 backdrop-blur-sm rounded-xl p-6 mb-8">
-                <h4 class="text-lg font-bold text-gray-900 mb-4 text-center">Co získáte:</h4>
+                <h4 class="text-lg font-bold text-gray-900 mb-4 text-center">{{ __('messages.what_you_get') }}</h4>
                 <ul class="space-y-3">
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -151,7 +151,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900"><strong>Neomezený počet pravidel synchronizace</strong></span>
+                        <span class="ml-3 text-gray-900"><strong>{{ __('messages.unlimited_sync_rules') }}</strong></span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -159,7 +159,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900"><strong>Neomezený počet připojených kalendářů</strong></span>
+                        <span class="ml-3 text-gray-900"><strong>{{ __('messages.unlimited_calendars') }}</strong></span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -167,7 +167,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Synchronizace v reálném čase (webhooky)</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.realtime_sync_webhooks') }}</span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -175,7 +175,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Podpora Google Calendar a Microsoft 365</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.google_microsoft_support') }}</span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -183,7 +183,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Emailové kalendáře</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.email_calendars') }}</span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -191,7 +191,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Pokročilé filtry (busy only, work hours, ...)</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.advanced_filters') }}</span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -199,7 +199,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Prioritní podpora</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.priority_support') }}</span>
                     </li>
                     <li class="flex items-start">
                         <div class="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mt-0.5 shadow-sm">
@@ -207,7 +207,7 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <span class="ml-3 text-gray-900">Všechny budoucí funkce zdarma</span>
+                        <span class="ml-3 text-gray-900">{{ __('messages.all_future_features_free') }}</span>
                     </li>
                 </ul>
             </div>
@@ -217,27 +217,27 @@
             <form action="{{ route('billing.trial-checkout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full py-5 px-6 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-lg rounded-xl font-bold hover:opacity-90 shadow-xl transform hover:scale-105 transition">
-                    Nastavit platební metodu pro automatické obnovení
+                    {{ __('messages.set_payment_for_auto_renewal') }}
                 </button>
             </form>
             
             <p class="text-center text-sm text-gray-600 mt-4">
-                ✓ Platební karta nebude zatížena během zkušební doby<br>
-                ✓ Automatická platba po skončení trialu (249 Kč/rok)<br>
-                ✓ Kdykoliv zrušitelné přes Stripe portál
+                {{ __('messages.trial_payment_info_1') }}<br>
+                {{ __('messages.trial_payment_info_2') }}<br>
+                {{ __('messages.trial_payment_info_3') }}
             </p>
             @else
             <form action="{{ route('billing.checkout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full py-5 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-lg rounded-xl font-bold hover:opacity-90 shadow-xl transform hover:scale-105 transition">
-                    Aktivovat předplatné (249 Kč/rok)
+                    {{ __('messages.activate_subscription_price') }}
                 </button>
             </form>
             
             <p class="text-center text-sm text-gray-600 mt-4">
-                ✓ Bezpečná platba přes Stripe<br>
-                ✓ Kdykoliv zrušitelné<br>
-                ✓ Automatické obnovení každý rok
+                {{ __('messages.payment_info_1') }}<br>
+                {{ __('messages.payment_info_2') }}<br>
+                {{ __('messages.payment_info_3') }}
             </p>
             @endif
         </div>
@@ -246,30 +246,30 @@
     
     <!-- FAQ Section -->
     <div class="mt-16 max-w-3xl mx-auto">
-        <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">Často kladené otázky</h3>
+        <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">{{ __('messages.faq') }}</h3>
         <div class="space-y-4">
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
-                <h4 class="font-bold text-gray-900 mb-2">Jak funguje zkušební měsíc zdarma?</h4>
-                <p class="text-gray-600">Po registraci máte 30 dní plný přístup ke všem funkcím SyncMyDay Pro zcela zdarma. Zadáte platební kartu, ale nebude z ní stržena žádná platba během zkušební doby. Po 30 dnech bude automaticky účtováno 249 Kč za rok předplatného.</p>
+                <h4 class="font-bold text-gray-900 mb-2">{{ __('messages.faq_trial_month') }}</h4>
+                <p class="text-gray-600">{{ __('messages.faq_trial_month_answer') }}</p>
             </div>
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
-                <h4 class="font-bold text-gray-900 mb-2">Mohu předplatné kdykoliv zrušit?</h4>
-                <p class="text-gray-600">Ano! Předplatné můžete zrušit kdykoliv. Pokud zrušíte, budete mít přístup k Pro funkcím až do konce zaplaceného období.</p>
+                <h4 class="font-bold text-gray-900 mb-2">{{ __('messages.faq_cancel_anytime') }}</h4>
+                <p class="text-gray-600">{{ __('messages.faq_cancel_anytime_answer') }}</p>
             </div>
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
-                <h4 class="font-bold text-gray-900 mb-2">Jaké platební metody přijímáte?</h4>
-                <p class="text-gray-600">Přijímáme všechny hlavní platební karty přes Stripe, včetně Visa, Mastercard a American Express.</p>
+                <h4 class="font-bold text-gray-900 mb-2">{{ __('messages.faq_payment_methods') }}</h4>
+                <p class="text-gray-600">{{ __('messages.faq_payment_methods_answer') }}</p>
             </div>
             <div class="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-indigo-300 transition">
-                <h4 class="font-bold text-gray-900 mb-2">Co se stane po zkušebním měsíci?</h4>
-                <p class="text-gray-600">Po uplynutí 30denní zkušební doby bude z vaší platební karty automaticky stržena roční platba 249 Kč. Pokud si nepřejete pokračovat, zrušte předplatné před koncem zkušebního období.</p>
+                <h4 class="font-bold text-gray-900 mb-2">{{ __('messages.faq_after_trial') }}</h4>
+                <p class="text-gray-600">{{ __('messages.faq_after_trial_answer') }}</p>
             </div>
         </div>
     </div>
     
     <!-- Trust Badges -->
     <div class="mt-12 text-center">
-        <p class="text-sm text-gray-500 mb-4">Bezpečné platby zajištěné přes</p>
+        <p class="text-sm text-gray-500 mb-4">{{ __('messages.secure_payments_via') }}</p>
         <div class="flex items-center justify-center space-x-8">
             <div class="text-gray-400 font-bold text-2xl">STRIPE</div>
             <div class="text-gray-400 font-bold text-xl">🔒 SSL</div>

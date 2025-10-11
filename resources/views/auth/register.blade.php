@@ -27,36 +27,36 @@
                     <span class="text-2xl font-bold">SyncMyDay</span>
                 </div>
                 
-                <h1 class="text-4xl font-extrabold mb-4">Join SyncMyDay!</h1>
-                <p class="text-lg text-indigo-100 mb-8">Start syncing your calendars in just 2 minutes. No credit card required.</p>
+                <h1 class="text-4xl font-extrabold mb-4">{{ __('messages.join_syncmyday') }}</h1>
+                <p class="text-lg text-indigo-100 mb-8">{{ __('messages.join_syncmyday_description') }}</p>
                 
                 <div class="space-y-6">
                     <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                        <h3 class="font-bold text-xl mb-4">What you'll get:</h3>
+                        <h3 class="font-bold text-xl mb-4">{{ __('messages.what_you_get') }}</h3>
                         <div class="space-y-3">
                             <div class="flex items-center space-x-3">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span>Real-time calendar synchronization</span>
+                                <span>{{ __('messages.realtime_calendar_sync') }}</span>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span>Connect multiple calendars</span>
+                                <span>{{ __('messages.connect_multiple_calendars') }}</span>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span>Privacy-first approach</span>
+                                <span>{{ __('messages.privacy_first_approach') }}</span>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span>Flexible sync rules</span>
+                                <span>{{ __('messages.flexible_sync_rules') }}</span>
                             </div>
                         </div>
                     </div>
@@ -78,8 +78,8 @@
             <div class="w-full max-w-md">
                 <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
                     <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
-                        <p class="text-gray-600">Get started with your free account</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ __('messages.create_account') }}</h2>
+                        <p class="text-gray-600">{{ __('messages.get_started_free') }}</p>
                     </div>
                     
                     @if($errors->any())
@@ -106,7 +106,7 @@
                                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Sign up with Google</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">{{ __('messages.sign_up_with_google') }}</span>
                         </a>
                         
                         <a href="{{ route('auth.microsoft') }}" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition group oauth-btn" data-provider="microsoft">
@@ -117,7 +117,7 @@
                                 <path fill="#05a6f0" d="M1 12h10v10H1z"/>
                                 <path fill="#ffba08" d="M12 12h10v10H12z"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Sign up with Microsoft</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">{{ __('messages.sign_up_with_microsoft') }}</span>
                         </a>
                     </div>
 
@@ -126,7 +126,7 @@
                             <div class="w-full border-t border-gray-300"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Or create account with email</span>
+                            <span class="px-2 bg-white text-gray-500">{{ __('messages.or_create_with_email') }}</span>
                         </div>
                     </div>
 
@@ -137,7 +137,7 @@
                         <input type="hidden" name="timezone" id="timezone" value="UTC">
                         
                         <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.full_name') }}</label>
                             <input 
                                 type="text" 
                                 name="name" 
@@ -177,7 +177,7 @@
                         </div>
                         
                         <div>
-                            <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                            <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.confirm_password') }}</label>
                             <input 
                                 type="password" 
                                 name="password_confirmation" 
@@ -196,7 +196,7 @@
                                 class="w-4 h-4 mt-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                             >
                             <label for="terms" class="ml-2 text-sm text-gray-600">
-                                I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">Privacy Policy</a>
+                                {{ __('messages.i_agree_to') }} <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.terms_of_service') }}</a> {{ __('messages.and') }} <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.privacy_policy') }}</a>
                             </label>
                         </div>
                         
@@ -204,15 +204,15 @@
                             type="submit" 
                             class="w-full py-3 px-4 gradient-bg text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-[1.02] transition"
                         >
-                            Create Account
+                            {{ __('messages.create_account') }}
                         </button>
                     </form>
                     
                     <div class="mt-8 text-center">
                         <p class="text-sm text-gray-600">
-                            Already have an account?
+                            {{ __('messages.already_have_account') }}
                             <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-700">
-                                Sign in instead
+                                {{ __('messages.sign_in_instead') }}
                             </a>
                         </p>
                     </div>

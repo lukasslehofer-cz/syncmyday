@@ -27,8 +27,8 @@
                     <span class="text-2xl font-bold">SyncMyDay</span>
                 </div>
                 
-                <h1 class="text-4xl font-extrabold mb-4">Welcome back!</h1>
-                <p class="text-lg text-indigo-100 mb-8">Sign in to manage your calendar synchronization and never miss a beat.</p>
+                <h1 class="text-4xl font-extrabold mb-4">{{ __('messages.welcome_back') }}</h1>
+                <p class="text-lg text-indigo-100 mb-8">{{ __('messages.sign_in_description') }}</p>
                 
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
@@ -38,8 +38,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Real-time Synchronization</h3>
-                            <p class="text-sm text-indigo-100">Keep all your calendars perfectly in sync</p>
+                            <h3 class="font-semibold">{{ __('messages.realtime_sync') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.realtime_sync_description') }}</p>
                         </div>
                     </div>
                     
@@ -50,8 +50,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Privacy First</h3>
-                            <p class="text-sm text-indigo-100">Your event details stay private and secure</p>
+                            <h3 class="font-semibold">{{ __('messages.privacy_first') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.privacy_first_description') }}</p>
                         </div>
                     </div>
                     
@@ -62,8 +62,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Easy Setup</h3>
-                            <p class="text-sm text-indigo-100">Connect and sync in just 2 minutes</p>
+                            <h3 class="font-semibold">{{ __('messages.easy_setup') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.easy_setup_description') }}</p>
                         </div>
                     </div>
                 </div>
@@ -79,8 +79,8 @@
             <div class="w-full max-w-md">
                 <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
                     <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Sign in</h2>
-                        <p class="text-gray-600">Access your account to manage your calendars</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ __('messages.sign_in') }}</h2>
+                        <p class="text-gray-600">{{ __('messages.sign_in_subtitle') }}</p>
                     </div>
                     
                     @if($errors->any())
@@ -103,7 +103,7 @@
                                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Continue with Google</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">{{ __('messages.continue_with_google') }}</span>
                         </a>
                         
                         <a href="{{ route('auth.microsoft') }}" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl hover:bg-gray-50 transition group oauth-btn" data-provider="microsoft">
@@ -114,7 +114,7 @@
                                 <path fill="#05a6f0" d="M1 12h10v10H1z"/>
                                 <path fill="#ffba08" d="M12 12h10v10H12z"/>
                             </svg>
-                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">Continue with Microsoft</span>
+                            <span class="text-sm font-medium text-gray-700 group-hover:text-gray-900">{{ __('messages.continue_with_microsoft') }}</span>
                         </a>
                     </div>
 
@@ -123,7 +123,7 @@
                             <div class="w-full border-t border-gray-300"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-2 bg-white text-gray-500">Or continue with email</span>
+                            <span class="px-2 bg-white text-gray-500">{{ __('messages.or_continue_with_email') }}</span>
                         </div>
                     </div>
 
@@ -134,7 +134,7 @@
                         <input type="hidden" name="timezone" id="timezone" value="UTC">
                         
                         <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email address</label>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.email_address') }}</label>
                             <input 
                                 type="email" 
                                 name="email" 
@@ -148,7 +148,7 @@
                         </div>
                         
                         <div>
-                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.password') }}</label>
                             <input 
                                 type="password" 
                                 name="password" 
@@ -162,11 +162,11 @@
                         <div class="flex items-center justify-between">
                             <label class="flex items-center">
                                 <input type="checkbox" name="remember" id="remember" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                <span class="ml-2 text-sm text-gray-700">Remember me</span>
+                                <span class="ml-2 text-sm text-gray-700">{{ __('messages.remember_me') }}</span>
                             </label>
                             
                             <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
-                                Forgot password?
+                                {{ __('messages.forgot_password') }}
                             </a>
                         </div>
                         
@@ -174,15 +174,15 @@
                             type="submit" 
                             class="w-full py-3 px-4 gradient-bg text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-[1.02] transition"
                         >
-                            Sign in
+                            {{ __('messages.sign_in') }}
                         </button>
                     </form>
                     
                     <div class="mt-8 text-center">
                         <p class="text-sm text-gray-600">
-                            Don't have an account?
+                            {{ __('messages.no_account') }}
                             <a href="{{ route('register') }}" class="font-semibold text-indigo-600 hover:text-indigo-700">
-                                Sign up for free
+                                {{ __('messages.sign_up_free') }}
                             </a>
                         </p>
                     </div>
@@ -192,7 +192,7 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
-                            Back to home
+                            {{ __('messages.back_to_home') }}
                         </a>
                     </div>
                 </div>
