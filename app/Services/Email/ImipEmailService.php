@@ -137,7 +137,7 @@ class ImipEmailService
         $ics[] = 'METHOD:' . $method;
         $ics[] = 'CALSCALE:GREGORIAN';
         $ics[] = 'BEGIN:VEVENT';
-        $ics[] = 'UID:' . $eventUid;
+        $ics[] = 'UID:' . $eventUid . '@syncmyday.cz';
         $ics[] = 'DTSTAMP:' . $nowUtc->format('Ymd\THis\Z');
         $ics[] = 'DTSTART:' . $startUtc->format('Ymd\THis\Z');
         $ics[] = 'DTEND:' . $endUtc->format('Ymd\THis\Z');
@@ -178,22 +178,12 @@ class ImipEmailService
         \DateTime $end,
         string $method
     ): string {
-        $action = $method === 'CANCEL' ? 'CANCELLED' : 'INVITATION';
-        
-        $text = "CALENDAR {$action}\n\n";
-        $text .= "Event: {$summary}\n";
-        $text .= "Start: " . $start->format('l, F j, Y \a\t g:i A') . "\n";
-        $text .= "End: " . $end->format('l, F j, Y \a\t g:i A') . "\n";
-        $text .= "\n";
-        
+        // Keep it simple for maximum compatibility
         if ($method === 'CANCEL') {
-            $text .= "This event has been cancelled.\n";
-        } else {
-            $text .= "This is an automatic blocker from SyncMyDay.\n";
-            $text .= "Your calendar should automatically process this invitation.\n";
+            return "This event has been cancelled.\n\nAutomatic blocker from SyncMyDay.";
         }
         
-        return $text;
+        return "This is an automatic blocker from SyncMyDay.";
     }
 
     /**
@@ -229,12 +219,9 @@ class ImipEmailService
         // Build text/calendar part using custom CalendarPart class
         $calendarPart = new CalendarPart($icsContent, $method);
         
-        // Build text/html part
-        $htmlBody = $this->buildHtmlFromText($textBody);
-        $htmlPart = new \Symfony\Component\Mime\Part\TextPart($htmlBody, 'utf-8', 'html');
-        
-        // Create multipart/alternative message
-        return new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart, $htmlPart);
+        // Create multipart/alternative message - just text/plain and text/calendar
+        // No HTML part for maximum Outlook compatibility
+        return new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart);
     }
 
     /**
