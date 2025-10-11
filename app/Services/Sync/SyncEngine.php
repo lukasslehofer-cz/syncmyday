@@ -239,6 +239,40 @@ class SyncEngine
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
 
+        // ANTI-LOOP PROTECTION: Check if this source event is actually a blocker itself
+        // If so, check if the original event is in the target calendar we're syncing to
+        // This prevents infinite loops in bidirectional sync
+        $isBlockerLoop = SyncEventMapping::where('target_calendar_id', $rule->source_calendar_id)
+            ->where('target_connection_id', $sourceConnection->id)
+            ->where('target_event_id', $sourceEventId)
+            ->where('source_calendar_id', $target->target_calendar_id)
+            ->where('source_connection_id', $target->target_connection_id)
+            ->exists();
+        
+        if ($isBlockerLoop) {
+            Log::channel('sync')->info('Skipping event to prevent sync loop', [
+                'source_event_id' => $sourceEventId,
+                'source_calendar_id' => $rule->source_calendar_id,
+                'target_calendar_id' => $target->target_calendar_id,
+                'rule_id' => $rule->id,
+            ]);
+            
+            SyncLog::logSync(
+                $rule->user_id,
+                $rule->id,
+                'skipped',
+                'source_to_target',
+                $sourceEventId,
+                null,
+                $start,
+                $end,
+                'Loop prevention: event is already a blocker from target calendar',
+                $transactionId
+            );
+            
+            return; // Skip this event to prevent loop
+        }
+
         // Check if we already have a mapping for this event -> target
         $mapping = SyncEventMapping::findMapping(
             $rule->id,

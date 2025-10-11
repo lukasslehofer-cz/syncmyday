@@ -151,7 +151,7 @@ class SyncRulesController extends Controller
                 }
             }
 
-            // Create sync rule
+            // Create sync rule (forward direction)
             $rule = SyncRule::create([
                 'user_id' => auth()->id(),
                 'source_connection_id' => $validated['source_type'] === 'api' ? $validated['source_connection_id'] : null,
@@ -171,7 +171,7 @@ class SyncRulesController extends Controller
                 'is_active' => true,
             ]);
 
-            // Create targets
+            // Create targets for forward rule
             foreach ($validated['target_connections'] as $target) {
                 SyncRuleTarget::create([
                     'sync_rule_id' => $rule->id,
@@ -179,6 +179,47 @@ class SyncRulesController extends Controller
                     'target_email_connection_id' => $target['type'] === 'email' ? $target['email_connection_id'] : null,
                     'target_calendar_id' => $target['calendar_id'] ?? null,
                 ]);
+            }
+
+            // For bidirectional sync, create reverse rules
+            if ($validated['direction'] === 'two_way') {
+                foreach ($validated['target_connections'] as $target) {
+                    // Create reverse rule: target -> source
+                    $reverseRule = SyncRule::create([
+                        'user_id' => auth()->id(),
+                        'source_connection_id' => $target['type'] === 'api' ? $target['connection_id'] : null,
+                        'source_email_connection_id' => $target['type'] === 'email' ? $target['email_connection_id'] : null,
+                        'source_calendar_id' => $target['calendar_id'] ?? null,
+                        'direction' => 'two_way_reverse',
+                        'blocker_title' => $validated['blocker_title'] ?? 'Busy — Sync',
+                        'filters' => $validated['filters'] ?? [
+                            'busy_only' => true,
+                            'ignore_all_day' => false,
+                        ],
+                        'time_filter_enabled' => $timeFilterEnabled,
+                        'time_filter_type' => $timeFilterType,
+                        'time_filter_start' => $timeFilterStart,
+                        'time_filter_end' => $timeFilterEnd,
+                        'time_filter_days' => $timeFilterDays,
+                        'is_active' => true,
+                    ]);
+
+                    // Create target for reverse rule (original source)
+                    SyncRuleTarget::create([
+                        'sync_rule_id' => $reverseRule->id,
+                        'target_connection_id' => $validated['source_type'] === 'api' ? $validated['source_connection_id'] : null,
+                        'target_email_connection_id' => $validated['source_type'] === 'email' ? $validated['source_email_connection_id'] : null,
+                        'target_calendar_id' => $validated['source_calendar_id'] ?? null,
+                    ]);
+
+                    // Create webhook subscription for reverse rule (only for API calendars)
+                    if ($target['type'] === 'api') {
+                        $targetConnection = CalendarConnection::find($target['connection_id']);
+                        if ($targetConnection) {
+                            $this->ensureWebhookSubscription($targetConnection, $target['calendar_id']);
+                        }
+                    }
+                }
             }
 
             // Create webhook subscription for source calendar (only for API calendars)
