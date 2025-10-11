@@ -432,4 +432,5 @@ return [
     'cancel_subscription_description' => 'Po zrušení budete mít přístup k Pro funkcím až do konce zaplaceného období. Poté bude vaše předplatné automaticky ukončeno.',
     'cancel_confirmation' => 'Opravdu chcete zrušit předplatné? Budete mít přístup až do konce zaplaceného období.',
     'subscription_cancelled' => 'Předplatné bylo zrušeno. Budete mít přístup až do konce zaplaceného období.',
+    'payment_method_removed_after_cancellation' => 'Platební metoda byla odstraněna po zrušení předplatného.',
 ];

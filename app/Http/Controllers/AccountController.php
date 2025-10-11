@@ -189,22 +189,37 @@ class AccountController extends Controller
             'is_oauth' => $user->isOAuthUser(),
         ]);
 
-        // Cancel Stripe subscription if exists
-        if ($user->stripe_subscription_id) {
+        // Cancel Stripe subscription and delete customer if exists
+        if ($user->stripe_customer_id) {
             try {
                 \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
-                $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
-                $subscription->cancel();
                 
-                Log::info('Stripe subscription cancelled for deleted user', [
+                // Delete the entire customer (this cancels subscriptions and removes payment methods)
+                \Stripe\Customer::delete($user->stripe_customer_id);
+                
+                Log::info('Stripe customer deleted for deleted user', [
                     'user_id' => $user->id,
+                    'customer_id' => $user->stripe_customer_id,
                     'subscription_id' => $user->stripe_subscription_id,
                 ]);
             } catch (\Exception $e) {
-                Log::error('Failed to cancel Stripe subscription during account deletion', [
+                Log::error('Failed to delete Stripe customer during account deletion', [
                     'user_id' => $user->id,
                     'error' => $e->getMessage(),
                 ]);
+                
+                // Fallback: try to cancel subscription directly if customer deletion fails
+                if ($user->stripe_subscription_id) {
+                    try {
+                        $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+                        $subscription->cancel();
+                    } catch (\Exception $e2) {
+                        Log::error('Failed to cancel subscription fallback', [
+                            'user_id' => $user->id,
+                            'error' => $e2->getMessage(),
+                        ]);
+                    }
+                }
             }
         }
 

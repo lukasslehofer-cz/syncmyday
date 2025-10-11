@@ -118,12 +118,14 @@
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-semibold text-gray-900">{{ __('messages.payment_method') }}</h2>
+            @if($subscription && !$subscription->cancel_at_period_end && $paymentMethod)
             <form method="POST" action="{{ route('billing.update-payment-method') }}">
                 @csrf
                 <button type="submit" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
                     {{ __('messages.update_card') }}
                 </button>
             </form>
+            @endif
         </div>
 
         @if($paymentMethod)
@@ -141,6 +143,9 @@
         </div>
         @else
         <p class="text-gray-600">{{ __('messages.no_payment_method') }}</p>
+        @if($subscription && $subscription->cancel_at_period_end)
+        <p class="text-sm text-gray-500 mt-2">{{ __('messages.payment_method_removed_after_cancellation') }}</p>
+        @endif
         @endif
     </div>
 

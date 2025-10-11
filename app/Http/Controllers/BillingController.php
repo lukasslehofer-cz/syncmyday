@@ -498,11 +498,30 @@ class BillingController extends Controller
         }
 
         try {
+            // Get subscription to find payment method
+            $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+
             // Cancel subscription at period end
             $subscription = \Stripe\Subscription::update(
                 $user->stripe_subscription_id,
                 ['cancel_at_period_end' => true]
             );
+
+            // Detach payment method (card will be removed)
+            if ($subscription->default_payment_method) {
+                try {
+                    \Stripe\PaymentMethod::detach($subscription->default_payment_method);
+                    Log::info('Payment method detached after subscription cancellation', [
+                        'user_id' => $user->id,
+                        'payment_method_id' => $subscription->default_payment_method,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::warning('Failed to detach payment method', [
+                        'error' => $e->getMessage(),
+                        'user_id' => $user->id,
+                    ]);
+                }
+            }
 
             Log::info('Subscription cancelled by user', [
                 'user_id' => $user->id,
