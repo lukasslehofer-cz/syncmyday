@@ -190,7 +190,7 @@ class SyncRulesController extends Controller
                         'source_connection_id' => $target['type'] === 'api' ? $target['connection_id'] : null,
                         'source_email_connection_id' => $target['type'] === 'email' ? $target['email_connection_id'] : null,
                         'source_calendar_id' => $target['calendar_id'] ?? null,
-                        'direction' => 'two_way_reverse',
+                        'direction' => 'two_way', // Both forward and reverse use 'two_way'
                         'blocker_title' => $validated['blocker_title'] ?? 'Busy — Sync',
                         'filters' => $validated['filters'] ?? [
                             'busy_only' => true,
