@@ -433,4 +433,6 @@ return [
     'cancel_confirmation' => 'Opravdu chcete zrušit předplatné? Budete mít přístup až do konce zaplaceného období.',
     'subscription_cancelled' => 'Předplatné bylo zrušeno. Budete mít přístup až do konce zaplaceného období.',
     'payment_method_removed_after_cancellation' => 'Platební metoda byla odstraněna po zrušení předplatného.',
+    'subscription_cancelling' => 'Předplatné se ruší',
+    'pro_trial_active' => 'Pro Zkušební Verze Aktivní',
 ];

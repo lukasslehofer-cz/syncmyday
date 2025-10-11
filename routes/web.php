@@ -150,6 +150,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update-payment-method', [BillingController::class, 'updatePaymentMethod'])->name('update-payment-method');
         Route::post('/cancel', [BillingController::class, 'cancelSubscription'])->name('cancel');
         Route::post('/reactivate', [BillingController::class, 'reactivateSubscription'])->name('reactivate');
+        Route::get('/reactivate-with-payment', [BillingController::class, 'reactivateWithPayment'])->name('reactivate-with-payment');
     });
     Route::get('/billing', [BillingController::class, 'index'])->name('billing'); // Shorthand
 

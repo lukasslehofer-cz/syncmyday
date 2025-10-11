@@ -23,8 +23,22 @@ class BillingController extends Controller
     {
         $user = auth()->user();
         
+        // Get subscription details from Stripe if user has one
+        $subscription = null;
+        if ($user->stripe_subscription_id) {
+            try {
+                $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+            } catch (\Exception $e) {
+                Log::warning('Failed to retrieve subscription for billing page', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
         return view('billing.index', [
             'user' => $user,
+            'subscription' => $subscription,
             'proPriceId' => config('services.stripe.pro_price_id'),
             'currency' => PricingHelper::getCurrency(),
             'formattedPrice' => PricingHelper::formatPrice(),
@@ -557,6 +571,30 @@ class BillingController extends Controller
         }
 
         try {
+            // Get subscription to check payment method
+            $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+
+            // If payment method was removed, redirect to add new one
+            if (!$subscription->default_payment_method) {
+                Log::info('Subscription reactivation requires new payment method', [
+                    'user_id' => $user->id,
+                    'subscription_id' => $user->stripe_subscription_id,
+                ]);
+
+                // Create Checkout Session to add payment method
+                $priceId = PricingHelper::getPriceId($user->locale);
+                
+                $session = Session::create([
+                    'customer' => $user->stripe_customer_id,
+                    'payment_method_types' => ['card'],
+                    'mode' => 'setup',
+                    'success_url' => route('billing.reactivate-with-payment') . '?session_id={CHECKOUT_SESSION_ID}',
+                    'cancel_url' => route('billing.manage'),
+                ]);
+
+                return redirect($session->url);
+            }
+
             // Remove cancellation
             \Stripe\Subscription::update(
                 $user->stripe_subscription_id,
@@ -578,6 +616,61 @@ class BillingController extends Controller
             ]);
 
             return redirect()->back()
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Complete reactivation after payment method setup
+     */
+    public function reactivateWithPayment(Request $request)
+    {
+        $user = auth()->user();
+        $sessionId = $request->query('session_id');
+
+        if (!$sessionId || !$user->stripe_subscription_id) {
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.billing_error'));
+        }
+
+        try {
+            // Get the setup session
+            $session = Session::retrieve($sessionId);
+            
+            // Attach payment method to subscription
+            if ($session->setup_intent) {
+                $setupIntent = \Stripe\SetupIntent::retrieve($session->setup_intent);
+                
+                if ($setupIntent->payment_method) {
+                    \Stripe\Subscription::update(
+                        $user->stripe_subscription_id,
+                        [
+                            'default_payment_method' => $setupIntent->payment_method,
+                            'cancel_at_period_end' => false,
+                        ]
+                    );
+
+                    Log::info('Subscription reactivated with new payment method', [
+                        'user_id' => $user->id,
+                        'subscription_id' => $user->stripe_subscription_id,
+                        'payment_method' => $setupIntent->payment_method,
+                    ]);
+
+                    return redirect()->route('billing.manage')
+                        ->with('success', __('messages.subscription_reactivated'));
+                }
+            }
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.billing_error'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to complete subscription reactivation', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->route('billing.manage')
                 ->with('error', __('messages.billing_error'));
         }
     }

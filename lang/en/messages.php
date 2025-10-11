@@ -425,4 +425,6 @@ return [
     'cancel_confirmation' => 'Are you sure you want to cancel your subscription? You will have access until the end of the paid period.',
     'subscription_cancelled' => 'Subscription has been cancelled. You will have access until the end of the paid period.',
     'payment_method_removed_after_cancellation' => 'Payment method has been removed after subscription cancellation.',
+    'subscription_cancelling' => 'Subscription Cancelling',
+    'pro_trial_active' => 'Pro Trial Active',
 ];

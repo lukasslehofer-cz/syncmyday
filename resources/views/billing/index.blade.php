@@ -11,27 +11,55 @@
     </div>
     
     <!-- Current Plan Status (for Pro users with active subscription) -->
-    @if($user->subscription_tier === 'pro' && $user->stripe_subscription_id)
-    <div class="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6">
-        <div class="flex items-center justify-between">
+    @if($user->subscription_tier === 'pro' && $user->stripe_subscription_id && $subscription)
+    @php
+        $isCancelling = $subscription->cancel_at_period_end ?? false;
+        $isTrialing = $subscription->status === 'trialing';
+        $renewDate = $subscription->current_period_end 
+            ? \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')
+            : ($user->subscription_ends_at ? $user->subscription_ends_at->format('j. F Y') : '');
+    @endphp
+    
+    <div class="mb-8 bg-gradient-to-r @if($isCancelling) from-orange-50 to-amber-50 border-orange-300 @else from-green-50 to-emerald-50 border-green-200 @endif border-2 rounded-2xl p-6">
+        <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center space-x-4">
+                @if($isCancelling)
+                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-orange-500 to-amber-600 flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                @else
                 <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
+                @endif
                 <div>
-                    <p class="text-xl font-bold text-gray-900">{{ __('messages.pro_subscription_active') }}</p>
-                    @if($user->subscription_ends_at)
-                    <p class="text-sm text-gray-600">
-                        {{ __('messages.renews_on', ['date' => $user->subscription_ends_at->format('j. F Y')]) }}
+                    <p class="text-xl font-bold text-gray-900">
+                        @if($isCancelling)
+                            {{ __('messages.subscription_cancelling') }}
+                        @elseif($isTrialing)
+                            {{ __('messages.pro_trial_active') }}
+                        @else
+                            {{ __('messages.pro_subscription_active') }}
+                        @endif
+                    </p>
+                    @if($renewDate)
+                    <p class="text-sm @if($isCancelling) text-orange-700 @else text-gray-600 @endif">
+                        @if($isCancelling)
+                            {{ __('messages.ends_on', ['date' => $renewDate]) }}
+                        @else
+                            {{ __('messages.renews_on', ['date' => $renewDate]) }}
+                        @endif
                     </p>
                     @endif
                 </div>
             </div>
             
             @if($user->stripe_customer_id)
-            <a href="{{ route('billing.manage') }}" class="inline-flex items-center px-6 py-3 border-2 border-green-600 text-green-700 font-semibold rounded-xl hover:bg-green-50 transition">
+            <a href="{{ route('billing.manage') }}" class="inline-flex items-center px-6 py-3 border-2 @if($isCancelling) border-orange-600 text-orange-700 hover:bg-orange-50 @else border-green-600 text-green-700 hover:bg-green-50 @endif font-semibold rounded-xl transition">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
