@@ -409,6 +409,24 @@ try {
                             // Create blockers in target calendars
                             foreach ($rule->targets as $target) {
                                 try {
+                                    // ANTI-LOOP: Skip if target is the SAME email calendar as source
+                                    // This prevents sending blocker back to the email address that sent it
+                                    if ($target->isEmailTarget() && $target->target_email_connection_id == $connection->id) {
+                                        $output[] = "  ⊘ Skipped target (same email calendar as source)";
+                                        
+                                        \App\Models\SyncLog::create([
+                                            'user_id' => $connection->user_id,
+                                            'sync_rule_id' => $rule->id,
+                                            'action' => 'skipped',
+                                            'source_event_id' => $eventData['uid'],
+                                            'event_start' => $eventData['start'],
+                                            'event_end' => $eventData['end'],
+                                            'error_message' => 'Loop prevention: target is same email calendar as source',
+                                            'transaction_id' => $transactionId,
+                                        ]);
+                                        
+                                        continue; // Skip to next target
+                                    }
                                     
                                     // Check if mapping already exists (to prevent duplicates)
                                     $existingMapping = \App\Models\SyncEventMapping::where('sync_rule_id', $rule->id)
