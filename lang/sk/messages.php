@@ -464,6 +464,16 @@ return [
     'add_password_first' => 'Najprv pridajte heslo, aby ste mohli odpojiť',
     'connect' => 'Pripojiť',
     'disconnect_other_first' => 'Najprv odpojte :provider',
+    'want_to_switch_provider' => 'Chcete prepnúť OAuth poskytovateľa?',
+    'switch_provider_instructions' => 'Najprv pridajte záložné heslo, potom môžete odpojiť :provider a pripojiť iného poskytovateľa.',
+    'add_login_method_warning' => 'Mali by ste pridať aspoň jeden spôsob prihlásenia pre zabezpečenie svojho účtu.',
+    'delete_account' => 'Zmazať účet',
+    'action_cannot_be_undone' => 'Túto akciu nie je možné vrátiť späť',
+    'delete_account_warning' => 'Po zmazaní účtu budú všetky vaše dáta natrvalo odstránené, vrátane všetkých pripojení kalendárov, synchronizačných pravidiel a nastavení.',
+    'delete_account_confirm' => 'Ste si úplne istí, že chcete zmazať svoj účet? Túto akciu nie je možné vrátiť späť!',
+    'confirm_your_password' => 'Potvrďte svoje heslo',
+    'enter_password_to_confirm' => 'Zadajte svoje heslo na potvrdenie',
+    'delete_my_account' => 'Zmazať môj účet',
     
     // Common
     'events' => 'udalostí',

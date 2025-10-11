@@ -464,6 +464,16 @@ return [
     'add_password_first' => 'Najpierw dodaj hasło, aby móc rozłączyć',
     'connect' => 'Połącz',
     'disconnect_other_first' => 'Najpierw rozłącz :provider',
+    'want_to_switch_provider' => 'Chcesz zmienić dostawcę OAuth?',
+    'switch_provider_instructions' => 'Najpierw dodaj zapasowe hasło, następnie możesz rozłączyć :provider i połączyć innego dostawcę.',
+    'add_login_method_warning' => 'Powinieneś dodać przynajmniej jedną metodę logowania, aby zabezpieczyć swoje konto.',
+    'delete_account' => 'Usuń konto',
+    'action_cannot_be_undone' => 'Tej akcji nie można cofnąć',
+    'delete_account_warning' => 'Po usunięciu konta wszystkie Twoje dane zostaną trwale usunięte, w tym wszystkie połączenia kalendarzy, reguły synchronizacji i ustawienia.',
+    'delete_account_confirm' => 'Czy na pewno chcesz usunąć swoje konto? Tej akcji nie można cofnąć!',
+    'confirm_your_password' => 'Potwierdź swoje hasło',
+    'enter_password_to_confirm' => 'Wprowadź hasło, aby potwierdzić',
+    'delete_my_account' => 'Usuń moje konto',
     
     // Common
     'events' => 'wydarzeń',

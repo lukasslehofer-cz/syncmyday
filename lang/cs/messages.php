@@ -540,6 +540,16 @@ return [
     'add_password_first' => 'Nejprve přidejte heslo, abyste mohli odpojit',
     'connect' => 'Připojit',
     'disconnect_other_first' => 'Nejprve odpojte :provider',
+    'want_to_switch_provider' => 'Chcete přepnout OAuth poskytovatele?',
+    'switch_provider_instructions' => 'Nejprve přidejte záložní heslo, poté můžete odpojit :provider a připojit jiného poskytovatele.',
+    'add_login_method_warning' => 'Měli byste přidat alespoň jeden způsob přihlášení pro zabezpečení svého účtu.',
+    'delete_account' => 'Smazat účet',
+    'action_cannot_be_undone' => 'Tuto akci nelze vrátit zpět',
+    'delete_account_warning' => 'Po smazání účtu budou všechna vaše data trvale odstraněna, včetně všech připojení kalendářů, synchronizačních pravidel a nastavení.',
+    'delete_account_confirm' => 'Jste si naprosto jisti, že chcete smazat svůj účet? Tuto akci nelze vrátit zpět!',
+    'confirm_your_password' => 'Potvrďte své heslo',
+    'enter_password_to_confirm' => 'Zadejte své heslo pro potvrzení',
+    'delete_my_account' => 'Smazat můj účet',
     
     // Common
     'events' => 'událostí',

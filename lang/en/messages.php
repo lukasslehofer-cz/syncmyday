@@ -533,6 +533,16 @@ return [
     'add_password_first' => 'Add a password first to enable disconnect',
     'connect' => 'Connect',
     'disconnect_other_first' => 'Disconnect :provider first',
+    'want_to_switch_provider' => 'Want to switch OAuth provider?',
+    'switch_provider_instructions' => 'Add a backup password first, then you can disconnect :provider and connect a different provider.',
+    'add_login_method_warning' => 'You should add at least one login method to secure your account.',
+    'delete_account' => 'Delete Account',
+    'action_cannot_be_undone' => 'This action cannot be undone',
+    'delete_account_warning' => 'Once you delete your account, all of your data will be permanently deleted including all calendar connections, sync rules, and settings.',
+    'delete_account_confirm' => 'Are you absolutely sure you want to delete your account? This cannot be undone!',
+    'confirm_your_password' => 'Confirm your password',
+    'enter_password_to_confirm' => 'Enter your password to confirm',
+    'delete_my_account' => 'Delete My Account',
     
     // Common
     'events' => 'events',

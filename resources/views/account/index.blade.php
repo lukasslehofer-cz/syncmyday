@@ -397,8 +397,8 @@
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                     </svg>
                     <div>
-                        <p class="text-sm font-medium text-blue-900">Want to switch OAuth provider?</p>
-                        <p class="text-xs text-blue-700 mt-1">Add a backup password first, then you can disconnect {{ $user->getOAuthProviderName() }} and connect a different provider.</p>
+                        <p class="text-sm font-medium text-blue-900">{{ __('messages.want_to_switch_provider') }}</p>
+                        <p class="text-xs text-blue-700 mt-1">{{ __('messages.switch_provider_instructions', ['provider' => $user->getOAuthProviderName()]) }}</p>
                     </div>
                 </div>
             </div>
@@ -410,7 +410,7 @@
                     <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
-                    <p class="text-sm text-gray-700">You should add at least one login method to secure your account.</p>
+                    <p class="text-sm text-gray-700">{{ __('messages.add_login_method_warning') }}</p>
                 </div>
             </div>
             @endif
@@ -420,7 +420,7 @@
     <!-- Delete Account -->
     <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl shadow-xl border-2 border-red-200 mb-6">
         <div class="px-6 py-5 border-b border-red-200">
-            <h2 class="text-xl font-bold text-red-900">Delete Account</h2>
+            <h2 class="text-xl font-bold text-red-900">{{ __('messages.delete_account') }}</h2>
         </div>
         <div class="p-6 lg:p-8">
             <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 mb-6">
@@ -431,26 +431,26 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-900 mb-1">This action cannot be undone</p>
-                        <p class="text-sm text-gray-600">Once you delete your account, all of your data will be permanently deleted including all calendar connections, sync rules, and settings.</p>
+                        <p class="text-sm font-bold text-gray-900 mb-1">{{ __('messages.action_cannot_be_undone') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.delete_account_warning') }}</p>
                     </div>
                 </div>
             </div>
             
-            <form method="POST" action="{{ route('account.destroy') }}" onsubmit="return confirm('Are you absolutely sure you want to delete your account? This cannot be undone!');">
+            <form method="POST" action="{{ route('account.destroy') }}" onsubmit="return confirm('{{ __('messages.delete_account_confirm') }}');">
                 @csrf
                 @method('DELETE')
 
                 @if(!$user->isOAuthUser())
                 <div class="mb-6">
-                    <label for="delete_password" class="block text-sm font-bold text-gray-900 mb-2">Confirm your password</label>
+                    <label for="delete_password" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.confirm_your_password') }}</label>
                     <input 
                         type="password" 
                         name="password" 
                         id="delete_password" 
                         required
                         class="w-full px-4 py-3 border-2 border-red-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                        placeholder="Enter your password to confirm"
+                        placeholder="{{ __('messages.enter_password_to_confirm') }}"
                     >
                     @error('password')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -466,7 +466,7 @@
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                         </svg>
-                        Delete My Account
+                        {{ __('messages.delete_my_account') }}
                     </button>
                 </div>
             </form>
