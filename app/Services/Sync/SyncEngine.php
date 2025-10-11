@@ -207,21 +207,9 @@ class SyncEngine
         $transactionId = Str::uuid()->toString();
         $sourceEventId = $this->getEventId($event);
 
-        Log::channel('sync')->info('Processing event from source', [
-            'event_id' => $sourceEventId,
-            'provider' => $sourceConnection->provider,
-            'rule_id' => $rule->id,
-        ]);
-
         // Check if this is our own blocker - skip to prevent loops
-        $isOurBlocker = $sourceService->isOurBlocker($event);
-        Log::channel('sync')->info('Check 1: isOurBlocker', [
-            'event_id' => $sourceEventId,
-            'result' => $isOurBlocker,
-        ]);
-        
-        if ($isOurBlocker) {
-            Log::channel('sync')->info('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
+        if ($sourceService->isOurBlocker($event)) {
+            Log::channel('sync')->debug('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
             return;
         }
         
@@ -232,13 +220,8 @@ class SyncEngine
             ->where('target_calendar_id', $rule->source_calendar_id)
             ->exists();
         
-        Log::channel('sync')->info('Check 2: isTargetBlocker (DB)', [
-            'event_id' => $sourceEventId,
-            'result' => $isTargetBlocker,
-        ]);
-        
         if ($isTargetBlocker) {
-            Log::channel('sync')->info('Skipping target blocker (by mapping)', [
+            Log::channel('sync')->debug('Skipping target blocker (by mapping)', [
                 'event_id' => $sourceEventId,
                 'calendar_id' => $rule->source_calendar_id,
             ]);
@@ -247,25 +230,11 @@ class SyncEngine
 
         // Check if event is deleted/cancelled
         $isDeleted = $this->isEventDeleted($event, $sourceConnection->provider);
-        
-        Log::channel('sync')->info('Check 3: isDeleted', [
-            'event_id' => $sourceEventId,
-            'result' => $isDeleted,
-        ]);
 
         // Apply filters
-        $normalizedEvent = $this->normalizeEvent($event, $sourceConnection->provider);
-        $shouldSync = $rule->shouldSyncEvent($normalizedEvent);
-        
-        Log::channel('sync')->info('Check 4: shouldSyncEvent (filters)', [
-            'event_id' => $sourceEventId,
-            'result' => $shouldSync,
-            'is_deleted' => $isDeleted,
-        ]);
-        
-        if (!$isDeleted && !$shouldSync) {
+        if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
             // Don't log filtered events to DB - would spam dashboard
-            Log::channel('sync')->info('Event filtered out by rules', [
+            Log::channel('sync')->debug('Event filtered out by rules', [
                 'event_id' => $sourceEventId,
                 'rule_id' => $rule->id,
             ]);
@@ -273,22 +242,7 @@ class SyncEngine
         }
 
         // Sync to all targets
-        Log::channel('sync')->info('Syncing event to targets', [
-            'event_id' => $sourceEventId,
-            'target_count' => $rule->targets->count(),
-        ]);
-        
         foreach ($rule->targets as $target) {
-            $targetId = $target->target_connection_id ?? $target->target_email_connection_id;
-            $targetCalendarId = $target->target_calendar_id ?? $target->target_email;
-            
-            Log::channel('sync')->info('Syncing to target', [
-                'event_id' => $sourceEventId,
-                'target_id' => $targetId,
-                'target_calendar_id' => $targetCalendarId,
-                'is_email' => $target->isEmailTarget(),
-            ]);
-            
             try {
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
@@ -345,15 +299,6 @@ class SyncEngine
         $sourceEventId = $this->getEventId($sourceEvent);
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
-
-        Log::channel('sync')->info('createOrUpdateBlockerInTarget called', [
-            'source_event_id' => $sourceEventId,
-            'source_provider' => $sourceConnection->provider,
-            'target_connection_id' => $target->target_connection_id,
-            'target_calendar_id' => $target->target_calendar_id,
-            'start' => $start?->format('Y-m-d H:i:s'),
-            'end' => $end?->format('Y-m-d H:i:s'),
-        ]);
 
         // ANTI-LOOP PROTECTION: Check if this source event is actually a blocker itself
         // If so, check if the original event is in the target calendar we're syncing to
@@ -518,14 +463,6 @@ class SyncEngine
 
         if (!$mapping) {
             // No mapping exists - create new blocker
-            Log::channel('sync')->info('Creating new blocker in target', [
-                'source_event_id' => $sourceEventId,
-                'target_calendar_id' => $target->target_calendar_id,
-                'blocker_title' => $rule->blocker_title,
-                'start' => $start?->format('Y-m-d H:i:s'),
-                'end' => $end?->format('Y-m-d H:i:s'),
-            ]);
-            
             $blockerId = $targetService->createBlocker(
                 $target->target_calendar_id,
                 $rule->blocker_title,
@@ -533,11 +470,6 @@ class SyncEngine
                 $end,
                 $transactionId
             );
-            
-            Log::channel('sync')->info('Blocker created successfully', [
-                'source_event_id' => $sourceEventId,
-                'blocker_id' => $blockerId,
-            ]);
 
             // Create mapping (handle Y2038 problem for dates beyond 2038)
             // Store times in UTC to avoid timezone conversion issues

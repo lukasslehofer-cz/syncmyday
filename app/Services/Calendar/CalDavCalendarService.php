@@ -676,32 +676,11 @@ class CalDavCalendarService
         if (is_array($event)) {
             $hasBlockerLower = isset($event['x-syncmyday-blocker']) && $event['x-syncmyday-blocker'];
             $hasBlockerUpper = isset($event['X-SYNCMYDAY-BLOCKER']) && $event['X-SYNCMYDAY-BLOCKER'];
-            $result = $hasBlockerLower || $hasBlockerUpper;
-            
-            Log::channel('sync')->info('CalDAV: isOurBlocker (array)', [
-                'event_id' => $event['id'] ?? 'unknown',
-                'has_x_syncmyday_blocker_lower' => $hasBlockerLower,
-                'has_X_SYNCMYDAY_BLOCKER_upper' => $hasBlockerUpper,
-                'x_syncmyday_blocker_value' => $event['x-syncmyday-blocker'] ?? 'not set',
-                'result' => $result,
-            ]);
-            
-            return $result;
+            return $hasBlockerLower || $hasBlockerUpper;
         }
         
         // VObject event
-        if (isset($event->{'X-SYNCMYDAY-BLOCKER'})) {
-            Log::channel('sync')->info('CalDAV: isOurBlocker (VObject) - HAS BLOCKER', [
-                'event_type' => get_class($event),
-            ]);
-            return true;
-        }
-        
-        Log::channel('sync')->info('CalDAV: isOurBlocker (VObject) - NO BLOCKER', [
-            'event_type' => get_class($event),
-        ]);
-        
-        return false;
+        return isset($event->{'X-SYNCMYDAY-BLOCKER'});
     }
     
     /**
@@ -761,21 +740,9 @@ class CalDavCalendarService
 </C:calendar-query>
 XML;
         
-        Log::channel('sync')->info('CalDAV: Requesting events', [
-            'calendar_id' => $calendarId,
-            'time_range' => "{$start} to {$end}",
-        ]);
-        
         $response = $this->client->request('REPORT', $calendarId, $xml, [
             'Content-Type' => 'application/xml; charset=utf-8',
             'Depth' => '1',
-        ]);
-        
-        Log::channel('sync')->info('CalDAV: Response received', [
-            'calendar_id' => $calendarId,
-            'status_code' => $response['statusCode'] ?? 'unknown',
-            'body_length' => strlen($response['body'] ?? ''),
-            'body_preview' => substr($response['body'] ?? '', 0, 500),
         ]);
         
         $events = $this->parseMultistatusResponse($response['body']);
@@ -872,19 +839,9 @@ XML;
      */
     private function parseMultistatusResponse(string $xml): array
     {
-        Log::channel('sync')->info('CalDAV: Parsing multistatus response', [
-            'xml_length' => strlen($xml),
-        ]);
-        
         $reader = new \Sabre\Xml\Reader();
         $reader->xml($xml);
         $result = $reader->parse();
-        
-        Log::channel('sync')->info('CalDAV: Parsed XML structure', [
-            'has_value' => isset($result['value']),
-            'value_type' => isset($result['value']) ? gettype($result['value']) : 'N/A',
-            'value_count' => isset($result['value']) && is_array($result['value']) ? count($result['value']) : 0,
-        ]);
         
         $events = [];
         
@@ -910,9 +867,6 @@ XML;
                                     foreach ($propstatChild['value'] as $propChild) {
                                         if (isset($propChild['name']) && $propChild['name'] === '{urn:ietf:params:xml:ns:caldav}calendar-data') {
                                             $calendarData = $propChild['value'];
-                                            Log::channel('sync')->info('CalDAV: Found calendar-data!', [
-                                                'length' => strlen($calendarData ?? ''),
-                                            ]);
                                             break 3; // Break out of all loops
                                         }
                                     }
@@ -922,26 +876,12 @@ XML;
                     }
                 }
                 
-                Log::channel('sync')->info('CalDAV: Extracted data from response', [
-                    'href' => $href,
-                    'has_calendar_data' => !empty($calendarData),
-                    'calendar_data_length' => strlen($calendarData ?? ''),
-                ]);
-                
                 if ($calendarData) {
                     try {
                         $vcalendar = VObject\Reader::read($calendarData);
                         
                         if (isset($vcalendar->VEVENT)) {
-                            Log::channel('sync')->info('CalDAV: Found VEVENT in calendar data', [
-                                'href' => $href,
-                            ]);
                             $events[] = $this->parseVEvent($vcalendar->VEVENT, $href);
-                        } else {
-                            Log::channel('sync')->info('CalDAV: No VEVENT in calendar data', [
-                                'href' => $href,
-                                'components' => array_keys((array) $vcalendar),
-                            ]);
                         }
                     } catch (\Exception $e) {
                         Log::channel('sync')->warning('Failed to parse calendar data', [
@@ -951,15 +891,7 @@ XML;
                     }
                 }
             }
-        } else {
-            Log::channel('sync')->warning('CalDAV: No response elements found in multistatus', [
-                'result_keys' => array_keys($result),
-            ]);
         }
-        
-        Log::channel('sync')->info('CalDAV: Finished parsing multistatus', [
-            'total_events' => count($events),
-        ]);
         
         return $events;
     }
@@ -995,11 +927,6 @@ XML;
         
         // Check for X-SYNCMYDAY-BLOCKER
         $isSyncMyDayBlocker = isset($vevent->{'X-SYNCMYDAY-BLOCKER'});
-        
-        Log::channel('sync')->info('CalDAV: parseVEvent - blocker check', [
-            'uid' => $uid,
-            'has_x_syncmyday_blocker' => $isSyncMyDayBlocker,
-        ]);
         
         return [
             'id' => $uid,
