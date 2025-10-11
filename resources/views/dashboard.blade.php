@@ -205,6 +205,33 @@
                             • <span>{{ $log->event_start->format('M j, H:i') }}</span>
                             @endif
                         </p>
+                        @if($log->syncRule)
+                        <p class="text-xs text-gray-600 mt-1.5 flex items-center space-x-1">
+                            @php
+                                $source = $log->syncRule->sourceConnection ?? $log->syncRule->sourceEmailConnection;
+                                $sourceLabel = $source ? ($source->provider_email ?? $source->email_address ?? 'Email Calendar') : 'Unknown';
+                                
+                                // Get target info based on direction
+                                $targetLabel = '';
+                                if ($log->direction === 'api_to_email') {
+                                    $target = $log->syncRule->targets->first();
+                                    if ($target && $target->targetEmailConnection) {
+                                        $targetLabel = $target->targetEmailConnection->target_email;
+                                    }
+                                } else {
+                                    $target = $log->syncRule->targets->first();
+                                    if ($target && $target->targetConnection) {
+                                        $targetLabel = $target->targetConnection->provider_email;
+                                    }
+                                }
+                            @endphp
+                            <span class="font-medium">{{ Str::limit($sourceLabel, 25) }}</span>
+                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            <span class="font-medium">{{ Str::limit($targetLabel, 25) }}</span>
+                        </p>
+                        @endif
                         @if($log->action === 'error' && $log->error_message)
                         <p class="text-xs text-red-600 mt-2 font-medium">{{ Str::limit($log->error_message, 80) }}</p>
                         @endif

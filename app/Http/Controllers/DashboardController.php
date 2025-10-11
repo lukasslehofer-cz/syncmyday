@@ -24,6 +24,7 @@ class DashboardController extends Controller
             ->get();
 
         $recentLogs = SyncLog::where('user_id', $user->id)
+            ->with(['syncRule.sourceConnection', 'syncRule.sourceEmailConnection', 'syncRule.targets.targetConnection', 'syncRule.targets.targetEmailConnection'])
             ->recent(20)
             ->get();
 
