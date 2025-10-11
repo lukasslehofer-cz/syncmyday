@@ -12,6 +12,7 @@ Po opravě kritických bugů synchronizace fungovala, ale:
 ### Dashboard plný "updated" logů
 
 Při každém syncu (každých 5 minut):
+
 1. ✅ Našlo všechny události v kalendáři
 2. ✅ Pro každou existující událost našlo mapping
 3. ❌ **Volalo `updateBlocker()`** - i když se **NIC nezměnilo**!
@@ -61,11 +62,11 @@ if ($mapping) {
     // Mapping exists - check if update is needed
     $needsUpdate = false;
     $maxTimestamp = new \DateTime('2038-01-01');
-    
+
     // Check if start/end time changed
     $mappingStart = $mapping->event_start;
     $mappingEnd = $mapping->event_end;
-    
+
     if ($mappingStart && $start && $start <= $maxTimestamp) {
         // Compare timestamps (allow 1 minute tolerance for rounding)
         if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
@@ -74,7 +75,7 @@ if ($mapping) {
     } elseif (!$mappingStart && $start) {
         $needsUpdate = true;
     }
-    
+
     if ($mappingEnd && $end && $end <= $maxTimestamp) {
         if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
             $needsUpdate = true;
@@ -82,12 +83,12 @@ if ($mapping) {
     } elseif (!$mappingEnd && $end) {
         $needsUpdate = true;
     }
-    
+
     if ($needsUpdate) {
         // Event time changed - update the blocker
         $targetService->updateBlocker(...);
         $action = 'updated';
-        
+
         Log::channel('sync')->info('Blocker updated due to time change', [
             'event_id' => $sourceEventId,
             'old_start' => $mappingStart?->format('Y-m-d H:i:s'),
@@ -114,7 +115,7 @@ if ($mapping) {
     $needsUpdate = false;
     $mappingStart = $mapping->event_start;
     $mappingEnd = $mapping->event_end;
-    
+
     // Check if start/end time changed
     if ($mappingStart && $start && $start <= $maxTimestamp) {
         if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
@@ -123,7 +124,7 @@ if ($mapping) {
     } elseif (!$mappingStart && $start) {
         $needsUpdate = true;
     }
-    
+
     if ($mappingEnd && $end && $end <= $maxTimestamp) {
         if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
             $needsUpdate = true;
@@ -131,7 +132,7 @@ if ($mapping) {
     } elseif (!$mappingEnd && $end) {
         $needsUpdate = true;
     }
-    
+
     if (!$needsUpdate) {
         // No changes - skip sending email
         Log::channel('sync')->debug('Email blocker unchanged, skipping iMIP', [
@@ -140,7 +141,7 @@ if ($mapping) {
         ]);
         return;
     }
-    
+
     $action = 'updated';
 }
 
@@ -154,21 +155,21 @@ $success = $this->imipEmail->sendBlockerInvitation(...);
 
 ### Před optimalizací:
 
-| Metrika | Hodnota |
-|---------|---------|
-| Sync logů za hodinu | ~120 (20 eventů × 6 syncù) |
-| API calls za hodinu | ~120 |
-| iMIP emailů za hodinu | ~120 (pro email targets) |
-| Dashboard | Spam "updated" logů |
+| Metrika               | Hodnota                    |
+| --------------------- | -------------------------- |
+| Sync logů za hodinu   | ~120 (20 eventů × 6 syncù) |
+| API calls za hodinu   | ~120                       |
+| iMIP emailů za hodinu | ~120 (pro email targets)   |
+| Dashboard             | Spam "updated" logů        |
 
 ### Po optimalizaci:
 
-| Metrika | Hodnota |
-|---------|---------|
-| Sync logů za hodinu | ~20 (pouze při prvním syncu) |
-| API calls za hodinu | ~0 (jen při skutečných změnách) |
+| Metrika               | Hodnota                         |
+| --------------------- | ------------------------------- |
+| Sync logů za hodinu   | ~20 (pouze při prvním syncu)    |
+| API calls za hodinu   | ~0 (jen při skutečných změnách) |
 | iMIP emailů za hodinu | ~0 (jen při skutečných změnách) |
-| Dashboard | Jen relevantní změny |
+| Dashboard             | Jen relevantní změny            |
 
 ### Úspora:
 
@@ -186,10 +187,12 @@ Teď se "updated" log objeví **jen když se skutečně něco změnilo**:
 ### Scénáře pro update:
 
 1. ✅ **Čas začátku se změnil** (>1 min rozdíl)
+
    - Uživatel posunul schůzku z 10:00 na 11:00
    - → Update blockeru + log
 
 2. ✅ **Čas konce se změnil** (>1 min rozdíl)
+
    - Schůzka se prodloužila z 1h na 2h
    - → Update blockeru + log
 
@@ -200,6 +203,7 @@ Teď se "updated" log objeví **jen když se skutečně něco změnilo**:
 ### Scénáře BEZ update:
 
 1. ❌ **Žádná změna**
+
    - Sync běží každých 5 min, ale událost se nezměnila
    - → Skip (žádný API call, žádný log)
 
@@ -221,6 +225,7 @@ tail -f storage/logs/sync.log | grep -E "unchanged|skipping"
 ```
 
 Uvidíš:
+
 ```
 [2025-10-11 10:05:23] Blocker unchanged, skipping update
 [2025-10-11 10:10:24] Email blocker unchanged, skipping iMIP
@@ -229,6 +234,7 @@ Uvidíš:
 ### Dashboard:
 
 Zobrazuje **jen relevantní operace**:
+
 - ✅ Created (nová událost)
 - ✅ Updated (změněný čas)
 - ✅ Deleted (zrušená událost)
@@ -248,6 +254,7 @@ Aktuálně se kontroluje jen **čas**. Pokud bychom chtěli detekovat i změnu *
 3. Updatovat při změně
 
 **Proč to zatím neděláme:**
+
 - Název blockeru se mění vzácně (když user edituje pravidlo)
 - Při změně pravidla se stejně deletují všechny blockery a vytvářejí nové
 
@@ -287,13 +294,13 @@ elseif (!$mappingStart && $start) {
 
 ```sql
 -- Počet updateů za poslední hodinu
-SELECT COUNT(*) 
-FROM sync_logs 
-WHERE action = 'updated' 
+SELECT COUNT(*)
+FROM sync_logs
+WHERE action = 'updated'
 AND created_at > NOW() - INTERVAL 1 HOUR;
 
 -- Porovnání před/po (minulý týden vs tento týden)
-SELECT 
+SELECT
     WEEK(created_at) as week,
     action,
     COUNT(*) as count
@@ -308,4 +315,3 @@ ORDER BY week DESC;
 **Status:** 🎉 Optimalizace dokončena!
 
 Dashboard je nyní čistý a zobrazuje jen relevantní změny.
-

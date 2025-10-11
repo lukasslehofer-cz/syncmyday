@@ -279,7 +279,90 @@ try {
                         break;
                     }
                     
+                    // Generate unique transaction ID for this sync operation
+                    $transactionId = \Illuminate\Support\Str::uuid()->toString();
+                    
                     foreach ($events as $eventData) {
+                        // Check if this is a cancellation
+                        $isCancellation = isset($eventData['method']) && strtoupper($eventData['method']) === 'CANCEL';
+                        
+                        if ($isCancellation) {
+                            // Handle event cancellation - delete existing blockers
+                            $output[] = "  📧 Event cancelled: {$eventData['uid']}";
+                            
+                            $mappings = \App\Models\SyncEventMapping::where('email_connection_id', $connection->id)
+                                ->where('original_event_uid', $eventData['uid'])
+                                ->get();
+                            
+                            foreach ($mappings as $mapping) {
+                                try {
+                                    // Delete blocker from target calendar
+                                    if ($mapping->target_connection_id) {
+                                        $targetConnection = $mapping->targetConnection;
+                                        
+                                        if ($targetConnection && $targetConnection->status === 'active') {
+                                            $service = $targetConnection->provider === 'google'
+                                                ? app(\App\Services\Calendar\GoogleCalendarService::class)
+                                                : app(\App\Services\Calendar\MicrosoftCalendarService::class);
+                                            
+                                            $service->initializeWithConnection($targetConnection);
+                                            $service->deleteBlocker(
+                                                $mapping->target_calendar_id,
+                                                $mapping->target_event_id
+                                            );
+                                            
+                                            $output[] = "  ✓ Deleted blocker from {$targetConnection->provider}";
+                                        }
+                                    } elseif ($mapping->target_email_connection_id) {
+                                        // Send CANCEL to email target
+                                        $targetEmail = $mapping->targetEmailConnection;
+                                        if ($targetEmail && $targetEmail->target_email) {
+                                            $imipService = app(\App\Services\Email\ImipEmailService::class);
+                                            $imipService->sendBlockerInvitation(
+                                                $targetEmail,
+                                                $targetEmail->target_email,
+                                                $mapping->target_event_id,
+                                                'Cancelled',
+                                                $eventData['start'],
+                                                $eventData['end'],
+                                                'CANCEL',
+                                                $mapping->sequence ?? 0
+                                            );
+                                            
+                                            $output[] = "  ✓ Sent cancellation to email";
+                                        }
+                                    }
+                                    
+                                    // Delete the mapping
+                                    $mapping->delete();
+                                    
+                                    // Log the deletion
+                                    \App\Models\SyncLog::create([
+                                        'user_id' => $connection->user_id,
+                                        'sync_rule_id' => $mapping->sync_rule_id,
+                                        'action' => 'deleted',
+                                        'source_event_id' => $eventData['uid'],
+                                        'target_event_id' => $mapping->target_event_id,
+                                        'transaction_id' => $transactionId,
+                                    ]);
+                                    
+                                } catch (\Exception $e) {
+                                    $output[] = "  ✗ Error deleting blocker: " . $e->getMessage();
+                                    
+                                    \App\Models\SyncLog::create([
+                                        'user_id' => $connection->user_id,
+                                        'sync_rule_id' => $mapping->sync_rule_id,
+                                        'action' => 'error',
+                                        'source_event_id' => $eventData['uid'],
+                                        'error_message' => $e->getMessage(),
+                                        'transaction_id' => $transactionId,
+                                    ]);
+                                }
+                            }
+                            
+                            continue; // Skip to next event
+                        }
+                        
                         // Process through each sync rule
                         foreach ($syncRules as $rule) {
                             if (!$rule->is_active) {
@@ -295,23 +378,54 @@ try {
                             // Create blockers in target calendars
                             foreach ($rule->targets as $target) {
                                 try {
+                                    // Check if mapping already exists (to prevent duplicates)
+                                    $existingMapping = \App\Models\SyncEventMapping::where('sync_rule_id', $rule->id)
+                                        ->where('email_connection_id', $connection->id)
+                                        ->where('original_event_uid', $eventData['uid'])
+                                        ->where('target_connection_id', $target->target_connection_id)
+                                        ->where('target_calendar_id', $target->target_calendar_id)
+                                        ->first();
+                                    
+                                    $blockerId = null;
+                                    $action = 'created';
+                                    
                                     if ($target->isEmailTarget()) {
                                         // Send iMIP to email target
                                         $targetEmail = $target->targetEmailConnection;
                                         if ($targetEmail && $targetEmail->target_email) {
                                             $imipService = app(\App\Services\Email\ImipEmailService::class);
-                                            $imipService->sendBlockerInvitation(
-                                                $targetEmail,
-                                                $targetEmail->target_email,
-                                                'syncmyday-' . $rule->id . '-' . md5($eventData['uid']),
-                                                $rule->blocker_title,
-                                                $eventData['start'],
-                                                $eventData['end']
-                                            );
-                                            $output[] = "  ✓ Sent blocker to email: {$targetEmail->target_email}";
+                                            $blockerId = 'syncmyday-' . $rule->id . '-' . md5($eventData['uid']);
+                                            
+                                            if ($existingMapping) {
+                                                // Update existing blocker
+                                                $imipService->sendBlockerInvitation(
+                                                    $targetEmail,
+                                                    $targetEmail->target_email,
+                                                    $blockerId,
+                                                    $rule->blocker_title,
+                                                    $eventData['start'],
+                                                    $eventData['end'],
+                                                    'REQUEST',
+                                                    ($existingMapping->sequence ?? 0) + 1
+                                                );
+                                                $existingMapping->update(['sequence' => ($existingMapping->sequence ?? 0) + 1]);
+                                                $action = 'updated';
+                                            } else {
+                                                // Create new blocker
+                                                $imipService->sendBlockerInvitation(
+                                                    $targetEmail,
+                                                    $targetEmail->target_email,
+                                                    $blockerId,
+                                                    $rule->blocker_title,
+                                                    $eventData['start'],
+                                                    $eventData['end']
+                                                );
+                                            }
+                                            
+                                            $output[] = "  ✓ " . ucfirst($action) . " blocker to email: {$targetEmail->target_email}";
                                         }
                                     } else {
-                                        // Create blocker in API calendar (Google/Microsoft)
+                                        // Create/update blocker in API calendar (Google/Microsoft)
                                         $targetConnection = $target->targetConnection;
                                         if ($targetConnection && $targetConnection->status === 'active') {
                                             $service = $targetConnection->provider === 'google'
@@ -319,22 +433,94 @@ try {
                                                 : app(\App\Services\Calendar\MicrosoftCalendarService::class);
                                             
                                             $service->initializeWithConnection($targetConnection);
-                                            $blockerId = $service->createBlocker(
-                                                $target->target_calendar_id,
-                                                $rule->blocker_title,
-                                                $eventData['start'],
-                                                $eventData['end'],
-                                                \Illuminate\Support\Str::uuid()->toString()
-                                            );
                                             
-                                            $output[] = "  ✓ Created blocker in {$targetConnection->provider}: {$targetConnection->account_email}";
+                                            if ($existingMapping && $existingMapping->target_event_id) {
+                                                // Update existing blocker
+                                                try {
+                                                    $service->updateBlocker(
+                                                        $target->target_calendar_id,
+                                                        $existingMapping->target_event_id,
+                                                        $rule->blocker_title,
+                                                        $eventData['start'],
+                                                        $eventData['end']
+                                                    );
+                                                    $blockerId = $existingMapping->target_event_id;
+                                                    $action = 'updated';
+                                                } catch (\Exception $e) {
+                                                    // If update fails, create new blocker
+                                                    $blockerId = $service->createBlocker(
+                                                        $target->target_calendar_id,
+                                                        $rule->blocker_title,
+                                                        $eventData['start'],
+                                                        $eventData['end'],
+                                                        \Illuminate\Support\Str::uuid()->toString()
+                                                    );
+                                                    $action = 'recreated';
+                                                }
+                                            } else {
+                                                // Create new blocker
+                                                $blockerId = $service->createBlocker(
+                                                    $target->target_calendar_id,
+                                                    $rule->blocker_title,
+                                                    $eventData['start'],
+                                                    $eventData['end'],
+                                                    \Illuminate\Support\Str::uuid()->toString()
+                                                );
+                                            }
+                                            
+                                            $output[] = "  ✓ " . ucfirst($action) . " blocker in {$targetConnection->provider}: {$targetConnection->account_email}";
                                         }
+                                    }
+                                    
+                                    // Create or update SyncEventMapping for tracking
+                                    if ($blockerId) {
+                                        if ($existingMapping) {
+                                            $existingMapping->update([
+                                                'target_event_id' => $blockerId,
+                                                'last_synced_at' => now(),
+                                            ]);
+                                        } else {
+                                            \App\Models\SyncEventMapping::create([
+                                                'sync_rule_id' => $rule->id,
+                                                'source_type' => 'email',
+                                                'email_connection_id' => $connection->id,
+                                                'original_event_uid' => $eventData['uid'],
+                                                'target_connection_id' => $target->target_connection_id,
+                                                'target_email_connection_id' => $target->target_email_connection_id,
+                                                'target_calendar_id' => $target->target_calendar_id,
+                                                'target_event_id' => $blockerId,
+                                                'sequence' => 0,
+                                                'last_synced_at' => now(),
+                                            ]);
+                                        }
+                                        
+                                        // Create SyncLog entry
+                                        \App\Models\SyncLog::create([
+                                            'user_id' => $connection->user_id,
+                                            'sync_rule_id' => $rule->id,
+                                            'action' => $action,
+                                            'source_event_id' => $eventData['uid'],
+                                            'target_event_id' => $blockerId,
+                                            'event_start' => $eventData['start'],
+                                            'event_end' => $eventData['end'],
+                                            'transaction_id' => $transactionId,
+                                        ]);
                                     }
                                     
                                     $totalEventsProcessed++;
                                     
                                 } catch (\Exception $e) {
                                     $output[] = "  ✗ Error creating blocker: " . $e->getMessage();
+                                    
+                                    // Log the error
+                                    \App\Models\SyncLog::create([
+                                        'user_id' => $connection->user_id,
+                                        'sync_rule_id' => $rule->id,
+                                        'action' => 'error',
+                                        'source_event_id' => $eventData['uid'] ?? 'unknown',
+                                        'error_message' => $e->getMessage(),
+                                        'transaction_id' => $transactionId,
+                                    ]);
                                 }
                             }
                         }

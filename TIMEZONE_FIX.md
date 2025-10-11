@@ -12,7 +12,7 @@ Po optimalizaci stále přicházely "updated" logy, i když se časy nezměnily:
 ### Logy z produkce:
 
 ```
-[2025-10-11 10:39:03] Blocker updated due to time change 
+[2025-10-11 10:39:03] Blocker updated due to time change
 {
     "event_id":"bpsdlan30llqv3k2sn4t294r1o_20251212T133000Z",
     "old_start":"2025-12-12 14:30:00",
@@ -66,16 +66,16 @@ if ($mappingStart && $start && $start <= $maxTimestamp) {
     // ✅ SPRÁVNĚ: Normalize both to UTC for comparison
     $mappingStartUtc = clone $mappingStart;
     $mappingStartUtc->setTimezone(new \DateTimeZone('UTC'));
-    
+
     $startUtc = clone $start;
     $startUtc->setTimezone(new \DateTimeZone('UTC'));
-    
+
     // Compare timestamps in the same timezone
     $diff = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
-    
+
     if ($diff > 60) {
         $needsUpdate = true;
-        
+
         // Debug log with normalized times
         Log::channel('sync')->debug('Start time difference detected', [
             'event_id' => $sourceEventId,
@@ -136,11 +136,13 @@ Format `c` (ISO 8601) zobrazí i timezone → snadný debug!
 ### Scénář 1: Žádná změna
 
 **Před:**
+
 - DB: `2025-12-12 14:30:00` (Europe/Prague)
 - API: `2025-12-12T13:30:00Z` (UTC, stejný moment)
 - ❌ Detekováno jako změna (3600s rozdíl)
 
 **Po:**
+
 - Oba normalized to UTC: `2025-12-12T13:30:00Z`
 - Diff = 0 sekund
 - ✅ Skip update
@@ -148,10 +150,12 @@ Format `c` (ISO 8601) zobrazí i timezone → snadný debug!
 ### Scénář 2: Skutečná změna
 
 **Před:**
+
 - DB: `2025-12-12 14:30:00`
 - API: `2025-12-12 15:30:00` (posunuto o hodinu)
 
 **Po:**
+
 - Oba normalized to UTC
 - Diff = 3600 sekund
 - ✅ Update proveden
@@ -159,9 +163,11 @@ Format `c` (ISO 8601) zobrazí i timezone → snadný debug!
 ### Scénář 3: DST (Daylight Saving Time)
 
 **Před:**
+
 - Možné problémy při přechodu letní/zimní čas
 
 **Po:**
+
 - UTC není ovlivněno DST
 - ✅ Žádné false positive při DST přechodech
 
@@ -192,6 +198,7 @@ Format `c` (ISO 8601) zobrazí i timezone → snadný debug!
 ```
 
 **Proč UTC?**
+
 - Standardní pro API (Google, Microsoft)
 - Žádné DST problémy
 - Snadná konverze pro display
@@ -242,4 +249,3 @@ $date->format('Y-m-d H:i:s')  // 2025-12-12 14:30:00 (bez timezone!)
 **Status:** 🎉 Timezone issue vyřešen!
 
 Synchronizace nyní správně detekuje změny bez ohledu na timezone nastavení.
-

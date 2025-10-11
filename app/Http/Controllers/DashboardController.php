@@ -17,9 +17,13 @@ class DashboardController extends Controller
         $connections = $user->calendarConnections()
             ->orderBy('created_at', 'desc')
             ->get();
+        
+        $emailCalendars = $user->emailCalendarConnections()
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $syncRules = $user->syncRules()
-            ->with(['sourceConnection', 'targets'])
+            ->with(['sourceConnection', 'sourceEmailConnection', 'targets'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -29,15 +33,15 @@ class DashboardController extends Controller
             ->get();
 
         $stats = [
-            'total_connections' => $connections->count(),
-            'active_connections' => $connections->where('status', 'active')->count(),
+            'total_connections' => $connections->count() + $emailCalendars->count(),
+            'active_connections' => $connections->where('status', 'active')->count() + $emailCalendars->where('status', 'active')->count(),
             'total_rules' => $syncRules->count(),
             'active_rules' => $syncRules->where('is_active', true)->count(),
             'recent_syncs' => $recentLogs->where('action', '!=', 'error')->count(),
             'recent_errors' => $recentLogs->where('action', 'error')->count(),
         ];
 
-        return view('dashboard', compact('connections', 'syncRules', 'recentLogs', 'stats'));
+        return view('dashboard', compact('connections', 'emailCalendars', 'syncRules', 'recentLogs', 'stats'));
     }
 }
 
