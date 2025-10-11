@@ -428,4 +428,18 @@ return [
     // Dashboard
     'footer_tagline' => 'Synchronizujte svoje kalendáre bez námahy',
     'home_stat_2mins' => 'Nastavenie za 2 minúty',
+    'alert' => 'Upozornenie',
+    'none' => 'Žiadne',
+    
+    // Common
+    'events' => 'udalostí',
+    'emails' => 'e-mailov',
+    'connection_error' => 'Chyba pripojenia',
+    'caldav_calendar' => 'CalDAV kalendár',
+    'calendar_singular' => 'Kalendár',
+    'calendars_count' => 'kalendár(ov)',
+    'remove' => 'Odstrániť',
+    'email_calendar_type' => 'E-mailový kalendár',
+    'email_type' => 'E-mail',
+    'syncing_to_targets' => 'Synchronizuje sa do :count cieľa|Synchronizuje sa do :count cieľov',
 ];

@@ -20,7 +20,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">Active</span>
+                <span class="text-xs font-semibold text-blue-600 bg-blue-100 px-3 py-1 rounded-full">{{ __('messages.active') }}</span>
             </div>
             <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.calendar_connections_stat') }}</p>
             <p class="text-4xl font-bold text-gray-900 mb-1">{{ $stats['active_connections'] }}</p>
@@ -66,7 +66,7 @@
                     </svg>
                 </div>
                 @if($stats['recent_errors'] > 0)
-                <span class="text-xs font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-full">Alert</span>
+                <span class="text-xs font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-full">{{ __('messages.alert') }}</span>
                 @else
                 <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{{ __('messages.none') }}</span>
                 @endif

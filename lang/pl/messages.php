@@ -428,4 +428,18 @@ return [
     // Dashboard
     'footer_tagline' => 'Synchronizuj swoje kalendarze bez wysiłku',
     'home_stat_2mins' => 'Konfiguracja w 2 minuty',
+    'alert' => 'Alert',
+    'none' => 'Brak',
+    
+    // Common
+    'events' => 'wydarzeń',
+    'emails' => 'e-maili',
+    'connection_error' => 'Błąd połączenia',
+    'caldav_calendar' => 'Kalendarz CalDAV',
+    'calendar_singular' => 'Kalendarz',
+    'calendars_count' => 'kalendarz(y)',
+    'remove' => 'Usuń',
+    'email_calendar_type' => 'Kalendarz e-mail',
+    'email_type' => 'E-mail',
+    'syncing_to_targets' => 'Synchronizacja do :count celu|Synchronizacja do :count celów',
 ];

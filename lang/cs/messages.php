@@ -505,4 +505,18 @@ return [
     // Dashboard
     'footer_tagline' => 'Synchronizujte své kalendáře bez námahy',
     'home_stat_2mins' => 'Nastavení za 2 minuty',
+    'alert' => 'Upozornění',
+    'none' => 'Žádné',
+    
+    // Common
+    'events' => 'událostí',
+    'emails' => 'e-mailů',
+    'connection_error' => 'Chyba připojení',
+    'caldav_calendar' => 'CalDAV kalendář',
+    'calendar_singular' => 'Kalendář',
+    'calendars_count' => 'kalendář(ů)',
+    'remove' => 'Odebrat',
+    'email_calendar_type' => 'E-mailový kalendář',
+    'email_type' => 'E-mail',
+    'syncing_to_targets' => 'Synchronizuje se do :count cíle|Synchronizuje se do :count cílů',
 ];

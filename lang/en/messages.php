@@ -497,4 +497,18 @@ return [
     // Dashboard
     'footer_tagline' => 'Sync your calendars effortlessly',
     'home_stat_2mins' => 'Set up in 2 minutes',
+    'alert' => 'Alert',
+    'none' => 'None',
+    
+    // Common
+    'events' => 'events',
+    'emails' => 'emails',
+    'connection_error' => 'Connection Error',
+    'caldav_calendar' => 'CalDAV Calendar',
+    'calendar_singular' => 'Calendar',
+    'calendars_count' => 'calendar(s)',
+    'remove' => 'Remove',
+    'email_calendar_type' => 'Email Calendar',
+    'email_type' => 'Email',
+    'syncing_to_targets' => 'Syncing to :count target|Syncing to :count targets',
 ];

@@ -75,7 +75,7 @@
                                     @endif
                                 </h3>
                                 <p class="text-xs text-gray-500">
-                                    Syncing to {{ $rule->targets->count() }} target{{ $rule->targets->count() !== 1 ? 's' : '' }}
+                                    {{ trans_choice('messages.syncing_to_targets', $rule->targets->count(), ['count' => $rule->targets->count()]) }}
                                 </p>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
                                     <p class="text-sm text-gray-600 font-mono bg-white/70 px-2 py-1 rounded mt-1 truncate">
                                         {{ $rule->sourceEmailConnection->email_address }}
                                     </p>
-                                    <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Email Calendar</span>
+                                    <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">{{ __('messages.email_calendar_type') }}</span>
                                 </div>
                             </div>
                             @else
@@ -198,7 +198,7 @@
                                             {{ $target->targetEmailConnection->target_email }}
                                         </p>
                                         @endif
-                                        <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Email</span>
+                                        <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">{{ __('messages.email_type') }}</span>
                                     </div>
                                 </div>
                                 @else
