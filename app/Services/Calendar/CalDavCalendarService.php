@@ -407,14 +407,28 @@ class CalDavCalendarService
                             break;
                         }
                     }
-                    // Handle array with name key
+                    // Handle array with name key or attributes
                     elseif (is_array($component)) {
                         Log::debug('CalDAV: Component is array', [
                             'url' => $url,
                             'component' => $component,
                         ]);
                         
+                        // Check direct name
                         if (isset($component['name']) && $component['name'] === 'VEVENT') {
+                            $supportsEvents = true;
+                            break;
+                        }
+                        
+                        // Check attributes.name (iCloud format)
+                        if (isset($component['attributes']['name']) && $component['attributes']['name'] === 'VEVENT') {
+                            $supportsEvents = true;
+                            Log::info('CalDAV: Found VEVENT in attributes!', ['url' => $url]);
+                            break;
+                        }
+                        
+                        // Check if it's a simple associative array with 'VEVENT' value
+                        if (in_array('VEVENT', $component, true)) {
                             $supportsEvents = true;
                             break;
                         }
