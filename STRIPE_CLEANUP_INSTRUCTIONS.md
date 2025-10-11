@@ -7,6 +7,7 @@ Tento skript slouží k vyčištění testovacích Stripe dat z databáze při p
 ## ⚠️ Kdy použít
 
 Použijte tento skript když:
+
 - Přecházíte z Stripe test mode na live mode
 - Vidíte chybu: `No such customer: 'cus_XXX'` v logách
 - Databáze obsahuje test customer IDs, ale používáte live Stripe klíče
@@ -70,13 +71,16 @@ Nebo přes FTP smažte: `public/cleanup-stripe-test-data.php`
 ## 🆘 Troubleshooting
 
 ### Chyba: "Access denied"
+
 - Zkontrolujte, že používáte správný secret klíč v URL
 
 ### Chyba: "500 Internal Server Error"
+
 - Zkontrolujte, že máte správně nastavené .env (DB připojení)
 - Zkontrolujte `storage/logs/laravel.log`
 
 ### Skript nic nenašel
+
 - To je dobře! Znamená to, že databáze neobsahuje test Stripe data
 
 ## 🔄 Alternativa: Artisan Command
@@ -92,4 +96,3 @@ Tento command dělá totéž, ale je bezpečnější (nepotřebuje veřejný PHP
 ## 📞 Podpora
 
 Pokud narazíte na problém, kontaktujte vývojáře.
-

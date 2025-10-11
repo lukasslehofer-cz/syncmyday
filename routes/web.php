@@ -146,7 +146,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/trial-checkout', [BillingController::class, 'createTrialCheckoutSession'])->name('trial-checkout');
         Route::post('/checkout', [BillingController::class, 'createCheckoutSession'])->name('checkout');
         Route::get('/success', [BillingController::class, 'success'])->name('success');
-        Route::get('/portal', [BillingController::class, 'portal'])->name('portal');
+        Route::get('/manage', [BillingController::class, 'manage'])->name('manage');
+        Route::post('/update-payment-method', [BillingController::class, 'updatePaymentMethod'])->name('update-payment-method');
+        Route::post('/cancel', [BillingController::class, 'cancelSubscription'])->name('cancel');
+        Route::post('/reactivate', [BillingController::class, 'reactivateSubscription'])->name('reactivate');
     });
     Route::get('/billing', [BillingController::class, 'index'])->name('billing'); // Shorthand
 

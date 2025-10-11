@@ -397,9 +397,9 @@ class BillingController extends Controller
     }
 
     /**
-     * Create portal session for subscription management
+     * Show subscription management page
      */
-    public function portal()
+    public function manage()
     {
         $user = auth()->user();
 
@@ -409,15 +409,146 @@ class BillingController extends Controller
         }
 
         try {
-            $session = \Stripe\BillingPortal\Session::create([
+            // Get subscription details from Stripe
+            $subscription = null;
+            $paymentMethod = null;
+            $invoices = [];
+
+            if ($user->stripe_subscription_id) {
+                $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+                
+                // Get payment method
+                if ($subscription->default_payment_method) {
+                    $paymentMethod = \Stripe\PaymentMethod::retrieve($subscription->default_payment_method);
+                }
+
+                // Get recent invoices
+                $invoices = \Stripe\Invoice::all([
+                    'customer' => $user->stripe_customer_id,
+                    'limit' => 10,
+                ]);
+            }
+
+            return view('billing.manage', [
+                'user' => $user,
+                'subscription' => $subscription,
+                'paymentMethod' => $paymentMethod,
+                'invoices' => $invoices,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to load subscription management', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->route('billing')
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Create Checkout Session for updating payment method
+     */
+    public function updatePaymentMethod()
+    {
+        $user = auth()->user();
+
+        if (!$user->stripe_customer_id) {
+            return redirect()->route('billing')
+                ->with('error', __('messages.no_subscription'));
+        }
+
+        try {
+            $session = Session::create([
                 'customer' => $user->stripe_customer_id,
-                'return_url' => route('billing'),
+                'payment_method_types' => ['card'],
+                'mode' => 'setup',
+                'success_url' => route('billing.manage') . '?payment_method_updated=1',
+                'cancel_url' => route('billing.manage'),
             ]);
 
             return redirect($session->url);
 
         } catch (\Exception $e) {
-            Log::error('Portal session creation failed', [
+            Log::error('Failed to create payment method update session', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Cancel subscription
+     */
+    public function cancelSubscription()
+    {
+        $user = auth()->user();
+
+        if (!$user->stripe_subscription_id) {
+            return redirect()->route('billing')
+                ->with('error', __('messages.no_subscription'));
+        }
+
+        try {
+            // Cancel subscription at period end
+            $subscription = \Stripe\Subscription::update(
+                $user->stripe_subscription_id,
+                ['cancel_at_period_end' => true]
+            );
+
+            Log::info('Subscription cancelled by user', [
+                'user_id' => $user->id,
+                'subscription_id' => $user->stripe_subscription_id,
+                'ends_at' => $subscription->current_period_end,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('success', __('messages.subscription_cancelled'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to cancel subscription', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Reactivate cancelled subscription
+     */
+    public function reactivateSubscription()
+    {
+        $user = auth()->user();
+
+        if (!$user->stripe_subscription_id) {
+            return redirect()->route('billing')
+                ->with('error', __('messages.no_subscription'));
+        }
+
+        try {
+            // Remove cancellation
+            \Stripe\Subscription::update(
+                $user->stripe_subscription_id,
+                ['cancel_at_period_end' => false]
+            );
+
+            Log::info('Subscription reactivated by user', [
+                'user_id' => $user->id,
+                'subscription_id' => $user->stripe_subscription_id,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('success', __('messages.subscription_reactivated'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to reactivate subscription', [
                 'error' => $e->getMessage(),
                 'user_id' => $user->id,
             ]);
