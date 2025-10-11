@@ -15,8 +15,17 @@
     @php
         $isCancelling = $subscription->cancel_at_period_end ?? false;
         $isTrialing = $subscription->status === 'trialing';
-        $renewDate = $subscription->current_period_end 
-            ? \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')
+        
+        // Get end/renew date based on subscription status
+        $endTimestamp = null;
+        if ($isCancelling && $subscription->cancel_at) {
+            $endTimestamp = $subscription->cancel_at;
+        } elseif ($subscription->current_period_end) {
+            $endTimestamp = $subscription->current_period_end;
+        }
+        
+        $renewDate = $endTimestamp 
+            ? \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y')
             : ($user->subscription_ends_at ? $user->subscription_ends_at->format('j. F Y') : '');
     @endphp
     
