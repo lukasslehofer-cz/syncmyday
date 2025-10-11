@@ -510,7 +510,8 @@ class BillingController extends Controller
             // Detach payment method (card will be removed)
             if ($subscription->default_payment_method) {
                 try {
-                    \Stripe\PaymentMethod::detach($subscription->default_payment_method);
+                    $paymentMethod = \Stripe\PaymentMethod::retrieve($subscription->default_payment_method);
+                    $paymentMethod->detach();
                     Log::info('Payment method detached after subscription cancellation', [
                         'user_id' => $user->id,
                         'payment_method_id' => $subscription->default_payment_method,
