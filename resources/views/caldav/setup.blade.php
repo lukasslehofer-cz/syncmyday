@@ -37,10 +37,10 @@
                     name="provider_type" 
                     value="icloud" 
                     checked
-                    class="peer absolute opacity-0"
+                    class="peer/icloud absolute opacity-0"
                     onchange="toggleProviderFields()"
                 >
-                <div class="h-full bg-gray-50 peer-checked:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked:border-purple-500 peer-checked:shadow-lg hover:border-purple-400 transition-all">
+                <div class="h-full bg-gray-50 peer-checked/icloud:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/icloud:border-purple-500 peer-checked/icloud:shadow-lg hover:border-purple-400 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-gray-800 to-black flex items-center justify-center">
@@ -50,8 +50,8 @@
                             </div>
                             <h4 class="font-bold text-gray-900">Apple iCloud</h4>
                         </div>
-                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked:border-purple-600 peer-checked:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked/icloud:border-purple-600 peer-checked/icloud:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4 text-white opacity-0 peer-checked/icloud:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
                                 <path d="M3 8l4 4 6-8"/>
                             </svg>
                         </div>
@@ -70,10 +70,10 @@
                     type="radio" 
                     name="provider_type" 
                     value="other" 
-                    class="peer absolute opacity-0"
+                    class="peer/other absolute opacity-0"
                     onchange="toggleProviderFields()"
                 >
-                <div class="h-full bg-gray-50 peer-checked:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked:border-purple-500 peer-checked:shadow-lg hover:border-purple-400 transition-all">
+                <div class="h-full bg-gray-50 peer-checked/other:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/other:border-purple-500 peer-checked/other:shadow-lg hover:border-purple-400 transition-all">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center">
@@ -83,8 +83,8 @@
                             </div>
                             <h4 class="font-bold text-gray-900">Other CalDAV</h4>
                         </div>
-                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked:border-purple-600 peer-checked:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                        <div class="relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 peer-checked/other:border-purple-600 peer-checked/other:bg-purple-600 flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4 text-white opacity-0 peer-checked/other:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
                                 <path d="M3 8l4 4 6-8"/>
                             </svg>
                         </div>
