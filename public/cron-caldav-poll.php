@@ -8,44 +8,29 @@
  * proc_open is disabled.
  * 
  * SECURITY:
- * - Uses bearer token authentication
- * - Token is defined in .env as CRON_SECURITY_TOKEN
+ * - Uses CRON_SECRET token from .env
  * 
  * SETUP:
  * - Set up a cron job to call this URL every 5-15 minutes:
- *   curl -H "Authorization: Bearer YOUR_TOKEN_HERE" https://yourdomain.com/cron-caldav-poll.php
+ *   https://yourdomain.com/cron-caldav-poll.php?token=YOUR_CRON_SECRET
  * 
  * FREQUENCY:
  * - Recommended: Every 5-10 minutes (CalDAV doesn't support webhooks)
  */
 
-// Security check
-$securityToken = $_ENV['CRON_SECURITY_TOKEN'] ?? getenv('CRON_SECURITY_TOKEN');
-$authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-
-if (!$securityToken) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Security token not configured']);
-    exit;
-}
-
-if (!str_starts_with($authHeader, 'Bearer ')) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized - Bearer token required']);
-    exit;
-}
-
-$providedToken = substr($authHeader, 7);
-if ($providedToken !== $securityToken) {
-    http_response_code(403);
-    echo json_encode(['error' => 'Forbidden - Invalid token']);
-    exit;
-}
-
 // Bootstrap Laravel
 require __DIR__ . '/../vendor/autoload.php';
 $app = require_once __DIR__ . '/../bootstrap/app.php';
-$app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+$kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+
+// Security check for CRON_SECRET
+$cronSecret = config('app.cron_secret');
+if (empty($cronSecret) || $cronSecret !== ($_GET['token'] ?? null)) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Forbidden: Invalid or missing cron token.']);
+    exit;
+}
 
 use App\Models\CalendarConnection;
 use App\Services\Sync\SyncEngine;
