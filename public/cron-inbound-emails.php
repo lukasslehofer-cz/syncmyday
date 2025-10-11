@@ -387,35 +387,28 @@ try {
                                 continue;
                             }
                             
+                            // ANTI-LOOP PROTECTION: Skip events with our own UID format
+                            // This prevents processing our own blockers sent via API → Email sync
+                            if (str_starts_with($eventData['uid'], 'syncmyday-')) {
+                                $output[] = "  ⊘ Skipped SyncMyDay blocker (loop prevention): {$eventData['uid']}";
+                                
+                                \App\Models\SyncLog::create([
+                                    'user_id' => $connection->user_id,
+                                    'sync_rule_id' => $rule->id,
+                                    'action' => 'skipped',
+                                    'source_event_id' => $eventData['uid'],
+                                    'event_start' => $eventData['start'],
+                                    'event_end' => $eventData['end'],
+                                    'error_message' => 'Loop prevention: this is a SyncMyDay blocker (recognized by UID format)',
+                                    'transaction_id' => $transactionId,
+                                ]);
+                                
+                                continue; // Skip to next event
+                            }
+                            
                             // Create blockers in target calendars
                             foreach ($rule->targets as $target) {
                                 try {
-                                    // ANTI-LOOP PROTECTION: Check if this event UID is already a blocker
-                                    // in the target calendar that came from this email calendar
-                                    // This prevents infinite loops in bidirectional sync
-                                    $isBlockerLoop = \App\Models\SyncEventMapping::where('source_calendar_id', $connection->target_email)
-                                        ->where('email_connection_id', $connection->id)
-                                        ->where('source_event_id', $eventData['uid'])
-                                        ->where('target_connection_id', $target->target_connection_id)
-                                        ->where('target_calendar_id', $target->target_calendar_id)
-                                        ->exists();
-                                    
-                                    if ($isBlockerLoop) {
-                                        $output[] = "  ⊘ Skipped event (loop prevention): {$eventData['uid']}";
-                                        
-                                        \App\Models\SyncLog::create([
-                                            'user_id' => $connection->user_id,
-                                            'sync_rule_id' => $rule->id,
-                                            'action' => 'skipped',
-                                            'source_event_id' => $eventData['uid'],
-                                            'event_start' => $eventData['start'],
-                                            'event_end' => $eventData['end'],
-                                            'error_message' => 'Loop prevention: event is already a blocker from target calendar',
-                                            'transaction_id' => $transactionId,
-                                        ]);
-                                        
-                                        continue; // Skip to next target
-                                    }
                                     
                                     // Check if mapping already exists (to prevent duplicates)
                                     $existingMapping = \App\Models\SyncEventMapping::where('sync_rule_id', $rule->id)
