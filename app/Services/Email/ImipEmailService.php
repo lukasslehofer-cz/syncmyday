@@ -4,6 +4,7 @@ namespace App\Services\Email;
 
 use App\Models\EmailCalendarConnection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * iMIP Email Service
@@ -196,7 +197,7 @@ class ImipEmailService
     }
 
     /**
-     * Send calendar email directly using Symfony Mailer
+     * Send calendar email using Laravel Mail with Symfony message manipulation
      */
     private function sendCalendarEmail(
         string $toEmail,
@@ -205,8 +206,23 @@ class ImipEmailService
         string $icsContent,
         string $method
     ): void {
-        $mailer = app(\Symfony\Component\Mailer\MailerInterface::class);
-        
+        Mail::send([], [], function ($message) use ($toEmail, $subject, $textBody, $icsContent, $method) {
+            $message->to($toEmail)
+                ->subject("Calendar: {$subject}")
+                ->from(config('mail.from.address'), config('mail.from.name'));
+            
+            // Access underlying Symfony message to build multipart
+            $message->getSymfonyMessage()->setBody(
+                $this->buildMultipartBody($textBody, $icsContent, $method)
+            );
+        });
+    }
+
+    /**
+     * Build multipart/alternative body with text/calendar inline
+     */
+    private function buildMultipartBody(string $textBody, string $icsContent, string $method)
+    {
         // Build email parts
         $textPart = new \Symfony\Component\Mime\Part\TextPart($textBody, 'utf-8');
         
@@ -226,20 +242,7 @@ class ImipEmailService
         $htmlPart = new \Symfony\Component\Mime\Part\TextPart($htmlBody, 'utf-8', 'html');
         
         // Create multipart/alternative message
-        $alternativePart = new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart, $htmlPart);
-        
-        // Build email
-        $email = new \Symfony\Component\Mime\Email();
-        $email->from(new \Symfony\Component\Mime\Address(
-            config('mail.from.address'),
-            config('mail.from.name')
-        ))
-        ->to($toEmail)
-        ->subject("Calendar: {$subject}")
-        ->setBody($alternativePart);
-        
-        // Send
-        $mailer->send($email);
+        return new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart, $htmlPart);
     }
 
     /**
