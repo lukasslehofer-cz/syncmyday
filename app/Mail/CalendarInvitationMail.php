@@ -50,27 +50,20 @@ class CalendarInvitationMail extends Mailable
             ])
             ->withSymfonyMessage(function ($message) {
                 // Add the text/calendar part directly to Symfony message
-                $calendarPart = new \Symfony\Component\Mime\Part\TextPart(
+                // Use 'quoted-printable' encoding (Symfony doesn't support '7bit')
+                $calendarPart = new \Symfony\Component\Mime\Part\DataPart(
                     $this->icsContent,
-                    'utf-8',
-                    'calendar',
-                    '7bit'
+                    'invite.ics',
+                    'text/calendar'
                 );
                 
                 // Set proper headers for calendar invitation
-                $calendarPart->getHeaders()
-                    ->addTextHeader('Content-Type', "text/calendar; method={$this->method}; name=\"invite.ics\"; charset=UTF-8")
-                    ->addTextHeader('Content-Disposition', 'inline')
-                    ->addTextHeader('Content-Transfer-Encoding', '7bit');
+                $headers = $calendarPart->getPreparedHeaders();
+                $headers->addTextHeader('Content-Type', "text/calendar; method={$this->method}; name=\"invite.ics\"; charset=UTF-8");
+                $headers->addTextHeader('Content-Disposition', 'inline; filename="invite.ics"');
                 
-                // Get the message body and add calendar part
-                $body = $message->getBody();
-                if ($body instanceof \Symfony\Component\Mime\Part\Multipart\AlternativeMultipart) {
-                    // Add calendar part to existing alternatives
-                    $parts = $body->getParts();
-                    $parts[] = $calendarPart;
-                    $message->setBody(new \Symfony\Component\Mime\Part\Multipart\AlternativeMultipart(...$parts));
-                }
+                // Attach the calendar part to the message
+                $message->attach($calendarPart);
             });
     }
 
