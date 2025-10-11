@@ -258,36 +258,75 @@ class SyncEngine
         $blockerId = null;
 
         if ($mapping) {
-            // Mapping exists - update the existing blocker
-            try {
-                $targetService->updateBlocker(
-                    $target->target_calendar_id,
-                    $mapping->target_event_id,
-                    $rule->blocker_title,
-                    $start,
-                    $end,
-                    $transactionId
-                );
-                
-                // Update mapping timestamps (handle Y2038 problem)
-                $maxTimestamp = new \DateTime('2038-01-01');
-                $mapping->update([
-                    'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
-                    'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+            // Mapping exists - check if update is needed
+            $needsUpdate = false;
+            $maxTimestamp = new \DateTime('2038-01-01');
+            
+            // Check if start/end time changed
+            $mappingStart = $mapping->event_start;
+            $mappingEnd = $mapping->event_end;
+            
+            if ($mappingStart && $start && $start <= $maxTimestamp) {
+                // Compare timestamps (allow 1 minute tolerance for rounding)
+                if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
+                    $needsUpdate = true;
+                }
+            } elseif (!$mappingStart && $start) {
+                $needsUpdate = true;
+            }
+            
+            if ($mappingEnd && $end && $end <= $maxTimestamp) {
+                if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
+                    $needsUpdate = true;
+                }
+            } elseif (!$mappingEnd && $end) {
+                $needsUpdate = true;
+            }
+            
+            if ($needsUpdate) {
+                // Event time changed - update the blocker
+                try {
+                    $targetService->updateBlocker(
+                        $target->target_calendar_id,
+                        $mapping->target_event_id,
+                        $rule->blocker_title,
+                        $start,
+                        $end,
+                        $transactionId
+                    );
+                    
+                    // Update mapping timestamps
+                    $mapping->update([
+                        'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
+                        'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+                    ]);
+                    
+                    $blockerId = $mapping->target_event_id;
+                    $action = 'updated';
+                    
+                    Log::channel('sync')->info('Blocker updated due to time change', [
+                        'event_id' => $sourceEventId,
+                        'old_start' => $mappingStart?->format('Y-m-d H:i:s'),
+                        'new_start' => $start->format('Y-m-d H:i:s'),
+                    ]);
+                    
+                } catch (\Exception $e) {
+                    // If update fails (e.g., blocker was manually deleted), create new one
+                    Log::channel('sync')->warning('Failed to update blocker, creating new one', [
+                        'target_event_id' => $mapping->target_event_id,
+                        'error' => $e->getMessage(),
+                    ]);
+                    
+                    $mapping->delete(); // Remove stale mapping
+                    $mapping = null; // Will create new one below
+                }
+            } else {
+                // No changes detected - skip update and logging
+                Log::channel('sync')->debug('Blocker unchanged, skipping update', [
+                    'event_id' => $sourceEventId,
+                    'blocker_id' => $mapping->target_event_id,
                 ]);
-                
-                $blockerId = $mapping->target_event_id;
-                $action = 'updated';
-                
-            } catch (\Exception $e) {
-                // If update fails (e.g., blocker was manually deleted), create new one
-                Log::channel('sync')->warning('Failed to update blocker, creating new one', [
-                    'target_event_id' => $mapping->target_event_id,
-                    'error' => $e->getMessage(),
-                ]);
-                
-                $mapping->delete(); // Remove stale mapping
-                $mapping = null; // Will create new one below
+                return; // Early return - don't log anything
             }
         }
 
@@ -455,6 +494,42 @@ class SyncEngine
         $eventUid = 'syncmyday-' . $rule->id . '-' . md5($sourceEventId);
         $sequence = $mapping ? ($mapping->sequence ?? 0) : 0;
         $action = 'created';
+        $maxTimestamp = new \DateTime('2038-01-01');
+
+        // Check if update is needed (for existing mappings)
+        if ($mapping) {
+            $needsUpdate = false;
+            $mappingStart = $mapping->event_start;
+            $mappingEnd = $mapping->event_end;
+            
+            // Check if start/end time changed
+            if ($mappingStart && $start && $start <= $maxTimestamp) {
+                if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
+                    $needsUpdate = true;
+                }
+            } elseif (!$mappingStart && $start) {
+                $needsUpdate = true;
+            }
+            
+            if ($mappingEnd && $end && $end <= $maxTimestamp) {
+                if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
+                    $needsUpdate = true;
+                }
+            } elseif (!$mappingEnd && $end) {
+                $needsUpdate = true;
+            }
+            
+            if (!$needsUpdate) {
+                // No changes - skip sending email
+                Log::channel('sync')->debug('Email blocker unchanged, skipping iMIP', [
+                    'event_id' => $sourceEventId,
+                    'target_email' => $targetEmailConnection->target_email,
+                ]);
+                return;
+            }
+            
+            $action = 'updated';
+        }
 
         try {
             // Send iMIP email (REQUEST for create/update)
@@ -470,8 +545,6 @@ class SyncEngine
             );
 
             if ($success) {
-                $maxTimestamp = new \DateTime('2038-01-01');
-                
                 if ($mapping) {
                     // Update existing mapping
                     $mapping->update([
@@ -479,7 +552,13 @@ class SyncEngine
                         'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
                         'sequence' => $sequence + 1,
                     ]);
-                    $action = 'updated';
+                    
+                    Log::channel('sync')->info('Email blocker updated due to time change', [
+                        'event_id' => $sourceEventId,
+                        'target_email' => $targetEmailConnection->target_email,
+                        'old_start' => $mappingStart?->format('Y-m-d H:i:s'),
+                        'new_start' => $start->format('Y-m-d H:i:s'),
+                    ]);
                 } else {
                     // Create new mapping
                     SyncEventMapping::create([
