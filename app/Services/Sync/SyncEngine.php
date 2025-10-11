@@ -182,10 +182,26 @@ class SyncEngine
         CalendarConnection $sourceConnection
     ): void {
         $transactionId = Str::uuid()->toString();
+        $sourceEventId = $this->getEventId($event);
 
         // Check if this is our own blocker - skip to prevent loops
         if ($sourceService->isOurBlocker($event)) {
-            Log::channel('sync')->debug('Skipping own blocker', ['event_id' => $this->getEventId($event)]);
+            Log::channel('sync')->debug('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
+            return;
+        }
+        
+        // ADDITIONAL ANTI-LOOP: Check if this event is a target blocker we just created
+        // This catches blockers before they're marked with category/tag (race condition)
+        $isTargetBlocker = SyncEventMapping::where('target_event_id', $sourceEventId)
+            ->where('target_connection_id', $sourceConnection->id)
+            ->where('target_calendar_id', $rule->source_calendar_id)
+            ->exists();
+        
+        if ($isTargetBlocker) {
+            Log::channel('sync')->debug('Skipping target blocker (by mapping)', [
+                'event_id' => $sourceEventId,
+                'calendar_id' => $rule->source_calendar_id,
+            ]);
             return;
         }
 
@@ -196,7 +212,7 @@ class SyncEngine
         if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
             // Don't log filtered events to DB - would spam dashboard
             Log::channel('sync')->debug('Event filtered out by rules', [
-                'event_id' => $this->getEventId($event),
+                'event_id' => $sourceEventId,
                 'rule_id' => $rule->id,
             ]);
             return;
