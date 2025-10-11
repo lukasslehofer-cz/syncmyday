@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
  * Calendar Invitation Mail
  * 
  * Sends iCalendar invitations that are automatically processed by Outlook/Gmail
- * by attaching ICS data with proper text/calendar headers.
+ * by composing multipart/alternative with inline text/calendar part.
  */
 class CalendarInvitationMail extends Mailable
 {
@@ -42,20 +42,40 @@ class CalendarInvitationMail extends Mailable
     public function build()
     {
         return $this->subject("Calendar: {$this->summary}")
-            ->text('emails.calendar-plain')
-            ->html('emails.calendar-html')
-            ->with([
-                'textBody' => $this->textBody,
-                'summary' => $this->summary,
-            ])
-            ->attachData(
-                $this->icsContent,
-                'invite.ics',
-                [
-                    'mime' => "text/calendar; method={$this->method}; charset=UTF-8",
-                ]
-            );
-    }
+            ->withSymfonyMessage(function ($message) {
+                // Build parts using Symfony Mime API
+                $textPart = new \Symfony\Component\Mime\Part\TextPart($this->textBody, 'utf-8');
+                $htmlPart = new \Symfony\Component\Mime\Part\TextPart(
+                    view('emails.calendar-html', [
+                        'textBody' => $this->textBody,
+                        'summary' => $this->summary,
+                    ])->render(),
+                    'utf-8',
+                    'html'
+                );
 
+                // Create inline calendar part
+                $calendarPart = new \Symfony\Component\Mime\Part\TextPart(
+                    $this->icsContent,
+                    'utf-8'
+                );
+                // Override headers for calendar part
+                $calendarPart->getHeaders()->addParameterizedHeader(
+                    'Content-Type',
+                    'text/calendar',
+                    [
+                        'method' => $this->method,
+                        'name' => 'invite.ics',
+                        'charset' => 'UTF-8'
+                    ]
+                );
+                $calendarPart->getHeaders()->addTextHeader('Content-Disposition', 'inline');
+
+                // Compose multipart/alternative with 3 parts
+                $alternative = new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart, $htmlPart);
+
+                $message->setBody($alternative);
+            });
+    }
 }
 
