@@ -300,7 +300,7 @@
                         <!-- Price -->
                         <div class="mb-6">
                             <div class="flex items-baseline justify-center mb-2">
-                                <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">249 Kč</span>
+                                <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ $formattedPrice }}</span>
                                 <span class="text-2xl text-gray-700 ml-3">{{ __('messages.per_year') }}</span>
                             </div>
                             <p class="text-gray-600">{{ __('messages.after_trial_month') }}</p>

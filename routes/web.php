@@ -25,7 +25,9 @@ use Illuminate\Support\Facades\Route;
 
 // Home & Public pages
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', [
+        'formattedPrice' => \App\Helpers\PricingHelper::formatPrice(),
+    ]);
 })->name('home');
 
 // Debug routes for session testing (REMOVE IN PRODUCTION!)
