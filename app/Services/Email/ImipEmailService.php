@@ -2,10 +2,8 @@
 
 namespace App\Services\Email;
 
-use App\Mail\CalendarInvitationMail;
 use App\Models\EmailCalendarConnection;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 /**
  * iMIP Email Service
@@ -60,10 +58,8 @@ class ImipEmailService
             // Create descriptive text body
             $textBody = $this->createTextBody($summary, $start, $end, $method);
 
-            // Send email using custom Mailable with proper text/calendar headers
-            Mail::to($targetEmail)->send(
-                new CalendarInvitationMail($icsContent, $method, $summary, $textBody)
-            );
+            // Send email directly using Symfony Mailer (bypass Laravel Mailable)
+            $this->sendCalendarEmail($targetEmail, $summary, $textBody, $icsContent, $method);
 
             Log::info('iMIP email sent', [
                 'connection_id' => $connection->id,
@@ -197,6 +193,68 @@ class ImipEmailService
         }
         
         return $text;
+    }
+
+    /**
+     * Send calendar email directly using Symfony Mailer
+     */
+    private function sendCalendarEmail(
+        string $toEmail,
+        string $subject,
+        string $textBody,
+        string $icsContent,
+        string $method
+    ): void {
+        $mailer = app(\Symfony\Component\Mailer\MailerInterface::class);
+        
+        // Build email parts
+        $textPart = new \Symfony\Component\Mime\Part\TextPart($textBody, 'utf-8');
+        
+        $calendarPart = new \Symfony\Component\Mime\Part\TextPart($icsContent, 'utf-8');
+        $calendarPart->getHeaders()->addParameterizedHeader(
+            'Content-Type',
+            'text/calendar',
+            [
+                'method' => $method,
+                'name' => 'invite.ics',
+                'charset' => 'UTF-8'
+            ]
+        );
+        $calendarPart->getHeaders()->addTextHeader('Content-Disposition', 'inline');
+        
+        $htmlBody = $this->buildHtmlFromText($textBody);
+        $htmlPart = new \Symfony\Component\Mime\Part\TextPart($htmlBody, 'utf-8', 'html');
+        
+        // Create multipart/alternative message
+        $alternativePart = new \Symfony\Component\Mime\Part\Multipart\AlternativePart($textPart, $calendarPart, $htmlPart);
+        
+        // Build email
+        $email = new \Symfony\Component\Mime\Email();
+        $email->from(new \Symfony\Component\Mime\Address(
+            config('mail.from.address'),
+            config('mail.from.name')
+        ))
+        ->to($toEmail)
+        ->subject("Calendar: {$subject}")
+        ->setBody($alternativePart);
+        
+        // Send
+        $mailer->send($email);
+    }
+
+    /**
+     * Build HTML from plain text
+     */
+    private function buildHtmlFromText(string $text): string
+    {
+        $escaped = htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $html = nl2br($escaped);
+        return '<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">'
+            . '<div style="background-color:#f8f9fa; padding:16px; border-radius:8px; border-left:4px solid #4F46E5;">'
+            . $html
+            . '</div>'
+            . '<p style="color:#6b7280; font-size:12px; margin-top:16px;">Sent by <strong>SyncMyDay</strong></p>'
+            . '</body></html>';
     }
 }
 
