@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Register model observers
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
         \App\Models\CalendarConnection::observe(\App\Observers\CalendarConnectionObserver::class);
         \App\Models\SyncRule::observe(\App\Observers\SyncRuleObserver::class);
         \App\Models\EmailCalendarConnection::observe(\App\Observers\EmailCalendarConnectionObserver::class);
