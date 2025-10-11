@@ -38,7 +38,7 @@ class EmailCalendarConnectionObserver
             try {
                 // Delete blocker from target calendar
                 if ($mapping->target_connection_id) {
-                    // API calendar (Google/Microsoft)
+                    // API calendar target (Google/Microsoft)
                     $targetConnection = $mapping->targetConnection;
                     
                     if ($targetConnection && $targetConnection->status === 'active') {
@@ -60,6 +60,34 @@ class EmailCalendarConnectionObserver
                             Log::warning('Failed to delete blocker', [
                                 'mapping_id' => $mapping->id,
                                 'target_event_id' => $mapping->target_event_id,
+                                'error' => $e->getMessage(),
+                            ]);
+                            $errors++;
+                        }
+                    }
+                } elseif ($mapping->target_email_connection_id) {
+                    // Email calendar target - send CANCEL
+                    $targetEmail = $mapping->targetEmailConnection;
+                    
+                    if ($targetEmail && $targetEmail->target_email) {
+                        try {
+                            $imipService = app(\App\Services\Email\ImipEmailService::class);
+                            
+                            $imipService->sendBlockerInvitation(
+                                $targetEmail,
+                                $targetEmail->target_email,
+                                $mapping->target_event_id,
+                                'Cancelled',
+                                new \DateTime(), // Dummy dates for cancellation
+                                new \DateTime(),
+                                'CANCEL',
+                                $mapping->sequence ?? 0
+                            );
+                            $deleted++;
+                        } catch (\Exception $e) {
+                            Log::warning('Failed to send CANCEL to email target', [
+                                'mapping_id' => $mapping->id,
+                                'target_email' => $targetEmail->target_email,
                                 'error' => $e->getMessage(),
                             ]);
                             $errors++;
