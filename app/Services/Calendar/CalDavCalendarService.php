@@ -86,21 +86,16 @@ class CalDavCalendarService
                 if (isset($response['{DAV:}current-user-principal'])) {
                     $principal = $response['{DAV:}current-user-principal'];
                     
-                    // Handle different response types
-                    if (is_string($principal)) {
-                        $principalUrl = $principal;
-                    } elseif (is_array($principal)) {
-                        $principalUrl = $principal[0] ?? $principal;
-                    } elseif (is_object($principal) && method_exists($principal, 'getHref')) {
-                        $principalUrl = $principal->getHref();
-                    } else {
-                        // Try to convert to string
-                        $principalUrl = (string) $principal;
-                    }
+                    Log::debug('iCloud discovery: Principal raw response', [
+                        'type' => gettype($principal),
+                        'value' => is_array($principal) ? json_encode($principal) : (string)$principal,
+                    ]);
+                    
+                    // Extract URL from response
+                    $principalUrl = self::extractUrlFromPropfindResponse($principal);
                     
                     Log::info('iCloud discovery: Found principal via .well-known', [
                         'principal_url' => $principalUrl,
-                        'response_type' => gettype($principal),
                     ]);
                 }
             } catch (\Exception $e) {
@@ -121,21 +116,16 @@ class CalDavCalendarService
                 
                 $principal = $response['{DAV:}current-user-principal'];
                 
-                // Handle different response types
-                if (is_string($principal)) {
-                    $principalUrl = $principal;
-                } elseif (is_array($principal)) {
-                    $principalUrl = $principal[0] ?? $principal;
-                } elseif (is_object($principal) && method_exists($principal, 'getHref')) {
-                    $principalUrl = $principal->getHref();
-                } else {
-                    // Try to convert to string
-                    $principalUrl = (string) $principal;
-                }
+                Log::debug('iCloud discovery: Principal raw response (root)', [
+                    'type' => gettype($principal),
+                    'value' => is_array($principal) ? json_encode($principal) : (string)$principal,
+                ]);
+                
+                // Extract URL from response
+                $principalUrl = self::extractUrlFromPropfindResponse($principal);
                 
                 Log::info('iCloud discovery: Found principal via root', [
                     'principal_url' => $principalUrl,
-                    'response_type' => gettype($principal),
                 ]);
             }
             
@@ -154,17 +144,13 @@ class CalDavCalendarService
             
             $calendarHome = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'];
             
-            // Handle different response types
-            if (is_string($calendarHome)) {
-                $calendarHomeUrl = $calendarHome;
-            } elseif (is_array($calendarHome)) {
-                $calendarHomeUrl = $calendarHome[0] ?? $calendarHome;
-            } elseif (is_object($calendarHome) && method_exists($calendarHome, 'getHref')) {
-                $calendarHomeUrl = $calendarHome->getHref();
-            } else {
-                // Try to convert to string
-                $calendarHomeUrl = (string) $calendarHome;
-            }
+            Log::debug('iCloud discovery: Calendar home raw response', [
+                'type' => gettype($calendarHome),
+                'value' => is_array($calendarHome) ? json_encode($calendarHome) : (string)$calendarHome,
+            ]);
+            
+            // Extract URL from response
+            $calendarHomeUrl = self::extractUrlFromPropfindResponse($calendarHome);
             
             Log::info('iCloud discovery: Step 3 - Listing calendars', [
                 'calendar_home_url' => $calendarHomeUrl,
@@ -763,6 +749,53 @@ XML;
         }
         
         return null;
+    }
+    
+    /**
+     * Extract URL string from PROPFIND response (handles various return types)
+     */
+    private static function extractUrlFromPropfindResponse($response): string
+    {
+        // Direct string
+        if (is_string($response)) {
+            return $response;
+        }
+        
+        // Object with getHref() method (Sabre\DAV\Xml\Element\Href)
+        if (is_object($response) && method_exists($response, 'getHref')) {
+            return $response->getHref();
+        }
+        
+        // Array - recursively extract
+        if (is_array($response)) {
+            // Try common array structures
+            if (isset($response['href'])) {
+                return self::extractUrlFromPropfindResponse($response['href']);
+            }
+            
+            if (isset($response[0])) {
+                return self::extractUrlFromPropfindResponse($response[0]);
+            }
+            
+            // If array has 'value' key
+            if (isset($response['value'])) {
+                return self::extractUrlFromPropfindResponse($response['value']);
+            }
+            
+            // Last resort: take first non-empty value
+            foreach ($response as $value) {
+                if (!empty($value)) {
+                    return self::extractUrlFromPropfindResponse($value);
+                }
+            }
+        }
+        
+        // Last resort: convert to string
+        if (is_object($response) && method_exists($response, '__toString')) {
+            return (string) $response;
+        }
+        
+        throw new \Exception('Unable to extract URL from PROPFIND response: ' . print_r($response, true));
     }
 }
 
