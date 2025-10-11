@@ -27,18 +27,9 @@
         // Format date
         $renewDate = '';
         if ($endTimestamp) {
-            try {
-                $renewDate = \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y');
-            } catch (\Exception $e) {
-                \Log::error('Failed to format subscription date', [
-                    'timestamp' => $endTimestamp,
-                    'error' => $e->getMessage(),
-                ]);
-            }
-        }
-        
-        // Fallback to DB date if Stripe date not available
-        if (empty($renewDate) && $user->subscription_ends_at) {
+            $renewDate = \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y');
+        } elseif ($user->subscription_ends_at) {
+            // Fallback to DB date if Stripe date not available
             $renewDate = $user->subscription_ends_at->format('j. F Y');
         }
     @endphp
