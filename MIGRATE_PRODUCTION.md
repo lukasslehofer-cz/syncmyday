@@ -1,8 +1,19 @@
 # Migrace na produkci
 
-Laravel automaticky detekuje production environment a ptá se na potvrzení.
+## Řešení pro Shared Hosting (bez artisan podpory):
 
-## Řešení:
+Pokud shared hosting neumožňuje spouštět `php artisan migrate --force`, použij HTTP endpoint:
+
+```bash
+https://syncmyday.cz/migrate.php?token=YOUR_CRON_SECRET
+```
+
+Script automaticky:
+- ✅ Zkontroluje, které migrace ještě neproběhly
+- ✅ Spustí je postupně
+- ✅ Vrátí JSON s výsledky
+
+## Lokální vývoj / VPS s plným přístupem:
 
 ```bash
 php artisan migrate --force
@@ -21,6 +32,12 @@ php artisan migrate
 
 ## Rollback (pokud by něco selhalo):
 
+Pro shared hosting s HTTP:
+```bash
+https://syncmyday.cz/migrate.php?token=YOUR_CRON_SECRET&rollback=1
+```
+
+Pro VPS/lokál:
 ```bash
 php artisan migrate:rollback --force --step=1
 ```
