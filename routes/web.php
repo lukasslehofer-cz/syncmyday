@@ -95,6 +95,7 @@ Route::middleware('auth')->prefix('oauth')->group(function () {
 Route::middleware('auth')->prefix('caldav')->name('caldav.')->group(function () {
     Route::get('/setup', [CalDavController::class, 'showSetup'])->name('setup');
     Route::post('/test', [CalDavController::class, 'testConnection'])->name('test');
+    Route::get('/select-calendars', [CalDavController::class, 'showSelectCalendars'])->name('select-calendars');
     Route::post('/complete', [CalDavController::class, 'complete'])->name('complete');
     Route::delete('/{connection}/disconnect', [CalDavController::class, 'disconnect'])->name('disconnect');
 });

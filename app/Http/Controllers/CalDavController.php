@@ -65,11 +65,8 @@ class CalDavController extends Controller
                 'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
                 'caldav_calendars' => $result['calendars'],
             ]);
-            
-            return view('caldav.select-calendars', [
-                'calendars' => $result['calendars'],
-                'email' => $validated['apple_id'],
-            ]);
+
+            return redirect()->route('caldav.select-calendars');
             
         } else {
             // Other CalDAV - manual configuration
@@ -109,11 +106,28 @@ class CalDavController extends Controller
                 'caldav_calendars' => $result['calendars'],
             ]);
             
-            return view('caldav.select-calendars', [
-                'calendars' => $result['calendars'],
-                'email' => $validated['email'] ?? $validated['username'],
-            ]);
+            return redirect()->route('caldav.select-calendars');
         }
+    }
+    
+    /**
+     * Show calendar selection page
+     */
+    public function showSelectCalendars()
+    {
+        // Get data from session
+        $calendars = session('caldav_calendars', []);
+        $email = session('caldav_email');
+        
+        if (!$email) {
+            return redirect()->route('caldav.setup')
+                ->with('error', __('messages.session_expired'));
+        }
+        
+        return view('caldav.select-calendars', [
+            'calendars' => $calendars,
+            'email' => $email,
+        ]);
     }
     
     /**
