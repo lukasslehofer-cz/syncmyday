@@ -7,6 +7,7 @@ use App\Models\CalendarConnection;
 use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -22,10 +23,12 @@ class OAuthController extends Controller
         // Check if coming from account settings (for connecting as backup login method)
         $fromAccountSettings = request()->is('account/connect/*');
         
-        session([
-            'oauth_state' => $state,
-            'oauth_from_account' => $fromAccountSettings
-        ]);
+        // Store state in cache instead of session (works with SameSite=lax cookies)
+        Cache::put("oauth_state_{$state}", [
+            'action' => 'calendar_connect',
+            'from_account' => $fromAccountSettings,
+            'created_at' => now(),
+        ], now()->addMinutes(10));
         
         return redirect($service->getAuthUrl($state));
     }
@@ -35,14 +38,24 @@ class OAuthController extends Controller
      */
     public function handleGoogleCallback(Request $request, GoogleCalendarService $service)
     {
-        // Verify state
-        if ($request->state !== session('oauth_state')) {
+        // Verify state from cache (not session - works with SameSite=lax)
+        $state = $request->state;
+        $stateData = Cache::get("oauth_state_{$state}");
+        
+        if (!$stateData) {
+            Log::warning('OAuth state not found or expired', [
+                'state' => $state,
+                'user_id' => auth()->id(),
+            ]);
             return redirect()->route('dashboard')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
+        
+        // Delete state from cache (one-time use)
+        Cache::forget("oauth_state_{$state}");
 
         // Check if this is from account settings (backup login method)
-        $fromAccountSettings = session('oauth_from_account', false);
+        $fromAccountSettings = $stateData['from_account'] ?? false;
 
         // Check if user denied access
         if ($request->has('error')) {
@@ -230,10 +243,12 @@ class OAuthController extends Controller
         // Check if coming from account settings (for connecting as backup login method)
         $fromAccountSettings = request()->is('account/connect/*');
         
-        session([
-            'oauth_state' => $state,
-            'oauth_from_account' => $fromAccountSettings
-        ]);
+        // Store state in cache instead of session (works with SameSite=lax cookies)
+        Cache::put("oauth_state_{$state}", [
+            'action' => 'calendar_connect',
+            'from_account' => $fromAccountSettings,
+            'created_at' => now(),
+        ], now()->addMinutes(10));
         
         return redirect($service->getAuthUrl($state));
     }
@@ -243,14 +258,24 @@ class OAuthController extends Controller
      */
     public function handleMicrosoftCallback(Request $request, MicrosoftCalendarService $service)
     {
-        // Verify state
-        if ($request->state !== session('oauth_state')) {
+        // Verify state from cache (not session - works with SameSite=lax)
+        $state = $request->state;
+        $stateData = Cache::get("oauth_state_{$state}");
+        
+        if (!$stateData) {
+            Log::warning('OAuth state not found or expired', [
+                'state' => $state,
+                'user_id' => auth()->id(),
+            ]);
             return redirect()->route('dashboard')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
+        
+        // Delete state from cache (one-time use)
+        Cache::forget("oauth_state_{$state}");
 
         // Check if this is from account settings (backup login method)
-        $fromAccountSettings = session('oauth_from_account', false);
+        $fromAccountSettings = $stateData['from_account'] ?? false;
 
         // Check if user denied access
         if ($request->has('error')) {

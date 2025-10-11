@@ -9,6 +9,7 @@ use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Stripe\Stripe;
@@ -21,7 +22,12 @@ class SocialAuthController extends Controller
     public function redirectToGoogle()
     {
         $state = Str::random(40);
-        session(['oauth_state' => $state, 'oauth_action' => 'login']);
+        
+        // Store state in cache instead of session (works with SameSite=lax cookies)
+        Cache::put("oauth_state_{$state}", [
+            'action' => 'login',
+            'created_at' => now(),
+        ], now()->addMinutes(10));
         
         // Create Google client with login-specific redirect URI
         $client = new \Google\Client();
@@ -41,24 +47,29 @@ class SocialAuthController extends Controller
      */
     public function handleGoogleCallback(Request $request)
     {
+        // Verify state from cache (not session - works with SameSite=lax)
+        $state = $request->state;
+        $stateData = Cache::get("oauth_state_{$state}");
+        
         // Debug logging
         Log::info('Google OAuth callback received', [
             'has_code' => $request->has('code'),
             'has_error' => $request->has('error'),
-            'state_from_request' => $request->state,
-            'state_from_session' => session('oauth_state'),
-            'session_id' => session()->getId(),
+            'state_from_request' => $state,
+            'state_exists_in_cache' => $stateData !== null,
         ]);
 
         // Verify state
-        if ($request->state !== session('oauth_state')) {
-            Log::warning('OAuth state mismatch', [
-                'expected' => session('oauth_state'),
-                'received' => $request->state,
+        if (!$stateData) {
+            Log::warning('OAuth state not found or expired', [
+                'state' => $state,
             ]);
             return redirect()->route('login')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
+        
+        // Delete state from cache (one-time use)
+        Cache::forget("oauth_state_{$state}");
 
         // Check if user denied access
         if ($request->has('error')) {
@@ -188,7 +199,12 @@ class SocialAuthController extends Controller
     public function redirectToMicrosoft()
     {
         $state = Str::random(40);
-        session(['oauth_state' => $state, 'oauth_action' => 'login']);
+        
+        // Store state in cache instead of session (works with SameSite=lax cookies)
+        Cache::put("oauth_state_{$state}", [
+            'action' => 'login',
+            'created_at' => now(),
+        ], now()->addMinutes(10));
         
         // Build auth URL with login-specific redirect URI
         $scopes = implode(' ', config('services.microsoft.scopes'));
@@ -213,11 +229,28 @@ class SocialAuthController extends Controller
      */
     public function handleMicrosoftCallback(Request $request)
     {
+        // Verify state from cache (not session - works with SameSite=lax)
+        $state = $request->state;
+        $stateData = Cache::get("oauth_state_{$state}");
+        
+        Log::info('Microsoft OAuth callback received', [
+            'has_code' => $request->has('code'),
+            'has_error' => $request->has('error'),
+            'state_from_request' => $state,
+            'state_exists_in_cache' => $stateData !== null,
+        ]);
+        
         // Verify state
-        if ($request->state !== session('oauth_state')) {
+        if (!$stateData) {
+            Log::warning('OAuth state not found or expired', [
+                'state' => $state,
+            ]);
             return redirect()->route('login')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
+        
+        // Delete state from cache (one-time use)
+        Cache::forget("oauth_state_{$state}");
 
         // Check if user denied access
         if ($request->has('error')) {

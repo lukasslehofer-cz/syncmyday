@@ -92,7 +92,7 @@ Ujisti se, že Nginx má všechny domény v `server_name`:
 server {
     listen 443 ssl http2;
     server_name syncmyday.cz syncmyday.sk syncmyday.pl syncmyday.eu syncmyday.de;
-    
+
     # ... zbytek konfigurace
 }
 ```
@@ -120,6 +120,7 @@ php artisan cache:clear
 ## 🎉 Hotovo!
 
 Nyní:
+
 - ✅ Uživatel navštíví **libovolnou doménu** (např. `syncmyday.sk`)
 - ✅ Uvidí web ve **slovenštině** (podle DOMAIN_LOCALES)
 - ✅ Klikne "Continue with Google"
@@ -132,34 +133,49 @@ Nyní:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ User visits syncmyday.sk                                        │
-│ → SetLocaleFromDomain middleware nastaví jazyk na "sk"         │
+│ 1. User visits syncmyday.sk                                     │
+│    → SetLocaleFromDomain middleware nastaví jazyk na "sk"      │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ User clicks "Continue with Google"                              │
-│ → url('/auth/google/callback') = syncmyday.sk/auth/...         │
+│ 2. User clicks "Continue with Google"                           │
+│    → Creates random state token                                │
+│    → Stores state in CACHE (not session!) with 10min TTL       │
+│    → redirect_uri = https://syncmyday.sk/auth/google/callback  │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Google OAuth with redirect_uri=https://syncmyday.sk/auth/...   │
+│ 3. Google OAuth flow (user authenticates)                       │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ Google redirects to: https://syncmyday.sk/auth/google/callback │
-│ (matches what's in Google Console ✅)                           │
+│ 4. Google redirects to: syncmyday.sk/auth/google/callback      │
+│    with state token and authorization code in URL              │
+│    (matches Google Console ✅)                                  │
 └─────────────────────┬───────────────────────────────────────────┘
                       │
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ User logged in on syncmyday.sk with Slovak locale              │
-│ Session cookie: .syncmyday.sk                                  │
-│ All subsequent requests stay on .sk domain                     │
+│ 5. Callback verifies state from CACHE (not cookies!)           │
+│    → State valid? ✅ Delete from cache (one-time use)          │
+│    → Exchange code for tokens                                   │
+│    → Create/login user                                          │
+│    → NEW session created with cookies ✅                        │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ 6. User logged in on syncmyday.sk ✅                            │
+│    Session cookie works: .syncmyday.sk                         │
+│    All subsequent requests stay on .sk domain                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+**🔑 Klíč k řešení**: OAuth state je v **Cache**, ne v Session. Proto funguje i když 
+cross-site cookies jsou blokovány SameSite=lax policy během OAuth redirectu.
 
 ## 📈 Přidání další země
 
@@ -178,14 +194,14 @@ Když budeš chtít přidat novou zemi:
 
 ## 🆚 Proč toto místo složitějšího řešení?
 
-| Aspekt | Složité řešení (proxy redirect) | Jednoduché řešení (všechny domény) |
-|--------|----------------------------------|-------------------------------------|
-| **Session cookie** | ❌ Cross-domain problém | ✅ Cookie pro správnou doménu |
-| **OAuth setup** | ✅ Jen jedna doména v konzolích | ⚠️ Všechny domény v konzolích |
-| **Middleware** | ⚠️ Extra middleware nutný | ✅ Žádný extra middleware |
-| **User experience** | ⚠️ Redirect mezi doménami | ✅ Zůstane na jedné doméně |
-| **Debugging** | ❌ Složitější | ✅ Jednodušší |
-| **Škálovatelnost** | ✅ Pro 100+ domén | ⚠️ Pro 5-10 domén ideální |
+| Aspekt              | Složité řešení (proxy redirect) | Jednoduché řešení (všechny domény) |
+| ------------------- | ------------------------------- | ---------------------------------- |
+| **Session cookie**  | ❌ Cross-domain problém         | ✅ Cookie pro správnou doménu      |
+| **OAuth setup**     | ✅ Jen jedna doména v konzolích | ⚠️ Všechny domény v konzolích      |
+| **Middleware**      | ⚠️ Extra middleware nutný       | ✅ Žádný extra middleware          |
+| **User experience** | ⚠️ Redirect mezi doménami       | ✅ Zůstane na jedné doméně         |
+| **Debugging**       | ❌ Složitější                   | ✅ Jednodušší                      |
+| **Škálovatelnost**  | ✅ Pro 100+ domén               | ⚠️ Pro 5-10 domén ideální          |
 
 **Pro tvůj use case (5-10 národních domén) je jednoduché řešení LEPŠÍ! 🎯**
 
@@ -202,15 +218,21 @@ Když budeš chtít přidat novou zemi:
 ## 🆘 Troubleshooting
 
 ### Problém: redirect_uri_mismatch
+
 **Řešení**: Zkontroluj, že máš danou doménu přidanou v Google/Microsoft konzoli
 
 ### Problém: Po přihlášení se vrátím na login
-**Řešení**: 
-- Zkontroluj session cookie doménu
-- Ujisti se, že `SESSION_DOMAIN` v `.env` není nastavena (nebo je `null`)
+
+**Už vyřešeno!** ✅ OAuth state se ukládá do Cache místo Session, takže funguje bez problémů s cross-site cookies.
+
+Pokud by se problém přesto objevil:
+- Zkontroluj, že cache funguje (`php artisan cache:clear`)
+- Zkontroluj logy: `tail -f storage/logs/laravel.log`
 
 ### Problém: Špatný jazyk po přihlášení
+
 **Řešení**:
+
 - Zkontroluj `DOMAIN_LOCALES` v `.env`
 - Ujisti se, že je to validní JSON
 - `php artisan config:clear`
@@ -228,4 +250,3 @@ Když budeš chtít přidat novou zemi:
 - `MULTI_DOMAIN_SETUP.md` - Původní složitější dokumentace (pro referenci)
 - `README.md` - Hlavní dokumentace projektu
 - `DEPLOYMENT.md` - Deployment instrukce
-
