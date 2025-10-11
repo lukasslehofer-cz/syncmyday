@@ -261,6 +261,7 @@ class SyncEngine
             // Mapping exists - check if update is needed
             $needsUpdate = false;
             $maxTimestamp = new \DateTime('2038-01-01');
+            $debugInfo = [];
             
             // Check if start/end time changed
             $mappingStart = $mapping->event_start;
@@ -274,20 +275,19 @@ class SyncEngine
                 $startUtc->setTimezone(new \DateTimeZone('UTC'));
                 
                 // Compare timestamps (allow 1 minute tolerance for rounding)
-                $diff = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
+                $diffStart = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
                 
-                if ($diff > 60) {
+                $debugInfo['start_diff_seconds'] = $diffStart;
+                $debugInfo['old_start_utc'] = $mappingStartUtc->format('c');
+                $debugInfo['new_start_utc'] = $startUtc->format('c');
+                
+                if ($diffStart > 60) {
                     $needsUpdate = true;
-                    
-                    Log::channel('sync')->debug('Start time difference detected', [
-                        'event_id' => $sourceEventId,
-                        'diff_seconds' => $diff,
-                        'old' => $mappingStartUtc->format('c'),
-                        'new' => $startUtc->format('c'),
-                    ]);
+                    $debugInfo['reason'] = 'start_time_changed';
                 }
             } elseif (!$mappingStart && $start) {
                 $needsUpdate = true;
+                $debugInfo['reason'] = 'no_old_start';
             }
             
             if ($mappingEnd && $end && $end <= $maxTimestamp) {
@@ -297,13 +297,23 @@ class SyncEngine
                 $endUtc = clone $end;
                 $endUtc->setTimezone(new \DateTimeZone('UTC'));
                 
-                $diff = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
+                $diffEnd = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
                 
-                if ($diff > 60) {
+                $debugInfo['end_diff_seconds'] = $diffEnd;
+                $debugInfo['old_end_utc'] = $mappingEndUtc->format('c');
+                $debugInfo['new_end_utc'] = $endUtc->format('c');
+                
+                if ($diffEnd > 60) {
                     $needsUpdate = true;
+                    if (!isset($debugInfo['reason'])) {
+                        $debugInfo['reason'] = 'end_time_changed';
+                    }
                 }
             } elseif (!$mappingEnd && $end) {
                 $needsUpdate = true;
+                if (!isset($debugInfo['reason'])) {
+                    $debugInfo['reason'] = 'no_old_end';
+                }
             }
             
             if ($needsUpdate) {
@@ -327,11 +337,8 @@ class SyncEngine
                     $blockerId = $mapping->target_event_id;
                     $action = 'updated';
                     
-                    Log::channel('sync')->info('Blocker updated due to time change', [
-                        'event_id' => $sourceEventId,
-                        'old_start' => $mappingStart?->format('Y-m-d H:i:s'),
-                        'new_start' => $start->format('Y-m-d H:i:s'),
-                    ]);
+                    $debugInfo['event_id'] = $sourceEventId;
+                    Log::channel('sync')->info('Blocker updated due to time change', $debugInfo);
                     
                 } catch (\Exception $e) {
                     // If update fails (e.g., blocker was manually deleted), create new one
@@ -533,9 +540,9 @@ class SyncEngine
                 $startUtc = clone $start;
                 $startUtc->setTimezone(new \DateTimeZone('UTC'));
                 
-                $diff = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
+                $diffStart = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
                 
-                if ($diff > 60) {
+                if ($diffStart > 60) {
                     $needsUpdate = true;
                 }
             } elseif (!$mappingStart && $start) {
@@ -549,9 +556,9 @@ class SyncEngine
                 $endUtc = clone $end;
                 $endUtc->setTimezone(new \DateTimeZone('UTC'));
                 
-                $diff = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
+                $diffEnd = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
                 
-                if ($diff > 60) {
+                if ($diffEnd > 60) {
                     $needsUpdate = true;
                 }
             } elseif (!$mappingEnd && $end) {
@@ -563,6 +570,8 @@ class SyncEngine
                 Log::channel('sync')->debug('Email blocker unchanged, skipping iMIP', [
                     'event_id' => $sourceEventId,
                     'target_email' => $targetEmailConnection->target_email,
+                    'start_diff' => $diffStart ?? 0,
+                    'end_diff' => $diffEnd ?? 0,
                 ]);
                 return;
             }
