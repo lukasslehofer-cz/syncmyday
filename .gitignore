@@ -27,7 +27,7 @@ Thumbs.db
 /storage/logs/*.log
 
 # Cache
-/bootstrap/cache/*
+/bootstrap/cache/.gitignore
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/views/*
