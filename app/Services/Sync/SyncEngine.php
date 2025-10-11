@@ -581,6 +581,44 @@ class SyncEngine
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
 
+        // ANTI-LOOP PROTECTION: Check if this source event is actually a blocker
+        // that was created FROM this email calendar TO this API calendar
+        // This prevents infinite loops in bidirectional sync (Email ↔ API)
+        // 
+        // Scenario: Email → API → Email (loop)
+        // 1. User sends event via email → creates blocker in API calendar (target_event_id = API event ID)
+        // 2. API calendar tries to sync back → we detect API event is actually our blocker
+        $isBlockerLoop = SyncEventMapping::where('target_event_id', $sourceEventId)
+            ->where('target_connection_id', $sourceConnection->id)
+            ->where('target_calendar_id', $rule->source_calendar_id)
+            ->where('email_connection_id', $target->target_email_connection_id) // Email as SOURCE
+            ->exists();
+        
+        if ($isBlockerLoop) {
+            Log::channel('sync')->info('Skipping event to prevent email sync loop', [
+                'source_event_id' => $sourceEventId,
+                'source_calendar_id' => $rule->source_calendar_id,
+                'target_email_connection_id' => $target->target_email_connection_id,
+                'target_email' => $targetEmailConnection->target_email,
+                'rule_id' => $rule->id,
+            ]);
+            
+            SyncLog::logSync(
+                $rule->user_id,
+                $rule->id,
+                'skipped',
+                'source_to_target',
+                $sourceEventId,
+                null,
+                $start,
+                $end,
+                'Loop prevention: event is a blocker from this email calendar',
+                $transactionId
+            );
+            
+            return;
+        }
+
         // Check if we already have a mapping for this event -> email target
         $mapping = SyncEventMapping::where([
             'sync_rule_id' => $rule->id,
