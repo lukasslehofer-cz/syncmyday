@@ -248,7 +248,7 @@
                 </div>
                 
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center">
                         <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
                         </svg>
