@@ -128,13 +128,6 @@ class GoogleCalendarService
         \DateTime $end,
         string $transactionId
     ): string {
-        Log::channel('sync')->info('Google: Creating blocker', [
-            'calendar_id' => $calendarId,
-            'title' => $title,
-            'start' => $start->format('Y-m-d H:i:s'),
-            'end' => $end->format('Y-m-d H:i:s'),
-        ]);
-        
         $event = new Event([
             'summary' => $title,
             'description' => 'Auto-synced by SyncMyDay',

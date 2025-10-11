@@ -6,6 +6,7 @@ use App\Models\CalendarConnection;
 use App\Models\SyncEventMapping;
 use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
+use App\Services\Calendar\CalDavCalendarService;
 use Illuminate\Support\Facades\Log;
 
 class CalendarConnectionObserver
@@ -63,17 +64,22 @@ class CalendarConnectionObserver
                     $targetConnection = $mapping->targetConnection;
                     
                     if ($targetConnection && $targetConnection->status === 'active') {
-                        $service = $targetConnection->provider === 'google'
-                            ? app(GoogleCalendarService::class)
-                            : app(MicrosoftCalendarService::class);
+                        $service = match($targetConnection->provider) {
+                            'google' => app(GoogleCalendarService::class),
+                            'microsoft' => app(MicrosoftCalendarService::class),
+                            'caldav' => app(CalDavCalendarService::class),
+                            default => null,
+                        };
                         
-                        $service->initializeWithConnection($targetConnection);
-                        $service->deleteBlocker(
-                            $mapping->target_calendar_id,
-                            $mapping->target_event_id
-                        );
-                        
-                        $deletedCount++;
+                        if ($service) {
+                            $service->initializeWithConnection($targetConnection);
+                            $service->deleteBlocker(
+                                $mapping->target_calendar_id,
+                                $mapping->target_event_id
+                            );
+                            
+                            $deletedCount++;
+                        }
                     }
                 } elseif ($mapping->target_email_connection_id) {
                     // Email calendar target - send CANCEL
@@ -143,9 +149,19 @@ class CalendarConnectionObserver
 
         // Initialize service for this connection
         try {
-            $service = $connection->provider === 'google' 
-                ? app(GoogleCalendarService::class) 
-                : app(MicrosoftCalendarService::class);
+            $service = match($connection->provider) {
+                'google' => app(GoogleCalendarService::class),
+                'microsoft' => app(MicrosoftCalendarService::class),
+                'caldav' => app(CalDavCalendarService::class),
+                default => null,
+            };
+            
+            if (!$service) {
+                Log::warning('Unknown provider for target cleanup', [
+                    'provider' => $connection->provider,
+                ]);
+                return;
+            }
             
             $service->initializeWithConnection($connection);
             
