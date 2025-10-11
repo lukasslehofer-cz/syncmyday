@@ -147,7 +147,29 @@ class SyncEngine
             ]);
         }
 
-        $rule->update(['last_triggered_at' => now()]);
+        // Mark initial sync as completed if this rule has email targets
+        // This enables sending emails for subsequent changes
+        if (!$rule->initial_sync_completed) {
+            $hasEmailTargets = $rule->targets->contains(function ($target) {
+                return $target->isEmailTarget();
+            });
+            
+            if ($hasEmailTargets) {
+                $rule->update([
+                    'initial_sync_completed' => true,
+                    'last_triggered_at' => now(),
+                ]);
+                
+                Log::channel('sync')->info('Initial sync completed for rule with email targets', [
+                    'rule_id' => $rule->id,
+                    'processed_events' => $processedCount,
+                ]);
+            } else {
+                $rule->update(['last_triggered_at' => now()]);
+            }
+        } else {
+            $rule->update(['last_triggered_at' => now()]);
+        }
     }
 
     /**
@@ -579,6 +601,53 @@ class SyncEngine
         $sequence = $mapping ? ($mapping->sequence ?? 0) : 0;
         $action = 'created';
         $maxTimestamp = new \DateTime('2038-01-01');
+
+        // BATCH MODE for initial sync: Create mapping but don't send email
+        // This prevents flooding user's inbox with hundreds of emails on first sync
+        if (!$rule->initial_sync_completed && !$mapping) {
+            Log::channel('sync')->debug('Initial sync batch mode - creating mapping without sending email', [
+                'rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_email' => $targetEmailConnection->target_email,
+            ]);
+            
+            // Store times in UTC
+            $startToStore = null;
+            $endToStore = null;
+            
+            if ($start && $start <= $maxTimestamp) {
+                $startToStore = clone $start;
+                $startToStore->setTimezone(new \DateTimeZone('UTC'));
+            }
+            
+            if ($end && $end <= $maxTimestamp) {
+                $endToStore = clone $end;
+                $endToStore->setTimezone(new \DateTimeZone('UTC'));
+            }
+            
+            // Create mapping without sending email
+            SyncEventMapping::create([
+                'sync_rule_id' => $rule->id,
+                'source_connection_id' => $sourceConnection->id,
+                'source_calendar_id' => $rule->source_calendar_id,
+                'source_event_id' => $sourceEventId,
+                'target_connection_id' => null,
+                'target_email_connection_id' => $target->target_email_connection_id,
+                'target_calendar_id' => null,
+                'target_event_id' => $eventUid,
+                'event_start' => $startToStore,
+                'event_end' => $endToStore,
+                'sequence' => 0, // Not sent yet
+            ]);
+            
+            Log::channel('sync')->info('Initial sync: Mapping created without email', [
+                'rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_email' => $targetEmailConnection->target_email,
+            ]);
+            
+            return; // Skip sending email during initial sync
+        }
 
         // Check if update is needed (for existing mappings)
         if ($mapping) {

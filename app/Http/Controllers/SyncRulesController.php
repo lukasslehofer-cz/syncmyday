@@ -169,6 +169,7 @@ class SyncRulesController extends Controller
                 'time_filter_end' => $timeFilterEnd,
                 'time_filter_days' => $timeFilterDays,
                 'is_active' => true,
+                'initial_sync_completed' => false, // Will be set to true after first sync
             ]);
 
             // Create targets for forward rule
@@ -202,6 +203,7 @@ class SyncRulesController extends Controller
                         'time_filter_end' => $timeFilterEnd,
                         'time_filter_days' => $timeFilterDays,
                         'is_active' => true,
+                        'initial_sync_completed' => false, // Will be set to true after first sync
                     ]);
 
                     // Create target for reverse rule (original source)

@@ -18,6 +18,7 @@ class SyncRule extends Model
         'filters',
         'blocker_title',
         'is_active',
+        'initial_sync_completed',
         'last_triggered_at',
         'time_filter_enabled',
         'time_filter_type',
@@ -30,6 +31,7 @@ class SyncRule extends Model
         'filters' => 'array',
         'time_filter_days' => 'array',
         'is_active' => 'boolean',
+        'initial_sync_completed' => 'boolean',
         'time_filter_enabled' => 'boolean',
         'last_triggered_at' => 'datetime',
     ];
