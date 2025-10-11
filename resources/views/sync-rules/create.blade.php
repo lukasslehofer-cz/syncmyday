@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Sync Rule')
+@section('title', __('messages.create_sync_rule'))
 
 @section('content')
 <style>

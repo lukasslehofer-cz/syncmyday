@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Account Settings - SyncMyDay')
+@section('title', __('messages.account_settings') . ' - SyncMyDay')
 
 @section('content')
 <style>

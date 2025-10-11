@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Billing')
+@section('title', __('messages.billing'))
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8 text-center">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Billing & Subscription</h1>
-        <p class="text-lg text-gray-600">Simple pricing for powerful calendar sync</p>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.billing_and_subscription') }}</h1>
+        <p class="text-lg text-gray-600">{{ __('messages.simple_pricing_for_powerful_sync') }}</p>
     </div>
     
     <!-- Current Plan Status (for Pro users with active subscription) -->
