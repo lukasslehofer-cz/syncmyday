@@ -299,8 +299,21 @@ class CalDavCalendarService
             ]);
             
             foreach ($resourceType as $type) {
-                // Handle both array and object types
-                if (is_array($type)) {
+                // Handle string format: {namespace}localname
+                if (is_string($type)) {
+                    Log::debug('CalDAV: resourceType element is string', [
+                        'url' => $url,
+                        'type' => $type,
+                    ]);
+                    
+                    // Check if it's a calendar type
+                    if ($type === '{urn:ietf:params:xml:ns:caldav}calendar') {
+                        $isCalendar = true;
+                        break;
+                    }
+                }
+                // Handle array with name/namespaceURI keys
+                elseif (is_array($type)) {
                     Log::debug('CalDAV: resourceType element is array', [
                         'url' => $url,
                         'type' => $type,
@@ -311,8 +324,9 @@ class CalDavCalendarService
                         $isCalendar = true;
                         break;
                     }
-                } elseif (is_object($type)) {
-                    // For Sabre XML objects
+                } 
+                // Handle object
+                elseif (is_object($type)) {
                     $name = property_exists($type, 'name') ? $type->name : null;
                     $namespace = property_exists($type, 'namespaceURI') ? $type->namespaceURI : null;
                     
@@ -363,8 +377,21 @@ class CalDavCalendarService
                 ]);
                 
                 foreach ($components as $component) {
-                    // Handle both array and object types
-                    if (is_array($component)) {
+                    // Handle string format: {namespace}localname or just localname
+                    if (is_string($component)) {
+                        Log::debug('CalDAV: Component is string', [
+                            'url' => $url,
+                            'component' => $component,
+                        ]);
+                        
+                        // Check if it contains VEVENT (with or without namespace)
+                        if ($component === 'VEVENT' || strpos($component, 'VEVENT') !== false) {
+                            $supportsEvents = true;
+                            break;
+                        }
+                    }
+                    // Handle array with name key
+                    elseif (is_array($component)) {
                         Log::debug('CalDAV: Component is array', [
                             'url' => $url,
                             'component' => $component,
@@ -374,7 +401,9 @@ class CalDavCalendarService
                             $supportsEvents = true;
                             break;
                         }
-                    } elseif (is_object($component)) {
+                    } 
+                    // Handle object
+                    elseif (is_object($component)) {
                         $name = property_exists($component, 'name') ? $component->name : null;
                         
                         Log::debug('CalDAV: Component is object', [
