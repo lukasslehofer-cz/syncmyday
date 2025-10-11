@@ -46,6 +46,10 @@ class CalDavCalendarService
             'password' => $password,
         ]);
         
+        // Fix SSL certificate issues on shared hosting
+        $this->client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+        $this->client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+        
         Log::channel('sync')->debug('CalDAV client initialized', [
             'connection_id' => $connection->id,
             'url' => $connection->caldav_url,
@@ -70,6 +74,10 @@ class CalDavCalendarService
                 'userName' => $appleId,
                 'password' => $appPassword,
             ]);
+            
+            // Fix SSL certificate issues on shared hosting
+            $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+            $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
             
             Log::info('iCloud discovery: Step 1 - Finding principal', [
                 'apple_id' => $appleId,
@@ -200,6 +208,10 @@ class CalDavCalendarService
                 'userName' => $username,
                 'password' => $password,
             ]);
+            
+            // Fix SSL certificate issues on shared hosting
+            $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+            $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
             
             // Try to discover principal URL
             $response = $client->propfind('', [
