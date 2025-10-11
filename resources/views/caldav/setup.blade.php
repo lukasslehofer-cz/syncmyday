@@ -15,50 +15,88 @@
             </h1>
         </div>
         <p class="text-lg text-gray-600">
-            Connect your Apple iCloud, Nextcloud, or other CalDAV calendar
+            Connect your Apple iCloud or other CalDAV calendar
         </p>
     </div>
 
-    <!-- How it works -->
+    <!-- How it works / Provider Selection -->
     <div class="mb-8 bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6 lg:p-8">
         <div class="flex items-center space-x-3 mb-4">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center shadow-md">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
             </div>
-            <h3 class="text-xl font-bold text-gray-900">Supported Providers</h3>
+            <h3 class="text-xl font-bold text-gray-900">Choose Your Calendar Provider</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Apple iCloud -->
-            <div class="bg-white rounded-xl p-4 border border-purple-200">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
-                        <span class="text-white font-bold text-sm"></span>
+            <label class="relative cursor-pointer">
+                <input 
+                    type="radio" 
+                    name="provider_type" 
+                    value="icloud" 
+                    checked
+                    class="peer absolute opacity-0"
+                    onchange="toggleProviderFields()"
+                >
+                <div class="bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:border-purple-400 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-gray-800 to-black flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900">Apple iCloud</h4>
+                        </div>
+                        <div class="relative w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-purple-500 peer-checked:bg-purple-500 flex items-center justify-center transition">
+                            <svg class="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 12 12">
+                                <path d="M2 6L5 9L10 3"/>
+                            </svg>
+                        </div>
                     </div>
-                    <h4 class="font-bold text-gray-900">Apple iCloud</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>Username:</strong> Your Apple ID email</p>
+                        <p><strong>Password:</strong> <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-purple-600 hover:text-purple-700 underline">App-specific password</a></p>
+                        <p class="text-xs text-gray-500 mt-2">✓ Easy setup - automatic configuration</p>
+                    </div>
                 </div>
-                <div class="space-y-2 text-sm text-gray-600">
-                    <p><strong>URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-xs">https://caldav.icloud.com</code></p>
-                    <p><strong>Username:</strong> Your Apple ID email</p>
-                    <p><strong>Password:</strong> <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-purple-600 hover:text-purple-700 underline">App-specific password</a></p>
-                </div>
-            </div>
+            </label>
             
-            <!-- Nextcloud -->
-            <div class="bg-white rounded-xl p-4 border border-purple-200">
-                <div class="flex items-center space-x-3 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                        <span class="text-white font-bold text-sm">N</span>
+            <!-- Other CalDAV -->
+            <label class="relative cursor-pointer">
+                <input 
+                    type="radio" 
+                    name="provider_type" 
+                    value="other" 
+                    class="peer absolute opacity-0"
+                    onchange="toggleProviderFields()"
+                >
+                <div class="bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:border-purple-400 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                                </svg>
+                            </div>
+                            <h4 class="font-bold text-gray-900">Other CalDAV</h4>
+                        </div>
+                        <div class="relative w-5 h-5 rounded-full border-2 border-gray-300 peer-checked:border-purple-500 peer-checked:bg-purple-500 flex items-center justify-center transition">
+                            <svg class="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 12 12">
+                                <path d="M2 6L5 9L10 3"/>
+                            </svg>
+                        </div>
                     </div>
-                    <h4 class="font-bold text-gray-900">Nextcloud</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>Server URL:</strong> Your CalDAV server address</p>
+                        <p><strong>Username:</strong> Your account username</p>
+                        <p><strong>Password:</strong> Your account password</p>
+                        <p class="text-xs text-gray-500 mt-2">Nextcloud, Radicale, Baikal, etc.</p>
+                    </div>
                 </div>
-                <div class="space-y-2 text-sm text-gray-600">
-                    <p><strong>URL:</strong> <code class="bg-gray-100 px-2 py-1 rounded text-xs">https://your.nextcloud.com/remote.php/dav</code></p>
-                    <p><strong>Username:</strong> Your Nextcloud username</p>
-                    <p><strong>Password:</strong> Your password or app password</p>
-                </div>
-            </div>
+            </label>
         </div>
     </div>
 
@@ -67,59 +105,6 @@
         @csrf
 
         <div class="p-6 lg:p-8 space-y-6">
-            <!-- Provider Type Selection -->
-            <div>
-                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-4">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <span>Choose Your Calendar Provider</span>
-                </label>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Apple iCloud -->
-                    <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition">
-                        <input 
-                            type="radio" 
-                            name="provider_type" 
-                            value="icloud" 
-                            checked
-                            class="w-5 h-5 text-purple-600 border-2 border-gray-300 focus:ring-purple-500"
-                            onchange="toggleProviderFields()"
-                        >
-                        <div class="ml-4 flex-1">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center">
-                                    <span class="text-white font-bold text-xs"></span>
-                                </div>
-                                <span class="font-bold text-gray-900">Apple iCloud</span>
-                            </div>
-                            <p class="text-sm text-gray-600 mt-1">Easy setup - we'll find everything automatically</p>
-                        </div>
-                    </label>
-                    
-                    <!-- Other CalDAV -->
-                    <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-xl cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition">
-                        <input 
-                            type="radio" 
-                            name="provider_type" 
-                            value="other" 
-                            class="w-5 h-5 text-purple-600 border-2 border-gray-300 focus:ring-purple-500"
-                            onchange="toggleProviderFields()"
-                        >
-                        <div class="ml-4 flex-1">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-                                    <span class="text-white font-bold text-xs">N</span>
-                                </div>
-                                <span class="font-bold text-gray-900">Other CalDAV</span>
-                            </div>
-                            <p class="text-sm text-gray-600 mt-1">Nextcloud, etc. - manual configuration</p>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
             <!-- Apple iCloud Fields -->
             <div id="icloud-fields">
                 <!-- Apple ID Wizard -->
@@ -214,7 +199,7 @@
                         name="url" 
                         id="url" 
                         value="{{ old('url') }}" 
-                        placeholder="https://your.nextcloud.com/remote.php/dav"
+                        placeholder="https://your.server.com/path/to/caldav"
                         class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 transition font-mono text-sm"
                     >
                     @error('url')
