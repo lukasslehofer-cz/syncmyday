@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Make target_connection_id nullable to support email calendar targets
+     * Make target_connection_id and target_calendar_id nullable to support email calendar targets
      * 
-     * When syncing to email calendars, we don't have a target_connection_id
-     * (since there's no API connection), only target_email_connection_id.
+     * When syncing to email calendars, we don't have:
+     * - target_connection_id (no API connection)
+     * - target_calendar_id (no API calendar ID, only email address)
+     * 
+     * Only target_email_connection_id is used for email targets.
      */
     public function up(): void
     {
@@ -18,8 +21,13 @@ return new class extends Migration
             // Drop the foreign key constraint first
             $table->dropForeign(['target_connection_id']);
             
-            // Make the column nullable
+            // Make target_connection_id nullable
             $table->foreignId('target_connection_id')
+                ->nullable()
+                ->change();
+            
+            // Make target_calendar_id nullable (email calendars don't have calendar IDs)
+            $table->string('target_calendar_id')
                 ->nullable()
                 ->change();
             
@@ -40,8 +48,13 @@ return new class extends Migration
             // Drop the foreign key constraint
             $table->dropForeign(['target_connection_id']);
             
-            // Make the column NOT NULL again
+            // Make target_connection_id NOT NULL again
             $table->foreignId('target_connection_id')
+                ->nullable(false)
+                ->change();
+            
+            // Make target_calendar_id NOT NULL again
+            $table->string('target_calendar_id')
                 ->nullable(false)
                 ->change();
             

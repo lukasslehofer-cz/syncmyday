@@ -9,6 +9,7 @@ https://syncmyday.cz/migrate.php?token=YOUR_CRON_SECRET
 ```
 
 Script automaticky:
+
 - ✅ Zkontroluje, které migrace ještě neproběhly
 - ✅ Spustí je postupně
 - ✅ Vrátí JSON s výsledky
@@ -33,11 +34,13 @@ php artisan migrate
 ## Rollback (pokud by něco selhalo):
 
 Pro shared hosting s HTTP:
+
 ```bash
 https://syncmyday.cz/migrate.php?token=YOUR_CRON_SECRET&rollback=1
 ```
 
 Pro VPS/lokál:
+
 ```bash
 php artisan migrate:rollback --force --step=1
 ```
