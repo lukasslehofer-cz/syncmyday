@@ -5,26 +5,26 @@
     <!-- Header -->
     <div class="mb-8">
         <a href="{{ route('email-calendars.index') }}" class="text-sm text-blue-600 hover:text-blue-700 mb-2 inline-block">
-            ← Back to Email Calendars
+            ← {{ __('messages.back_to_email_calendars') }}
         </a>
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900">{{ $emailCalendar->name }}</h1>
-                <p class="mt-1 text-sm text-gray-600">Email-based calendar connection</p>
+                <p class="mt-1 text-sm text-gray-600">{{ __('messages.email_based_calendar') }}</p>
             </div>
             @if($emailCalendar->status === 'active')
-                <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-lg">Active</span>
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-lg">{{ __('messages.active') }}</span>
             @elseif($emailCalendar->status === 'paused')
-                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg">Paused</span>
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg">{{ __('messages.paused') }}</span>
             @else
-                <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-lg">Error</span>
+                <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-lg">{{ __('messages.error') }}</span>
             @endif
         </div>
     </div>
 
     <!-- Email Address -->
     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-3">📧 Your Unique Email Address</h2>
+        <h2 class="text-lg font-semibold text-gray-900 mb-3">📧 {{ __('messages.your_unique_email') }}</h2>
         <div class="bg-white rounded-lg p-4 border border-blue-300">
             <div class="flex items-center gap-3">
                 <code class="flex-1 text-lg font-mono text-gray-900 break-all">{{ $emailCalendar->email_address }}</code>
@@ -32,7 +32,7 @@
                     onclick="navigator.clipboard.writeText('{{ $emailCalendar->email_address }}'); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000)"
                     class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"
                 >
-                    Copy
+                    {{ __('messages.copy') }}
                 </button>
             </div>
         </div>
@@ -117,20 +117,20 @@
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <p class="text-sm text-gray-600">Emails Received</p>
+                <p class="text-sm text-gray-600">{{ __('messages.emails_received') }}</p>
                 <p class="text-2xl font-bold text-gray-900">{{ number_format($emailCalendar->emails_received) }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-600">Events Processed</p>
+                <p class="text-sm text-gray-600">{{ __('messages.events_processed') }}</p>
                 <p class="text-2xl font-bold text-gray-900">{{ number_format($emailCalendar->events_processed) }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-600">Last Email</p>
+                <p class="text-sm text-gray-600">{{ __('messages.last_email') }}</p>
                 <p class="text-2xl font-bold text-gray-900">
                     @if($emailCalendar->last_email_at)
                         {{ $emailCalendar->last_email_at->diffForHumans() }}
                     @else
-                        Never
+                        {{ __('messages.never') }}
                     @endif
                 </p>
             </div>
@@ -138,7 +138,7 @@
 
         @if($emailCalendar->last_error)
         <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-            <p class="text-sm font-medium text-red-900">Last Error:</p>
+            <p class="text-sm font-medium text-red-900">{{ __('messages.last_error') }}:</p>
             <p class="text-sm text-red-700 mt-1">{{ $emailCalendar->last_error }}</p>
         </div>
         @endif
@@ -150,7 +150,7 @@
             @csrf
             @method('DELETE')
             <button type="submit" class="px-4 py-2 border border-red-600 text-red-600 hover:bg-red-50 rounded-lg font-medium">
-                Delete Calendar
+                {{ __('messages.delete_calendar') }}
             </button>
         </form>
     </div>

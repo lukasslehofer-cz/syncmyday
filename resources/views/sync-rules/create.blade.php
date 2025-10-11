@@ -378,7 +378,7 @@ function addTargetRow() {
     div.innerHTML = `
         <div class="flex items-center justify-between">
             <span class="text-sm font-semibold text-gray-700">{{ __('messages.target') }} ${index + 1}</span>
-            ${index > 0 ? `<button type="button" class="remove-target text-red-600 hover:text-red-700 font-medium text-sm">Remove</button>` : ''}
+            ${index > 0 ? `<button type="button" class="remove-target text-red-600 hover:text-red-700 font-medium text-sm">{{ __('messages.remove') }}</button>` : ''}
         </div>
         
         <select class="target-connection-select custom-select select-purple w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white transition shadow-sm hover:border-purple-300" required>

@@ -308,7 +308,7 @@ return [
     'password_reset_link_sent' => 'Odkaz pro reset hesla byl odeslán na váš email!',
     'password_reset_token_invalid' => 'Tento odkaz pro reset hesla je neplatný nebo vypršel. Vyžádejte si prosím nový.',
     'password_reset_success' => 'Vaše heslo bylo úspěšně změněno!',
-
+    
     // General
     'error' => 'Chyba',
     'warning' => 'Varování',
@@ -403,6 +403,7 @@ return [
     // Billing & Subscription
     'pricing' => 'Ceník',
     'trial_period_active' => 'Zkušební období aktivní',
+    'trial_remaining_days' => 'Zbývá vám :days dní zkušebního období (končí :date)',
     'trial_period_expired' => 'Zkušební období vypršelo',
     'payment_method_not_set' => 'Platební metoda není nastavena',
     'payment_method_set' => 'Platební metoda je nastavena',
@@ -508,6 +509,17 @@ return [
     'alert' => 'Upozornění',
     'none' => 'Žádné',
     
+    // Account Settings
+    'email_cannot_be_changed' => 'E-mail nelze změnit',
+    'timezone' => 'Časová zóna',
+    'locale' => 'Jazyk',
+    'name_label' => 'Jméno',
+    'update_profile' => 'Aktualizovat profil',
+    'change_password' => 'Změnit heslo',
+    'current_password' => 'Současné heslo',
+    'new_password' => 'Nové heslo',
+    'save_changes' => 'Uložit změny',
+    
     // Common
     'events' => 'událostí',
     'emails' => 'e-mailů',
@@ -519,4 +531,18 @@ return [
     'email_calendar_type' => 'E-mailový kalendář',
     'email_type' => 'E-mail',
     'syncing_to_targets' => 'Synchronizuje se do :count cíle|Synchronizuje se do :count cílů',
+    'paused' => 'Pozastaveno',
+    'error' => 'Chyba',
+    'copy' => 'Kopírovat',
+    'never' => 'Nikdy',
+    'last_error' => 'Poslední chyba',
+    'delete_calendar' => 'Smazat kalendář',
+    
+    // Email Calendars
+    'back_to_email_calendars' => 'Zpět na e-mailové kalendáře',
+    'email_based_calendar' => 'E-mailové připojení kalendáře',
+    'your_unique_email' => 'Vaše jedinečná e-mailová adresa',
+    'emails_received' => 'Přijatých e-mailů',
+    'events_processed' => 'Zpracovaných událostí',
+    'last_email' => 'Poslední e-mail',
 ];

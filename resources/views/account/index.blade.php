@@ -55,7 +55,7 @@
                 @method('PUT')
 
                 <div>
-                    <label for="name" class="block text-sm font-bold text-gray-900 mb-2">Name</label>
+                    <label for="name" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.full_name') }}</label>
                     <input 
                         type="text" 
                         name="name" 
@@ -70,18 +70,18 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-bold text-gray-900 mb-2">Email</label>
+                    <label for="email" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.email_address') }}</label>
                     <input 
                         type="email" 
                         value="{{ $user->email }}" 
                         disabled
                         class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
                     >
-                    <p class="mt-2 text-xs text-gray-500">Email cannot be changed</p>
+                    <p class="mt-2 text-xs text-gray-500">{{ __('messages.email_cannot_be_changed') }}</p>
                 </div>
 
                 <div>
-                    <label for="timezone" class="block text-sm font-bold text-gray-900 mb-2">Timezone</label>
+                    <label for="timezone" class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.timezone') }}</label>
                     <select 
                         name="timezone" 
                         id="timezone" 

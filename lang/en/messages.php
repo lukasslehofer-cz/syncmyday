@@ -395,6 +395,7 @@ return [
     // Billing & Subscription
     'pricing' => 'Pricing',
     'trial_period_active' => 'Trial Period Active',
+    'trial_remaining_days' => 'You have :days days left in your trial period (ends :date)',
     'trial_period_expired' => 'Trial Period Expired',
     'payment_method_not_set' => 'Payment method not set',
     'payment_method_set' => 'Payment method set',
@@ -500,6 +501,17 @@ return [
     'alert' => 'Alert',
     'none' => 'None',
     
+    // Account Settings
+    'email_cannot_be_changed' => 'Email cannot be changed',
+    'timezone' => 'Timezone',
+    'locale' => 'Language',
+    'name_label' => 'Name',
+    'update_profile' => 'Update Profile',
+    'change_password' => 'Change Password',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'save_changes' => 'Save Changes',
+    
     // Common
     'events' => 'events',
     'emails' => 'emails',
@@ -511,4 +523,18 @@ return [
     'email_calendar_type' => 'Email Calendar',
     'email_type' => 'Email',
     'syncing_to_targets' => 'Syncing to :count target|Syncing to :count targets',
+    'paused' => 'Paused',
+    'error' => 'Error',
+    'copy' => 'Copy',
+    'never' => 'Never',
+    'last_error' => 'Last Error',
+    'delete_calendar' => 'Delete Calendar',
+    
+    // Email Calendars
+    'back_to_email_calendars' => 'Back to Email Calendars',
+    'email_based_calendar' => 'Email-based calendar connection',
+    'your_unique_email' => 'Your Unique Email Address',
+    'emails_received' => 'Emails Received',
+    'events_processed' => 'Events Processed',
+    'last_email' => 'Last Email',
 ];

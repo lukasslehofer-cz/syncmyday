@@ -240,7 +240,7 @@ return [
     'password_reset_link_sent' => 'Link do resetowania hasła został wysłany na Twój e-mail!',
     'password_reset_token_invalid' => 'Ten link do resetowania hasła jest nieprawidłowy lub wygasł. Poproś o nowy.',
     'password_reset_success' => 'Twoje hasło zostało pomyślnie zresetowane!',
-
+    
     // General
     'error' => 'Błąd',
     'warning' => 'Ostrzeżenie',
@@ -326,6 +326,7 @@ return [
     // Billing & Subscription
     'pricing' => 'Cennik',
     'trial_period_active' => 'Okres próbny aktywny',
+    'trial_remaining_days' => 'Pozostało :days dni okresu próbnego (kończy się :date)',
     'trial_period_expired' => 'Okres próbny wygasł',
     'payment_method_not_set' => 'Metoda płatności nie jest ustawiona',
     'payment_method_set' => 'Metoda płatności jest ustawiona',
@@ -431,6 +432,17 @@ return [
     'alert' => 'Alert',
     'none' => 'Brak',
     
+    // Account Settings
+    'email_cannot_be_changed' => 'E-mail nie może być zmieniony',
+    'timezone' => 'Strefa czasowa',
+    'locale' => 'Język',
+    'name_label' => 'Imię',
+    'update_profile' => 'Aktualizuj profil',
+    'change_password' => 'Zmień hasło',
+    'current_password' => 'Obecne hasło',
+    'new_password' => 'Nowe hasło',
+    'save_changes' => 'Zapisz zmiany',
+    
     // Common
     'events' => 'wydarzeń',
     'emails' => 'e-maili',
@@ -442,4 +454,18 @@ return [
     'email_calendar_type' => 'Kalendarz e-mail',
     'email_type' => 'E-mail',
     'syncing_to_targets' => 'Synchronizacja do :count celu|Synchronizacja do :count celów',
+    'paused' => 'Wstrzymany',
+    'error' => 'Błąd',
+    'copy' => 'Kopiuj',
+    'never' => 'Nigdy',
+    'last_error' => 'Ostatni błąd',
+    'delete_calendar' => 'Usuń kalendarz',
+    
+    // Email Calendars
+    'back_to_email_calendars' => 'Powrót do kalendarzy e-mail',
+    'email_based_calendar' => 'Połączenie kalendarza e-mail',
+    'your_unique_email' => 'Twój unikalny adres e-mail',
+    'emails_received' => 'Otrzymanych e-maili',
+    'events_processed' => 'Przetworzonych wydarzeń',
+    'last_email' => 'Ostatni e-mail',
 ];

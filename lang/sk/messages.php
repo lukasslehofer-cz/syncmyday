@@ -326,6 +326,7 @@ return [
     // Billing & Subscription
     'pricing' => 'Cenník',
     'trial_period_active' => 'Skúšobné obdobie aktívne',
+    'trial_remaining_days' => 'Zostáva vám :days dní skúšobného obdobia (končí :date)',
     'trial_period_expired' => 'Skúšobné obdobie vypršalo',
     'payment_method_not_set' => 'Platobná metóda nie je nastavená',
     'payment_method_set' => 'Platobná metóda je nastavená',
@@ -431,6 +432,17 @@ return [
     'alert' => 'Upozornenie',
     'none' => 'Žiadne',
     
+    // Account Settings
+    'email_cannot_be_changed' => 'E-mail nemožno zmeniť',
+    'timezone' => 'Časové pásmo',
+    'locale' => 'Jazyk',
+    'name_label' => 'Meno',
+    'update_profile' => 'Aktualizovať profil',
+    'change_password' => 'Zmeniť heslo',
+    'current_password' => 'Súčasné heslo',
+    'new_password' => 'Nové heslo',
+    'save_changes' => 'Uložiť zmeny',
+    
     // Common
     'events' => 'udalostí',
     'emails' => 'e-mailov',
@@ -442,4 +454,18 @@ return [
     'email_calendar_type' => 'E-mailový kalendár',
     'email_type' => 'E-mail',
     'syncing_to_targets' => 'Synchronizuje sa do :count cieľa|Synchronizuje sa do :count cieľov',
+    'paused' => 'Pozastavené',
+    'error' => 'Chyba',
+    'copy' => 'Kopírovať',
+    'never' => 'Nikdy',
+    'last_error' => 'Posledná chyba',
+    'delete_calendar' => 'Zmazať kalendár',
+    
+    // Email Calendars
+    'back_to_email_calendars' => 'Späť na e-mailové kalendáre',
+    'email_based_calendar' => 'E-mailové pripojenie kalendára',
+    'your_unique_email' => 'Vaša jedinečná e-mailová adresa',
+    'emails_received' => 'Prijatých e-mailov',
+    'events_processed' => 'Spracovaných udalostí',
+    'last_email' => 'Posledný e-mail',
 ];
