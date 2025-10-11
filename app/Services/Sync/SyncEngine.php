@@ -214,8 +214,14 @@ class SyncEngine
         ]);
 
         // Check if this is our own blocker - skip to prevent loops
-        if ($sourceService->isOurBlocker($event)) {
-            Log::channel('sync')->debug('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
+        $isOurBlocker = $sourceService->isOurBlocker($event);
+        Log::channel('sync')->info('Check 1: isOurBlocker', [
+            'event_id' => $sourceEventId,
+            'result' => $isOurBlocker,
+        ]);
+        
+        if ($isOurBlocker) {
+            Log::channel('sync')->info('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
             return;
         }
         
@@ -226,8 +232,13 @@ class SyncEngine
             ->where('target_calendar_id', $rule->source_calendar_id)
             ->exists();
         
+        Log::channel('sync')->info('Check 2: isTargetBlocker (DB)', [
+            'event_id' => $sourceEventId,
+            'result' => $isTargetBlocker,
+        ]);
+        
         if ($isTargetBlocker) {
-            Log::channel('sync')->debug('Skipping target blocker (by mapping)', [
+            Log::channel('sync')->info('Skipping target blocker (by mapping)', [
                 'event_id' => $sourceEventId,
                 'calendar_id' => $rule->source_calendar_id,
             ]);
@@ -236,11 +247,25 @@ class SyncEngine
 
         // Check if event is deleted/cancelled
         $isDeleted = $this->isEventDeleted($event, $sourceConnection->provider);
+        
+        Log::channel('sync')->info('Check 3: isDeleted', [
+            'event_id' => $sourceEventId,
+            'result' => $isDeleted,
+        ]);
 
         // Apply filters
-        if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
+        $normalizedEvent = $this->normalizeEvent($event, $sourceConnection->provider);
+        $shouldSync = $rule->shouldSyncEvent($normalizedEvent);
+        
+        Log::channel('sync')->info('Check 4: shouldSyncEvent (filters)', [
+            'event_id' => $sourceEventId,
+            'result' => $shouldSync,
+            'is_deleted' => $isDeleted,
+        ]);
+        
+        if (!$isDeleted && !$shouldSync) {
             // Don't log filtered events to DB - would spam dashboard
-            Log::channel('sync')->debug('Event filtered out by rules', [
+            Log::channel('sync')->info('Event filtered out by rules', [
                 'event_id' => $sourceEventId,
                 'rule_id' => $rule->id,
             ]);
