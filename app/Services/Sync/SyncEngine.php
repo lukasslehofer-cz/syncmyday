@@ -566,6 +566,14 @@ class SyncEngine
             'target_email_connection_id' => $target->target_email_connection_id,
         ])->first();
         
+        Log::channel('sync')->debug('Email target mapping check', [
+            'source_event_id' => $sourceEventId,
+            'sync_rule_id' => $rule->id,
+            'target_email_connection_id' => $target->target_email_connection_id,
+            'mapping_found' => $mapping ? 'yes' : 'no',
+            'mapping_id' => $mapping ? $mapping->id : null,
+        ]);
+        
         // Generate a stable event UID for iMIP
         $eventUid = 'syncmyday-' . $rule->id . '-' . md5($sourceEventId);
         $sequence = $mapping ? ($mapping->sequence ?? 0) : 0;
@@ -668,7 +676,7 @@ class SyncEngine
                     ]);
                 } else {
                     // Create new mapping
-                    SyncEventMapping::create([
+                    $newMapping = SyncEventMapping::create([
                         'sync_rule_id' => $rule->id,
                         'source_connection_id' => $sourceConnection->id,
                         'source_calendar_id' => $rule->source_calendar_id,
@@ -681,10 +689,13 @@ class SyncEngine
                         'sequence' => 1,
                     ]);
                     
-                    Log::channel('sync')->info('Email blocker created', [
+                    Log::channel('sync')->info('Email blocker created and mapping saved', [
                         'event_id' => $sourceEventId,
                         'target_email' => $targetEmailConnection->target_email,
                         'event_uid' => $eventUid,
+                        'mapping_id' => $newMapping->id,
+                        'sync_rule_id' => $rule->id,
+                        'target_email_connection_id' => $target->target_email_connection_id,
                     ]);
                 }
 
