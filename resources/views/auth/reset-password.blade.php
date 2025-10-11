@@ -26,8 +26,8 @@
                     <span class="text-2xl font-bold">SyncMyDay</span>
                 </div>
                 
-                <h1 class="text-4xl font-extrabold mb-4">Create New Password</h1>
-                <p class="text-lg text-indigo-100 mb-8">Enter your new password below. Make it strong and memorable!</p>
+                <h1 class="text-4xl font-extrabold mb-4">{{ __('messages.create_new_password') }}</h1>
+                <p class="text-lg text-indigo-100 mb-8">{{ __('messages.new_password_description') }}</p>
                 
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
@@ -37,8 +37,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Minimum 8 Characters</h3>
-                            <p class="text-sm text-indigo-100">Keep your account secure</p>
+                            <h3 class="font-semibold">{{ __('messages.minimum_8_characters') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.keep_account_secure') }}</p>
                         </div>
                     </div>
                     
@@ -49,8 +49,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Auto Login</h3>
-                            <p class="text-sm text-indigo-100">You'll be logged in automatically after reset</p>
+                            <h3 class="font-semibold">{{ __('messages.auto_login') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.auto_login_description') }}</p>
                         </div>
                     </div>
                     
@@ -61,8 +61,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Secure Process</h3>
-                            <p class="text-sm text-indigo-100">Your password is encrypted and safe</p>
+                            <h3 class="font-semibold">{{ __('messages.secure_process') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.password_encrypted_safe') }}</p>
                         </div>
                     </div>
                 </div>
@@ -78,8 +78,8 @@
             <div class="w-full max-w-md">
                 <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
                     <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
-                        <p class="text-gray-600">Enter your new password below.</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ __('messages.reset_password_heading') }}</h2>
+                        <p class="text-gray-600">{{ __('messages.new_password_subtitle') }}</p>
                     </div>
 
                     <form method="POST" action="{{ route('password.update') }}">
@@ -89,7 +89,7 @@
 
                         <div class="mb-6">
                             <label for="email-display" class="block text-sm font-bold text-gray-700 mb-2">
-                                Email Address
+                                {{ __('messages.email_address') }}
                             </label>
                             <input 
                                 id="email-display" 
@@ -102,7 +102,7 @@
 
                         <div class="mb-6">
                             <label for="password" class="block text-sm font-bold text-gray-700 mb-2">
-                                New Password
+                                {{ __('messages.new_password_label') }}
                             </label>
                             <input 
                                 id="password" 
@@ -111,7 +111,7 @@
                                 required 
                                 autofocus
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 transition @error('password') border-red-300 @enderror"
-                                placeholder="••••••••"
+                                placeholder="{{ __('messages.placeholder_password_dots') }}"
                             >
                             @error('password')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -120,7 +120,7 @@
 
                         <div class="mb-6">
                             <label for="password_confirmation" class="block text-sm font-bold text-gray-700 mb-2">
-                                Confirm Password
+                                {{ __('messages.confirm_password_label') }}
                             </label>
                             <input 
                                 id="password_confirmation" 
@@ -128,7 +128,7 @@
                                 name="password_confirmation" 
                                 required
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 transition"
-                                placeholder="••••••••"
+                                placeholder="{{ __('messages.placeholder_password_dots') }}"
                             >
                         </div>
 
@@ -144,12 +144,12 @@
                         @enderror
 
                         <button type="submit" class="w-full gradient-bg text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition shadow-lg mb-6">
-                            Reset Password
+                            {{ __('messages.reset_password_button') }}
                         </button>
 
                         <div class="text-center">
                             <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium text-sm">
-                                ← Back to Login
+                                {{ __('messages.back_to_login_arrow') }}
                             </a>
                         </div>
                     </form>

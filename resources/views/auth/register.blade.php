@@ -62,8 +62,8 @@
                     </div>
                     
                     <div class="text-sm text-indigo-100">
-                        <p>✨ Free plan includes basic features</p>
-                        <p>🚀 Upgrade to Pro for unlimited sync rules</p>
+                                <p>{{ __('messages.free_plan_info') }}</p>
+                        <p>{{ __('messages.pro_plan_info') }}</p>
                     </div>
                 </div>
             </div>
@@ -146,12 +146,12 @@
                                 required 
                                 autofocus
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                placeholder="John Doe"
+                                placeholder="{{ __('messages.placeholder_name') }}"
                             >
                         </div>
                         
                         <div>
-                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email address</label>
+                            <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.email_address') }}</label>
                             <input 
                                 type="email" 
                                 name="email" 
@@ -159,21 +159,21 @@
                                 value="{{ old('email') }}" 
                                 required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                placeholder="you@example.com"
+                                placeholder="{{ __('messages.placeholder_email') }}"
                             >
                         </div>
                         
                         <div>
-                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.password') }}</label>
                             <input 
                                 type="password" 
                                 name="password" 
                                 id="password" 
                                 required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                placeholder="Minimum 8 characters"
+                                placeholder="{{ __('messages.placeholder_password_min') }}"
                             >
-                            <p class="mt-2 text-xs text-gray-500">Must be at least 8 characters long</p>
+                            <p class="mt-2 text-xs text-gray-500">{{ __('messages.password_requirements') }}</p>
                         </div>
                         
                         <div>
@@ -184,7 +184,7 @@
                                 id="password_confirmation" 
                                 required
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
-                                placeholder="Re-enter your password"
+                                placeholder="{{ __('messages.placeholder_password_confirm') }}"
                             >
                         </div>
                         
@@ -222,7 +222,7 @@
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
-                            Back to home
+                            {{ __('messages.back_to_home') }}
                         </a>
                     </div>
                 </div>

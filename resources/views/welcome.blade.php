@@ -49,7 +49,7 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_features') }}</a>
                     <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_how_it_works') }}</a>
-                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.billing') }}</a>
+                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_pricing') }}</a>
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -109,7 +109,7 @@
                         <div class="text-sm text-gray-600 font-medium">{{ __('messages.privacy_first') }}</div>
                     </div>
                     <div class="col-span-2 md:col-span-1 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-pink-200 shadow-lg transform hover:scale-105 transition">
-                        <div class="text-4xl font-bold gradient-text mb-2">2 mins</div>
+                        <div class="text-4xl font-bold gradient-text mb-2">{{ __('messages.home_stat_2mins') }}</div>
                         <div class="text-sm text-gray-600 font-medium">{{ __('messages.easy_setup') }}</div>
                     </div>
                 </div>

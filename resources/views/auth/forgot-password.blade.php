@@ -26,8 +26,8 @@
                     <span class="text-2xl font-bold">SyncMyDay</span>
                 </div>
                 
-                <h1 class="text-4xl font-extrabold mb-4">Reset Password</h1>
-                <p class="text-lg text-indigo-100 mb-8">No worries! Just enter your email and we'll send you a reset link.</p>
+                <h1 class="text-4xl font-extrabold mb-4">{{ __('messages.reset_password_title') }}</h1>
+                <p class="text-lg text-indigo-100 mb-8">{{ __('messages.forgot_password_description') }}</p>
                 
                 <div class="space-y-4">
                     <div class="flex items-start space-x-3">
@@ -37,8 +37,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Secure & Fast</h3>
-                            <p class="text-sm text-indigo-100">Reset link sent instantly to your email</p>
+                            <h3 class="font-semibold">{{ __('messages.secure_fast') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.reset_link_sent_instantly') }}</p>
                         </div>
                     </div>
                     
@@ -49,8 +49,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Valid for 1 Hour</h3>
-                            <p class="text-sm text-indigo-100">Reset link expires after 1 hour for security</p>
+                            <h3 class="font-semibold">{{ __('messages.valid_for_1_hour') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.reset_link_expires') }}</p>
                         </div>
                     </div>
                     
@@ -61,8 +61,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold">Easy Process</h3>
-                            <p class="text-sm text-indigo-100">Click the link and create a new password</p>
+                            <h3 class="font-semibold">{{ __('messages.easy_process') }}</h3>
+                            <p class="text-sm text-indigo-100">{{ __('messages.click_link_create_password') }}</p>
                         </div>
                     </div>
                 </div>
@@ -78,8 +78,8 @@
             <div class="w-full max-w-md">
                 <div class="bg-white rounded-2xl shadow-xl p-8 lg:p-10">
                     <div class="mb-8">
-                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
-                        <p class="text-gray-600">Enter your email address and we'll send you a reset link.</p>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ __('messages.forgot_password_heading') }}</h2>
+                        <p class="text-gray-600">{{ __('messages.forgot_password_subtitle') }}</p>
                     </div>
 
                     @if(session('success'))
@@ -90,7 +90,7 @@
                             </svg>
                             <span class="font-medium">{{ session('success') }}</span>
                         </div>
-                        <p class="mt-2 text-sm text-green-700">Please check your inbox and click the reset link.</p>
+                        <p class="mt-2 text-sm text-green-700">{{ __('messages.check_inbox_message') }}</p>
                     </div>
                     @endif
 
@@ -99,7 +99,7 @@
 
                         <div class="mb-6">
                             <label for="email" class="block text-sm font-bold text-gray-700 mb-2">
-                                Email Address
+                                {{ __('messages.email_address') }}
                             </label>
                             <input 
                                 id="email" 
@@ -109,7 +109,7 @@
                                 required 
                                 autofocus
                                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 transition @error('email') border-red-300 @enderror"
-                                placeholder="your@email.com"
+                                placeholder="{{ __('messages.placeholder_your_email') }}"
                             >
                             @error('email')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -117,20 +117,20 @@
                         </div>
 
                         <button type="submit" class="w-full gradient-bg text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition shadow-lg mb-6">
-                            Send Reset Link
+                            {{ __('messages.send_reset_link') }}
                         </button>
 
                         <div class="text-center">
                             <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-700 font-medium text-sm">
-                                ← Back to Login
+                                {{ __('messages.back_to_login_arrow') }}
                             </a>
                         </div>
                     </form>
                 </div>
 
                 <p class="text-center text-sm text-gray-600 mt-8">
-                    Don't have an account? 
-                    <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold">Sign up</a>
+                    {{ __('messages.dont_have_account') }} 
+                    <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-700 font-semibold">{{ __('messages.sign_up_link') }}</a>
                 </p>
             </div>
         </div>
