@@ -527,12 +527,15 @@ class SocialAuthController extends Controller
             // Calculate trial end timestamp
             $trialEnd = $user->subscription_ends_at->timestamp;
 
+            // Get correct Price ID based on user's locale
+            $priceId = \App\Helpers\PricingHelper::getPriceId($user->locale);
+
             // Create Checkout Session with trial
             $session = \Stripe\Checkout\Session::create([
                 'customer' => $customer->id,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
-                    'price' => config('services.stripe.pro_price_id'),
+                    'price' => $priceId,
                     'quantity' => 1,
                 ]],
                 'mode' => 'subscription',
@@ -540,6 +543,7 @@ class SocialAuthController extends Controller
                     'trial_end' => $trialEnd,
                     'metadata' => [
                         'user_id' => $user->id,
+                        'locale' => $user->locale,
                     ],
                 ],
                 'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}&redirect=dashboard',
@@ -548,6 +552,11 @@ class SocialAuthController extends Controller
                     'user_id' => $user->id,
                     'is_trial' => true,
                     'source' => $source,
+                    'locale' => $user->locale,
+                ],
+                // Don't create invoice for trial period
+                'invoice_creation' => [
+                    'enabled' => false,
                 ],
             ]);
 
