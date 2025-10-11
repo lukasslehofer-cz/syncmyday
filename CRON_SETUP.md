@@ -40,7 +40,27 @@ Syncs calendars according to active sync rules.
 
 ---
 
-### 3. **Webhook Renewal** (Every 6 hours)
+### 3. **CalDAV Polling** (Every 5-10 minutes)
+
+Polls CalDAV calendars (Apple iCloud, Nextcloud, etc.) for changes and triggers sync. CalDAV doesn't support webhooks, so we need to poll periodically.
+
+**URL:** `https://syncmyday.cz/cron-caldav-poll.php?token=YOUR_CRON_SECRET`
+
+**Recommended cron syntax (every 5 minutes):**
+
+```
+*/5 * * * * curl -s "https://syncmyday.cz/cron-caldav-poll.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
+```
+
+**Alternative (every 10 minutes for lower server load):**
+
+```
+*/10 * * * * curl -s "https://syncmyday.cz/cron-caldav-poll.php?token=YOUR_CRON_SECRET" > /dev/null 2>&1
+```
+
+---
+
+### 4. **Webhook Renewal** (Every 6 hours)
 
 Renews expiring webhook subscriptions for Google/Microsoft calendars.
 
@@ -54,7 +74,7 @@ Renews expiring webhook subscriptions for Google/Microsoft calendars.
 
 ---
 
-### 4. **Queue Processing** (Every 5 minutes)
+### 5. **Queue Processing** (Every 5 minutes)
 
 Processes queued jobs (background tasks).
 
@@ -68,7 +88,7 @@ Processes queued jobs (background tasks).
 
 ---
 
-### 5. **Connections Health Check** (Every hour)
+### 6. **Connections Health Check** (Every hour)
 
 Checks calendar connections for expired tokens.
 
@@ -82,7 +102,7 @@ Checks calendar connections for expired tokens.
 
 ---
 
-### 6. **Logs Cleanup** (Daily at midnight)
+### 7. **Logs Cleanup** (Daily at midnight)
 
 Cleans up old sync logs (30 days retention).
 
@@ -96,7 +116,7 @@ Cleans up old sync logs (30 days retention).
 
 ---
 
-### 7. **Trial Ending Notifications** (Daily at 9:00)
+### 8. **Trial Ending Notifications** (Daily at 9:00)
 
 Sends email notifications to users whose trial is ending soon.
 
@@ -110,7 +130,7 @@ Sends email notifications to users whose trial is ending soon.
 
 ---
 
-### 8. **Trial Expiration** (Daily at midnight)
+### 9. **Trial Expiration** (Daily at midnight)
 
 Expires trial periods for users without active subscriptions.
 

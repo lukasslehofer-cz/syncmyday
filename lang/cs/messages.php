@@ -267,4 +267,11 @@ return [
     'calendar_access_denied' => 'Neudělili jste potřebná oprávnění. Zkuste to prosím znovu a povolte přístup ke svému kalendáři.',
     'calendar_connection_network_error' => 'Nelze se připojit k :provider. Zkontrolujte prosím připojení k internetu a zkuste to znovu.',
     'calendar_connection_generic_error' => 'Nelze připojit kalendář :provider. Zkuste to prosím znovu. Pokud problém přetrvává, kontaktujte podporu.',
+    
+    // CalDAV
+    'caldav_connection_failed' => 'Připojení CalDAV se nezdařilo',
+    'caldav_connected_success' => 'CalDAV kalendář byl úspěšně připojen!',
+    'caldav_disconnected_success' => 'CalDAV kalendář byl odpojen.',
+    'caldav_connection_save_failed' => 'Uložení CalDAV připojení se nezdařilo. Zkuste to prosím znovu.',
+    'session_expired' => 'Platnost relace vypršela. Zkuste to prosím znovu.',
 ];

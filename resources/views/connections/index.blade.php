@@ -12,7 +12,7 @@
     <!-- Add New Connection -->
     <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8 border border-gray-100">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Add New Calendar</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Google Calendar -->
             <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
                 <div class="flex flex-col items-center text-center">
@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <p class="text-xl font-bold text-gray-900 mb-2">Google Calendar</p>
-                        <p class="text-sm text-gray-600">Connect your Google account with OAuth</p>
+                        <p class="text-sm text-gray-600">Connect via OAuth</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -50,11 +50,33 @@
                     </div>
                     <div>
                         <p class="text-xl font-bold text-gray-900 mb-2">Microsoft 365</p>
-                        <p class="text-sm text-gray-600">Connect your Microsoft account with OAuth</p>
+                        <p class="text-sm text-gray-600">Connect via OAuth</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
                     <svg class="w-6 h-6 text-purple-400 group-hover:text-purple-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- CalDAV Calendar -->
+            <a href="{{ route('caldav.setup') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-xl hover:border-orange-400 hover:shadow-xl transition transform hover:scale-105">
+                <div class="flex flex-col items-center text-center">
+                    <div class="flex-shrink-0 mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-r from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xl font-bold text-gray-900 mb-2">Apple / CalDAV</p>
+                        <p class="text-sm text-gray-600">iCloud, Nextcloud, etc.</p>
+                    </div>
+                </div>
+                <div class="absolute top-4 right-4">
+                    <svg class="w-6 h-6 text-orange-400 group-hover:text-orange-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
                 </div>
@@ -72,7 +94,7 @@
                     </div>
                     <div>
                         <p class="text-xl font-bold text-gray-900 mb-2">Email Calendar</p>
-                        <p class="text-sm text-gray-600">Forward .ics invitations via email</p>
+                        <p class="text-sm text-gray-600">Forward via email</p>
                     </div>
                 </div>
                 <div class="absolute top-4 right-4">
@@ -118,19 +140,29 @@
                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                                 </svg>
                             </div>
-                            @else
+                            @elseif($connection->provider === 'microsoft')
                             <div class="h-14 w-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
                                 <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
+                                </svg>
+                            </div>
+                            @elseif($connection->provider === 'caldav')
+                            <div class="h-14 w-14 bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
                                 </svg>
                             </div>
                             @endif
                         </div>
                         <div>
                             <p class="text-lg font-bold text-gray-900">
-                                {{ ucfirst($connection->provider) }} Calendar
+                                @if($connection->provider === 'caldav')
+                                    CalDAV Calendar
+                                @else
+                                    {{ ucfirst($connection->provider) }} Calendar
+                                @endif
                             </p>
-                            <p class="text-sm text-gray-600 font-medium">{{ $connection->provider_email }}</p>
+                            <p class="text-sm text-gray-600 font-medium">{{ $connection->account_email ?? $connection->provider_email }}</p>
                             <div class="flex items-center mt-2 space-x-4">
                                 <span class="text-xs text-gray-500">
                                     <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,6 +198,18 @@
                             </button>
                         </form>
                         
+                        @if($connection->provider === 'caldav')
+                        <form action="{{ route('caldav.disconnect', $connection) }}" method="POST" class="inline" onsubmit="return confirm('⚠️ Are you sure you want to disconnect this CalDAV calendar?\n\nThis will automatically:\n• Delete all sync rules using this calendar as SOURCE\n• Delete sync rules where this is the ONLY target\n• Remove ALL blocker events created from this calendar\n\nThis action cannot be undone!')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Remove
+                            </button>
+                        </form>
+                        @else
                         <form action="{{ route('connections.destroy', $connection) }}" method="POST" class="inline" onsubmit="return confirm('⚠️ Are you sure you want to disconnect this calendar?\n\nThis will automatically:\n• Delete all sync rules using this calendar as SOURCE\n• Delete sync rules where this is the ONLY target\n• Remove ALL blocker events created from this calendar\n• Stop all webhooks\n\nThis action cannot be undone!')">
                             @csrf
                             @method('DELETE')
@@ -176,6 +220,7 @@
                                 Remove
                             </button>
                         </form>
+                        @endif
                     </div>
                 </div>
                 

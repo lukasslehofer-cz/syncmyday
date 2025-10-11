@@ -8,6 +8,7 @@ use App\Models\SyncLog;
 use App\Models\SyncEventMapping;
 use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
+use App\Services\Calendar\CalDavCalendarService;
 use App\Services\Email\ImipEmailService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -26,15 +27,18 @@ class SyncEngine
 {
     private GoogleCalendarService $googleService;
     private MicrosoftCalendarService $microsoftService;
+    private CalDavCalendarService $calDavService;
     private ImipEmailService $imipEmail;
 
     public function __construct(
         GoogleCalendarService $googleService,
         MicrosoftCalendarService $microsoftService,
+        CalDavCalendarService $calDavService,
         ImipEmailService $imipEmail
     ) {
         $this->googleService = $googleService;
         $this->microsoftService = $microsoftService;
+        $this->calDavService = $calDavService;
         $this->imipEmail = $imipEmail;
     }
 
@@ -901,9 +905,12 @@ class SyncEngine
      */
     private function getService(CalendarConnection $connection)
     {
-        return $connection->provider === 'google'
-            ? $this->googleService
-            : $this->microsoftService;
+        return match($connection->provider) {
+            'google' => $this->googleService,
+            'microsoft' => $this->microsoftService,
+            'caldav' => $this->calDavService,
+            default => throw new \Exception("Unsupported provider: {$connection->provider}"),
+        };
     }
 
     /**
@@ -911,47 +918,70 @@ class SyncEngine
      */
     private function normalizeEvent($event, string $provider): array
     {
-        if ($provider === 'google') {
-            $isAllDay = $event->getStart()->getDate() !== null;
-            $transparency = $event->getTransparency();
-            
-            // All-day events should always be considered 'busy' by default
-            // This allows users to control them via the 'ignore_all_day' filter
-            // Only non-all-day events respect the transparency setting
-            if ($isAllDay) {
-                $showAs = 'busy';
-            } else {
-                $showAs = $transparency === 'transparent' ? 'free' : 'busy';
-            }
-            
-            return [
-                'id' => $event->getId(),
-                'start' => $event->getStart()->getDateTime() ?? $event->getStart()->getDate(),
-                'end' => $event->getEnd()->getDateTime() ?? $event->getEnd()->getDate(),
-                'isAllDay' => $isAllDay,
-                'busyStatus' => $showAs,
-                'showAs' => $showAs,
-            ];
+        return match($provider) {
+            'google' => $this->normalizeGoogleEvent($event),
+            'microsoft' => $this->normalizeMicrosoftEvent($event),
+            'caldav' => $this->normalizeCalDavEvent($event),
+            default => throw new \Exception("Unsupported provider for normalization: {$provider}"),
+        };
+    }
+    
+    private function normalizeGoogleEvent($event): array
+    {
+        $isAllDay = $event->getStart()->getDate() !== null;
+        $transparency = $event->getTransparency();
+        
+        // All-day events should always be considered 'busy' by default
+        // This allows users to control them via the 'ignore_all_day' filter
+        // Only non-all-day events respect the transparency setting
+        if ($isAllDay) {
+            $showAs = 'busy';
         } else {
-            // Microsoft
-            $isAllDay = $event['isAllDay'] ?? false;
-            
-            // Same logic for Microsoft: all-day events are 'busy' by default
-            if ($isAllDay) {
-                $showAs = 'busy';
-            } else {
-                $showAs = $event['showAs'] ?? 'busy';
-            }
-            
-            return [
-                'id' => $event['id'],
-                'start' => $event['start']['dateTime'],
-                'end' => $event['end']['dateTime'],
-                'isAllDay' => $isAllDay,
-                'busyStatus' => $showAs,
-                'showAs' => $showAs,
-            ];
+            $showAs = $transparency === 'transparent' ? 'free' : 'busy';
         }
+        
+        return [
+            'id' => $event->getId(),
+            'start' => $event->getStart()->getDateTime() ?? $event->getStart()->getDate(),
+            'end' => $event->getEnd()->getDateTime() ?? $event->getEnd()->getDate(),
+            'isAllDay' => $isAllDay,
+            'busyStatus' => $showAs,
+            'showAs' => $showAs,
+        ];
+    }
+    
+    private function normalizeMicrosoftEvent($event): array
+    {
+        $isAllDay = $event['isAllDay'] ?? false;
+        
+        // Same logic for Microsoft: all-day events are 'busy' by default
+        if ($isAllDay) {
+            $showAs = 'busy';
+        } else {
+            $showAs = $event['showAs'] ?? 'busy';
+        }
+        
+        return [
+            'id' => $event['id'],
+            'start' => $event['start']['dateTime'],
+            'end' => $event['end']['dateTime'],
+            'isAllDay' => $isAllDay,
+            'busyStatus' => $showAs,
+            'showAs' => $showAs,
+        ];
+    }
+    
+    private function normalizeCalDavEvent($event): array
+    {
+        // CalDAV events are already normalized in CalDavCalendarService::parseVEvent()
+        return [
+            'id' => $event['id'],
+            'start' => $event['start']->format('c'),
+            'end' => $event['end']->format('c'),
+            'isAllDay' => $event['isAllDay'],
+            'busyStatus' => $event['busyStatus'],
+            'showAs' => $event['showAs'],
+        ];
     }
 
     private function getEventId($event): string
@@ -962,12 +992,12 @@ class SyncEngine
     private function getEventStart($event, string $provider): ?\DateTime
     {
         try {
-            if ($provider === 'google') {
-                $dateTime = $event->getStart()->getDateTime() ?? $event->getStart()->getDate();
-                return new \DateTime($dateTime);
-            } else {
-                return new \DateTime($event['start']['dateTime']);
-            }
+            return match($provider) {
+                'google' => new \DateTime($event->getStart()->getDateTime() ?? $event->getStart()->getDate()),
+                'microsoft' => new \DateTime($event['start']['dateTime']),
+                'caldav' => $event['start'], // Already DateTime object
+                default => null,
+            };
         } catch (\Exception $e) {
             return null;
         }
@@ -976,12 +1006,12 @@ class SyncEngine
     private function getEventEnd($event, string $provider): ?\DateTime
     {
         try {
-            if ($provider === 'google') {
-                $dateTime = $event->getEnd()->getDateTime() ?? $event->getEnd()->getDate();
-                return new \DateTime($dateTime);
-            } else {
-                return new \DateTime($event['end']['dateTime']);
-            }
+            return match($provider) {
+                'google' => new \DateTime($event->getEnd()->getDateTime() ?? $event->getEnd()->getDate()),
+                'microsoft' => new \DateTime($event['end']['dateTime']),
+                'caldav' => $event['end'], // Already DateTime object
+                default => null,
+            };
         } catch (\Exception $e) {
             return null;
         }
@@ -989,12 +1019,12 @@ class SyncEngine
 
     private function isEventDeleted($event, string $provider): bool
     {
-        if ($provider === 'google') {
-            return $event->getStatus() === 'cancelled';
-        } else {
-            // Microsoft sends a special removed property in delta
-            return isset($event['@removed']) && $event['@removed'];
-        }
+        return match($provider) {
+            'google' => $event->getStatus() === 'cancelled',
+            'microsoft' => isset($event['@removed']) && $event['@removed'],
+            'caldav' => isset($event['status']) && $event['status'] === 'cancelled',
+            default => false,
+        };
     }
 }
 
