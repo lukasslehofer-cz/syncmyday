@@ -624,7 +624,11 @@ class CalDavCalendarService
         
         // Increment sequence
         if (isset($vevent->SEQUENCE)) {
-            $vevent->SEQUENCE = $vevent->SEQUENCE->getValue() + 1;
+            $currentSequence = $vevent->SEQUENCE;
+            $sequenceValue = is_object($currentSequence) && method_exists($currentSequence, 'getValue') 
+                ? $currentSequence->getValue() 
+                : (int) $currentSequence;
+            $vevent->SEQUENCE = $sequenceValue + 1;
         } else {
             $vevent->add('SEQUENCE', 1);
         }
@@ -764,7 +768,14 @@ XML;
         ], 0);
         
         if (isset($response['{http://calendarserver.org/ns/}getctag'])) {
-            return $response['{http://calendarserver.org/ns/}getctag']->getValue();
+            $ctag = $response['{http://calendarserver.org/ns/}getctag'];
+            
+            // Handle different response types
+            if (is_string($ctag)) {
+                return $ctag;
+            } elseif (is_object($ctag) && method_exists($ctag, 'getValue')) {
+                return $ctag->getValue();
+            }
         }
         
         // Fallback to current timestamp
