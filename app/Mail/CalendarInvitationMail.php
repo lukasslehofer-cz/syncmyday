@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
  * Calendar Invitation Mail
  * 
  * Sends iCalendar invitations that are automatically processed by Outlook/Gmail
- * by embedding ICS data directly in email body with proper text/calendar headers.
+ * by attaching ICS data with proper text/calendar headers.
  */
 class CalendarInvitationMail extends Mailable
 {
@@ -48,21 +48,13 @@ class CalendarInvitationMail extends Mailable
                 'textBody' => $this->textBody,
                 'summary' => $this->summary,
             ])
-            ->withSymfonyMessage(function ($message) {
-                // Create a text/calendar part
-                $calendarPart = new \Symfony\Component\Mime\Part\DataPart(
-                    $this->icsContent,
-                    'invite.ics',
-                    'text/calendar'
-                );
-                
-                // Modify headers to include method parameter
-                $calendarPart->contentType("text/calendar; method={$this->method}; charset=UTF-8");
-                $calendarPart->disposition('inline');
-                
-                // Add to message
-                $message->attach($calendarPart);
-            });
+            ->attachData(
+                $this->icsContent,
+                'invite.ics',
+                [
+                    'mime' => "text/calendar; method={$this->method}; charset=UTF-8",
+                ]
+            );
     }
 
 }
