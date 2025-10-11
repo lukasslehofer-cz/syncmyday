@@ -400,8 +400,6 @@ return [
     'active' => 'Active',
     'trial_active' => 'Trial Period',
     'cancelling' => 'Cancelling',
-    'ends_on' => 'Ends on',
-    'renews_on' => 'Renews on',
     'price' => 'Price',
     'year' => 'year',
     'subscription_will_end' => 'Subscription will end',

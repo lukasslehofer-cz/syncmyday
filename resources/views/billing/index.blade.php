@@ -41,18 +41,6 @@
         if (empty($renewDate) && $user->subscription_ends_at) {
             $renewDate = $user->subscription_ends_at->format('j. F Y');
         }
-        
-        // Debug logging
-        \Log::info('Billing page subscription display', [
-            'user_id' => $user->id,
-            'has_subscription' => isset($subscription),
-            'subscription_status' => $subscription->status ?? 'N/A',
-            'current_period_end' => $subscription->current_period_end ?? 'N/A',
-            'cancel_at' => $subscription->cancel_at ?? 'N/A',
-            'cancel_at_period_end' => $subscription->cancel_at_period_end ?? false,
-            'endTimestamp' => $endTimestamp,
-            'renewDate' => $renewDate,
-        ]);
     @endphp
     
     <div class="mb-8 bg-gradient-to-r @if($isCancelling) from-orange-50 to-amber-50 border-orange-300 @else from-green-50 to-emerald-50 border-green-200 @endif border-2 rounded-2xl p-6">

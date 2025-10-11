@@ -408,8 +408,6 @@ return [
     'active' => 'Aktivní',
     'trial_active' => 'Zkušební období',
     'cancelling' => 'Ruší se',
-    'ends_on' => 'Končí',
-    'renews_on' => 'Obnovuje se',
     'price' => 'Cena',
     'year' => 'rok',
     'subscription_will_end' => 'Předplatné bude ukončeno',
