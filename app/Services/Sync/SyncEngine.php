@@ -140,7 +140,7 @@ class SyncEngine
         }
         
         if ($skippedCount > 0) {
-            Log::channel('sync')->info('Skipped events outside sync range', [
+            Log::channel('sync')->debug('Skipped events outside sync range', [
                 'rule_id' => $rule->id,
                 'processed' => $processedCount,
                 'skipped' => $skippedCount,
@@ -172,18 +172,11 @@ class SyncEngine
 
         // Apply filters
         if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
-            SyncLog::logSync(
-                $rule->user_id,
-                $rule->id,
-                'skipped',
-                'source_to_target',
-                $this->getEventId($event),
-                null,
-                $this->getEventStart($event, $sourceConnection->provider),
-                $this->getEventEnd($event, $sourceConnection->provider),
-                null,
-                $transactionId
-            );
+            // Don't log filtered events to DB - would spam dashboard
+            Log::channel('sync')->debug('Event filtered out by rules', [
+                'event_id' => $this->getEventId($event),
+                'rule_id' => $rule->id,
+            ]);
             return;
         }
 
@@ -494,19 +487,11 @@ class SyncEngine
                 );
             }
         } else {
-            // No mapping found - event was probably never synced
-            SyncLog::logSync(
-                $rule->user_id,
-                $rule->id,
-                'skipped',
-                'source_to_target',
-                $sourceEventId,
-                null,
-                null,
-                null,
-                'No mapping found for deleted event',
-                $transactionId
-            );
+            // No mapping found - event was probably never synced or filtered out
+            Log::channel('sync')->debug('No mapping found for deleted event', [
+                'event_id' => $sourceEventId,
+                'rule_id' => $rule->id,
+            ]);
         }
     }
 
