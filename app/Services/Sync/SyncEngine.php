@@ -267,16 +267,39 @@ class SyncEngine
             $mappingEnd = $mapping->event_end;
             
             if ($mappingStart && $start && $start <= $maxTimestamp) {
+                // Normalize both to UTC for comparison
+                $mappingStartUtc = clone $mappingStart;
+                $mappingStartUtc->setTimezone(new \DateTimeZone('UTC'));
+                $startUtc = clone $start;
+                $startUtc->setTimezone(new \DateTimeZone('UTC'));
+                
                 // Compare timestamps (allow 1 minute tolerance for rounding)
-                if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
+                $diff = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
+                
+                if ($diff > 60) {
                     $needsUpdate = true;
+                    
+                    Log::channel('sync')->debug('Start time difference detected', [
+                        'event_id' => $sourceEventId,
+                        'diff_seconds' => $diff,
+                        'old' => $mappingStartUtc->format('c'),
+                        'new' => $startUtc->format('c'),
+                    ]);
                 }
             } elseif (!$mappingStart && $start) {
                 $needsUpdate = true;
             }
             
             if ($mappingEnd && $end && $end <= $maxTimestamp) {
-                if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
+                // Normalize both to UTC for comparison
+                $mappingEndUtc = clone $mappingEnd;
+                $mappingEndUtc->setTimezone(new \DateTimeZone('UTC'));
+                $endUtc = clone $end;
+                $endUtc->setTimezone(new \DateTimeZone('UTC'));
+                
+                $diff = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
+                
+                if ($diff > 60) {
                     $needsUpdate = true;
                 }
             } elseif (!$mappingEnd && $end) {
@@ -504,7 +527,15 @@ class SyncEngine
             
             // Check if start/end time changed
             if ($mappingStart && $start && $start <= $maxTimestamp) {
-                if (abs($mappingStart->getTimestamp() - $start->getTimestamp()) > 60) {
+                // Normalize both to UTC for comparison
+                $mappingStartUtc = clone $mappingStart;
+                $mappingStartUtc->setTimezone(new \DateTimeZone('UTC'));
+                $startUtc = clone $start;
+                $startUtc->setTimezone(new \DateTimeZone('UTC'));
+                
+                $diff = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
+                
+                if ($diff > 60) {
                     $needsUpdate = true;
                 }
             } elseif (!$mappingStart && $start) {
@@ -512,7 +543,15 @@ class SyncEngine
             }
             
             if ($mappingEnd && $end && $end <= $maxTimestamp) {
-                if (abs($mappingEnd->getTimestamp() - $end->getTimestamp()) > 60) {
+                // Normalize both to UTC for comparison
+                $mappingEndUtc = clone $mappingEnd;
+                $mappingEndUtc->setTimezone(new \DateTimeZone('UTC'));
+                $endUtc = clone $end;
+                $endUtc->setTimezone(new \DateTimeZone('UTC'));
+                
+                $diff = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
+                
+                if ($diff > 60) {
                     $needsUpdate = true;
                 }
             } elseif (!$mappingEnd && $end) {
