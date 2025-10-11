@@ -39,6 +39,7 @@ return [
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
         'pro_price_id' => env('STRIPE_PRO_PRICE_ID'), // Default fallback
+        'trial_period_days' => env('TRIAL_PERIOD_DAYS', 31), // Trial length in days
         'prices' => [
             'cs' => env('STRIPE_PRICE_CZK'), // 249 CZK
             'en' => env('STRIPE_PRICE_EUR'), // 10.99 USD

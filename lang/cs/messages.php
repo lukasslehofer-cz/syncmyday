@@ -236,7 +236,7 @@ return [
     // Navigation
     'menu' => 'Menu',
     'upgrade_pro' => 'Upgrade na Pro',
-    'billing' => 'Fakturace',
+    'billing' => 'Ceník',
     'admin_panel' => 'Správa',
     
     // Trial Banner

@@ -47,7 +47,7 @@ class AuthController extends Controller
             'locale' => app()->getLocale(),
             'timezone' => $request->timezone ?? 'UTC',
             'subscription_tier' => 'pro',
-            'subscription_ends_at' => now()->addDays(31),
+            'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
         ]);
 
         Auth::login($user);

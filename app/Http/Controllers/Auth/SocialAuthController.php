@@ -140,7 +140,7 @@ class SocialAuthController extends Controller
                     'locale' => app()->getLocale(),
                     'timezone' => session('detected_timezone', 'UTC'), // Will be updated on first dashboard load
                     'subscription_tier' => 'pro',
-                    'subscription_ends_at' => now()->addDays(31), // 31-day trial
+                    'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
 
                 // Create Stripe customer
@@ -329,7 +329,7 @@ class SocialAuthController extends Controller
                     'locale' => app()->getLocale(),
                     'timezone' => session('detected_timezone', 'UTC'), // Will be updated on first dashboard load
                     'subscription_tier' => 'pro',
-                    'subscription_ends_at' => now()->addDays(31), // 31-day trial
+                    'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
 
                 // Create Stripe customer
