@@ -63,8 +63,13 @@ class CalendarConnection extends Model
     /**
      * Get decrypted access token
      */
-    public function getAccessToken(): string
+    public function getAccessToken(): ?string
     {
+        // CalDAV connections don't use OAuth tokens
+        if (!$this->access_token_encrypted) {
+            return null;
+        }
+        
         $encryptionService = app(TokenEncryptionService::class);
         return $encryptionService->decrypt($this->access_token_encrypted);
     }

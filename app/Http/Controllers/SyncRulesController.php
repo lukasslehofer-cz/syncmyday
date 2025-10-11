@@ -316,6 +316,15 @@ class SyncRulesController extends Controller
      */
     private function ensureWebhookSubscription(CalendarConnection $connection, string $calendarId): void
     {
+        // CalDAV doesn't support webhooks - it uses polling instead
+        if ($connection->provider === 'caldav') {
+            Log::info('Skipping webhook creation for CalDAV (uses polling)', [
+                'connection_id' => $connection->id,
+                'calendar_id' => $calendarId,
+            ]);
+            return;
+        }
+        
         // Skip webhooks for localhost (requires HTTPS)
         $appUrl = config('app.url');
         if (str_contains($appUrl, 'localhost') || str_contains($appUrl, '127.0.0.1')) {
