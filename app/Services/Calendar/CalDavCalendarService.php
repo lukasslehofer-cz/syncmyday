@@ -879,14 +879,42 @@ XML;
                 $href = null;
                 $calendarData = null;
                 
+                Log::channel('sync')->info('CalDAV: Response element structure', [
+                    'value_keys' => array_map(function($item) {
+                        return $item['name'] ?? 'no-name';
+                    }, $response['value']),
+                ]);
+                
                 foreach ($response['value'] as $prop) {
+                    Log::channel('sync')->info('CalDAV: Processing prop', [
+                        'prop_name' => $prop['name'] ?? 'no-name',
+                        'has_value' => isset($prop['value']),
+                        'value_type' => isset($prop['value']) ? gettype($prop['value']) : 'N/A',
+                    ]);
+                    
                     if ($prop['name'] === '{DAV:}href') {
                         $href = $prop['value'];
-                    } elseif (isset($prop['value'][0]['value'])) {
+                    } elseif (isset($prop['value']) && is_array($prop['value'])) {
+                        Log::channel('sync')->info('CalDAV: Prop has array value', [
+                            'prop_name' => $prop['name'],
+                            'value_count' => count($prop['value']),
+                            'first_item_keys' => isset($prop['value'][0]) ? array_keys($prop['value'][0]) : [],
+                        ]);
+                        
                         foreach ($prop['value'] as $innerProp) {
-                            if ($innerProp['name'] === '{urn:ietf:params:xml:ns:caldav}calendar-data') {
-                                $calendarData = $innerProp['value'];
-                                break;
+                            if (isset($innerProp['name'])) {
+                                Log::channel('sync')->info('CalDAV: Inner prop found', [
+                                    'inner_prop_name' => $innerProp['name'],
+                                    'has_value' => isset($innerProp['value']),
+                                ]);
+                                
+                                if ($innerProp['name'] === '{urn:ietf:params:xml:ns:caldav}calendar-data') {
+                                    $calendarData = $innerProp['value'];
+                                    Log::channel('sync')->info('CalDAV: Found calendar-data!', [
+                                        'length' => strlen($calendarData ?? ''),
+                                    ]);
+                                    break;
+                                }
                             }
                         }
                     }
