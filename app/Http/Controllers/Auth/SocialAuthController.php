@@ -23,11 +23,11 @@ class SocialAuthController extends Controller
         $state = Str::random(40);
         session(['oauth_state' => $state, 'oauth_action' => 'login']);
         
-        // Create Google client with login-specific redirect URI
+        // Create Google client with login-specific redirect URI (always on primary OAuth domain)
         $client = new \Google\Client();
         $client->setClientId(config('services.google.client_id'));
         $client->setClientSecret(config('services.google.client_secret'));
-        $client->setRedirectUri(url('/auth/google/callback')); // Use login callback URL
+        $client->setRedirectUri(config('services.google.redirect_login'));
         $client->setScopes(config('services.google.scopes'));
         $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
@@ -81,11 +81,11 @@ class SocialAuthController extends Controller
         }
 
         try {
-            // Create Google client with login-specific redirect URI
+            // Create Google client with login-specific redirect URI (always on primary OAuth domain)
             $client = new \Google\Client();
             $client->setClientId(config('services.google.client_id'));
             $client->setClientSecret(config('services.google.client_secret'));
-            $client->setRedirectUri(url('/auth/google/callback')); // Use login callback URL
+            $client->setRedirectUri(config('services.google.redirect_login'));
             
             // Exchange code for tokens
             $tokens = $client->fetchAccessTokenWithAuthCode($request->code);
@@ -190,11 +190,11 @@ class SocialAuthController extends Controller
         $state = Str::random(40);
         session(['oauth_state' => $state, 'oauth_action' => 'login']);
         
-        // Build auth URL with login-specific redirect URI
+        // Build auth URL with login-specific redirect URI (always on primary OAuth domain)
         $scopes = implode(' ', config('services.microsoft.scopes'));
         $tenant = config('services.microsoft.tenant', 'common');
         $clientId = config('services.microsoft.client_id');
-        $redirectUri = url('/auth/microsoft/callback'); // Use login callback URL
+        $redirectUri = config('services.microsoft.redirect_login');
         
         $authUrl = sprintf(
             'https://login.microsoftonline.com/%s/oauth2/v2.0/authorize?client_id=%s&response_type=code&redirect_uri=%s&response_mode=query&scope=%s&state=%s&prompt=select_account',
@@ -240,14 +240,14 @@ class SocialAuthController extends Controller
         }
 
         try {
-            // Exchange code for tokens using login-specific redirect URI
+            // Exchange code for tokens using login-specific redirect URI (always on primary OAuth domain)
             $response = \Illuminate\Support\Facades\Http::asForm()->post(
                 'https://login.microsoftonline.com/' . config('services.microsoft.tenant', 'common') . '/oauth2/v2.0/token',
                 [
                     'client_id' => config('services.microsoft.client_id'),
                     'client_secret' => config('services.microsoft.client_secret'),
                     'code' => $request->code,
-                    'redirect_uri' => url('/auth/microsoft/callback'), // Use login callback URL
+                    'redirect_uri' => config('services.microsoft.redirect_login'),
                     'grant_type' => 'authorization_code',
                     'scope' => implode(' ', config('services.microsoft.scopes')),
                 ]

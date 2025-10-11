@@ -40,26 +40,26 @@ When a user visits any domain:
 
 **Problem**: OAuth applications (Google, Microsoft) require exact callback URLs. We cannot register hundreds of potential national domains.
 
-**Solution**: Proxy Redirect Middleware
-
-**Middleware**: `App\Http\Middleware\OAuthProxyRedirect`
+**Solution**: Hardcoded Primary Domain in OAuth Configuration
 
 **Flow**:
 
-1. User clicks "Continue with Google" on syncmyday.pl
-2. User is sent to Google for authentication
-3. Google redirects back to: `https://syncmyday.pl/oauth/google/callback?code=...`
-4. **Proxy Middleware detects non-primary domain**
-5. Middleware redirects to: `https://syncmyday.cz/oauth/google/callback?code=...`
-6. OAuth processing completes on .cz domain
-7. User is redirected back to their original domain (syncmyday.pl)
+1. User clicks "Continue with Google" on `syncmyday.pl`
+2. Application redirects to Google with `redirect_uri=https://syncmyday.cz/auth/google/callback` (hardcoded primary domain)
+3. User authenticates with Google
+4. Google redirects back to: `https://syncmyday.cz/auth/google/callback?code=...` (as configured)
+5. OAuth processing completes on .cz domain
+6. User is logged in with locale set based on their original domain preference
 
 **Benefits**:
 
 - Only need to configure OAuth callbacks for one domain (.cz)
 - Users can access the app from any national domain
-- Seamless experience - users don't notice the redirect
-- State and query parameters are preserved
+- OAuth redirect URI is always correct (matches what's registered in Google/Microsoft)
+- No additional redirects needed - cleaner flow
+- **Fallback middleware** (`OAuthProxyRedirect`) catches any edge cases
+
+**Note**: The `OAuthProxyRedirect` middleware acts as a safety net in case an OAuth callback somehow arrives on a non-primary domain, but in normal operation it should not be triggered.
 
 ## Configuration
 
@@ -68,21 +68,26 @@ When a user visits any domain:
 Add to your `.env`:
 
 ```env
-# Domain Localization
-DOMAIN_CZ=syncmyday.cz
-DOMAIN_SK=syncmyday.sk
-DOMAIN_PL=syncmyday.pl
-DOMAIN_DE=syncmyday.de
-
 # OAuth Primary Domain (where OAuth apps are configured)
 OAUTH_PRIMARY_DOMAIN=syncmyday.cz
 
-# OAuth Redirect URIs (should point to primary domain)
-GOOGLE_REDIRECT_URI="${APP_URL}/oauth/google/callback"
-MICROSOFT_REDIRECT_URI="${APP_URL}/oauth/microsoft/callback"
+# Domain to Locale Mapping (JSON format)
+DOMAIN_LOCALES='{"syncmyday.cz":"cs","syncmyday.sk":"sk","syncmyday.pl":"pl","syncmyday.eu":"en"}'
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Microsoft OAuth
+MICROSOFT_CLIENT_ID=your_microsoft_client_id
+MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
+MICROSOFT_TENANT=common
 ```
 
-**Important**: `APP_URL` should be set to your primary domain: `https://syncmyday.cz`
+**Important Notes**:
+- OAuth redirect URIs are now **hardcoded in `config/services.php`** using the `OAUTH_PRIMARY_DOMAIN`
+- You **no longer need** `GOOGLE_REDIRECT_URI` or `MICROSOFT_REDIRECT_URI` environment variables
+- `APP_URL` can be any domain - it won't affect OAuth redirects
 
 ### OAuth Provider Configuration
 
