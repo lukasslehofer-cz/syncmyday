@@ -223,11 +223,16 @@ class ImipEmailService
      */
     private function buildMultipartBody(string $textBody, string $icsContent, string $method)
     {
-        // Build email parts
+        // Build text/plain part
         $textPart = new \Symfony\Component\Mime\Part\TextPart($textBody, 'utf-8');
         
-        $calendarPart = new \Symfony\Component\Mime\Part\TextPart($icsContent, 'utf-8');
-        $calendarPart->getHeaders()->addParameterizedHeader(
+        // Build text/calendar part - must use DataPart to set custom content-type
+        $calendarPart = new \Symfony\Component\Mime\Part\DataPart($icsContent, 'invite.ics', 'text/calendar');
+        
+        // Override headers for calendar part
+        $headers = $calendarPart->getPreparedHeaders();
+        $headers->remove('Content-Type');
+        $headers->addParameterizedHeader(
             'Content-Type',
             'text/calendar',
             [
@@ -236,8 +241,10 @@ class ImipEmailService
                 'charset' => 'UTF-8'
             ]
         );
-        $calendarPart->getHeaders()->addTextHeader('Content-Disposition', 'inline');
+        $headers->remove('Content-Disposition');
+        $headers->addTextHeader('Content-Disposition', 'inline');
         
+        // Build text/html part
         $htmlBody = $this->buildHtmlFromText($textBody);
         $htmlPart = new \Symfony\Component\Mime\Part\TextPart($htmlBody, 'utf-8', 'html');
         
