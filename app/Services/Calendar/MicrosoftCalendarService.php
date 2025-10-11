@@ -344,11 +344,14 @@ class MicrosoftCalendarService
             // Then switch to delta for incremental updates
             $url = "/me/calendars/{$calendarId}/calendarView"
                 . "?startDateTime={$startDateTime}"
-                . "&endDateTime={$endDateTime}"
-                . "&\$top=50";
+                . "&endDateTime={$endDateTime}";
             
+            // Note: $top is not supported with calendarView + change tracking
+            // Use Prefer header instead
             $request = $this->graph->createRequest('GET', $url)
-                ->addHeaders(['Prefer' => 'odata.track-changes']);
+                ->addHeaders([
+                    'Prefer' => 'odata.track-changes, odata.maxpagesize=50'
+                ]);
         }
 
         $response = $request->execute();
