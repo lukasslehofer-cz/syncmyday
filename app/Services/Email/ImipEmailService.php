@@ -226,12 +226,19 @@ class ImipEmailService
         // Build text/plain part
         $textPart = new \Symfony\Component\Mime\Part\TextPart($textBody, 'utf-8');
         
-        // Build text/calendar part - must use DataPart to set custom content-type
-        $calendarPart = new \Symfony\Component\Mime\Part\DataPart($icsContent, 'invite.ics', 'text/calendar');
+        // Build text/calendar part
+        // Use TextPart but override Content-Type header completely
+        $calendarPart = new \Symfony\Component\Mime\Part\TextPart($icsContent, 'utf-8');
         
-        // Override headers for calendar part
+        // Get prepared headers and replace Content-Type
         $headers = $calendarPart->getPreparedHeaders();
-        $headers->remove('Content-Type');
+        
+        // Remove default text/plain Content-Type
+        if ($headers->has('Content-Type')) {
+            $headers->remove('Content-Type');
+        }
+        
+        // Add proper text/calendar Content-Type with method parameter
         $headers->addParameterizedHeader(
             'Content-Type',
             'text/calendar',
@@ -241,8 +248,9 @@ class ImipEmailService
                 'charset' => 'UTF-8'
             ]
         );
-        $headers->remove('Content-Disposition');
-        $headers->addTextHeader('Content-Disposition', 'inline');
+        
+        // Set inline disposition
+        $headers->addTextHeader('Content-Disposition', 'inline; filename=invite.ics');
         
         // Build text/html part
         $htmlBody = $this->buildHtmlFromText($textBody);
