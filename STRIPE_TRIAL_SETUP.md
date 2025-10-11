@@ -6,9 +6,9 @@ Tento dokument obsahuje kompletní návod k nastavení 30denního trialu a ročn
 
 ### 1. **Trial Flow**
 
-- Po registraci má uživatel automaticky 30 dní trial s plným přístupem (Pro tier)
+- Po registraci má uživatel automaticky 31 dní trial s plným přístupem (Pro tier)
 - Uživatel zadá platební kartu při registraci, ale žádné peníze se nestrhnou během trialu
-- Po 30 dnech se automaticky strhne 249 Kč/rok
+- Po 31 dnech se automaticky strhne 249 Kč/rok
 - Pokud uživatel nezadá platební kartu nebo ji zruší před koncem trialu, služba se deaktivuje
 
 ### 2. **Implementované komponenty**
@@ -22,12 +22,12 @@ Tento dokument obsahuje kompletní návod k nastavení 30denního trialu a ročn
 
 #### **AuthController** (`app/Http/Controllers/Auth/AuthController.php`)
 
-- Po registraci se uživatel nastaví na Pro tier s `subscription_ends_at = now() + 30 days`
+- Po registraci se uživatel nastaví na Pro tier s `subscription_ends_at = now() + 31 days`
 - Redirect na Stripe Checkout pro zadání platební karty s trialem
 
 #### **BillingController** (`app/Http/Controllers/BillingController.php`)
 
-- `createTrialCheckoutSession()` - Stripe Checkout s 30denním trialem
+- `createTrialCheckoutSession()` - Stripe Checkout s 31denním trialem
 - `createCheckoutSession()` - Stripe Checkout bez trialu (pro expirované účty)
 - Webhook handling pro `checkout.session.completed`, `customer.subscription.updated`, `invoice.payment_succeeded`
 
@@ -134,7 +134,7 @@ stripe listen --forward-to http://localhost:8000/webhooks/stripe
    - V dashboardu by se měl zobrazit trial banner
    - Zkontrolujte databázi: uživatel by měl mít:
      - `subscription_tier = 'pro'`
-     - `subscription_ends_at = now() + 30 days`
+     - `subscription_ends_at = now() + 31 days`
      - `stripe_subscription_id = 'sub_xxxx'`
 
 4. **Webhook testy:**
