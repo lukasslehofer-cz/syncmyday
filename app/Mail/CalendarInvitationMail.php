@@ -49,20 +49,18 @@ class CalendarInvitationMail extends Mailable
                 'summary' => $this->summary,
             ])
             ->withSymfonyMessage(function ($message) {
-                // Add the text/calendar part directly to Symfony message
-                // Use 'quoted-printable' encoding (Symfony doesn't support '7bit')
+                // Create a text/calendar part
                 $calendarPart = new \Symfony\Component\Mime\Part\DataPart(
                     $this->icsContent,
                     'invite.ics',
                     'text/calendar'
                 );
                 
-                // Set proper headers for calendar invitation
-                $headers = $calendarPart->getPreparedHeaders();
-                $headers->addTextHeader('Content-Type', "text/calendar; method={$this->method}; name=\"invite.ics\"; charset=UTF-8");
-                $headers->addTextHeader('Content-Disposition', 'inline; filename="invite.ics"');
+                // Modify headers to include method parameter
+                $calendarPart->contentType("text/calendar; method={$this->method}; charset=UTF-8");
+                $calendarPart->disposition('inline');
                 
-                // Attach the calendar part to the message
+                // Add to message
                 $message->attach($calendarPart);
             });
     }
