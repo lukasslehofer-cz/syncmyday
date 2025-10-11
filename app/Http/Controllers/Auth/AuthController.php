@@ -138,6 +138,17 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            
+            // Update timezone if provided and user has UTC
+            $user = Auth::user();
+            if ($request->has('timezone') && $user->timezone === 'UTC') {
+                $timezone = $request->input('timezone');
+                // Validate timezone
+                if (in_array($timezone, timezone_identifiers_list())) {
+                    $user->update(['timezone' => $timezone]);
+                }
+            }
+            
             return redirect()->intended(route('dashboard'));
         }
 
