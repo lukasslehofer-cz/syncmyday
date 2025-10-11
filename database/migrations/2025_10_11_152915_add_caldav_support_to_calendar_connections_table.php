@@ -15,6 +15,9 @@ return new class extends Migration
         // First, modify the provider ENUM to include 'caldav'
         DB::statement("ALTER TABLE calendar_connections MODIFY COLUMN provider ENUM('google', 'microsoft', 'caldav') NOT NULL");
         
+        // Make OAuth tokens nullable (CalDAV doesn't use OAuth)
+        DB::statement("ALTER TABLE calendar_connections MODIFY COLUMN access_token_encrypted TEXT NULL");
+        
         Schema::table('calendar_connections', function (Blueprint $table) {
             // CalDAV specific fields
             $table->string('caldav_url')->nullable()->after('provider_email');
@@ -45,6 +48,9 @@ return new class extends Migration
                 'sync_token',
             ]);
         });
+        
+        // Restore OAuth tokens to NOT NULL
+        DB::statement("ALTER TABLE calendar_connections MODIFY COLUMN access_token_encrypted TEXT NOT NULL");
         
         // Restore provider ENUM to original values
         DB::statement("ALTER TABLE calendar_connections MODIFY COLUMN provider ENUM('google', 'microsoft') NOT NULL");
