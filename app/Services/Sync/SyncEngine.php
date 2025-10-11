@@ -681,6 +681,7 @@ class SyncEngine
                         'source_connection_id' => $sourceConnection->id,
                         'source_calendar_id' => $rule->source_calendar_id,
                         'source_event_id' => $sourceEventId,
+                        'target_connection_id' => null, // Email target has no API connection
                         'target_email_connection_id' => $target->target_email_connection_id,
                         'target_calendar_id' => null,
                         'target_event_id' => $eventUid,
