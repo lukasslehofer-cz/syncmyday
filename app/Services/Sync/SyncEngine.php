@@ -57,6 +57,11 @@ class SyncEngine
             ->where('is_active', true)
             ->with(['targets.targetConnection', 'targets.targetEmailConnection'])
             ->get();
+        
+        Log::channel('sync')->info('Found sync rules for connection', [
+            'connection_id' => $connection->id,
+            'rule_count' => $rules->count(),
+        ]);
 
         foreach ($rules as $rule) {
             try {
@@ -89,6 +94,12 @@ class SyncEngine
      */
     public function syncRule(SyncRule $rule, CalendarConnection $sourceConnection): void
     {
+        Log::channel('sync')->info('Starting sync rule', [
+            'rule_id' => $rule->id,
+            'source_calendar_id' => $rule->source_calendar_id,
+            'target_count' => $rule->targets->count(),
+        ]);
+        
         // Initialize source service
         $sourceService = $this->getService($sourceConnection);
         $sourceService->initializeWithConnection($sourceConnection);
@@ -106,6 +117,14 @@ class SyncEngine
             $rule->source_calendar_id,
             $subscription?->sync_token
         );
+        
+        Log::channel('sync')->info('Fetched events from source', [
+            'rule_id' => $rule->id,
+            'provider' => $sourceConnection->provider,
+            'calendar_id' => $rule->source_calendar_id,
+            'event_count' => count($changedData['events'] ?? []),
+            'has_sync_token' => isset($subscription?->sync_token),
+        ]);
 
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
