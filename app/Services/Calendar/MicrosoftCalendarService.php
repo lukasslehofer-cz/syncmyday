@@ -279,11 +279,14 @@ class MicrosoftCalendarService
         $response = $this->graph->createRequest('POST', '/subscriptions')
             ->attachBody($subscription)
             ->execute();
+        
+        // Convert GraphResponse to array
+        $data = $response->getBody();
 
         return [
-            'subscription_id' => $response['id'],
-            'resource_id' => $response['clientState'],
-            'expires_at' => \Carbon\Carbon::parse($response['expirationDateTime']),
+            'subscription_id' => $data['id'],
+            'resource_id' => $data['clientState'],
+            'expires_at' => \Carbon\Carbon::parse($data['expirationDateTime']),
         ];
     }
 
@@ -299,8 +302,11 @@ class MicrosoftCalendarService
         $response = $this->graph->createRequest('PATCH', "/subscriptions/{$subscriptionId}")
             ->attachBody($update)
             ->execute();
+        
+        // Convert GraphResponse to array
+        $data = $response->getBody();
 
-        return \Carbon\Carbon::parse($response['expirationDateTime']);
+        return \Carbon\Carbon::parse($data['expirationDateTime']);
     }
 
     /**
@@ -346,11 +352,14 @@ class MicrosoftCalendarService
         }
 
         $response = $request->execute();
+        
+        // Convert GraphResponse to array
+        $data = $response->getBody();
 
         return [
-            'events' => $response['value'] ?? [],
-            'delta_link' => $response['@odata.deltaLink'] ?? null,
-            'next_link' => $response['@odata.nextLink'] ?? null,
+            'events' => $data['value'] ?? [],
+            'delta_link' => $data['@odata.deltaLink'] ?? null,
+            'next_link' => $data['@odata.nextLink'] ?? null,
         ];
     }
 }
