@@ -2,6 +2,7 @@
 
 namespace App\Services\Email;
 
+use App\Mail\CalendarInvitationMail;
 use App\Models\EmailCalendarConnection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -56,15 +57,13 @@ class ImipEmailService
                 $targetEmail
             );
 
-            // Send email
-            Mail::raw('Calendar invitation attached.', function ($message) use ($targetEmail, $icsContent, $summary) {
-                $message->to($targetEmail)
-                    ->subject("Calendar: {$summary}")
-                    ->from(config('mail.from.address'), config('mail.from.name'))
-                    ->attachData($icsContent, 'invite.ics', [
-                        'mime' => 'text/calendar; method=REQUEST; charset=UTF-8',
-                    ]);
-            });
+            // Create descriptive text body
+            $textBody = $this->createTextBody($summary, $start, $end, $method);
+
+            // Send email using custom Mailable with proper text/calendar headers
+            Mail::to($targetEmail)->send(
+                new CalendarInvitationMail($icsContent, $method, $summary, $textBody)
+            );
 
             Log::info('iMIP email sent', [
                 'connection_id' => $connection->id,
@@ -171,6 +170,33 @@ class ImipEmailService
         $value = str_replace("\n", '\\n', $value);
         
         return $value;
+    }
+
+    /**
+     * Create human-readable text body for email
+     */
+    private function createTextBody(
+        string $summary,
+        \DateTime $start,
+        \DateTime $end,
+        string $method
+    ): string {
+        $action = $method === 'CANCEL' ? 'CANCELLED' : 'INVITATION';
+        
+        $text = "CALENDAR {$action}\n\n";
+        $text .= "Event: {$summary}\n";
+        $text .= "Start: " . $start->format('l, F j, Y \a\t g:i A') . "\n";
+        $text .= "End: " . $end->format('l, F j, Y \a\t g:i A') . "\n";
+        $text .= "\n";
+        
+        if ($method === 'CANCEL') {
+            $text .= "This event has been cancelled.\n";
+        } else {
+            $text .= "This is an automatic blocker from SyncMyDay.\n";
+            $text .= "Your calendar should automatically process this invitation.\n";
+        }
+        
+        return $text;
     }
 }
 
