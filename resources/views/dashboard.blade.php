@@ -211,16 +211,15 @@
                                 $source = $log->syncRule->sourceConnection ?? $log->syncRule->sourceEmailConnection;
                                 $sourceLabel = $source ? ($source->provider_email ?? $source->email_address ?? 'Email Calendar') : 'Unknown';
                                 
-                                // Get target info based on direction
+                                // Get target info - check if it's email or API target
                                 $targetLabel = '';
-                                if ($log->direction === 'api_to_email') {
-                                    $target = $log->syncRule->targets->first();
-                                    if ($target && $target->targetEmailConnection) {
+                                $target = $log->syncRule->targets->first();
+                                if ($target) {
+                                    if ($target->targetEmailConnection) {
+                                        // Email target
                                         $targetLabel = $target->targetEmailConnection->target_email;
-                                    }
-                                } else {
-                                    $target = $log->syncRule->targets->first();
-                                    if ($target && $target->targetConnection) {
+                                    } elseif ($target->targetConnection) {
+                                        // API target
                                         $targetLabel = $target->targetConnection->provider_email;
                                     }
                                 }
