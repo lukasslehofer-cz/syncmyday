@@ -207,6 +207,12 @@ class SyncEngine
         $transactionId = Str::uuid()->toString();
         $sourceEventId = $this->getEventId($event);
 
+        Log::channel('sync')->info('Processing event from source', [
+            'event_id' => $sourceEventId,
+            'provider' => $sourceConnection->provider,
+            'rule_id' => $rule->id,
+        ]);
+
         // Check if this is our own blocker - skip to prevent loops
         if ($sourceService->isOurBlocker($event)) {
             Log::channel('sync')->debug('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
@@ -242,7 +248,22 @@ class SyncEngine
         }
 
         // Sync to all targets
+        Log::channel('sync')->info('Syncing event to targets', [
+            'event_id' => $sourceEventId,
+            'target_count' => $rule->targets->count(),
+        ]);
+        
         foreach ($rule->targets as $target) {
+            $targetId = $target->target_connection_id ?? $target->target_email_connection_id;
+            $targetCalendarId = $target->target_calendar_id ?? $target->target_email;
+            
+            Log::channel('sync')->info('Syncing to target', [
+                'event_id' => $sourceEventId,
+                'target_id' => $targetId,
+                'target_calendar_id' => $targetCalendarId,
+                'is_email' => $target->isEmailTarget(),
+            ]);
+            
             try {
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
@@ -299,6 +320,15 @@ class SyncEngine
         $sourceEventId = $this->getEventId($sourceEvent);
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
+
+        Log::channel('sync')->info('createOrUpdateBlockerInTarget called', [
+            'source_event_id' => $sourceEventId,
+            'source_provider' => $sourceConnection->provider,
+            'target_connection_id' => $target->target_connection_id,
+            'target_calendar_id' => $target->target_calendar_id,
+            'start' => $start?->format('Y-m-d H:i:s'),
+            'end' => $end?->format('Y-m-d H:i:s'),
+        ]);
 
         // ANTI-LOOP PROTECTION: Check if this source event is actually a blocker itself
         // If so, check if the original event is in the target calendar we're syncing to
@@ -463,6 +493,14 @@ class SyncEngine
 
         if (!$mapping) {
             // No mapping exists - create new blocker
+            Log::channel('sync')->info('Creating new blocker in target', [
+                'source_event_id' => $sourceEventId,
+                'target_calendar_id' => $target->target_calendar_id,
+                'blocker_title' => $rule->blocker_title,
+                'start' => $start?->format('Y-m-d H:i:s'),
+                'end' => $end?->format('Y-m-d H:i:s'),
+            ]);
+            
             $blockerId = $targetService->createBlocker(
                 $target->target_calendar_id,
                 $rule->blocker_title,
@@ -470,6 +508,11 @@ class SyncEngine
                 $end,
                 $transactionId
             );
+            
+            Log::channel('sync')->info('Blocker created successfully', [
+                'source_event_id' => $sourceEventId,
+                'blocker_id' => $blockerId,
+            ]);
 
             // Create mapping (handle Y2038 problem for dates beyond 2038)
             // Store times in UTC to avoid timezone conversion issues
