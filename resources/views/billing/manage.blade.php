@@ -148,7 +148,16 @@
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">{{ __('messages.invoices') }}</h2>
 
-        @if($invoices && $invoices->data && count($invoices->data) > 0)
+        @php
+            // Filter out invoices with 0 amount (trial invoices)
+            $paidInvoices = $invoices && $invoices->data 
+                ? collect($invoices->data)->filter(function($invoice) {
+                    return $invoice->amount_paid > 0;
+                  })
+                : collect([]);
+        @endphp
+
+        @if($paidInvoices->isNotEmpty())
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
@@ -160,7 +169,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @foreach($invoices->data as $invoice)
+                    @foreach($paidInvoices as $invoice)
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm text-gray-900">
                             {{ \Carbon\Carbon::createFromTimestamp($invoice->created)->format('j. M Y') }}
