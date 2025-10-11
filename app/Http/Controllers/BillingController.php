@@ -110,11 +110,15 @@ class BillingController extends Controller
         } catch (\Exception $e) {
             Log::error('Stripe trial checkout session creation failed', [
                 'error' => $e->getMessage(),
+                'error_class' => get_class($e),
                 'user_id' => $user->id,
+                'locale' => $user->locale ?? 'N/A',
+                'price_id' => $priceId ?? 'N/A',
+                'stripe_customer_id' => $user->stripe_customer_id ?? 'N/A',
             ]);
 
             return redirect()->back()
-                ->with('error', __('messages.billing_error'));
+                ->with('error', 'Stripe Error: ' . $e->getMessage());
         }
     }
 

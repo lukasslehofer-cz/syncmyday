@@ -110,12 +110,16 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Stripe trial checkout session creation failed during registration', [
                 'error' => $e->getMessage(),
+                'error_class' => get_class($e),
+                'trace' => $e->getTraceAsString(),
                 'user_id' => $user->id,
+                'locale' => $user->locale,
+                'price_id' => $priceId ?? 'N/A',
             ]);
 
             // If Stripe fails, still let user in but show them billing page
             return redirect()->route('billing')
-                ->with('warning', __('messages.setup_payment_method'));
+                ->with('error', 'Stripe Error: ' . $e->getMessage());
         }
     }
 
