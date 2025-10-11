@@ -31,8 +31,56 @@ return [
     'logout' => 'Odhlásit se',
     'signed_in_as' => 'Přihlášen jako',
     
-    // Landing Page
+    // Landing Page / Homepage
     'back_to_home' => 'Zpět na hlavní stránku',
+    'home_page_title' => 'SyncMyDay - Udržujte své kalendáře synchronizované',
+    
+    // Homepage Menu (separate from logged-in menu)
+    'home_features' => 'Funkce',
+    'home_how_it_works' => 'Jak to funguje',
+    'home_pricing' => 'Ceník',
+    
+    // Homepage Hero Section
+    'home_hero_title' => 'Už žádné dvojí rezervace',
+    'home_hero_subtitle' => 'Napříč kalendáři',
+    'home_hero_description' => 'Automaticky synchronizujte zaneprázdněné časy mezi pracovním a osobním kalendářem.',
+    'home_hero_tagline' => 'Jednoduché • Bezpečné • V reálném čase',
+    'home_learn_more' => 'Zjistit více',
+    'home_stat_realtime' => 'V reálném čase',
+    'home_stat_instant_sync' => 'Okamžitá synchronizace',
+    
+    // Homepage Features Section
+    'home_features_section_title' => 'Funkce',
+    'home_features_heading' => 'Vše, co potřebujete pro synchronizaci',
+    'home_features_description' => 'Výkonné funkce navržené pro dokonalou harmonii vašich kalendářů',
+    'feature_privacy_description' => 'Ukládáme pouze časy začátku/konce události. Nikdy názvy, popisy nebo účastníky. Všechna data šifrována.',
+    'feature_realtime_description' => 'Webhooky detekují změny okamžitě. Blokující události vytvořeny během minut, automaticky aktualizovány při změnách.',
+    'feature_smart_rules' => 'Chytrá pravidla',
+    'feature_smart_rules_description' => 'Filtrujte podle zaneprázdněnosti, pracovní doby (9-17), nebo vylučte celodenní události. Plná kontrola nad tím, co se synchronizuje.',
+    'feature_email_description' => 'Synchronizace s e-mailovými kalendářními službami. Přeposílejte .ics pozvánky a vytvoříme blokující události automaticky.',
+    'feature_easy_setup_description' => 'Připojte Google Calendar a Microsoft 365 pomocí OAuth. Žádné API klíče nebo technické nastavení.',
+    'feature_duplicate_prevention' => 'Prevence duplikátů',
+    'feature_duplicate_prevention_description' => 'Chytrá detekce zabraňuje vytváření duplikátních blokátorů pro stejnou událost napříč pravidly.',
+    
+    // Homepage How It Works Section
+    'home_how_it_works_section_title' => 'Jak to funguje',
+    'home_how_it_works_heading' => 'Začněte ve 3 jednoduchých krocích',
+    'home_step2_description' => 'Vyberte, které kalendáře synchronizovat a nastavte filtry pro zaneprázdněnost, pracovní dobu nebo celodenní události.',
+    'home_step3_title' => 'Relaxujte a zůstaňte synchronizováni',
+    'home_step3_description' => 'Blokující události jsou vytvářeny automaticky v reálném čase. Už žádné dvojí rezervace!',
+    
+    // Homepage Supported Platforms
+    'home_platforms_title' => 'Funguje s vašimi oblíbenými kalendářními službami',
+    'apple_icloud' => 'Apple iCloud',
+    
+    // Homepage Pricing
+    'syncmyday_pro' => 'SyncMyDay Pro',
+    'real_time_sync' => 'Synchronizace v reálném čase',
+    
+    // Homepage Footer
+    'footer_description' => 'Kalendářní synchronizace se soukromím na prvním místě.',
+    
+    // Legacy (keep for compatibility)
     'real_time_synchronization' => 'Synchronizace v reálném čase',
     'keep_calendars_in_sync' => 'Udržujte všechny své kalendáře dokonale synchronizované',
     'privacy_first' => 'Soukromí na prvním místě',
@@ -189,6 +237,17 @@ return [
     'upgrade_pro' => 'Upgrade na Pro',
     'billing' => 'Fakturace',
     'admin_panel' => 'Správa',
+    
+    // Trial Banner
+    'trial_expiring_warning' => '⚠️ Zkušební období brzy končí!',
+    'trial_days_remaining' => 'Zbývá vám :days :unit.',
+    'trial_day' => 'den',
+    'trial_days_2_4' => 'dny',
+    'trial_days_5_plus' => 'dní',
+    'trial_active' => '🎉 Zkušební období aktivní!',
+    'trial_full_access_remaining' => 'Máte plný přístup k SyncMyDay Pro ještě :days :unit.',
+    'trial_payment_reminder' => 'Nezapomeňte nastavit platební metodu, aby nedošlo k přerušení služby.',
+    'set_payment' => 'Nastavit platbu',
     
     // Footer
     'product' => 'Produkt',

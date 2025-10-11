@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\PricingHelper;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -72,12 +73,15 @@ class AuthController extends Controller
             // Calculate trial end timestamp
             $trialEnd = $user->subscription_ends_at->timestamp;
 
+            // Get correct Price ID based on user's locale
+            $priceId = PricingHelper::getPriceId($user->locale);
+
             // Create Checkout Session with trial
             $session = Session::create([
                 'customer' => $customer->id,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
-                    'price' => config('services.stripe.pro_price_id'),
+                    'price' => $priceId,
                     'quantity' => 1,
                 ]],
                 'mode' => 'subscription',
@@ -85,6 +89,7 @@ class AuthController extends Controller
                     'trial_end' => $trialEnd,
                     'metadata' => [
                         'user_id' => $user->id,
+                        'locale' => $user->locale,
                     ],
                 ],
                 'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}&redirect=onboarding',
@@ -92,6 +97,7 @@ class AuthController extends Controller
                 'metadata' => [
                     'user_id' => $user->id,
                     'is_trial' => true,
+                    'locale' => $user->locale,
                 ],
             ]);
 

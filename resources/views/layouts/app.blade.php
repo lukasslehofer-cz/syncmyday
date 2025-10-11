@@ -173,14 +173,14 @@
                     <div>
                         <p class="text-sm font-medium text-amber-900">
                             @if(auth()->user()->isTrialExpiringSoon())
-                                <strong>⚠️ Zkušební období brzy končí!</strong> Zbývá vám {{ auth()->user()->getRemainingTrialDays() }} {{ auth()->user()->getRemainingTrialDays() === 1 ? 'den' : (auth()->user()->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }}.
+                                <strong>{{ __('messages.trial_expiring_warning') }}</strong> {{ __('messages.trial_days_remaining', ['days' => auth()->user()->getRemainingTrialDays(), 'unit' => auth()->user()->getRemainingTrialDays() === 1 ? __('messages.trial_day') : (auth()->user()->getRemainingTrialDays() <= 4 ? __('messages.trial_days_2_4') : __('messages.trial_days_5_plus'))]) }}
                             @else
-                                <strong>🎉 Zkušební období aktivní!</strong> Máte plný přístup k SyncMyDay Pro ještě {{ auth()->user()->getRemainingTrialDays() }} {{ auth()->user()->getRemainingTrialDays() === 1 ? 'den' : (auth()->user()->getRemainingTrialDays() <= 4 ? 'dny' : 'dní') }}.
+                                <strong>{{ __('messages.trial_active') }}</strong> {{ __('messages.trial_full_access_remaining', ['days' => auth()->user()->getRemainingTrialDays(), 'unit' => auth()->user()->getRemainingTrialDays() === 1 ? __('messages.trial_day') : (auth()->user()->getRemainingTrialDays() <= 4 ? __('messages.trial_days_2_4') : __('messages.trial_days_5_plus'))]) }}
                             @endif
                         </p>
                         @if(!auth()->user()->stripe_subscription_id)
                         <p class="text-xs text-amber-700 mt-0.5">
-                            Nezapomeňte nastavit platební metodu, aby nedošlo k přerušení služby.
+                            {{ __('messages.trial_payment_reminder') }}
                         </p>
                         @endif
                     </div>
@@ -323,7 +323,7 @@
                 
                 <div class="mt-8 pt-8 border-t border-gray-200">
                     <p class="text-center text-sm text-gray-500">
-                        &copy; {{ date('Y') }} SyncMyDay. All rights reserved.
+                        &copy; {{ date('Y') }} SyncMyDay. {{ __('messages.all_rights_reserved') }}.
                     </p>
                 </div>
             </div>

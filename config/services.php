@@ -38,7 +38,21 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-        'pro_price_id' => env('STRIPE_PRO_PRICE_ID'),
+        'pro_price_id' => env('STRIPE_PRO_PRICE_ID'), // Default fallback
+        'prices' => [
+            'cs' => env('STRIPE_PRICE_CZK'), // 249 CZK
+            'en' => env('STRIPE_PRICE_USD'), // 10.99 USD
+            'de' => env('STRIPE_PRICE_EUR'), // 9.99 EUR
+            'pl' => env('STRIPE_PRICE_PLN'), // 39.99 PLN
+            'sk' => env('STRIPE_PRICE_EUR'), // 9.99 EUR (SK používá EUR)
+        ],
+        'currencies' => [
+            'cs' => ['code' => 'CZK', 'symbol' => 'Kč', 'amount' => 249],
+            'en' => ['code' => 'USD', 'symbol' => '$', 'amount' => 10.99],
+            'de' => ['code' => 'EUR', 'symbol' => '€', 'amount' => 9.99],
+            'pl' => ['code' => 'PLN', 'symbol' => 'zł', 'amount' => 39.99],
+            'sk' => ['code' => 'EUR', 'symbol' => '€', 'amount' => 9.99],
+        ],
     ],
 
     // Token encryption key (separate from app key for added security)

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SyncMyDay - Keep Your Calendars in Sync</title>
+    <title>{{ __('messages.home_page_title') }}</title>
     <link rel="icon" type="image/png" href="/syncmyday-logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -47,8 +47,8 @@
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Features</a>
-                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">How It Works</a>
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_features') }}</a>
+                    <a href="#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_how_it_works') }}</a>
                     <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.billing') }}</a>
                 </div>
                 
@@ -74,13 +74,13 @@
                 </div>
                 
                 <h2 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
-                    Never Double-Book Again<br>
-                    <span class="gradient-text">Across Calendars</span>
+                    {{ __('messages.home_hero_title') }}<br>
+                    <span class="gradient-text">{{ __('messages.home_hero_subtitle') }}</span>
                 </h2>
                 
                 <p class="text-xl sm:text-2xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
-                    Automatically sync busy times between your work and personal calendars.<br>
-                    <span class="text-indigo-600 font-semibold">Simple • Secure • Real-time</span>
+                    {{ __('messages.home_hero_description') }}<br>
+                    <span class="text-indigo-600 font-semibold">{{ __('messages.home_hero_tagline') }}</span>
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -91,7 +91,7 @@
                         </svg>
                     </a>
                     <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-indigo-200 shadow-lg transform hover:scale-105 transition">
-                        Learn More
+                        {{ __('messages.home_learn_more') }}
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
@@ -101,8 +101,8 @@
                 <!-- Stats -->
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
                     <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-indigo-200 shadow-lg transform hover:scale-105 transition">
-                        <div class="text-4xl font-bold gradient-text mb-2">Real-time</div>
-                        <div class="text-sm text-gray-600 font-medium">Instant Sync</div>
+                        <div class="text-4xl font-bold gradient-text mb-2">{{ __('messages.home_stat_realtime') }}</div>
+                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.home_stat_instant_sync') }}</div>
                     </div>
                     <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-200 shadow-lg transform hover:scale-105 transition">
                         <div class="text-4xl font-bold gradient-text mb-2">100%</div>
@@ -125,9 +125,9 @@
     <section id="features" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">Features</h3>
-                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">Everything you need to stay synchronized</h2>
-                <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">Powerful features designed to keep your calendars in perfect harmony</p>
+                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_features_section_title') }}</h3>
+                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_features_heading') }}</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">{{ __('messages.home_features_description') }}</p>
             </div>
             
             <div class="grid md:grid-cols-3 gap-8">
@@ -139,7 +139,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.privacy_first') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">We only store event start/end times. Never titles, descriptions, or attendees. All data encrypted at rest.</p>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_privacy_description') }}</p>
                 </div>
                 
                 <!-- Feature 2 -->
@@ -150,7 +150,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.real_time_synchronization') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">Webhooks detect changes instantly. Blocker events created within minutes, automatically updated when events change.</p>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_realtime_description') }}</p>
                 </div>
                 
                 <!-- Feature 3 -->
@@ -160,8 +160,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Smart Rules</h3>
-                    <p class="text-gray-600 leading-relaxed">Filter by busy status, work hours (9-5), or exclude all-day events. Full control over what gets synced.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.feature_smart_rules') }}</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_smart_rules_description') }}</p>
                 </div>
                 
                 <!-- Feature 4 -->
@@ -172,7 +172,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.email_calendars_support') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">Sync with email-based calendar services. Forward .ics invites and we'll create blocker events automatically.</p>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_email_description') }}</p>
                 </div>
                 
                 <!-- Feature 5 -->
@@ -183,7 +183,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.easy_setup') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">Connect Google Calendar and Microsoft 365 with OAuth. No API keys or technical setup required.</p>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_easy_setup_description') }}</p>
                 </div>
                 
                 <!-- Feature 6 -->
@@ -193,8 +193,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Duplicate Prevention</h3>
-                    <p class="text-gray-600 leading-relaxed">Smart detection prevents creating duplicate blockers for the same event across multiple sync rules.</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.feature_duplicate_prevention') }}</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_duplicate_prevention_description') }}</p>
                 </div>
             </div>
         </div>
@@ -204,8 +204,8 @@
     <section id="how-it-works" class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">How It Works</h3>
-                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">Get started in 3 simple steps</h2>
+                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_how_it_works_section_title') }}</h3>
+                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_how_it_works_heading') }}</h2>
             </div>
             
             <div class="grid md:grid-cols-3 gap-12">
@@ -218,13 +218,13 @@
                 <div class="relative text-center">
                     <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">2</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.create_sync_rule') }}</h3>
-                    <p class="text-gray-600">Choose which calendars to sync and set filters for busy status, work hours, or all-day events.</p>
+                    <p class="text-gray-600">{{ __('messages.home_step2_description') }}</p>
                 </div>
                 
                 <div class="relative text-center">
                     <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">3</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Relax & Stay Synced</h3>
-                    <p class="text-gray-600">Blocker events are created automatically in real-time. No more double-bookings!</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.home_step3_title') }}</h3>
+                    <p class="text-gray-600">{{ __('messages.home_step3_description') }}</p>
                 </div>
             </div>
         </div>
@@ -233,7 +233,7 @@
     <!-- Supported Platforms -->
     <section class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-8">Works With Your Favorite Calendar Services</p>
+            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-8">{{ __('messages.home_platforms_title') }}</p>
             <div class="flex flex-wrap justify-center items-center gap-12">
                 <div class="flex items-center space-x-3">
                     <div class="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
@@ -262,7 +262,7 @@
                             <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                         </svg>
                     </div>
-                    <span class="text-xl font-semibold text-gray-900">Apple iCloud</span>
+                    <span class="text-xl font-semibold text-gray-900">{{ __('messages.apple_icloud') }}</span>
                 </div>
             </div>
         </div>
@@ -284,7 +284,7 @@
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                            SyncMyDay Pro
+                            {{ __('messages.syncmyday_pro') }}
                         </span>
                     </div>
                     
@@ -318,7 +318,7 @@
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <span class="text-gray-900 font-medium">Real-time sync</span>
+                                <span class="text-gray-900 font-medium">{{ __('messages.real_time_sync') }}</span>
                             </div>
                             <div class="flex items-center space-x-2">
                                 <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -364,14 +364,14 @@
                         </div>
                         <span class="text-lg font-bold">SyncMyDay</span>
                     </div>
-                    <p class="text-sm text-gray-400">Privacy-first calendar synchronization made simple.</p>
+                    <p class="text-sm text-gray-400">{{ __('messages.footer_description') }}</p>
                 </div>
                 
                 <div>
                     <h3 class="text-sm font-semibold mb-3">{{ __('messages.product') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#features" class="text-sm text-gray-400 hover:text-white">Features</a></li>
-                        <li><a href="#how-it-works" class="text-sm text-gray-400 hover:text-white">How It Works</a></li>
+                        <li><a href="#features" class="text-sm text-gray-400 hover:text-white">{{ __('messages.home_features') }}</a></li>
+                        <li><a href="#how-it-works" class="text-sm text-gray-400 hover:text-white">{{ __('messages.home_how_it_works') }}</a></li>
                         <li><a href="#pricing" class="text-sm text-gray-400 hover:text-white">{{ __('messages.billing') }}</a></li>
                     </ul>
                 </div>

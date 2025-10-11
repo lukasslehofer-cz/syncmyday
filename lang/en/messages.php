@@ -31,8 +31,56 @@ return [
     'logout' => 'Logout',
     'signed_in_as' => 'Signed in as',
     
-    // Landing Page
+    // Landing Page / Homepage
     'back_to_home' => 'Back to home',
+    'home_page_title' => 'SyncMyDay - Keep Your Calendars in Sync',
+    
+    // Homepage Menu (separate from logged-in menu)
+    'home_features' => 'Features',
+    'home_how_it_works' => 'How It Works',
+    'home_pricing' => 'Pricing',
+    
+    // Homepage Hero Section
+    'home_hero_title' => 'Never Double-Book Again',
+    'home_hero_subtitle' => 'Across Calendars',
+    'home_hero_description' => 'Automatically sync busy times between your work and personal calendars.',
+    'home_hero_tagline' => 'Simple • Secure • Real-time',
+    'home_learn_more' => 'Learn More',
+    'home_stat_realtime' => 'Real-time',
+    'home_stat_instant_sync' => 'Instant Sync',
+    
+    // Homepage Features Section
+    'home_features_section_title' => 'Features',
+    'home_features_heading' => 'Everything you need to stay synchronized',
+    'home_features_description' => 'Powerful features designed to keep your calendars in perfect harmony',
+    'feature_privacy_description' => 'We only store event start/end times. Never titles, descriptions, or attendees. All data encrypted at rest.',
+    'feature_realtime_description' => 'Webhooks detect changes instantly. Blocker events created within minutes, automatically updated when events change.',
+    'feature_smart_rules' => 'Smart Rules',
+    'feature_smart_rules_description' => 'Filter by busy status, work hours (9-5), or exclude all-day events. Full control over what gets synced.',
+    'feature_email_description' => 'Sync with email-based calendar services. Forward .ics invites and we\'ll create blocker events automatically.',
+    'feature_easy_setup_description' => 'Connect Google Calendar and Microsoft 365 with OAuth. No API keys or technical setup required.',
+    'feature_duplicate_prevention' => 'Duplicate Prevention',
+    'feature_duplicate_prevention_description' => 'Smart detection prevents creating duplicate blockers for the same event across multiple sync rules.',
+    
+    // Homepage How It Works Section
+    'home_how_it_works_section_title' => 'How It Works',
+    'home_how_it_works_heading' => 'Get started in 3 simple steps',
+    'home_step2_description' => 'Choose which calendars to sync and set filters for busy status, work hours, or all-day events.',
+    'home_step3_title' => 'Relax & Stay Synced',
+    'home_step3_description' => 'Blocker events are created automatically in real-time. No more double-bookings!',
+    
+    // Homepage Supported Platforms
+    'home_platforms_title' => 'Works With Your Favorite Calendar Services',
+    'apple_icloud' => 'Apple iCloud',
+    
+    // Homepage Pricing
+    'syncmyday_pro' => 'SyncMyDay Pro',
+    'real_time_sync' => 'Real-time sync',
+    
+    // Homepage Footer
+    'footer_description' => 'Privacy-first calendar synchronization made simple.',
+    
+    // Legacy (keep for compatibility)
     'real_time_synchronization' => 'Real-time Synchronization',
     'keep_calendars_in_sync' => 'Keep all your calendars perfectly in sync',
     'privacy_first' => 'Privacy First',
@@ -69,7 +117,7 @@ return [
     'connect_first_calendar' => 'Connect your first calendar to start syncing your schedule',
     'choose_from_providers' => 'Choose from Google Calendar, Microsoft 365, or Email Calendar above',
     'your_connected_calendars' => 'Your Connected Calendars',
-    'calendars' => 'calendar(s)',
+    'calendars' => 'Calendars',
     'events' => 'events',
     'emails' => 'emails',
     'active' => 'Active',
@@ -189,6 +237,17 @@ return [
     'upgrade_pro' => 'Upgrade Pro',
     'billing' => 'Billing',
     'admin_panel' => 'Admin Panel',
+    
+    // Trial Banner
+    'trial_expiring_warning' => '⚠️ Trial period ending soon!',
+    'trial_days_remaining' => 'You have :days :unit remaining.',
+    'trial_day' => 'day',
+    'trial_days_2_4' => 'days',
+    'trial_days_5_plus' => 'days',
+    'trial_active' => '🎉 Trial period active!',
+    'trial_full_access_remaining' => 'You have full access to SyncMyDay Pro for :days more :unit.',
+    'trial_payment_reminder' => 'Don\'t forget to set up your payment method to avoid service interruption.',
+    'set_payment' => 'Set up payment',
     
     // Footer
     'product' => 'Product',
