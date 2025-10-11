@@ -76,19 +76,41 @@ class CalDavCalendarService
             ]);
             
             // Try .well-known/caldav first for discovery
+            $principalUrl = null;
+            
             try {
                 $response = $client->propfind('/.well-known/caldav', [
                     '{DAV:}current-user-principal',
                 ], 0);
                 
                 if (isset($response['{DAV:}current-user-principal'])) {
-                    $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+                    $principal = $response['{DAV:}current-user-principal'];
+                    
+                    // Handle different response types
+                    if (is_string($principal)) {
+                        $principalUrl = $principal;
+                    } elseif (is_array($principal)) {
+                        $principalUrl = $principal[0] ?? $principal;
+                    } elseif (is_object($principal) && method_exists($principal, 'getHref')) {
+                        $principalUrl = $principal->getHref();
+                    } else {
+                        // Try to convert to string
+                        $principalUrl = (string) $principal;
+                    }
+                    
                     Log::info('iCloud discovery: Found principal via .well-known', [
                         'principal_url' => $principalUrl,
+                        'response_type' => gettype($principal),
                     ]);
                 }
             } catch (\Exception $e) {
-                // If .well-known fails, try root
+                Log::warning('iCloud discovery: .well-known failed, trying root', [
+                    'error' => $e->getMessage(),
+                ]);
+            }
+            
+            // If .well-known didn't work, try root
+            if (!$principalUrl) {
                 $response = $client->propfind('/', [
                     '{DAV:}current-user-principal',
                 ], 0);
@@ -97,9 +119,23 @@ class CalDavCalendarService
                     throw new \Exception('Could not discover CalDAV principal for iCloud');
                 }
                 
-                $principalUrl = $response['{DAV:}current-user-principal']->getHref();
+                $principal = $response['{DAV:}current-user-principal'];
+                
+                // Handle different response types
+                if (is_string($principal)) {
+                    $principalUrl = $principal;
+                } elseif (is_array($principal)) {
+                    $principalUrl = $principal[0] ?? $principal;
+                } elseif (is_object($principal) && method_exists($principal, 'getHref')) {
+                    $principalUrl = $principal->getHref();
+                } else {
+                    // Try to convert to string
+                    $principalUrl = (string) $principal;
+                }
+                
                 Log::info('iCloud discovery: Found principal via root', [
                     'principal_url' => $principalUrl,
+                    'response_type' => gettype($principal),
                 ]);
             }
             
@@ -116,7 +152,19 @@ class CalDavCalendarService
                 throw new \Exception('Could not discover calendar home for iCloud');
             }
             
-            $calendarHomeUrl = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set']->getHref();
+            $calendarHome = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'];
+            
+            // Handle different response types
+            if (is_string($calendarHome)) {
+                $calendarHomeUrl = $calendarHome;
+            } elseif (is_array($calendarHome)) {
+                $calendarHomeUrl = $calendarHome[0] ?? $calendarHome;
+            } elseif (is_object($calendarHome) && method_exists($calendarHome, 'getHref')) {
+                $calendarHomeUrl = $calendarHome->getHref();
+            } else {
+                // Try to convert to string
+                $calendarHomeUrl = (string) $calendarHome;
+            }
             
             Log::info('iCloud discovery: Step 3 - Listing calendars', [
                 'calendar_home_url' => $calendarHomeUrl,
