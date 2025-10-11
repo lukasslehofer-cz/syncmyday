@@ -328,10 +328,23 @@ class SyncEngine
                         $transactionId
                     );
                     
-                    // Update mapping timestamps
+                    // Update mapping timestamps (store in UTC to avoid timezone issues)
+                    $startToStore = null;
+                    $endToStore = null;
+                    
+                    if ($start && $start <= $maxTimestamp) {
+                        $startToStore = clone $start;
+                        $startToStore->setTimezone(new \DateTimeZone('UTC'));
+                    }
+                    
+                    if ($end && $end <= $maxTimestamp) {
+                        $endToStore = clone $end;
+                        $endToStore->setTimezone(new \DateTimeZone('UTC'));
+                    }
+                    
                     $mapping->update([
-                        'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
-                        'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+                        'event_start' => $startToStore,
+                        'event_end' => $endToStore,
                     ]);
                     
                     $blockerId = $mapping->target_event_id;
@@ -371,7 +384,21 @@ class SyncEngine
             );
 
             // Create mapping (handle Y2038 problem for dates beyond 2038)
+            // Store times in UTC to avoid timezone conversion issues
             $maxTimestamp = new \DateTime('2038-01-01');
+            
+            $startToStore = null;
+            $endToStore = null;
+            
+            if ($start && $start <= $maxTimestamp) {
+                $startToStore = clone $start;
+                $startToStore->setTimezone(new \DateTimeZone('UTC'));
+            }
+            
+            if ($end && $end <= $maxTimestamp) {
+                $endToStore = clone $end;
+                $endToStore->setTimezone(new \DateTimeZone('UTC'));
+            }
             
             SyncEventMapping::create([
                 'sync_rule_id' => $rule->id,
@@ -381,8 +408,8 @@ class SyncEngine
                 'target_connection_id' => $target->target_connection_id,
                 'target_calendar_id' => $target->target_calendar_id,
                 'target_event_id' => $blockerId,
-                'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
-                'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+                'event_start' => $startToStore,
+                'event_end' => $endToStore,
             ]);
         }
 
@@ -593,11 +620,25 @@ class SyncEngine
             );
 
             if ($success) {
+                // Store times in UTC to avoid timezone conversion issues
+                $startToStore = null;
+                $endToStore = null;
+                
+                if ($start && $start <= $maxTimestamp) {
+                    $startToStore = clone $start;
+                    $startToStore->setTimezone(new \DateTimeZone('UTC'));
+                }
+                
+                if ($end && $end <= $maxTimestamp) {
+                    $endToStore = clone $end;
+                    $endToStore->setTimezone(new \DateTimeZone('UTC'));
+                }
+                
                 if ($mapping) {
                     // Update existing mapping
                     $mapping->update([
-                        'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
-                        'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+                        'event_start' => $startToStore,
+                        'event_end' => $endToStore,
                         'sequence' => $sequence + 1,
                     ]);
                     
@@ -617,8 +658,8 @@ class SyncEngine
                         'target_email_connection_id' => $target->target_email_connection_id,
                         'target_calendar_id' => null,
                         'target_event_id' => $eventUid,
-                        'event_start' => ($start && $start <= $maxTimestamp) ? $start : null,
-                        'event_end' => ($end && $end <= $maxTimestamp) ? $end : null,
+                        'event_start' => $startToStore,
+                        'event_end' => $endToStore,
                         'sequence' => 1,
                     ]);
                 }
