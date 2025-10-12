@@ -576,4 +576,17 @@ return [
     'emails_received' => 'Přijatých e-mailů',
     'events_processed' => 'Zpracovaných událostí',
     'last_email' => 'Poslední e-mail',
+    
+    // Contact Form
+    'contact_us' => 'Kontaktujte nás',
+    'contact_us_description' => 'Máte dotazy nebo potřebujete pomoc? Rádi vám pomůžeme!',
+    'your_name' => 'Vaše jméno',
+    'your_email' => 'Váš e-mail',
+    'subject' => 'Předmět',
+    'your_message' => 'Vaše zpráva',
+    'send_message' => 'Odeslat zprávu',
+    'other_ways_to_reach_us' => 'Další způsoby jak nás kontaktovat',
+    'browse_help_articles' => 'Procházet články nápovědy',
+    'contact_success' => 'Děkujeme za vaši zprávu! Odpovíme co nejdříve.',
+    'contact_error' => 'Omlouváme se, při odesílání zprávy došlo k chybě. Prosím zkuste to znovu.',
 ];

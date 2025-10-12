@@ -286,7 +286,7 @@
                         <li><strong>Wait a few minutes:</strong> CalDAV calendars update every 15 minutes</li>
                         <li><strong>Refresh connection:</strong> Use the "Refresh" button on the Connections page</li>
                     </ol>
-                    <p>If issues persist, contact support at <a href="mailto:support@syncmyday.com">support@syncmyday.com</a></p>
+                    <p>If issues persist, <a href="{{ route('contact') }}">contact our support team</a></p>
                 </div>
             </div>
             
@@ -337,7 +337,7 @@
 <div class="mt-12 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl">
     <h3 class="text-lg font-semibold text-gray-900 mb-2">Still have questions?</h3>
     <p class="text-gray-700 mb-4">We're here to help! Our support team typically responds within 24 hours.</p>
-    <a href="mailto:support@syncmyday.com" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition no-underline" style="text-decoration: none !important;">
+    <a href="{{ route('contact') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition no-underline" style="text-decoration: none !important;">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>

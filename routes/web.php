@@ -34,6 +34,10 @@ Route::get('/', function () {
 Route::view('/privacy', 'legal.privacy')->name('privacy');
 Route::view('/terms', 'legal.terms')->name('terms');
 
+// Contact
+Route::get('/contact', [App\Http\Controllers\ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
+
 // Help Center
 Route::prefix('help')->name('help.')->group(function () {
     Route::get('/', function () {

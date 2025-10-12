@@ -569,4 +569,17 @@ return [
     'emails_received' => 'Emails Received',
     'events_processed' => 'Events Processed',
     'last_email' => 'Last Email',
+    
+    // Contact Form
+    'contact_us' => 'Contact Us',
+    'contact_us_description' => 'Have questions or need help? We\'re here to assist you!',
+    'your_name' => 'Your Name',
+    'your_email' => 'Your Email',
+    'subject' => 'Subject',
+    'your_message' => 'Your Message',
+    'send_message' => 'Send Message',
+    'other_ways_to_reach_us' => 'Other Ways to Reach Us',
+    'browse_help_articles' => 'Browse Help Articles',
+    'contact_success' => 'Thank you for your message! We\'ll respond as soon as possible.',
+    'contact_error' => 'Sorry, there was an error sending your message. Please try again.',
 ];

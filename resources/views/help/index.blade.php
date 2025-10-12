@@ -110,9 +110,6 @@
 
 <!-- Second row - 2 cards centered -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Spacer for centering on large screens -->
-    <div class="hidden lg:block"></div>
-    
     <!-- CalDAV -->
     <a href="{{ route('help.connect-caldav') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 hover:shadow-xl transition transform hover:scale-105">
         <div class="flex flex-col items-center text-center">
