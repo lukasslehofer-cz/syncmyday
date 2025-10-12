@@ -1,8 +1,13 @@
-@extends('layouts.help')
+@extends('layouts.public')
 
 @section('title', 'Connect Google Calendar')
 
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
 @section('content')
+<div class="help-content">
 <div class="flex items-center mb-6">
     <div class="w-16 h-16 rounded-2xl bg-blue-500 flex items-center justify-center mr-4">
         <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">

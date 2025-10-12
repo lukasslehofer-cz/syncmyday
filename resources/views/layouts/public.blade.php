@@ -11,6 +11,129 @@
     <style>
         [x-cloak] { display: none !important; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        
+        /* Help content styling */
+        .help-content h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .help-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #374151;
+            margin-top: 2.5rem;
+            margin-bottom: 1.25rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .help-content h2:first-of-type {
+            margin-top: 1.5rem;
+            border-top: none;
+            padding-top: 0;
+        }
+        
+        .help-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #4b5563;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .help-content h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .help-content p {
+            color: #6b7280;
+            line-height: 1.75;
+            margin-bottom: 1.25rem;
+        }
+        
+        .help-content strong {
+            color: #374151;
+            font-weight: 600;
+        }
+        
+        .help-content ul, .help-content ol {
+            margin-left: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: #6b7280;
+        }
+        
+        .help-content ul {
+            list-style-type: disc;
+        }
+        
+        .help-content ol {
+            list-style-type: decimal;
+        }
+        
+        .help-content ul li, .help-content ol li {
+            margin-bottom: 0.75rem;
+            line-height: 1.75;
+        }
+        
+        .help-content a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .help-content a:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+        
+        /* Only underline links in paragraphs and lists */
+        .help-content p a,
+        .help-content li a {
+            text-decoration: underline;
+        }
+        
+        .help-content code {
+            background-color: #f3f4f6;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            color: #db2777;
+            font-family: monospace;
+        }
+        
+        .help-content pre {
+            background-color: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        .help-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Image placeholder styles */
+        .img-placeholder {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 2px dashed #d1d5db;
+            border-radius: 0.75rem;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            margin: 1.5rem 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50 antialiased">
@@ -117,7 +240,25 @@
 
     <!-- Main Content -->
     <main class="min-h-screen">
+        @if(View::hasSection('sidebar'))
+        <div class="py-8 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+                    <!-- Sidebar -->
+                    <aside class="lg:col-span-3 mb-8 lg:mb-0">
+                        @yield('sidebar')
+                    </aside>
+                    
+                    <!-- Main Content -->
+                    <div class="lg:col-span-9">
+                        @yield('content')
+                    </div>
+                </div>
+            </div>
+        </div>
+        @else
         @yield('content')
+        @endif
     </main>
 
     @auth

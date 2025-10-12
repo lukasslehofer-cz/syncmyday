@@ -1,8 +1,13 @@
-@extends('layouts.help')
+@extends('layouts.public')
 
 @section('title', 'Frequently Asked Questions')
 
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
 @section('content')
+<div class="help-content">
 <h1>Frequently Asked Questions</h1>
 
 <p class="text-xl text-gray-600 mb-8">Quick answers to common questions about SyncMyDay.</p>

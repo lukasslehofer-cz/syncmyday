@@ -1,8 +1,18 @@
-@extends('layouts.help')
+@extends('layouts.public')
 
 @section('title', 'Help Center')
 
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
 @section('content')
+<div class="help-content">
+<div class="help-content">
 <h1>Welcome to SyncMyDay Help Center</h1>
 
 <p class="text-xl text-gray-600 mb-8">Everything you need to know about keeping your calendars in sync.</p>
@@ -172,6 +182,7 @@
             </ol>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

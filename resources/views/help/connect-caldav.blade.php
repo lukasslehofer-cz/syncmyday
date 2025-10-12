@@ -1,8 +1,13 @@
-@extends('layouts.help')
+@extends('layouts.public')
 
 @section('title', 'Connect CalDAV Calendar')
 
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
 @section('content')
+<div class="help-content">
 <div class="flex items-center mb-6">
     <div class="w-16 h-16 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center mr-4 shadow-lg">
         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
