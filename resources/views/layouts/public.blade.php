@@ -221,6 +221,37 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden border-t border-gray-100" x-data="{ open: false }">
+            <button @click="open = !open" class="w-full px-4 py-3 flex items-center justify-between text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>Menu</span>
+                <svg 
+                    class="w-5 h-5 transform transition-transform" 
+                    :class="{ 'rotate-180': open }"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" x-cloak class="pb-3 space-y-1 bg-gray-50">
+                <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-white' }}">
+                    {{ __('messages.dashboard') }}
+                </a>
+                <a href="{{ route('connections.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('connections.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-white' }}">
+                    {{ __('messages.calendars') }}
+                </a>
+                <a href="{{ route('sync-rules.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-white' }}">
+                    {{ __('messages.sync_rules') }}
+                </a>
+                <a href="{{ route('help.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">
+                    {{ __('messages.help_center') }}
+                </a>
+                <a href="{{ route('blog.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">Blog</a>
+            </div>
+        </div>
     </header>
     @else
     <!-- Guest User Header -->
@@ -250,6 +281,29 @@
                 </div>
             </div>
         </nav>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden border-t border-gray-100" x-data="{ open: false }">
+            <button @click="open = !open" class="w-full px-4 py-3 flex items-center justify-between text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>Menu</span>
+                <svg 
+                    class="w-5 h-5 transform transition-transform" 
+                    :class="{ 'rotate-180': open }"
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <div x-show="open" x-cloak class="pb-3 space-y-1 bg-gray-50">
+                <a href="{{ route('home') }}#features" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">{{ __('messages.home_features') }}</a>
+                <a href="{{ route('home') }}#how-it-works" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">{{ __('messages.home_how_it_works') }}</a>
+                <a href="{{ route('home') }}#pricing" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">{{ __('messages.home_pricing') }}</a>
+                <a href="{{ route('help.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">{{ __('messages.help_center') }}</a>
+                <a href="{{ route('blog.index') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-white">Blog</a>
+            </div>
+        </div>
     </header>
     @endauth
 
@@ -258,9 +312,51 @@
         @if(View::hasSection('sidebar'))
         <div class="py-8 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Mobile Sidebar Menu Toggle -->
+                <div class="lg:hidden mb-6" x-data="{ mobileMenuOpen: false }">
+                    <button 
+                        @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-700 hover:bg-gray-50 transition"
+                    >
+                        <span class="font-medium">
+                            @if(request()->is('blog*'))
+                                {{ __('messages.blog_categories') }}
+                            @elseif(request()->is('help*'))
+                                {{ __('messages.help_center') }}
+                            @else
+                                Kategorie
+                            @endif
+                        </span>
+                        <svg 
+                            class="w-5 h-5 transform transition-transform" 
+                            :class="{ 'rotate-180': mobileMenuOpen }"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Mobile Sidebar -->
+                    <div 
+                        x-show="mobileMenuOpen" 
+                        x-cloak
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 transform scale-95"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 transform scale-100"
+                        x-transition:leave-end="opacity-0 transform scale-95"
+                        class="mt-4"
+                    >
+                        @yield('sidebar')
+                    </div>
+                </div>
+                
                 <div class="lg:grid lg:grid-cols-12 lg:gap-8">
-                    <!-- Sidebar -->
-                    <aside class="lg:col-span-3 mb-8 lg:mb-0">
+                    <!-- Desktop Sidebar -->
+                    <aside class="hidden lg:block lg:col-span-3">
                         @yield('sidebar')
                     </aside>
                     

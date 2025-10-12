@@ -1,6 +1,17 @@
 # 🚀 Nasazení blogu na produkci
 
-## Krok 1: Nahrání souborů
+Pravidelný delpoy:
+
+# Lokálně
+
+git add public/blog-import.php blog-import.sh
+git commit -m "Fix blog import for production"
+git push
+
+# Na serveru
+
+bash deploy.sh
+bash blog-import.sh
 
 ### A) Nahrát nové soubory na server
 

@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:sticky lg:top-24">
     <h3 class="text-lg font-bold text-gray-900 mb-4">{{ __('messages.blog_categories') }}</h3>
     
     <nav class="space-y-1">
