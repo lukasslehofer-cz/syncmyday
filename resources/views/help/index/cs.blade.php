@@ -6,11 +6,16 @@
     @include('help.partials.sidebar')
 @endsection
 
+@section('sidebar')
+    @include('help.partials.sidebar')
+@endsection
+
 @section('content')
 <div class="help-content">
-<h1>Vítejte v centru nápovědy SyncMyDay</h1>
+<div class="help-content">
+<h1>Vítejte v Centru nápovědy SyncMyDay</h1>
 
-<p class="text-xl text-gray-600 mb-8">Vše, co potřebujete vědět o synchronizaci kalendářů.</p>
+<p class="text-xl text-gray-600 mb-8">Vše, co potřebujete vědět o udržování vašich kalendářů v synchronizaci.</p>
 
 <div class="grid md:grid-cols-2 gap-6 mb-12">
     <a href="{{ route('help.faq') }}" class="group p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl hover:shadow-lg transition">
@@ -22,7 +27,7 @@
             </div>
             <h2 class="text-2xl font-bold text-gray-900 group-hover:text-indigo-600 transition">Často kladené otázky</h2>
         </div>
-        <p class="text-gray-600">Rychlé odpovědi na běžné otázky o zabezpečení, platbách a fungování SyncMyDay.</p>
+        <p class="text-gray-600">Rychlé odpovědi na časté otázky o bezpečnosti, platbách a fungování SyncMyDay.</p>
     </a>
     
     <a href="{{ route('help.sync-rules') }}" class="group p-6 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100 rounded-xl hover:shadow-lg transition">
@@ -34,12 +39,12 @@
             </div>
             <h2 class="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition">Vytváření pravidel synchronizace</h2>
         </div>
-        <p class="text-gray-600">Naučte se nastavit synchronizaci mezi kalendáři s filtry a možnostmi.</p>
+        <p class="text-gray-600">Naučte se nastavit synchronizaci mezi vašimi kalendáři s filtry a možnostmi.</p>
     </a>
 </div>
 
 <h2>Připojte své kalendáře</h2>
-<p>Vyberte si svou kalendářovou službu níže:</p>
+<p>Níže vyberte svou kalendářovou službu a začněte:</p>
 
 <!-- První řádek - 3 karty -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -58,7 +63,7 @@
             </div>
             <div>
                 <p class="text-xl font-bold text-gray-900 mb-2">Google Calendar</p>
-                <p class="text-sm text-gray-600">Rychlé OAuth nastavení</p>
+                <p class="text-sm text-gray-600">Rychlé nastavení OAuth</p>
             </div>
         </div>
         <div class="absolute top-4 right-4">
@@ -113,7 +118,7 @@
     </a>
 </div>
 
-<!-- Druhý řádek - 2 karty -->
+<!-- Druhý řádek - 2 karty vycentrované -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <!-- CalDAV -->
     <a href="{{ route('help.connect-caldav') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 hover:shadow-xl transition transform hover:scale-105">
@@ -127,7 +132,7 @@
             </div>
             <div>
                 <p class="text-xl font-bold text-gray-900 mb-2">CalDAV</p>
-                <p class="text-sm text-gray-600">Fastmail, Nextcloud, atd.</p>
+                <p class="text-sm text-gray-600">Fastmail, Nextcloud atd.</p>
             </div>
         </div>
         <div class="absolute top-4 right-4">
@@ -149,7 +154,7 @@
             </div>
             <div>
                 <p class="text-xl font-bold text-gray-900 mb-2">E-mailový kalendář</p>
-                <p class="text-sm text-gray-600">Přepošlete .ics pozvánky</p>
+                <p class="text-sm text-gray-600">Přeposílání .ics pozvánek</p>
             </div>
         </div>
         <div class="absolute top-4 right-4">
@@ -169,15 +174,14 @@
         </div>
         <div class="ml-3">
             <h3 class="text-lg font-semibold text-blue-900 mb-2">Začínáme</h3>
-            <p class="text-blue-800 mb-2">Jak začít se synchronizací kalendářů:</p>
+            <p class="text-blue-800 mb-2">Pro zahájení synchronizace vašich kalendářů:</p>
             <ol class="list-decimal list-inside space-y-1 text-blue-800">
-                <li>Připojte alespoň 2 kalendáře pomocí návodů výše</li>
-                <li>Vytvořte pravidlo synchronizace, které definuje, jak se mají události synchronizovat</li>
-                <li>Sledujte, jak se blokující události automaticky vytváří v reálném čase!</li>
+                <li>Připojte alespoň 2 kalendáře pomocí výše uvedených průvodců</li>
+                <li>Vytvořte pravidlo synchronizace pro definování, jak se události mají synchronizovat</li>
+                <li>Sledujte, jak se blokovací události automaticky vytvářejí v reálném čase!</li>
             </ol>
         </div>
     </div>
 </div>
 </div>
 @endsection
-
