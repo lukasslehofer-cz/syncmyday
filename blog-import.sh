@@ -28,7 +28,7 @@ fi
 
 # Import článků z JSON
 echo -e "${YELLOW}📥 Importuji články z JSON...${NC}"
-php run-artisan.php blog:import --file=$IMPORT_FILE 2>&1 | tail -10
+php public/blog-import.php 2>&1 | tail -15
 echo -e "${GREEN}✓ Import dokončen${NC}"
 
 # Vyčištění cache
