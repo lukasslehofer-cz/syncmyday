@@ -137,7 +137,7 @@ git push origin main
 
 ```bash
 # Připojte se na server:
-ssh syncmyday_cz@ssh.syncmyday.cz
+ssh syncmyday_cz@syncmyday.cz
 
 # Spusťte deployment skript:
 bash ~/deploy.sh
