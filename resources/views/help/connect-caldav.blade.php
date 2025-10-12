@@ -17,11 +17,11 @@
 
 <div class="p-6 bg-blue-50 border border-blue-200 rounded-xl mb-8">
     <div class="flex items-start">
-        <svg class="w-6 h-6 text-blue-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-blue-600 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <div class="flex-1">
-            <h3 class="text-lg font-semibold text-blue-900 mb-2 leading-tight">What is CalDAV?</h3>
+        <div>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2">What is CalDAV?</h3>
             <p class="text-blue-800 mb-2"><strong>CalDAV</strong> is an open standard protocol for accessing calendar data over the internet. Many calendar services support CalDAV, making it a flexible option for connecting calendars.</p>
             <p class="text-blue-800 mb-0"><strong>Popular CalDAV providers include:</strong> Fastmail, Nextcloud, SOGo, Radicale, Baikal, Synology Calendar, and many others.</p>
         </div>

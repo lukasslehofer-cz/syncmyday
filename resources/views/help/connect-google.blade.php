@@ -20,11 +20,11 @@
 
 <div class="p-6 bg-green-50 border border-green-200 rounded-xl mb-8">
     <div class="flex items-start">
-        <svg class="w-6 h-6 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-green-600 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <div class="flex-1">
-            <h3 class="text-lg font-semibold text-green-900 mb-2 leading-tight">Why Google Calendar?</h3>
+        <div>
+            <h3 class="text-lg font-semibold text-green-900 mb-2">Why Google Calendar?</h3>
             <p class="text-green-800 mb-0"><strong>Google Calendar is the easiest calendar to connect!</strong> It uses secure OAuth authentication, so you never share your password with us. Setup takes less than 2 minutes, and synchronization is instant thanks to real-time webhooks.</p>
         </div>
     </div>
