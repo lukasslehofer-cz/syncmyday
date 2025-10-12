@@ -1,0 +1,174 @@
+{
+    "categories": [
+        {
+            "slug": "news",
+            "sort_order": 1,
+            "translations": [
+                {
+                    "locale": "cs",
+                    "name": "Novinky",
+                    "description": "Nejnovější zprávy a aktualizace o SyncMyDay"
+                },
+                {
+                    "locale": "en",
+                    "name": "News",
+                    "description": "Latest news and updates about SyncMyDay"
+                },
+                {
+                    "locale": "de",
+                    "name": "Neuigkeiten",
+                    "description": "Neueste Nachrichten und Updates zu SyncMyDay"
+                },
+                {
+                    "locale": "pl",
+                    "name": "Aktualności",
+                    "description": "Najnowsze wiadomości i aktualizacje SyncMyDay"
+                },
+                {
+                    "locale": "sk",
+                    "name": "Novinky",
+                    "description": "Najnovšie správy a aktualizácie o SyncMyDay"
+                }
+            ]
+        },
+        {
+            "slug": "guides",
+            "sort_order": 2,
+            "translations": [
+                {
+                    "locale": "cs",
+                    "name": "Návody",
+                    "description": "Podrobné návody pro maximální využití SyncMyDay"
+                },
+                {
+                    "locale": "en",
+                    "name": "Guides",
+                    "description": "Detailed guides to get the most out of SyncMyDay"
+                },
+                {
+                    "locale": "de",
+                    "name": "Anleitungen",
+                    "description": "Detaillierte Anleitungen für maximale Nutzung von SyncMyDay"
+                },
+                {
+                    "locale": "pl",
+                    "name": "Poradniki",
+                    "description": "Szczegółowe przewodniki dotyczące maksymalnego wykorzystania SyncMyDay"
+                },
+                {
+                    "locale": "sk",
+                    "name": "Návody",
+                    "description": "Podrobné návody na maximálne využitie SyncMyDay"
+                }
+            ]
+        },
+        {
+            "slug": "tips-and-tricks",
+            "sort_order": 3,
+            "translations": [
+                {
+                    "locale": "cs",
+                    "name": "Tipy a triky",
+                    "description": "Užitečné tipy pro efektivnější práci s kalendáři"
+                },
+                {
+                    "locale": "en",
+                    "name": "Tips & Tricks",
+                    "description": "Useful tips for more efficient calendar management"
+                },
+                {
+                    "locale": "de",
+                    "name": "Tipps & Tricks",
+                    "description": "Nützliche Tipps für effizienteres Kalendermanagement"
+                },
+                {
+                    "locale": "pl",
+                    "name": "Wskazówki i triki",
+                    "description": "Przydatne wskazówki dotyczące bardziej efektywnego zarządzania kalendarzem"
+                },
+                {
+                    "locale": "sk",
+                    "name": "Tipy a triky",
+                    "description": "Užitočné tipy pre efektívnejšiu prácu s kalendármi"
+                }
+            ]
+        }
+    ],
+    "articles": [
+        {
+            "slug": "porovnani-kalendarnich-sluzeb",
+            "category_slug": "guides",
+            "featured_image": null,
+            "is_published": true,
+            "published_at": "2025-10-07 18:23:47",
+            "translations": [
+                {
+                    "locale": "cs",
+                    "title": "Porovnání kalendářních služeb pro firmy",
+                    "excerpt": "Detailní přehled a porovnání nejpopulárnějších kalendářních služeb pro firemní použití.",
+                    "content": "<p>Výběr správné kalendářní služby je klíčový pro efektivní plánování a organizaci firemních aktivit. V tomto článku porovnáme nejpopulárnější možnosti.<\/p>\n\n<h2>Hlavní kritéria výběru<\/h2>\n\n<p>Při výběru kalendářní služby je důležité zvážit následující faktory:<\/p>\n\n<ul>\n    <li><strong>Integrace s dalšími nástroji<\/strong> - Kompatibilita s e-mailem, úkolovníky a projektovými nástroji<\/li>\n    <li><strong>Sdílení a spolupráce<\/strong> - Možnost sdílet kalendáře s kolegy a týmy<\/li>\n    <li><strong>Mobilní aplikace<\/strong> - Kvalitní aplikace pro iOS a Android<\/li>\n    <li><strong>Zabezpečení<\/strong> - Šifrování dat a ochrana soukromí<\/li>\n    <li><strong>Cena<\/strong> - Poměr cena\/výkon pro firemní využití<\/li>\n<\/ul>\n\n<h2>Srovnávací tabulka<\/h2>\n\n<table class=\"w-full border-collapse border border-gray-300\">\n    <thead>\n        <tr class=\"bg-gray-100\">\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Služba<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Integrace<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Mobilní app<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Cena\/uživatel<\/th>\n        <\/tr>\n    <\/thead>\n    <tbody>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Google Calendar<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Gmail, Meet, Docs<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Vynikající<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Zdarma \/ 6 USD<\/td>\n        <\/tr>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Microsoft 365<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Outlook, Teams, Office<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Velmi dobrá<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">5 - 12 USD<\/td>\n        <\/tr>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Apple iCloud<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Apple ekosystém<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Vynikající (iOS)<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Zdarma \/ 1 - 10 USD<\/td>\n        <\/tr>\n    <\/tbody>\n<\/table>\n\n<h2>Závěr<\/h2>\n\n<p>Každá služba má své výhody. Google Calendar vyniká v jednoduchosti a integraci, Microsoft 365 je ideální pro větší firmy s komplexními požadavky, a Apple iCloud je nejlepší volbou pro firmy používající Apple zařízení.<\/p>\n\n<p><strong>S SyncMyDay můžete využít to nejlepší z více služeb současně!<\/strong> Automatická synchronizace zajistí, že vaše události jsou vždy aktuální napříč všemi kalendáři.<\/p>",
+                    "meta_title": "Porovnání Google Calendar, Microsoft 365 a Apple iCloud pro firmy",
+                    "meta_description": "Detailní srovnání nejpopulárnějších kalendářních služeb pro firemní použití. Zjistěte, která je pro vás nejlepší."
+                },
+                {
+                    "locale": "en",
+                    "title": "Comparing Calendar Services for Business",
+                    "excerpt": "A detailed overview and comparison of the most popular calendar services for business use.",
+                    "content": "<p>Choosing the right calendar service is crucial for effective planning and organization of business activities. In this article, we compare the most popular options.<\/p>\n\n<h2>Main Selection Criteria<\/h2>\n\n<p>When choosing a calendar service, it is important to consider the following factors:<\/p>\n\n<ul>\n    <li><strong>Integration with other tools<\/strong> - Compatibility with email, task managers and project tools<\/li>\n    <li><strong>Sharing and collaboration<\/strong> - Ability to share calendars with colleagues and teams<\/li>\n    <li><strong>Mobile apps<\/strong> - Quality apps for iOS and Android<\/li>\n    <li><strong>Security<\/strong> - Data encryption and privacy protection<\/li>\n    <li><strong>Price<\/strong> - Cost-effectiveness for business use<\/li>\n<\/ul>\n\n<h2>Comparison Table<\/h2>\n\n<table class=\"w-full border-collapse border border-gray-300\">\n    <thead>\n        <tr class=\"bg-gray-100\">\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Service<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Integration<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Mobile app<\/th>\n            <th class=\"border border-gray-300 px-4 py-2 text-left\">Price\/user<\/th>\n        <\/tr>\n    <\/thead>\n    <tbody>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Google Calendar<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Gmail, Meet, Docs<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Excellent<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Free \/ $6<\/td>\n        <\/tr>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Microsoft 365<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Outlook, Teams, Office<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Very good<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">$5 - $12<\/td>\n        <\/tr>\n        <tr>\n            <td class=\"border border-gray-300 px-4 py-2\"><strong>Apple iCloud<\/strong><\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Apple ecosystem<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Excellent (iOS)<\/td>\n            <td class=\"border border-gray-300 px-4 py-2\">Free \/ $1 - $10<\/td>\n        <\/tr>\n    <\/tbody>\n<\/table>\n\n<h2>Conclusion<\/h2>\n\n<p>Each service has its advantages. Google Calendar excels in simplicity and integration, Microsoft 365 is ideal for larger companies with complex requirements, and Apple iCloud is the best choice for companies using Apple devices.<\/p>\n\n<p><strong>With SyncMyDay, you can use the best of multiple services at once!<\/strong> Automatic synchronization ensures that your events are always up to date across all calendars.<\/p>",
+                    "meta_title": "Comparing Google Calendar, Microsoft 365 and Apple iCloud for Business",
+                    "meta_description": "Detailed comparison of the most popular calendar services for business use. Find out which one is best for you."
+                }
+            ]
+        },
+        {
+            "slug": "5-tipu-jak-predejit-double-booking",
+            "category_slug": "tips-and-tricks",
+            "featured_image": "\/images\/blog\/clanek1.jpg",
+            "is_published": true,
+            "published_at": "2025-10-10 18:23:47",
+            "translations": [
+                {
+                    "locale": "cs",
+                    "title": "5 tipů jak předejít dvojitému bookingu",
+                    "excerpt": "Praktické tipy a osvědčené postupy pro eliminaci konfliktů v kalendáři.",
+                    "content": "<p>Dvojité bookování (double booking) je noční můrou každého, kdo spravuje více kalendářů. Zde je 5 osvědčených tipů, jak se mu vyhnout.<\/p>\r\n\r\n<h2>1. Automatická synchronizace je základ<\/h2>\r\n\r\n<p>Manuální kopírování událostí mezi kalendáři je zdlouhavé a náchylné k chybám. Používejte nástroje pro automatickou synchronizaci, které zajistí, že všechny vaše kalendáře jsou vždy aktuální.<\/p>\r\n<!-- Varianta 2: Centrovaný blok (přerušuje text) -->\r\n<div class=\"my-8 p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 border-2 border-indigo-200 rounded-xl shadow-lg max-w-md mx-auto\">\r\n    <div class=\"text-center\">\r\n        <div class=\"inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4 shadow-md\" style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\">\r\n            <svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\r\n                <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z\"\/>\r\n            <\/svg>\r\n        <\/div>\r\n        <h3 class=\"text-xl font-bold text-gray-900 mb-2\">Vyzkoušejte SyncMyDay<\/h3>\r\n        <p class=\"text-sm text-gray-600 mb-4\">Zdarma na 14 dní. Bez platební karty.<\/p>\r\n        <a href=\"\/register\" class=\"inline-block px-6 py-3 font-semibold rounded-lg hover:opacity-90 shadow-md transform hover:scale-105 transition mr-2\" style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; text-decoration: none !important;\">\r\n            Začít zdarma\r\n        <\/a>\r\n        <a href=\"\/#features\" class=\"inline-block px-6 py-3 text-sm font-semibold hover:text-indigo-700 transition\" style=\"color: #6366f1 !important; text-decoration: none !important;\">\r\n            Zjistit více →\r\n        <\/a>\r\n    <\/div>\r\n<\/div>\r\n<div class=\"bg-indigo-50 border-l-4 border-indigo-600 p-4 my-6\">\r\n    <p class=\"font-semibold text-indigo-900\">💡 Pro tip:<\/p>\r\n    <p class=\"text-indigo-800\">SyncMyDay automaticky vytváří blokovací události v reálném čase, takže když přidáte schůzku do pracovního kalendáře, okamžitě se tento čas zablokuje i v soukromém kalendáři.<\/p>\r\n<\/div>\r\n\r\n<h2>2. Nastavte buffer time<\/h2>\r\n\r\n<p>Mezi schůzkami vždy nechávejte alespoň 15-30 minut volného času. To vám dá prostor pro:<\/p>\r\n\r\n<ul>\r\n    <li>Přesun mezi místy konání<\/li>\r\n    <li>Krátkou přestávku<\/li>\r\n    <li>Zpracování poznámek z předchozí schůzky<\/li>\r\n    <li>Přípravu na následující jednání<\/li>\r\n<\/ul>\r\n\r\n<h2>3. Používejte jedno místo pro booking<\/h2>\r\n\r\n<p>Pokud někdo chce s vámi naplánovat schůzku, vždy mu poskytněte odkaz na váš hlavní kalendář nebo bookovací nástroj. Nikdy neříkejte \"podívám se a ozvu se\" - to vede k chybám.<\/p>\r\n\r\n<h2>4. Pravidelně kontrolujte konflikt<\/h2>\r\n\r\n<p>Alespoň jednou týdně si projděte všechny své kalendáře a zkontrolujte, zda nemáte nějaké překrývající se události. Čím dříve konflikt odhalíte, tím snazší je ho vyřešit.<\/p>\r\n\r\n<h2>5. Nastavte notifikace<\/h2>\r\n\r\n<p>Konfigurace upozornění na blížící se události vám pomůže nezapomenout na schůzky a včas reagovat na případné časové konflikty.<\/p>\r\n\r\n<div class=\"bg-green-50 border border-green-200 rounded-lg p-6 my-6\">\r\n    <h3 class=\"text-xl font-bold text-green-900 mb-2\">Závěr<\/h3>\r\n    <p class=\"text-green-800\">Předcházení dvojitému bookingu je především o správných nástrojích a dobrých návycích. S automatickou synchronizací kalendářů máte vyhráno!<\/p>\r\n<\/div>",
+                    "meta_title": "5 osvědčených tipů jak předejít double booking v kalendáři",
+                    "meta_description": "Praktický průvodce prevencí dvojitého bookování. Naučte se tipy a triky pro bezproblémové plánování schůzek."
+                },
+                {
+                    "locale": "en",
+                    "title": "5 Tips to Prevent Double Booking",
+                    "excerpt": "Practical tips and best practices for eliminating calendar conflicts.",
+                    "content": "<p>Double booking is the nightmare of anyone managing multiple calendars. Here are 5 proven tips to avoid it.<\/p>\r\n\r\n<h2>1. Automatic Synchronization is Key<\/h2>\r\n\r\n<p>Manually copying events between calendars is time-consuming and error-prone. Use automatic synchronization tools that ensure all your calendars are always up to date.<\/p>\r\n\r\n<div class=\"bg-indigo-50 border-l-4 border-indigo-600 p-4 my-6\">\r\n    <p class=\"font-semibold text-indigo-900\">💡 Pro tip:<\/p>\r\n    <p class=\"text-indigo-800\">SyncMyDay automatically creates blocking events in real-time, so when you add a meeting to your work calendar, this time is immediately blocked in your personal calendar too.<\/p>\r\n<\/div>\r\n\r\n<h2>2. Set Buffer Time<\/h2>\r\n\r\n<p>Always leave at least 15-30 minutes of free time between meetings. This gives you space for:<\/p>\r\n\r\n<ul>\r\n    <li>Travel between locations<\/li>\r\n    <li>A short break<\/li>\r\n    <li>Processing notes from the previous meeting<\/li>\r\n    <li>Preparation for the next meeting<\/li>\r\n<\/ul>\r\n\r\n<h2>3. Use One Place for Booking<\/h2>\r\n\r\n<p>If someone wants to schedule a meeting with you, always provide them with a link to your main calendar or booking tool. Never say \"I'll check and get back to you\" - that leads to errors.<\/p>\r\n\r\n<h2>4. Regularly Check for Conflicts<\/h2>\r\n\r\n<p>At least once a week, review all your calendars and check for overlapping events. The sooner you discover a conflict, the easier it is to resolve.<\/p>\r\n\r\n<h2>5. Set Up Notifications<\/h2>\r\n\r\n<p>Configuring alerts for upcoming events will help you remember appointments and respond to time conflicts in time.<\/p>\r\n\r\n<div class=\"bg-green-50 border border-green-200 rounded-lg p-6 my-6\">\r\n    <h3 class=\"text-xl font-bold text-green-900 mb-2\">Conclusion<\/h3>\r\n    <p class=\"text-green-800\">Preventing double booking is primarily about the right tools and good habits. With automatic calendar synchronization, you've got it made!<\/p>\r\n<\/div>",
+                    "meta_title": "5 Proven Tips to Prevent Double Booking in Your Calendar",
+                    "meta_description": "A practical guide to preventing double booking. Learn tips and tricks for hassle-free meeting scheduling."
+                }
+            ]
+        },
+        {
+            "slug": "jak-nastavit-synchronizaci-kalendaru",
+            "category_slug": "guides",
+            "featured_image": null,
+            "is_published": true,
+            "published_at": "2025-10-11 18:23:47",
+            "translations": [
+                {
+                    "locale": "cs",
+                    "title": "Jak nastavit synchronizaci kalendářů: Krok za krokem",
+                    "excerpt": "Kompletní průvodce nastavením automatické synchronizace mezi vašimi kalendáři.",
+                    "content": "<p>Správa více kalendářů nemusí být složitá. Tento průvodce vám ukáže, jak nastavit automatickou synchronizaci za pár minut.<\/p>\n\n<h2>Proč synchronizovat kalendáře?<\/h2>\n\n<p>Pokud používáte více kalendářů (pracovní, osobní, rodinný), pravděpodobně znáte tyto problémy:<\/p>\n\n<div class=\"bg-red-50 border border-red-200 rounded-lg p-4 my-4\">\n    <ul class=\"space-y-2\">\n        <li>❌ Dvojité bookování důležitých schůzek<\/li>\n        <li>❌ Zapomenuté události<\/li>\n        <li>❌ Konfliktující časy mezi kalendáři<\/li>\n        <li>❌ Manuální kopírování událostí<\/li>\n    <\/ul>\n<\/div>\n\n<p>Řešením je automatická synchronizace, která zajistí, že když je čas obsazený v jednom kalendáři, automaticky se zablokuje i ve všech ostatních.<\/p>\n\n<h2>Postup nastavení (5 kroků)<\/h2>\n\n<h3>Krok 1: Připojte své kalendáře<\/h3>\n\n<p>Nejprve připojte všechny kalendáře, které chcete synchronizovat:<\/p>\n\n<ol class=\"list-decimal list-inside space-y-2 ml-4\">\n    <li>Přihlaste se do SyncMyDay<\/li>\n    <li>Klikněte na \"Připojit kalendář\"<\/li>\n    <li>Vyberte poskytovatele (Google, Microsoft, Apple...)<\/li>\n    <li>Autorizujte přístup<\/li>\n    <li>Opakujte pro všechny své kalendáře<\/li>\n<\/ol>\n\n<h3>Krok 2: Vytvořte synchronizační pravidlo<\/h3>\n\n<p>Synchronizační pravidlo definuje, jak se události mají mezi kalendáři přenášet:<\/p>\n\n<ul class=\"space-y-2 ml-4\">\n    <li><strong>Zdrojový kalendář:<\/strong> odkud se události berou<\/li>\n    <li><strong>Cílový kalendář:<\/strong> kam se události kopírují jako \"Zaneprázdněn\"<\/li>\n    <li><strong>Filtry:<\/strong> volitelně můžete synchronizovat pouze určité typy událostí<\/li>\n<\/ul>\n\n<div class=\"bg-blue-50 border-l-4 border-blue-600 p-4 my-6\">\n    <p class=\"font-semibold text-blue-900\">📌 Příklad:<\/p>\n    <p class=\"text-blue-800\">Pracovní kalendář (Google) → Osobní kalendář (Apple iCloud)<br>\n    Když přidáte schůzku do pracovního Google kalendáře, automaticky se vytvoří blokovací událost \"Zaneprázdněn\" ve vašem osobním iCloud kalendáři.<\/p>\n<\/div>\n\n<h3>Krok 3: Nastavte filtrování (volitelné)<\/h3>\n\n<p>Můžete synchronizovat:<\/p>\n\n<ul class=\"ml-4\">\n    <li>✅ Všechny události<\/li>\n    <li>✅ Pouze události, kde jste označeni jako \"Zaneprázdněn\"<\/li>\n    <li>✅ Pouze celodenní události<\/li>\n    <li>✅ Události obsahující určitá klíčová slova<\/li>\n<\/ul>\n\n<h3>Krok 4: Aktivujte pravidlo<\/h3>\n\n<p>Jedním kliknutím aktivujte synchronizaci. Systém začne okamžitě sledovat změny a synchronizovat události v reálném čase.<\/p>\n\n<h3>Krok 5: Otestujte funkčnost<\/h3>\n\n<p>Vytvořte testovací událost ve zdrojovém kalendáři a ověřte, že se během několika sekund objeví v cílovém kalendáři.<\/p>\n\n<h2>Časté otázky<\/h2>\n\n<h3>Jak rychle se události synchronizují?<\/h3>\n<p>Synchronizace probíhá prakticky okamžitě díky webhookům. Nová událost se přenese do cílového kalendáře během 1-5 sekund.<\/p>\n\n<h3>Vidí lidé obsah mých událostí?<\/h3>\n<p>Ne! V cílovém kalendáři se vytvoří pouze blokovací událost s obecným názvem \"Zaneprázdněn\". Detaily vaší události zůstávají soukromé.<\/p>\n\n<h3>Můžu synchronizovat více kalendářů najednou?<\/h3>\n<p>Ano! Můžete vytvořit neomezený počet synchronizačních pravidel a synchronizovat tak libovolné kombinace kalendářů.<\/p>\n\n<h3>Co když smažu událost?<\/h3>\n<p>Pokud odstraníte událost ze zdrojového kalendáře, automaticky se smaže i odpovídající blokovací událost v cílovém kalendáři.<\/p>\n\n<h2>Začněte dnes!<\/h2>\n\n<p>Nastavení automatické synchronizace zabere jen pár minut a ušetří vám hodiny času i stres z dvojitého bookování. <a href=\"\/register\" class=\"text-indigo-600 hover:text-indigo-700 font-semibold\">Zaregistrujte se zdarma<\/a> a vyzkoušejte si to.<\/p>",
+                    "meta_title": "Jak nastavit synchronizaci kalendářů - Kompletní průvodce 2025",
+                    "meta_description": "Detailní krok za krokem průvodce nastavením automatické synchronizace kalendářů. Eliminujte double booking jednou provždy."
+                },
+                {
+                    "locale": "en",
+                    "title": "How to Set Up Calendar Synchronization: Step by Step",
+                    "excerpt": "Complete guide to setting up automatic synchronization between your calendars.",
+                    "content": "<p>Managing multiple calendars doesn't have to be complicated. This guide will show you how to set up automatic synchronization in just a few minutes.<\/p>\n\n<h2>Why Synchronize Calendars?<\/h2>\n\n<p>If you use multiple calendars (work, personal, family), you probably know these problems:<\/p>\n\n<div class=\"bg-red-50 border border-red-200 rounded-lg p-4 my-4\">\n    <ul class=\"space-y-2\">\n        <li>❌ Double booking important meetings<\/li>\n        <li>❌ Forgotten events<\/li>\n        <li>❌ Conflicting times between calendars<\/li>\n        <li>❌ Manual copying of events<\/li>\n    <\/ul>\n<\/div>\n\n<p>The solution is automatic synchronization, which ensures that when time is occupied in one calendar, it is automatically blocked in all others.<\/p>\n\n<h2>Setup Process (5 Steps)<\/h2>\n\n<h3>Step 1: Connect Your Calendars<\/h3>\n\n<p>First, connect all calendars you want to synchronize:<\/p>\n\n<ol class=\"list-decimal list-inside space-y-2 ml-4\">\n    <li>Log in to SyncMyDay<\/li>\n    <li>Click \"Connect Calendar\"<\/li>\n    <li>Select provider (Google, Microsoft, Apple...)<\/li>\n    <li>Authorize access<\/li>\n    <li>Repeat for all your calendars<\/li>\n<\/ol>\n\n<h3>Step 2: Create Synchronization Rule<\/h3>\n\n<p>A synchronization rule defines how events should be transferred between calendars:<\/p>\n\n<ul class=\"space-y-2 ml-4\">\n    <li><strong>Source calendar:<\/strong> where events come from<\/li>\n    <li><strong>Target calendar:<\/strong> where events are copied as \"Busy\"<\/li>\n    <li><strong>Filters:<\/strong> optionally you can synchronize only certain types of events<\/li>\n<\/ul>\n\n<div class=\"bg-blue-50 border-l-4 border-blue-600 p-4 my-6\">\n    <p class=\"font-semibold text-blue-900\">📌 Example:<\/p>\n    <p class=\"text-blue-800\">Work calendar (Google) → Personal calendar (Apple iCloud)<br>\n    When you add a meeting to your work Google calendar, a blocking event \"Busy\" is automatically created in your personal iCloud calendar.<\/p>\n<\/div>\n\n<h3>Step 3: Set Filtering (Optional)<\/h3>\n\n<p>You can synchronize:<\/p>\n\n<ul class=\"ml-4\">\n    <li>✅ All events<\/li>\n    <li>✅ Only events where you are marked as \"Busy\"<\/li>\n    <li>✅ Only all-day events<\/li>\n    <li>✅ Events containing certain keywords<\/li>\n<\/ul>\n\n<h3>Step 4: Activate Rule<\/h3>\n\n<p>With one click, activate synchronization. The system will immediately start monitoring changes and synchronizing events in real-time.<\/p>\n\n<h3>Step 5: Test Functionality<\/h3>\n\n<p>Create a test event in the source calendar and verify that it appears in the target calendar within a few seconds.<\/p>\n\n<h2>Frequently Asked Questions<\/h2>\n\n<h3>How quickly do events synchronize?<\/h3>\n<p>Synchronization occurs almost instantly thanks to webhooks. A new event is transferred to the target calendar within 1-5 seconds.<\/p>\n\n<h3>Do people see the content of my events?<\/h3>\n<p>No! Only a blocking event with a generic name \"Busy\" is created in the target calendar. Details of your event remain private.<\/p>\n\n<h3>Can I synchronize multiple calendars at once?<\/h3>\n<p>Yes! You can create unlimited synchronization rules and thus synchronize any combination of calendars.<\/p>\n\n<h3>What if I delete an event?<\/h3>\n<p>If you remove an event from the source calendar, the corresponding blocking event in the target calendar is automatically deleted as well.<\/p>\n\n<h2>Start Today!<\/h2>\n\n<p>Setting up automatic synchronization takes just a few minutes and will save you hours of time and stress from double booking. <a href=\"\/register\" class=\"text-indigo-600 hover:text-indigo-700 font-semibold\">Register for free<\/a> and try it out.<\/p>",
+                    "meta_title": "How to Set Up Calendar Synchronization - Complete Guide 2025",
+                    "meta_description": "Detailed step-by-step guide to setting up automatic calendar synchronization. Eliminate double booking once and for all."
+                }
+            ]
+        }
+    ]
+}
