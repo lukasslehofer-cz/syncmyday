@@ -312,8 +312,8 @@
                     <div>
                         <h3 class="text-sm font-semibold text-gray-900 mb-3">{{ __('messages.legal') }}</h3>
                         <ul class="space-y-2">
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.privacy_policy') }}</a></li>
-                            <li><a href="#" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.terms_of_service') }}</a></li>
+                            <li><a href="{{ route('privacy') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.privacy_policy') }}</a></li>
+                            <li><a href="{{ route('terms') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.terms_of_service') }}</a></li>
                             @can('admin')
                             <li><a href="{{ route('admin.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.admin_panel') }}</a></li>
                             @endcan

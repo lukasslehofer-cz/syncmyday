@@ -30,6 +30,10 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Public legal pages
+Route::view('/privacy', 'legal.privacy')->name('privacy');
+Route::view('/terms', 'legal.terms')->name('terms');
+
 // Debug routes for session testing (REMOVE IN PRODUCTION!)
 Route::get('/debug-session', function () {
     return response()->json([
