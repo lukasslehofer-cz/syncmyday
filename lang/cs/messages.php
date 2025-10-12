@@ -59,9 +59,9 @@ return [
     'feature_smart_rules' => 'Chytrá pravidla',
     'feature_smart_rules_description' => 'Filtrujte podle zaneprázdněnosti, pracovní doby (9-17), nebo vylučte celodenní události. Plná kontrola nad tím, co se synchronizuje.',
     'feature_email_description' => 'Přísná firemní politika pro Exchange? Nevadí, naše synchronizace pomocí e-mailových pozvánek si s tím poradí!',
-    'feature_easy_setup_description' => 'Připojte Google Calendar a Microsoft 365 pomocí OAuth. Žádné API klíče nebo technické nastavení.',
+    'feature_easy_setup_description' => 'Připojte Google Calendar a Microsoft 365 pomocí vašich existujících účtů. Žádné komplikované technické nastavení.',
     'feature_duplicate_prevention' => 'Prevence duplikátů',
-    'feature_duplicate_prevention_description' => 'Chytrá detekce zabraňuje vytváření duplikátních blokátorů pro stejnou událost napříč pravidly.',
+    'feature_duplicate_prevention_description' => 'Chytrá detekce zabraňuje vytváření duplikátních blockerů pro stejnou událost napříč vašimi kalendáři.',
     
     // Homepage How It Works Section
     'home_how_it_works_section_title' => 'Jak to funguje',

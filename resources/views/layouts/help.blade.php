@@ -91,12 +91,19 @@
         
         .help-content a {
             color: #6366f1;
-            text-decoration: underline;
+            text-decoration: none;
             font-weight: 500;
         }
         
         .help-content a:hover {
             color: #4f46e5;
+            text-decoration: underline;
+        }
+        
+        /* Only underline links in paragraphs and lists */
+        .help-content p a,
+        .help-content li a {
+            text-decoration: underline;
         }
         
         .help-content code {
@@ -155,26 +162,85 @@
     <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
+                <div class="flex items-center space-x-8">
+                    <a href="{{ auth()->check() ? route('dashboard') : route('home') }}" class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SyncMyDay</span>
+                    </a>
+
+                    @auth
+                    <!-- Authenticated User Menu -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            {{ __('messages.dashboard') }}
+                        </a>
+                        <a href="{{ route('connections.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('connections.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            {{ __('messages.calendars') }}
+                        </a>
+                        <a href="{{ route('sync-rules.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                            {{ __('messages.sync_rules') }}
+                        </a>
                     </div>
-                    <span class="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">SyncMyDay</span>
-                </a>
+                    @else
+                    <!-- Guest User Menu (Homepage style) -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="{{ route('home') }}#features" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_features') }}</a>
+                        <a href="{{ route('home') }}#how-it-works" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_how_it_works') }}</a>
+                        <a href="{{ route('home') }}#pricing" class="text-sm font-medium text-gray-600 hover:text-indigo-600">{{ __('messages.home_pricing') }}</a>
+                    </div>
+                    @endauth
+                </div>
                 
                 <div class="flex items-center space-x-4">
-                    @guest
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">Sign In</a>
-                        <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 shadow-md">
-                            Sign Up
+                    @auth
+                        @if(auth()->user()->subscription_tier === 'free')
+                        <a href="{{ route('billing') }}" class="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white gradient-bg hover:opacity-90 shadow-md">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            {{ __('messages.upgrade_pro') }}
                         </a>
+                        @endif
+
+                        <!-- User Menu -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-gray-900">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-semibold">
+                                    {{ strtoupper(substr(auth()->user()->email, 0, 2)) }}
+                                </div>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+
+                            <div x-show="open" @click.away="open = false" x-cloak style="display: none;" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 border border-gray-100">
+                                <div class="px-4 py-2 border-b border-gray-100">
+                                    <p class="text-xs text-gray-500">{{ __('messages.signed_in_as') }}</p>
+                                    <p class="text-sm font-medium text-gray-900 truncate">{{ auth()->user()->email }}</p>
+                                </div>
+                                <a href="{{ route('account.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.account_settings') }}</a>
+                                <a href="{{ route('billing') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.billing') }}</a>
+                                @can('admin')
+                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('messages.admin_panel') }}</a>
+                                @endcan
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        {{ __('messages.logout') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     @else
-                        <a href="{{ route('dashboard') }}" class="px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 shadow-md">
-                            Dashboard
+                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-gray-900">{{ __('messages.sign_in') }}</a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-white gradient-bg rounded-lg hover:opacity-90 shadow-md">
+                            {{ __('messages.sign_up') }}
                         </a>
-                    @endguest
+                    @endauth
                 </div>
             </div>
         </div>
