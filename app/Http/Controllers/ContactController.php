@@ -10,7 +10,9 @@ class ContactController extends Controller
 {
     public function show()
     {
-        return view('contact');
+        return view('contact', [
+            'formattedPrice' => \App\Helpers\PricingHelper::formatPrice(),
+        ]);
     }
 
     public function send(Request $request)
