@@ -134,6 +134,21 @@
             font-style: italic;
             margin: 1.5rem 0;
         }
+        
+        /* Step counter */
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50 antialiased">
