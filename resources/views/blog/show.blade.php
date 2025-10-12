@@ -71,27 +71,27 @@
     </div>
 
     <!-- CTA Block -->
-    <div class="my-12 p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-2xl text-white">
-        <div class="max-w-3xl mx-auto text-center">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-6">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="my-10 p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 rounded-2xl shadow-xl border border-indigo-200">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-lg mb-4 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
             </div>
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ __('messages.blog_cta_title') }}</h2>
-            <p class="text-xl mb-8 text-white/90">{{ __('messages.blog_cta_subtitle') }}</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-lg hover:bg-gray-100 shadow-lg transform hover:scale-105 transition inline-flex items-center justify-center">
+            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">{{ __('messages.blog_cta_title') }}</h2>
+            <p class="text-lg mb-6 text-gray-700">{{ __('messages.blog_cta_subtitle') }}</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; text-decoration: none !important;">
                     {{ __('messages.blog_cta_button_primary') }}
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
-                <a href="{{ route('home') }}#features" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/20 border-2 border-white/30 transition inline-flex items-center justify-center">
+                <a href="{{ route('home') }}#features" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold bg-white rounded-xl hover:bg-gray-50 border-2 border-indigo-200 shadow-lg transform hover:scale-105 transition" style="color: #374151 !important; text-decoration: none !important;">
                     {{ __('messages.blog_cta_button_secondary') }}
                 </a>
             </div>
-            <p class="mt-6 text-sm text-white/80">{{ __('messages.blog_cta_footnote') }}</p>
+            <p class="mt-4 text-xs text-gray-600 font-medium">{{ __('messages.blog_cta_footnote') }}</p>
         </div>
     </div>
 

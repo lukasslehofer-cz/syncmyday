@@ -125,7 +125,11 @@ class BlogArticle extends Model
     public function getFeaturedImageUrl()
     {
         if ($this->featured_image) {
-            return asset('storage/' . $this->featured_image);
+            // If path starts with /, use as-is, otherwise prepend images/blog/
+            if (str_starts_with($this->featured_image, '/')) {
+                return asset(ltrim($this->featured_image, '/'));
+            }
+            return asset('images/blog/' . $this->featured_image);
         }
         return asset('syncmyday-logo.png'); // fallback
     }

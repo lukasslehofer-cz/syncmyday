@@ -39,3 +39,7 @@ install.php
 
 # Backup soubory
 .env.backup*
+
+# Blog images (upload via FTP/SFTP)
+/public/images/blog/*
+!/public/images/blog/.gitignore
