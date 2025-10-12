@@ -48,11 +48,11 @@ return [
             'sk' => env('STRIPE_PRICE_EUR'), // 9.99 EUR (SK používá EUR)
         ],
         'currencies' => [
-            'cs' => ['code' => 'CZK', 'symbol' => 'Kč', 'amount' => 249],
-            'en' => ['code' => 'EUR', 'symbol' => '€', 'amount' => 9.90],
-            'de' => ['code' => 'EUR', 'symbol' => '€', 'amount' => 9.90],
-            'pl' => ['code' => 'PLN', 'symbol' => 'zł', 'amount' => 49],
-            'sk' => ['code' => 'EUR', 'symbol' => '€', 'amount' => 9.90],
+            'cs' => ['code' => 'CZK', 'symbol' => 'Kč', 'amount' => env('PRICE_AMOUNT_CZK', 249)],
+            'en' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
+            'de' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
+            'pl' => ['code' => 'PLN', 'symbol' => 'zł', 'amount' => env('PRICE_AMOUNT_PLN', 49)],
+            'sk' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
         ],
     ],
 
