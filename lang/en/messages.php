@@ -582,4 +582,16 @@ return [
     'browse_help_articles' => 'Browse Help Articles',
     'contact_success' => 'Thank you for your message! We\'ll respond as soon as possible.',
     'contact_error' => 'Sorry, there was an error sending your message. Please try again.',
+    
+    // Help Center Sidebar
+    'help_overview' => 'Overview',
+    'help_connection_guides' => 'Connection Guides',
+    'help_google_calendar' => 'Google Calendar',
+    'help_microsoft_365' => 'Microsoft 365',
+    'help_apple_icloud' => 'Apple iCloud',
+    'help_caldav' => 'CalDAV (Generic)',
+    'help_email_calendar' => 'Email Calendar',
+    'help_other_topics' => 'Other Topics',
+    'help_creating_sync_rules' => 'Creating Sync Rules',
+    'help_contact_support' => 'Contact Support',
 ];

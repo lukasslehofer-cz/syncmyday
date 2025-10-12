@@ -589,4 +589,16 @@ return [
     'browse_help_articles' => 'Procházet články nápovědy',
     'contact_success' => 'Děkujeme za vaši zprávu! Odpovíme co nejdříve.',
     'contact_error' => 'Omlouváme se, při odesílání zprávy došlo k chybě. Prosím zkuste to znovu.',
+    
+    // Help Center Sidebar
+    'help_overview' => 'Přehled',
+    'help_connection_guides' => 'Průvodci připojením',
+    'help_google_calendar' => 'Google Calendar',
+    'help_microsoft_365' => 'Microsoft 365',
+    'help_apple_icloud' => 'Apple iCloud',
+    'help_caldav' => 'CalDAV (Obecný)',
+    'help_email_calendar' => 'E-mailový kalendář',
+    'help_other_topics' => 'Další témata',
+    'help_creating_sync_rules' => 'Vytváření pravidel synchronizace',
+    'help_contact_support' => 'Kontaktovat podporu',
 ];
