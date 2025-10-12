@@ -112,6 +112,13 @@ Route::prefix('help')->name('help.')->group(function () {
     })->name('sync-rules');
 });
 
+// Blog
+Route::prefix('blog')->name('blog.')->group(function () {
+    Route::get('/', [App\Http\Controllers\BlogController::class, 'index'])->name('index');
+    Route::get('/category/{slug}', [App\Http\Controllers\BlogController::class, 'category'])->name('category');
+    Route::get('/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('show');
+});
+
 // Debug routes for session testing (REMOVE IN PRODUCTION!)
 Route::get('/debug-session', function () {
     return response()->json([
@@ -260,6 +267,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/connections', [AdminController::class, 'connections'])->name('connections');
         Route::get('/webhooks', [AdminController::class, 'webhooks'])->name('webhooks');
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
+        
+        // Blog admin
+        Route::prefix('blog')->name('blog.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\BlogAdminController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\BlogAdminController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\BlogAdminController::class, 'store'])->name('store');
+            Route::get('/{id}/edit', [\App\Http\Controllers\Admin\BlogAdminController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [\App\Http\Controllers\Admin\BlogAdminController::class, 'update'])->name('update');
+            Route::delete('/{id}', [\App\Http\Controllers\Admin\BlogAdminController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/toggle-publish', [\App\Http\Controllers\Admin\BlogAdminController::class, 'togglePublish'])->name('toggle-publish');
+        });
     });
 });
 

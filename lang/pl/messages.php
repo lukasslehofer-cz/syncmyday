@@ -551,4 +551,23 @@ return [
     'next_steps' => 'Następne kroki',
     'email_calendar_next_steps' => 'Po utworzeniu tego kalendarza e-mail przejdź do <strong>Reguł synchronizacji</strong>, aby określić, jak ma się synchronizować z innymi kalendarzami. Możesz go użyć jako <strong>źródła</strong> (odbieranie przekierowanych e-maili) lub jako <strong>celu</strong> (wysyłanie zaproszeń iMIP).',
     'create_email_calendar_button' => 'Utwórz kalendarz e-mail',
+    
+    // Blog
+    'blog_title' => 'Blog - Wskazówki i aktualności',
+    'blog_subtitle' => 'Odkryj najlepsze praktyki, aktualności i wskazówki dotyczące synchronizacji kalendarzy',
+    'blog_meta_description' => 'Przeczytaj artykuły o synchronizacji kalendarzy, produktywności i najlepszych praktykach z SyncMyDay',
+    'blog_categories' => 'Kategorie',
+    'blog_all_articles' => 'Wszystkie artykuły',
+    'blog_no_articles' => 'Nie opublikowano jeszcze żadnych artykułów.',
+    'blog_no_articles_in_category' => 'W tej kategorii nie ma artykułów.',
+    'blog_related_articles' => 'Powiązane artykuły',
+    'back_to_blog' => 'Powrót do blogu',
+    'back_to' => 'Powrót do',
+    
+    // Blog CTA
+    'blog_cta_title' => 'Zacznij synchronizować swoje kalendarze już dziś!',
+    'blog_cta_subtitle' => 'Koniec z podwójnymi rezerwacjami i stresem. SyncMyDay załatwi to automatycznie.',
+    'blog_cta_button_primary' => 'Wypróbuj za darmo',
+    'blog_cta_button_secondary' => 'Zobacz funkcje',
+    'blog_cta_footnote' => '✓ 14 dni za darmo • ✓ Bez karty kredytowej • ✓ Natychmiastowa aktywacja',
 ];

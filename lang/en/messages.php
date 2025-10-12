@@ -645,4 +645,23 @@ return [
     'help_other_topics' => 'Other Topics',
     'help_creating_sync_rules' => 'Creating Sync Rules',
     'help_contact_support' => 'Contact Support',
+    
+    // Blog
+    'blog_title' => 'Blog - Tips & News',
+    'blog_subtitle' => 'Discover best practices, news and tips for calendar synchronization',
+    'blog_meta_description' => 'Read articles about calendar synchronization, productivity and best practices with SyncMyDay',
+    'blog_categories' => 'Categories',
+    'blog_all_articles' => 'All Articles',
+    'blog_no_articles' => 'No articles have been published yet.',
+    'blog_no_articles_in_category' => 'There are no articles in this category.',
+    'blog_related_articles' => 'Related Articles',
+    'back_to_blog' => 'Back to blog',
+    'back_to' => 'Back to',
+    
+    // Blog CTA
+    'blog_cta_title' => 'Start syncing your calendars today!',
+    'blog_cta_subtitle' => 'No double booking, no stress. SyncMyDay handles it automatically.',
+    'blog_cta_button_primary' => 'Try for free',
+    'blog_cta_button_secondary' => 'View features',
+    'blog_cta_footnote' => '✓ 14 days free • ✓ No credit card • ✓ Instant activation',
 ];

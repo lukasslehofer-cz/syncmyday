@@ -652,4 +652,23 @@ return [
     'help_other_topics' => 'Další témata',
     'help_creating_sync_rules' => 'Vytváření pravidel synchronizace',
     'help_contact_support' => 'Kontaktovat podporu',
+    
+    // Blog
+    'blog_title' => 'Blog - Tipy a novinky',
+    'blog_subtitle' => 'Objevte nejlepší postupy, novinky a tipy pro synchronizaci kalendářů',
+    'blog_meta_description' => 'Přečtěte si články o synchronizaci kalendářů, produktivitě a nejlepších postupech s SyncMyDay',
+    'blog_categories' => 'Kategorie',
+    'blog_all_articles' => 'Všechny články',
+    'blog_no_articles' => 'Zatím nebyly publikovány žádné články.',
+    'blog_no_articles_in_category' => 'V této kategorii nejsou žádné články.',
+    'blog_related_articles' => 'Související články',
+    'back_to_blog' => 'Zpět na blog',
+    'back_to' => 'Zpět na',
+    
+    // Blog CTA
+    'blog_cta_title' => 'Začněte synchronizovat své kalendáře už dnes!',
+    'blog_cta_subtitle' => 'Žádné double booking, žádný stres. SyncMyDay to vyřeší za vás automaticky.',
+    'blog_cta_button_primary' => 'Vyzkoušet zdarma',
+    'blog_cta_button_secondary' => 'Zobrazit funkce',
+    'blog_cta_footnote' => '✓ 14 dní zdarma • ✓ Bez platební karty • ✓ Okamžitá aktivace',
 ];

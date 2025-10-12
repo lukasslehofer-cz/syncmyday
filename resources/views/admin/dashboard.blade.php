@@ -80,6 +80,11 @@
             <h3 class="font-semibold text-gray-900 mb-2">Health Check</h3>
             <p class="text-sm text-gray-600">System health status</p>
         </a>
+        
+        <a href="{{ route('admin.blog.index') }}" class="bg-white rounded-lg shadow p-6 hover:bg-gray-50">
+            <h3 class="font-semibold text-gray-900 mb-2">Blog Articles</h3>
+            <p class="text-sm text-gray-600">Manage blog content</p>
+        </a>
     </div>
 </div>
 @endsection

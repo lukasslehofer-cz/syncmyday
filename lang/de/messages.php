@@ -241,5 +241,24 @@ return [
     'calendar_access_denied' => 'Sie haben die erforderlichen Berechtigungen nicht erteilt. Bitte versuchen Sie es erneut und erlauben Sie den Zugriff auf Ihren Kalender.',
     'calendar_connection_network_error' => 'Verbindung zu :provider nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
     'calendar_connection_generic_error' => 'Kalender :provider kann nicht verbunden werden. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie den Support.',
+    
+    // Blog
+    'blog_title' => 'Blog - Tipps & Neuigkeiten',
+    'blog_subtitle' => 'Entdecken Sie Best Practices, Neuigkeiten und Tipps zur Kalendersynchronisation',
+    'blog_meta_description' => 'Lesen Sie Artikel über Kalendersynchronisation, Produktivität und Best Practices mit SyncMyDay',
+    'blog_categories' => 'Kategorien',
+    'blog_all_articles' => 'Alle Artikel',
+    'blog_no_articles' => 'Es wurden noch keine Artikel veröffentlicht.',
+    'blog_no_articles_in_category' => 'In dieser Kategorie gibt es keine Artikel.',
+    'blog_related_articles' => 'Verwandte Artikel',
+    'back_to_blog' => 'Zurück zum Blog',
+    'back_to' => 'Zurück zu',
+    
+    // Blog CTA
+    'blog_cta_title' => 'Beginnen Sie noch heute mit der Synchronisierung Ihrer Kalender!',
+    'blog_cta_subtitle' => 'Keine Doppelbuchungen, kein Stress. SyncMyDay erledigt das automatisch.',
+    'blog_cta_button_primary' => 'Kostenlos testen',
+    'blog_cta_button_secondary' => 'Funktionen anzeigen',
+    'blog_cta_footnote' => '✓ 14 Tage kostenlos • ✓ Keine Kreditkarte • ✓ Sofortige Aktivierung',
 ];
 

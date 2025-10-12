@@ -551,4 +551,23 @@ return [
     'next_steps' => 'Ďalšie kroky',
     'email_calendar_next_steps' => 'Po vytvorení tohto e-mailového kalendára prejdite na <strong>Pravidlá synchronizácie</strong> a definujte, ako sa má synchronizovať s vašimi ďalšími kalendármi. Môžete ho použiť ako <strong>zdroj</strong> (príjem presmerovaných e-mailov) alebo ako <strong>cieľ</strong> (odosielanie iMIP pozvánok).',
     'create_email_calendar_button' => 'Vytvoriť e-mailový kalendár',
+    
+    // Blog
+    'blog_title' => 'Blog - Tipy a novinky',
+    'blog_subtitle' => 'Objavte najlepšie postupy, novinky a tipy na synchronizáciu kalendárov',
+    'blog_meta_description' => 'Prečítajte si články o synchronizácii kalendárov, produktivite a najlepších postupoch so SyncMyDay',
+    'blog_categories' => 'Kategórie',
+    'blog_all_articles' => 'Všetky články',
+    'blog_no_articles' => 'Zatiaľ neboli publikované žiadne články.',
+    'blog_no_articles_in_category' => 'V tejto kategórii nie sú žiadne články.',
+    'blog_related_articles' => 'Súvisiace články',
+    'back_to_blog' => 'Späť na blog',
+    'back_to' => 'Späť na',
+    
+    // Blog CTA
+    'blog_cta_title' => 'Začnite synchronizovať svoje kalendáre už dnes!',
+    'blog_cta_subtitle' => 'Žiadne dvojité rezervácie, žiadny stres. SyncMyDay to vyrieši automaticky.',
+    'blog_cta_button_primary' => 'Vyskúšať zadarmo',
+    'blog_cta_button_secondary' => 'Zobraziť funkcie',
+    'blog_cta_footnote' => '✓ 14 dní zadarmo • ✓ Bez platobnej karty • ✓ Okamžitá aktivácia',
 ];
