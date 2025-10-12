@@ -196,7 +196,7 @@
                                 class="w-4 h-4 mt-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                             >
                             <label for="terms" class="ml-2 text-sm text-gray-600">
-                                {{ __('messages.i_agree_to') }} <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.terms_of_service') }}</a> {{ __('messages.and') }} <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.privacy_policy') }}</a>
+                                {{ __('messages.i_agree_to') }} <a href="{{ route('terms') }}" target="_blank" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.terms_of_service') }}</a> {{ __('messages.and') }} <a href="{{ route('privacy') }}" target="_blank" class="text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.privacy_policy') }}</a>
                             </label>
                         </div>
                         
