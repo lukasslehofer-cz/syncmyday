@@ -41,35 +41,74 @@ Route::post('/contact', [App\Http\Controllers\ContactController::class, 'send'])
 // Help Center
 Route::prefix('help')->name('help.')->group(function () {
     Route::get('/', function () {
-        return view('help.index');
-    })->name('index');
+        $locale = app()->getLocale();
+        return view("help.index.{$locale}", [], ['locale' => $locale])
+            ->render();
+    })->name('index')->fallback(function () {
+        return view('help.index.en');
+    });
     
     Route::get('/faq', function () {
-        return view('help.faq');
+        $locale = app()->getLocale();
+        try {
+            return view("help.faq.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.faq.en');
+        }
     })->name('faq');
     
     Route::get('/connect-google', function () {
-        return view('help.connect-google');
+        $locale = app()->getLocale();
+        try {
+            return view("help.connect-google.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.connect-google.en');
+        }
     })->name('connect-google');
     
     Route::get('/connect-microsoft', function () {
-        return view('help.connect-microsoft');
+        $locale = app()->getLocale();
+        try {
+            return view("help.connect-microsoft.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.connect-microsoft.en');
+        }
     })->name('connect-microsoft');
     
     Route::get('/connect-apple', function () {
-        return view('help.connect-apple');
+        $locale = app()->getLocale();
+        try {
+            return view("help.connect-apple.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.connect-apple.en');
+        }
     })->name('connect-apple');
     
     Route::get('/connect-caldav', function () {
-        return view('help.connect-caldav');
+        $locale = app()->getLocale();
+        try {
+            return view("help.connect-caldav.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.connect-caldav.en');
+        }
     })->name('connect-caldav');
     
     Route::get('/connect-email', function () {
-        return view('help.connect-email');
+        $locale = app()->getLocale();
+        try {
+            return view("help.connect-email.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.connect-email.en');
+        }
     })->name('connect-email');
     
     Route::get('/sync-rules', function () {
-        return view('help.sync-rules');
+        $locale = app()->getLocale();
+        try {
+            return view("help.sync-rules.{$locale}");
+        } catch (\Exception $e) {
+            return view('help.sync-rules.en');
+        }
     })->name('sync-rules');
 });
 
