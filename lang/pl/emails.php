@@ -13,6 +13,7 @@ return [
     'verify_email_greeting' => 'Cześć :name!',
     'verify_email_intro' => 'Dziękujemy za rejestrację w SyncMyDay! Kliknij przycisk poniżej, aby zweryfikować swój adres e-mail i aktywować konto.',
     'verify_email_button' => 'Zweryfikuj adres e-mail',
+    'verify_email_security_note' => 'Ten link wygaśnie za 60 minut ze względów bezpieczeństwa.',
     'verify_email_alternative' => 'Jeśli przycisk nie działa, skopiuj i wklej ten link do przeglądarki:',
     'verify_email_footer' => 'Jeśli nie zakładałeś konta, nie musisz podejmować żadnych działań.',
     'verification_link_sent' => 'Nowy link weryfikacyjny został wysłany na Twój adres e-mail.',

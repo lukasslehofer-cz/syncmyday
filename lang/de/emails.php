@@ -13,6 +13,7 @@ return [
     'verify_email_greeting' => 'Hallo :name!',
     'verify_email_intro' => 'Vielen Dank für Ihre Registrierung bei SyncMyDay! Bitte klicken Sie auf die Schaltfläche unten, um Ihre E-Mail-Adresse zu bestätigen und Ihr Konto zu aktivieren.',
     'verify_email_button' => 'E-Mail-Adresse bestätigen',
+    'verify_email_security_note' => 'Dieser Link läuft aus Sicherheitsgründen in 60 Minuten ab.',
     'verify_email_alternative' => 'Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link und fügen Sie ihn in Ihren Browser ein:',
     'verify_email_footer' => 'Wenn Sie kein Konto erstellt haben, ist keine weitere Aktion erforderlich.',
     'verification_link_sent' => 'Ein neuer Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet.',

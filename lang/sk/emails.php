@@ -13,6 +13,7 @@ return [
     'verify_email_greeting' => 'Ahoj :name!',
     'verify_email_intro' => 'Ďakujeme za registráciu v SyncMyDay! Prosím kliknite na tlačidlo nižšie pre overenie vašej e-mailovej adresy a aktiváciu účtu.',
     'verify_email_button' => 'Overiť e-mailovú adresu',
+    'verify_email_security_note' => 'Tento odkaz vyprší za 60 minút z bezpečnostných dôvodov.',
     'verify_email_alternative' => 'Ak tlačidlo nefunguje, skopírujte a vložte tento odkaz do prehliadača:',
     'verify_email_footer' => 'Ak ste nevytvárali účet, nie je nutná žiadna ďalšia akcia.',
     'verification_link_sent' => 'Nový overovací odkaz bol odoslaný na vašu e-mailovú adresu.',
