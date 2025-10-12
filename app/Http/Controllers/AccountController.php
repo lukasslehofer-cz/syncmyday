@@ -195,7 +195,8 @@ class AccountController extends Controller
                 \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
                 
                 // Delete the entire customer (this cancels subscriptions and removes payment methods)
-                \Stripe\Customer::delete($user->stripe_customer_id);
+                $customer = \Stripe\Customer::retrieve($user->stripe_customer_id);
+                $customer->delete();
                 
                 Log::info('Stripe customer deleted for deleted user', [
                     'user_id' => $user->id,
