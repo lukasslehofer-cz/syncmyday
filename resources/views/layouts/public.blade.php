@@ -40,7 +40,7 @@
             font-size: 1.5rem;
             font-weight: 600;
             color: #4b5563;
-            margin-top: 2rem;
+            margin-top: 0.125rem;
             margin-bottom: 1rem;
         }
         
