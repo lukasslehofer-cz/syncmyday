@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends(auth()->check() ? 'layouts.app' : 'welcome')
 
 @section('title', __('messages.contact_us'))
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 @guest pt-24 @endguest">
     <div class="mb-8">
         <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.contact_us') }}</h1>
         <p class="text-lg text-gray-600">{{ __('messages.contact_us_description') }}</p>
