@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMail;
 use App\Models\User;
 use App\Models\CalendarConnection;
 use App\Services\Calendar\GoogleCalendarService;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Stripe\Stripe;
 
@@ -158,6 +160,16 @@ class SocialAuthController extends Controller
                     Log::error('Stripe customer creation failed for OAuth user', [
                         'error' => $e->getMessage(),
                         'user_id' => $user->id,
+                    ]);
+                }
+
+                // Send welcome email (OAuth users don't trigger Verified event)
+                try {
+                    Mail::to($user->email)->send(new WelcomeMail($user));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send welcome email for OAuth user', [
+                        'user_id' => $user->id,
+                        'error' => $e->getMessage(),
                     ]);
                 }
 
@@ -347,6 +359,16 @@ class SocialAuthController extends Controller
                     Log::error('Stripe customer creation failed for OAuth user', [
                         'error' => $e->getMessage(),
                         'user_id' => $user->id,
+                    ]);
+                }
+
+                // Send welcome email (OAuth users don't trigger Verified event)
+                try {
+                    Mail::to($user->email)->send(new WelcomeMail($user));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send welcome email for OAuth user', [
+                        'user_id' => $user->id,
+                        'error' => $e->getMessage(),
                     ]);
                 }
 
