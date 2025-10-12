@@ -60,15 +60,22 @@
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
         <tr>
             <td style="padding: 10px 0;">
-                <a href="{{ config('app.url') }}/docs" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-                    📚 {{ __('emails.welcome_documentation') }}
+                <a href="{{ route('help.index') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    💬 {{ __('emails.welcome_help_center') }}
                 </a>
             </td>
         </tr>
         <tr>
             <td style="padding: 10px 0;">
-                <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-                    💬 {{ __('emails.welcome_help_center') }}
+                <a href="{{ route('help.faq') }}" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    ❓ {{ __('emails.faq') }}
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 0;">
+                <a href="mailto:support@syncmyday.com" style="color: #667eea; text-decoration: none; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    📧 {{ __('emails.contact_support') }}
                 </a>
             </td>
         </tr>

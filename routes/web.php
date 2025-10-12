@@ -34,6 +34,41 @@ Route::get('/', function () {
 Route::view('/privacy', 'legal.privacy')->name('privacy');
 Route::view('/terms', 'legal.terms')->name('terms');
 
+// Help Center
+Route::prefix('help')->name('help.')->group(function () {
+    Route::get('/', function () {
+        return view('help.index');
+    })->name('index');
+    
+    Route::get('/faq', function () {
+        return view('help.faq');
+    })->name('faq');
+    
+    Route::get('/connect-google', function () {
+        return view('help.connect-google');
+    })->name('connect-google');
+    
+    Route::get('/connect-microsoft', function () {
+        return view('help.connect-microsoft');
+    })->name('connect-microsoft');
+    
+    Route::get('/connect-apple', function () {
+        return view('help.connect-apple');
+    })->name('connect-apple');
+    
+    Route::get('/connect-caldav', function () {
+        return view('help.connect-caldav');
+    })->name('connect-caldav');
+    
+    Route::get('/connect-email', function () {
+        return view('help.connect-email');
+    })->name('connect-email');
+    
+    Route::get('/sync-rules', function () {
+        return view('help.sync-rules');
+    })->name('sync-rules');
+});
+
 // Debug routes for session testing (REMOVE IN PRODUCTION!)
 Route::get('/debug-session', function () {
     return response()->json([

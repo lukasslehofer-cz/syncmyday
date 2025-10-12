@@ -379,9 +379,9 @@
                 <div>
                     <h3 class="text-sm font-semibold mb-3">{{ __('messages.support') }}</h3>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.documentation') }}</a></li>
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.help_center') }}</a></li>
-                        <li><a href="#" class="text-sm text-gray-400 hover:text-white">{{ __('messages.contact_us') }}</a></li>
+                        <li><a href="{{ route('help.index') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.help_center') }}</a></li>
+                        <li><a href="{{ route('help.faq') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.faq') }}</a></li>
+                        <li><a href="mailto:support@syncmyday.com" class="text-sm text-gray-400 hover:text-white">{{ __('messages.contact_us') }}</a></li>
                     </ul>
                 </div>
                 

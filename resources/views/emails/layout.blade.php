@@ -63,7 +63,7 @@
                                         <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
                                             <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none;">{{ __('emails.visit_website') }}</a>
                                             <span style="color: #6b7280;"> | </span>
-                                            <a href="{{ route('home') }}" style="color: #667eea; text-decoration: none;">{{ __('emails.help_center') }}</a>
+                                            <a href="{{ route('help.index') }}" style="color: #667eea; text-decoration: none;">{{ __('emails.help_center') }}</a>
                                         </p>
                                         <p style="margin: 20px 0 0 0; color: #6b7280; font-size: 14px; line-height: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
                                             &copy; {{ date('Y') }} {{ config('app.name') }}. {{ __('messages.all_rights_reserved') }}

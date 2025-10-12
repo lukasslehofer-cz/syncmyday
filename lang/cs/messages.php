@@ -43,7 +43,7 @@ return [
     // Homepage Hero Section
     'home_hero_title' => 'Double booking?',
     'home_hero_subtitle' => 'Zbavte se ho jednou pro vždy!',
-    'home_hero_description' => 'Automaticky synchronizujte zaneprázdněné časy mezi pracovním a osobním kalendářem.',
+    'home_hero_description' => 'Automaticky synchronizujte zaneprázdněné časy mezi vašimi kalendáři, ať už jsou praovní nebo soukromé.',
     'home_hero_tagline' => 'Jednoduché • Bezpečné • V reálném čase',
     'home_learn_more' => 'Zjistit více',
     'home_stat_realtime' => 'Rychle',
@@ -54,11 +54,11 @@ return [
     'home_features_section_title' => 'Funkce',
     'home_features_heading' => 'Vše, co potřebujete pro synchronizaci',
     'home_features_description' => 'Výkonné funkce navržené pro dokonalou harmonii vašich kalendářů',
-    'feature_privacy_description' => 'Ukládáme pouze časy začátku/konce události. Nikdy názvy, popisy nebo účastníky. Všechna data šifrována.',
-    'feature_realtime_description' => 'Webhooky detekují změny okamžitě. Blokující události vytvořeny během minut, automaticky aktualizovány při změnách.',
+    'feature_privacy_description' => 'Ukládáme pouze časy začátku/konce události. Nikdy názvy, popisy nebo účastníky. Všechna citlivá data šifrována.',
+    'feature_realtime_description' => 'Změny detekujeme téměř okamžitě. Blockery jsou vytvořeny během minut a automaticky aktualizovány při změnách.',
     'feature_smart_rules' => 'Chytrá pravidla',
     'feature_smart_rules_description' => 'Filtrujte podle zaneprázdněnosti, pracovní doby (9-17), nebo vylučte celodenní události. Plná kontrola nad tím, co se synchronizuje.',
-    'feature_email_description' => 'Synchronizace s e-mailovými kalendářními službami. Přeposílejte .ics pozvánky a vytvoříme blokující události automaticky.',
+    'feature_email_description' => 'Přísná firemní politika pro Exchange? Nevadí, naše synchronizace pomocí e-mailových pozvánek si s tím poradí!',
     'feature_easy_setup_description' => 'Připojte Google Calendar a Microsoft 365 pomocí OAuth. Žádné API klíče nebo technické nastavení.',
     'feature_duplicate_prevention' => 'Prevence duplikátů',
     'feature_duplicate_prevention_description' => 'Chytrá detekce zabraňuje vytváření duplikátních blokátorů pro stejnou událost napříč pravidly.',
@@ -279,7 +279,7 @@ return [
     'unlimited_connected_calendars' => 'Neomezený počet kalendářů',
     'real_time_sync_webhooks' => 'Synchronizace v reálném čase (webhooky)',
     'support_google_microsoft' => 'Podpora Google Calendar a Microsoft 365',
-    'email_calendars_support' => 'Emailové kalendáře',
+    'email_calendars_support' => 'Emailová synchronizace',
     'advanced_filters' => 'Pokročilé filtry (pouze busy, pracovní doba, ...)',
     'priority_support' => 'Prioritní podpora',
     'all_future_features_free' => 'Všechny budoucí funkce zdarma',
@@ -505,7 +505,7 @@ return [
     
     // Dashboard
     'footer_tagline' => 'Synchronizujte své kalendáře bez námahy',
-    'home_stat_2mins' => 'Nastavení za 2 minuty',
+    'home_stat_2mins' => '2 minuty',
     'alert' => 'Upozornění',
     'none' => 'Žádné',
     
