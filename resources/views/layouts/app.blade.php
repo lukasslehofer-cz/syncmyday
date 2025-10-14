@@ -158,35 +158,40 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @endauth
     
-    <!-- Trial Banner -->
+    <!-- Trial Banner - Zvýrazněný -->
     @auth
     @if(auth()->user()->isInTrial())
-    <div class="bg-gradient-to-r from-indigo-600 to-purple-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <div class="flex items-center space-x-3">
+    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg border-b-4 border-indigo-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center space-x-4">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
                     </div>
                     <div>
-                        <p class="text-sm font-semibold text-white">
+                        <p class="text-lg md:text-xl font-bold text-white mb-1">
                             @if(auth()->user()->isTrialExpiringSoon())
-                                🔥 {{ __('messages.trial_ending_soon') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
+                                🔥 {{ __('messages.trial_ending_soon') }}
                             @else
-                                ✨ {{ __('messages.trial_active') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
+                                ✨ {{ __('messages.trial_active') }}
                             @endif
                         </p>
-                        <p class="text-xs text-indigo-100 mt-0.5">
+                        <p class="text-base md:text-lg font-semibold text-white/90">
+                            {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
+                        </p>
+                        <p class="text-sm text-white/80 mt-1">
                             {{ __('messages.upgrade_now_save') }}
                         </p>
                     </div>
                 </div>
-                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-5 py-2 bg-white hover:bg-indigo-50 text-indigo-600 text-sm font-bold rounded-lg shadow-lg transition transform hover:scale-105">
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-indigo-50 text-indigo-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
                     {{ __('messages.upgrade_now') }}
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
             </div>
