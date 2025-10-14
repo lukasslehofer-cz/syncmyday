@@ -69,7 +69,7 @@
                 
                 <!-- Step 3: Done! -->
                 <div class="flex items-center space-x-2 sm:space-x-3">
-                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full {{ $onboardingComplete ? 'bg-yellow-400 animate-bounce' : 'bg-white/20' }} flex items-center justify-center font-bold text-white shadow-lg">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full {{ $onboardingComplete ? 'bg-yellow-400' : 'bg-white/20' }} flex items-center justify-center font-bold text-white shadow-lg">
                         @if($onboardingComplete)
                             <span class="text-2xl">🎉</span>
                         @else
