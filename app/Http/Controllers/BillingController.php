@@ -86,8 +86,8 @@ class BillingController extends Controller
                     ->with('error', 'Pricing configuration error. Please contact support.');
             }
 
-            // Create Checkout Session
-            $session = Session::create([
+            // Build Checkout Session configuration
+            $sessionConfig = [
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
                 'line_items' => [[
@@ -101,7 +101,28 @@ class BillingController extends Controller
                     'user_id' => $user->id,
                     'interval' => $interval,
                 ],
-            ]);
+            ];
+
+            // If user is in trial, extend trial period until their current trial ends
+            // This ensures they get the full trial period before being charged
+            if ($user->isInTrial() && $user->subscription_ends_at) {
+                $sessionConfig['subscription_data'] = [
+                    'trial_end' => $user->subscription_ends_at->timestamp,
+                    'metadata' => [
+                        'user_id' => $user->id,
+                        'locale' => $user->locale,
+                        'had_trial' => 'true',
+                    ],
+                ];
+                
+                Log::info('Checkout session with trial extension', [
+                    'user_id' => $user->id,
+                    'trial_ends_at' => $user->subscription_ends_at->toDateTimeString(),
+                ]);
+            }
+
+            // Create Checkout Session
+            $session = Session::create($sessionConfig);
 
             Log::info('Checkout session created', [
                 'user_id' => $user->id,
