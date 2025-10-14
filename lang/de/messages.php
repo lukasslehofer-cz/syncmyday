@@ -289,5 +289,14 @@ return [
     'save_with_yearly' => 'Sparen Sie :percent% mit Jahresplan',
     'start_free_trial_now' => 'Kostenlos starten (ohne Karte)',
     'no_commitment' => 'Keine Verpflichtung',
+    
+    // Onboarding Progress Bar
+    'onboarding_step1_title' => 'Kalender verbinden',
+    'onboarding_step1_desc' => 'Google/Microsoft verbinden',
+    'onboarding_step2_title' => 'Regeln erstellen',
+    'onboarding_step2_desc' => 'Synchronisation einrichten',
+    'onboarding_step3_title' => 'Entspannen',
+    'onboarding_step3_desc' => 'Alles erledigt!',
+    'dismiss' => 'Schließen',
 ];
 

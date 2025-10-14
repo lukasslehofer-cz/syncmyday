@@ -195,6 +195,9 @@
     @endif
     @endauth
     
+    <!-- Onboarding Progress Bar -->
+    @include('partials.onboarding-progress')
+    
     <!-- Flash Messages -->
     @if(session('success') || session('error') || session('warning'))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6" x-data="{ show: true }">

@@ -53,5 +53,26 @@ class OnboardingController extends Controller
         return redirect()->route('dashboard')
             ->with('success', __('messages.onboarding_complete'));
     }
+    
+    /**
+     * Dismiss onboarding progress bar
+     */
+    public function dismissProgress(Request $request)
+    {
+        $request->session()->put('onboarding_progress_dismissed', true);
+        
+        return redirect()->back();
+    }
+    
+    /**
+     * Track click for auto-hide progress bar
+     */
+    public function trackClick(Request $request)
+    {
+        $clicks = $request->session()->get('onboarding_clicks', 0);
+        $request->session()->put('onboarding_clicks', $clicks + 1);
+        
+        return response()->json(['clicks' => $clicks + 1]);
+    }
 }
 

@@ -693,4 +693,13 @@ return [
     'save_with_yearly' => 'Save :percent% with yearly',
     'start_free_trial_now' => 'Start Free Trial (No Card)',
     'no_commitment' => 'No commitment',
+    
+    // Onboarding Progress Bar
+    'onboarding_step1_title' => 'Connect Calendars',
+    'onboarding_step1_desc' => 'Link Google/Microsoft',
+    'onboarding_step2_title' => 'Create Rules',
+    'onboarding_step2_desc' => 'Setup synchronization',
+    'onboarding_step3_title' => 'Relax',
+    'onboarding_step3_desc' => 'All done!',
+    'dismiss' => 'Dismiss',
 ];

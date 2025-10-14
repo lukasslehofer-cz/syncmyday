@@ -599,4 +599,13 @@ return [
     'save_with_yearly' => 'Ušetrite :percent% s ročným plánom',
     'start_free_trial_now' => 'Začať zadarmo (bez karty)',
     'no_commitment' => 'Žiadne záväzky',
+    
+    // Onboarding Progress Bar
+    'onboarding_step1_title' => 'Napojiť kalendáre',
+    'onboarding_step1_desc' => 'Pripojte Google/Microsoft',
+    'onboarding_step2_title' => 'Vytvoriť pravidlá',
+    'onboarding_step2_desc' => 'Nastavte synchronizáciu',
+    'onboarding_step3_title' => 'Relaxovať',
+    'onboarding_step3_desc' => 'Všetko hotové!',
+    'dismiss' => 'Zavrieť',
 ];

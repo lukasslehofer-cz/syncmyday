@@ -98,6 +98,29 @@
     </div>
     @endif
     
+    <!-- Trial Status Banner (if in trial) -->
+    @if($user->isInTrial())
+    <div class="mb-8 bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 border-4 border-green-400 rounded-3xl p-8 shadow-2xl">
+        <div class="flex items-center justify-center space-x-4 mb-4">
+            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-lg animate-pulse">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div class="text-center">
+                <h3 class="text-3xl font-extrabold text-gray-900 mb-1">{{ __('messages.trial_active') }}</h3>
+                <p class="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    {{ trans_choice('messages.days_remaining', $trialDaysRemaining, ['count' => $trialDaysRemaining]) }}
+                </p>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <p class="text-lg text-gray-700 font-semibold">{{ __('messages.no_charge_during_trial') }}</p>
+            <p class="text-sm text-gray-600 mt-2">{{ __('messages.choose_plan_after_trial') }}</p>
+        </div>
+    </div>
+    @endif
+    
     <!-- Pricing Cards -->
     @if($user->subscription_tier === 'free' || $user->isInTrial())
     <div class="max-w-5xl mx-auto">
@@ -217,13 +240,6 @@
                 </form>
             </div>
         </div>
-        
-        @if($user->isInTrial())
-        <p class="text-center text-sm text-gray-600 mt-8">
-            {{ __('messages.trial_days_remaining', ['days' => $trialDaysRemaining]) }}<br>
-            {{ __('messages.no_charge_during_trial') }}
-        </p>
-        @endif
     </div>
     @endif
     

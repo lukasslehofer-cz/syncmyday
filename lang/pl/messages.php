@@ -599,4 +599,13 @@ return [
     'save_with_yearly' => 'Oszczędź :percent% z planem rocznym',
     'start_free_trial_now' => 'Rozpocznij za darmo (bez karty)',
     'no_commitment' => 'Bez zobowiązań',
+    
+    // Onboarding Progress Bar
+    'onboarding_step1_title' => 'Połącz kalendarze',
+    'onboarding_step1_desc' => 'Połącz Google/Microsoft',
+    'onboarding_step2_title' => 'Utwórz reguły',
+    'onboarding_step2_desc' => 'Skonfiguruj synchronizację',
+    'onboarding_step3_title' => 'Zrelaksuj się',
+    'onboarding_step3_desc' => 'Wszystko gotowe!',
+    'dismiss' => 'Zamknij',
 ];

@@ -700,4 +700,13 @@ return [
     'save_with_yearly' => 'Ušetři :percent% s ročním plánem',
     'start_free_trial_now' => 'Začít zdarma (bez karty)',
     'no_commitment' => 'Žádné závazky',
+    
+    // Onboarding Progress Bar
+    'onboarding_step1_title' => 'Napojit kalendáře',
+    'onboarding_step1_desc' => 'Připojte Google/Microsoft',
+    'onboarding_step2_title' => 'Vytvořit pravidla',
+    'onboarding_step2_desc' => 'Nastavte synchronizaci',
+    'onboarding_step3_title' => 'Relaxovat',
+    'onboarding_step3_desc' => 'Vše je hotovo!',
+    'dismiss' => 'Zavřít',
 ];
