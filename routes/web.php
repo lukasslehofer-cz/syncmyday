@@ -214,7 +214,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/create-rule', [OnboardingController::class, 'createRule'])->name('create-rule');
         Route::post('/complete', [OnboardingController::class, 'complete'])->name('complete');
         Route::post('/dismiss', [OnboardingController::class, 'dismissProgress'])->name('dismiss');
-        Route::post('/track-click', [OnboardingController::class, 'trackClick'])->name('track-click');
     });
 
     // Calendar connections

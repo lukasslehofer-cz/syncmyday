@@ -167,11 +167,9 @@
         $hasRules = $user->syncRules()->count() > 0;
         $onboardingComplete = $hasConnections && $hasRules;
         $dismissedProgress = session('onboarding_progress_dismissed', false);
-        $clickCount = session('onboarding_clicks', 0);
-        $autoHide = $onboardingComplete && $clickCount >= 5;
         
         // Show trial banner only if onboarding progress is NOT showing
-        $showOnboardingProgress = $user->isInTrial() && !$dismissedProgress && !$autoHide;
+        $showOnboardingProgress = $user->isInTrial() && !$onboardingComplete && !$dismissedProgress;
         $showTrialBanner = !$showOnboardingProgress;
     @endphp
     

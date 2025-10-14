@@ -7,18 +7,14 @@
     $hasRules = $user->syncRules()->count() > 0;
     $onboardingComplete = $hasConnections && $hasRules;
     
-    // Check if user has dismissed the progress bar
+    // Check if user has dismissed the progress bar (for current session only)
     $dismissedProgress = session('onboarding_progress_dismissed', false);
     
-    // Auto-hide after both steps complete + some time/clicks
-    $clickCount = session('onboarding_clicks', 0);
-    $autoHide = $onboardingComplete && $clickCount >= 5;
-    
-    // Don't show if:
-    // - User has subscription (not in trial)
-    // - Progress is dismissed
-    // - Auto-hide triggered
-    $shouldShow = $user->isInTrial() && !$dismissedProgress && !$autoHide;
+    // Show if:
+    // - User is in trial
+    // - NOT all steps completed
+    // - User hasn't dismissed it (resets on new login)
+    $shouldShow = $user->isInTrial() && !$onboardingComplete && !$dismissedProgress;
 @endphp
 
 @if($shouldShow)
@@ -99,20 +95,6 @@
         </div>
     </div>
 </div>
-
-<!-- Click counter (increment on any click) -->
-<script>
-    document.addEventListener('click', function() {
-        // Increment click counter via AJAX
-        fetch('{{ route('onboarding.track-click') }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Content-Type': 'application/json',
-            },
-        });
-    }, { once: false });
-</script>
 @endif
 @endauth
 
