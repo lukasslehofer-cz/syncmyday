@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Stripe\Stripe;
 
 class SocialAuthController extends Controller
 {
@@ -145,24 +144,6 @@ class SocialAuthController extends Controller
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
 
-                // Create Stripe customer
-                try {
-                    Stripe::setApiKey(config('services.stripe.secret'));
-                    $customer = \Stripe\Customer::create([
-                        'email' => $user->email,
-                        'name' => $user->name,
-                        'metadata' => [
-                            'user_id' => $user->id,
-                        ],
-                    ]);
-                    $user->update(['stripe_customer_id' => $customer->id]);
-                } catch (\Exception $e) {
-                    Log::error('Stripe customer creation failed for OAuth user', [
-                        'error' => $e->getMessage(),
-                        'user_id' => $user->id,
-                    ]);
-                }
-
                 // Send welcome email (OAuth users don't trigger Verified event)
                 try {
                     Mail::to($user->email)->send(new WelcomeMail($user));
@@ -185,14 +166,15 @@ class SocialAuthController extends Controller
             // Now connect the calendar automatically
             $this->connectGoogleCalendar($user, $tokens, $googleId, $googleEmail);
 
-            // Check if user needs to setup payment method
-            if (!$user->stripe_subscription_id) {
-                return $this->redirectToStripeCheckout($user, 'oauth-google');
+            // Redirect to onboarding for new users, dashboard for existing users
+            if ($user->wasRecentlyCreated) {
+                return redirect()->route('onboarding.start')
+                    ->with('success', 'Welcome! Your Google account and calendar have been connected successfully.');
             }
 
-            // Redirect to dashboard with success message
+            // Existing user - go to dashboard
             return redirect()->route('dashboard')
-                ->with('success', 'Welcome! Your Google account and calendar have been connected successfully.');
+                ->with('success', 'Welcome back! You have been logged in successfully.');
 
         } catch (\Exception $e) {
             Log::error('Google OAuth login failed', [
@@ -344,24 +326,6 @@ class SocialAuthController extends Controller
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
 
-                // Create Stripe customer
-                try {
-                    Stripe::setApiKey(config('services.stripe.secret'));
-                    $customer = \Stripe\Customer::create([
-                        'email' => $user->email,
-                        'name' => $user->name,
-                        'metadata' => [
-                            'user_id' => $user->id,
-                        ],
-                    ]);
-                    $user->update(['stripe_customer_id' => $customer->id]);
-                } catch (\Exception $e) {
-                    Log::error('Stripe customer creation failed for OAuth user', [
-                        'error' => $e->getMessage(),
-                        'user_id' => $user->id,
-                    ]);
-                }
-
                 // Send welcome email (OAuth users don't trigger Verified event)
                 try {
                     Mail::to($user->email)->send(new WelcomeMail($user));
@@ -384,14 +348,15 @@ class SocialAuthController extends Controller
             // Now connect the calendar automatically
             $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail);
 
-            // Check if user needs to setup payment method
-            if (!$user->stripe_subscription_id) {
-                return $this->redirectToStripeCheckout($user, 'oauth-microsoft');
+            // Redirect to onboarding for new users, dashboard for existing users
+            if ($user->wasRecentlyCreated) {
+                return redirect()->route('onboarding.start')
+                    ->with('success', 'Welcome! Your Microsoft account and calendar have been connected successfully.');
             }
 
-            // Redirect to dashboard with success message
+            // Existing user - go to dashboard
             return redirect()->route('dashboard')
-                ->with('success', 'Welcome! Your Microsoft account and calendar have been connected successfully.');
+                ->with('success', 'Welcome back! You have been logged in successfully.');
 
         } catch (\Exception $e) {
             Log::error('Microsoft OAuth login failed', [
@@ -524,73 +489,5 @@ class SocialAuthController extends Controller
         }
     }
 
-    /**
-     * Redirect user to Stripe checkout for payment method setup
-     */
-    private function redirectToStripeCheckout(User $user, string $source)
-    {
-        try {
-            Stripe::setApiKey(config('services.stripe.secret'));
-
-            // Check if user already has Stripe customer
-            if (!$user->stripe_customer_id) {
-                $customer = \Stripe\Customer::create([
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'metadata' => [
-                        'user_id' => $user->id,
-                    ],
-                ]);
-                $user->update(['stripe_customer_id' => $customer->id]);
-            } else {
-                $customer = \Stripe\Customer::retrieve($user->stripe_customer_id);
-            }
-
-            // Calculate trial end timestamp
-            $trialEnd = $user->subscription_ends_at->timestamp;
-
-            // Get correct Price ID based on user's locale
-            $priceId = \App\Helpers\PricingHelper::getPriceId($user->locale);
-
-            // Create Checkout Session with trial
-            $session = \Stripe\Checkout\Session::create([
-                'customer' => $customer->id,
-                'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'price' => $priceId,
-                    'quantity' => 1,
-                ]],
-                'mode' => 'subscription',
-                'subscription_data' => [
-                    'trial_end' => $trialEnd,
-                    'metadata' => [
-                        'user_id' => $user->id,
-                        'locale' => $user->locale,
-                    ],
-                ],
-                'success_url' => route('billing.success') . '?session_id={CHECKOUT_SESSION_ID}&redirect=dashboard',
-                'cancel_url' => route('dashboard'),
-                'metadata' => [
-                    'user_id' => $user->id,
-                    'is_trial' => true,
-                    'source' => $source,
-                    'locale' => $user->locale,
-                ],
-            ]);
-
-            return redirect($session->url);
-
-        } catch (\Exception $e) {
-            Log::error('Stripe checkout session creation failed for OAuth user', [
-                'error' => $e->getMessage(),
-                'user_id' => $user->id,
-                'source' => $source,
-            ]);
-
-            // If Stripe fails, still let user in but show them billing page
-            return redirect()->route('billing')
-                ->with('warning', 'Please set up your payment method to continue using SyncMyDay.');
-        }
-    }
 }
 
