@@ -158,9 +158,24 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     @endauth
     
-    <!-- Trial Banner - Zvýrazněný -->
+    <!-- Trial Banner - Zvýrazněný (skryje se když je aktivní onboarding progress) -->
     @auth
     @if(auth()->user()->isInTrial())
+    @php
+        $user = auth()->user();
+        $hasConnections = $user->calendarConnections()->count() > 0;
+        $hasRules = $user->syncRules()->count() > 0;
+        $onboardingComplete = $hasConnections && $hasRules;
+        $dismissedProgress = session('onboarding_progress_dismissed', false);
+        $clickCount = session('onboarding_clicks', 0);
+        $autoHide = $onboardingComplete && $clickCount >= 5;
+        
+        // Show trial banner only if onboarding progress is NOT showing
+        $showOnboardingProgress = $user->isInTrial() && !$dismissedProgress && !$autoHide;
+        $showTrialBanner = !$showOnboardingProgress;
+    @endphp
+    
+    @if($showTrialBanner)
     <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg border-b-4 border-indigo-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex items-center justify-between flex-wrap gap-4">
@@ -197,6 +212,7 @@
             </div>
         </div>
     </div>
+    @endif
     @endif
     @endauth
     
