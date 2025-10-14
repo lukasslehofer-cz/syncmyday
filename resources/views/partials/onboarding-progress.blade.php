@@ -34,7 +34,8 @@
                             <span class="text-lg sm:text-xl">1</span>
                         @endif
                     </div>
-                    <div class="hidden sm:block">
+                    {{-- Show on mobile only if this is the current step --}}
+                    <div class="{{ !$hasConnections ? 'block' : 'hidden' }} sm:block">
                         <p class="text-white font-semibold text-sm">{{ __('messages.onboarding_step1_title') }}</p>
                         <p class="text-white/80 text-xs">{{ __('messages.onboarding_step1_desc') }}</p>
                     </div>
@@ -56,7 +57,8 @@
                             <span class="text-lg sm:text-xl">2</span>
                         @endif
                     </div>
-                    <div class="hidden sm:block">
+                    {{-- Show on mobile only if step 1 is done and this is the current step --}}
+                    <div class="{{ $hasConnections && !$hasRules ? 'block' : 'hidden' }} sm:block">
                         <p class="text-white font-semibold text-sm">{{ __('messages.onboarding_step2_title') }}</p>
                         <p class="text-white/80 text-xs">{{ __('messages.onboarding_step2_desc') }}</p>
                     </div>
@@ -76,7 +78,8 @@
                             <span class="text-lg sm:text-xl">3</span>
                         @endif
                     </div>
-                    <div class="hidden sm:block">
+                    {{-- Show on mobile only if both steps are done --}}
+                    <div class="{{ $onboardingComplete ? 'block' : 'hidden' }} sm:block">
                         <p class="text-white font-semibold text-sm">{{ __('messages.onboarding_step3_title') }}</p>
                         <p class="text-white/80 text-xs">{{ __('messages.onboarding_step3_desc') }}</p>
                     </div>
