@@ -671,4 +671,33 @@ return [
     'blog_cta_button_primary' => 'Vyzkoušet zdarma',
     'blog_cta_button_secondary' => 'Zobrazit funkce',
     'blog_cta_footnote' => '✓ 14 dní zdarma • ✓ Bez platební karty • ✓ Okamžitá aktivace',
+    
+    // ============================================
+    // NOVÉ - Trial Without Card (2025-01-14)
+    // ============================================
+    
+    // Pricing Cards
+    'choose_your_plan' => 'Vyber si svůj plán',
+    'monthly_plan' => 'Měsíční plán',
+    'yearly_plan' => 'Roční plán',
+    'per_month' => 'měsíčně',
+    'or' => 'nebo',
+    'best_value' => 'Nejlepší hodnota',
+    'save_percent' => 'Ušetři :percent%',
+    'flexible_cancel_anytime' => 'Flexibilní, zrušitelné kdykoliv',
+    'choose_monthly' => 'Vybrat měsíční',
+    'choose_yearly' => 'Vybrat roční',
+    'no_charge_during_trial' => 'Během trialu se nic nestrhne',
+    
+    // Trial Banner (nové varianty)
+    'days_remaining' => '{0} Žádné dny|{1} 1 den zbývá|[2,4] :count dny zbývají|[5,*] :count dní zbývá',
+    'upgrade_now_save' => 'Upgraduj teď a ušetři',
+    'upgrade_now' => 'Upgraduj nyní',
+    
+    // Homepage
+    'start_free_trial' => 'Začni zdarma',
+    'choose_plan_after_trial' => 'Po trialu si vyber plán:',
+    'save_with_yearly' => 'Ušetři :percent% s ročním plánem',
+    'start_free_trial_now' => 'Začít zdarma (bez karty)',
+    'no_commitment' => 'Žádné závazky',
 ];

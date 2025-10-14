@@ -161,38 +161,34 @@
     <!-- Trial Banner -->
     @auth
     @if(auth()->user()->isInTrial())
-    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-b-2 border-amber-200">
+    <div class="bg-gradient-to-r from-indigo-600 to-purple-600">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between flex-wrap gap-3">
                 <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
-                        <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-amber-900">
+                        <p class="text-sm font-semibold text-white">
                             @if(auth()->user()->isTrialExpiringSoon())
-                                <strong>{{ __('messages.trial_expiring_warning') }}</strong> {{ __('messages.trial_days_remaining', ['days' => auth()->user()->getRemainingTrialDays(), 'unit' => auth()->user()->getRemainingTrialDays() === 1 ? __('messages.trial_day') : (auth()->user()->getRemainingTrialDays() <= 4 ? __('messages.trial_days_2_4') : __('messages.trial_days_5_plus'))]) }}
+                                🔥 {{ __('messages.trial_ending_soon') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                             @else
-                                <strong>{{ __('messages.trial_active') }}</strong> {{ __('messages.trial_full_access_remaining', ['days' => auth()->user()->getRemainingTrialDays(), 'unit' => auth()->user()->getRemainingTrialDays() === 1 ? __('messages.trial_day') : (auth()->user()->getRemainingTrialDays() <= 4 ? __('messages.trial_days_2_4') : __('messages.trial_days_5_plus'))]) }}
+                                ✨ {{ __('messages.trial_active') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                             @endif
                         </p>
-                        @if(!auth()->user()->stripe_subscription_id)
-                        <p class="text-xs text-amber-700 mt-0.5">
-                            {{ __('messages.trial_payment_reminder') }}
+                        <p class="text-xs text-indigo-100 mt-0.5">
+                            {{ __('messages.upgrade_now_save') }}
                         </p>
-                        @endif
                     </div>
                 </div>
-                @if(!auth()->user()->stripe_subscription_id)
-                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold rounded-lg shadow-sm transition">
-                    {{ __('messages.set_payment') }}
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-5 py-2 bg-white hover:bg-indigo-50 text-indigo-600 text-sm font-bold rounded-lg shadow-lg transition transform hover:scale-105">
+                    {{ __('messages.upgrade_now') }}
                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
-                @endif
             </div>
         </div>
     </div>

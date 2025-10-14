@@ -234,7 +234,6 @@ Route::middleware('auth')->group(function () {
     // Billing
     Route::prefix('billing')->name('billing.')->group(function () {
         Route::get('/', [BillingController::class, 'index'])->name('index');
-        Route::post('/trial-checkout', [BillingController::class, 'createTrialCheckoutSession'])->name('trial-checkout');
         Route::post('/checkout', [BillingController::class, 'createCheckoutSession'])->name('checkout');
         Route::get('/success', [BillingController::class, 'success'])->name('success');
         Route::get('/manage', [BillingController::class, 'manage'])->name('manage');

@@ -270,83 +270,128 @@
     
     <!-- Pricing Section -->
     <section id="pricing" class="py-20 gradient-bg">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-extrabold text-white mb-4">{{ __('messages.simple_pricing_for_powerful_sync') }}</h2>
                 <p class="text-xl text-indigo-100">{{ __('messages.full_functionality_no_limits') }}</p>
+                <div class="mt-6 inline-flex items-center px-6 py-3 bg-green-100 border-2 border-green-500 rounded-xl">
+                    <svg class="w-6 h-6 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="text-xl font-bold text-green-700">{{ __('messages.start_free_trial') }}</span>
+                </div>
             </div>
             
-            <div class="max-w-2xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-2xl p-8 lg:p-12 relative">
-                    <!-- Badge -->
+            <!-- Pricing Cards -->
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Monthly Plan -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-200 hover:border-indigo-300 transition relative">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('messages.monthly_plan') }}</h3>
+                        <div class="flex items-baseline justify-center mb-2">
+                            <span class="text-5xl font-bold text-gray-900">{{ \App\Helpers\PricingHelper::formatPrice(app()->getLocale(), 'monthly') }}</span>
+                        </div>
+                        <p class="text-gray-600">{{ __('messages.per_month') }}</p>
+                        <p class="text-sm text-gray-500 mt-2">{{ __('messages.flexible_cancel_anytime') }}</p>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-700">{{ __('messages.unlimited_sync_rules') }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-700">{{ __('messages.unlimited_connected_calendars') }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-700">{{ __('messages.real_time_sync') }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-700">{{ __('messages.priority_support') }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Button -->
+                    <a href="{{ route('register') }}" class="block w-full px-6 py-3 text-center text-lg font-bold text-indigo-600 bg-white border-2 border-indigo-600 rounded-xl hover:bg-indigo-50 transition">
+                        {{ __('messages.start_free_trial_now') }}
+                    </a>
+                </div>
+                
+                <!-- Yearly Plan (Recommended) -->
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-2xl p-8 border-2 border-indigo-500 relative transform md:scale-105">
+                    <!-- Best Value Badge -->
                     <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
                         <span class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold rounded-full shadow-lg">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                            {{ __('messages.syncmyday_pro') }}
+                            {{ __('messages.best_value') }}
                         </span>
                     </div>
                     
-                    <div class="text-center mt-4">
-                        <!-- Trial Badge -->
-                        <div class="inline-flex items-center px-4 py-2 bg-green-100 border-2 border-green-500 rounded-xl mb-6">
-                            <svg class="w-5 h-5 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="text-center mb-6 mt-4">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('messages.yearly_plan') }}</h3>
+                        <div class="flex items-baseline justify-center mb-2">
+                            <span class="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ $formattedPrice }}</span>
+                        </div>
+                        <p class="text-gray-700 font-medium">{{ __('messages.per_year') }}</p>
+                        <div class="mt-3 inline-block px-4 py-2 bg-green-100 border-2 border-green-500 rounded-lg">
+                            <p class="text-sm font-bold text-green-700">💰 {{ __('messages.save_with_yearly', ['percent' => \App\Helpers\PricingHelper::getYearlySavings(app()->getLocale())]) }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-lg font-bold text-green-700">{{ __('messages.first_month_free') }}</span>
+                            <span class="text-gray-900 font-medium">{{ __('messages.unlimited_sync_rules') }}</span>
                         </div>
-                        
-                        <!-- Price -->
-                        <div class="mb-6">
-                            <div class="flex items-baseline justify-center mb-2">
-                                <span class="text-6xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ $formattedPrice }}</span>
-                                <span class="text-2xl text-gray-700 ml-3">{{ __('messages.per_year') }}</span>
-                            </div>
-                            <p class="text-gray-600">{{ __('messages.after_trial_month') }}</p>
-                        </div>
-                        
-                        <!-- Key Features -->
-                        <div class="grid md:grid-cols-2 gap-3 mb-8 text-left">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-gray-900 font-medium">{{ __('messages.unlimited_sync_rules') }}</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-gray-900 font-medium">{{ __('messages.real_time_sync') }}</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-gray-900 font-medium">{{ __('messages.unlimited_connected_calendars') }}</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-gray-900 font-medium">{{ __('messages.priority_support') }}</span>
-                            </div>
-                        </div>
-                        
-                        <!-- CTA Button -->
-                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center w-full px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition mb-4">
-                            {{ __('messages.start_with_first_month_free') }}
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
-                        </a>
-                        
-                        <p class="text-sm text-gray-600">
-                            ✓ {{ __('messages.no_credit_card_required') }} • ✓ {{ __('messages.cancel_anytime') }}
-                        </p>
+                            <span class="text-gray-900 font-medium">{{ __('messages.unlimited_connected_calendars') }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-900 font-medium">{{ __('messages.real_time_sync') }}</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-indigo-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-gray-900 font-medium">{{ __('messages.priority_support') }}</span>
+                        </div>
                     </div>
+                    
+                    <!-- CTA Button -->
+                    <a href="{{ route('register') }}" class="block w-full px-6 py-3 text-center text-lg font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition">
+                        {{ __('messages.start_free_trial_now') }}
+                    </a>
                 </div>
+            </div>
+            
+            <!-- Bottom Note -->
+            <div class="text-center mt-8">
+                <p class="text-white text-lg">
+                    ✓ {{ __('messages.no_credit_card_required') }} • ✓ {{ __('messages.no_commitment') }}
+                </p>
             </div>
         </div>
     </section>

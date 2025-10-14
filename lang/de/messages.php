@@ -260,5 +260,34 @@ return [
     'blog_cta_button_primary' => 'Kostenlos testen',
     'blog_cta_button_secondary' => 'Funktionen anzeigen',
     'blog_cta_footnote' => '✓ 14 Tage kostenlos • ✓ Keine Kreditkarte • ✓ Sofortige Aktivierung',
+    
+    // ============================================
+    // NEU - Trial Without Card (2025-01-14)
+    // ============================================
+    
+    // Pricing Cards
+    'choose_your_plan' => 'Wählen Sie Ihren Plan',
+    'monthly_plan' => 'Monatlicher Plan',
+    'yearly_plan' => 'Jährlicher Plan',
+    'per_month' => 'pro Monat',
+    'or' => 'oder',
+    'best_value' => 'Bester Wert',
+    'save_percent' => 'Sparen Sie :percent%',
+    'flexible_cancel_anytime' => 'Flexibel, jederzeit kündbar',
+    'choose_monthly' => 'Monatlich wählen',
+    'choose_yearly' => 'Jährlich wählen',
+    'no_charge_during_trial' => 'Keine Gebühr während der Testversion',
+    
+    // Trial Banner
+    'days_remaining' => '{0} Keine Tage|{1} 1 Tag|[2,*] :count Tage verbleibend',
+    'upgrade_now_save' => 'Jetzt upgraden und sparen',
+    'upgrade_now' => 'Jetzt upgraden',
+    
+    // Homepage
+    'start_free_trial' => 'Kostenlos testen',
+    'choose_plan_after_trial' => 'Wählen Sie nach der Testversion Ihren Plan:',
+    'save_with_yearly' => 'Sparen Sie :percent% mit Jahresplan',
+    'start_free_trial_now' => 'Kostenlos starten (ohne Karte)',
+    'no_commitment' => 'Keine Verpflichtung',
 ];
 

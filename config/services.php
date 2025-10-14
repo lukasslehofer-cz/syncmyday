@@ -38,21 +38,58 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
-        'pro_price_id' => env('STRIPE_PRO_PRICE_ID'), // Default fallback
-        'trial_period_days' => env('TRIAL_PERIOD_DAYS', 31), // Trial length in days
-        'prices' => [
-            'cs' => env('STRIPE_PRICE_CZK'), // 249 CZK
-            'en' => env('STRIPE_PRICE_EUR'), // 10.99 USD
-            'de' => env('STRIPE_PRICE_EUR'), // 9.99 EUR
-            'pl' => env('STRIPE_PRICE_PLN'), // 39.99 PLN
-            'sk' => env('STRIPE_PRICE_EUR'), // 9.99 EUR (SK používá EUR)
+        'trial_period_days' => env('TRIAL_PERIOD_DAYS', 15), // Trial length in days
+        
+        // Monthly price IDs per locale
+        'prices_monthly' => [
+            'cs' => env('STRIPE_PRICE_CZK_MONTHLY'), // e.g. 29 CZK/month
+            'en' => env('STRIPE_PRICE_EUR_MONTHLY'), // e.g. 1.99 EUR/month
+            'de' => env('STRIPE_PRICE_EUR_MONTHLY'), // e.g. 1.99 EUR/month
+            'pl' => env('STRIPE_PRICE_PLN_MONTHLY'), // e.g. 9.99 PLN/month
+            'sk' => env('STRIPE_PRICE_EUR_MONTHLY'), // e.g. 1.99 EUR/month
         ],
+        
+        // Yearly price IDs per locale
+        'prices_yearly' => [
+            'cs' => env('STRIPE_PRICE_CZK_YEARLY'), // e.g. 249 CZK/year
+            'en' => env('STRIPE_PRICE_EUR_YEARLY'), // e.g. 19.99 EUR/year
+            'de' => env('STRIPE_PRICE_EUR_YEARLY'), // e.g. 19.99 EUR/year
+            'pl' => env('STRIPE_PRICE_PLN_YEARLY'), // e.g. 99 PLN/year
+            'sk' => env('STRIPE_PRICE_EUR_YEARLY'), // e.g. 19.99 EUR/year
+        ],
+        
+        // Currency information and amounts
         'currencies' => [
-            'cs' => ['code' => 'CZK', 'symbol' => 'Kč', 'amount' => env('PRICE_AMOUNT_CZK', 249)],
-            'en' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
-            'de' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
-            'pl' => ['code' => 'PLN', 'symbol' => 'zł', 'amount' => env('PRICE_AMOUNT_PLN', 49)],
-            'sk' => ['code' => 'EUR', 'symbol' => '€', 'amount' => env('PRICE_AMOUNT_EUR', 9.90)],
+            'cs' => [
+                'code' => 'CZK',
+                'symbol' => 'Kč',
+                'amount_monthly' => env('PRICE_AMOUNT_CZK_MONTHLY', 29),
+                'amount_yearly' => env('PRICE_AMOUNT_CZK_YEARLY', 249),
+            ],
+            'en' => [
+                'code' => 'EUR',
+                'symbol' => '€',
+                'amount_monthly' => env('PRICE_AMOUNT_EUR_MONTHLY', 1.99),
+                'amount_yearly' => env('PRICE_AMOUNT_EUR_YEARLY', 19.99),
+            ],
+            'de' => [
+                'code' => 'EUR',
+                'symbol' => '€',
+                'amount_monthly' => env('PRICE_AMOUNT_EUR_MONTHLY', 1.99),
+                'amount_yearly' => env('PRICE_AMOUNT_EUR_YEARLY', 19.99),
+            ],
+            'pl' => [
+                'code' => 'PLN',
+                'symbol' => 'zł',
+                'amount_monthly' => env('PRICE_AMOUNT_PLN_MONTHLY', 9.99),
+                'amount_yearly' => env('PRICE_AMOUNT_PLN_YEARLY', 99),
+            ],
+            'sk' => [
+                'code' => 'EUR',
+                'symbol' => '€',
+                'amount_monthly' => env('PRICE_AMOUNT_EUR_MONTHLY', 1.99),
+                'amount_yearly' => env('PRICE_AMOUNT_EUR_YEARLY', 19.99),
+            ],
         ],
     ],
 

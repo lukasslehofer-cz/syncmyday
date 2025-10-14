@@ -570,4 +570,33 @@ return [
     'blog_cta_button_primary' => 'Wypróbuj za darmo',
     'blog_cta_button_secondary' => 'Zobacz funkcje',
     'blog_cta_footnote' => '✓ 14 dni za darmo • ✓ Bez karty kredytowej • ✓ Natychmiastowa aktywacja',
+    
+    // ============================================
+    // NOWE - Trial Without Card (2025-01-14)
+    // ============================================
+    
+    // Pricing Cards
+    'choose_your_plan' => 'Wybierz swój plan',
+    'monthly_plan' => 'Plan miesięczny',
+    'yearly_plan' => 'Plan roczny',
+    'per_month' => 'miesięcznie',
+    'or' => 'lub',
+    'best_value' => 'Najlepsza wartość',
+    'save_percent' => 'Oszczędź :percent%',
+    'flexible_cancel_anytime' => 'Elastyczny, anuluj w dowolnym momencie',
+    'choose_monthly' => 'Wybierz miesięczny',
+    'choose_yearly' => 'Wybierz roczny',
+    'no_charge_during_trial' => 'Brak opłat podczas okresu próbnego',
+    
+    // Trial Banner
+    'days_remaining' => '{0} Brak dni|{1} 1 dzień|[2,4] :count dni|[5,*] :count dni pozostało',
+    'upgrade_now_save' => 'Ulepsz teraz i oszczędzaj',
+    'upgrade_now' => 'Ulepsz teraz',
+    
+    // Homepage
+    'start_free_trial' => 'Rozpocznij darmowy okres próbny',
+    'choose_plan_after_trial' => 'Wybierz plan po okresie próbnym:',
+    'save_with_yearly' => 'Oszczędź :percent% z planem rocznym',
+    'start_free_trial_now' => 'Rozpocznij za darmo (bez karty)',
+    'no_commitment' => 'Bez zobowiązań',
 ];

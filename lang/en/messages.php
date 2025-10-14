@@ -664,4 +664,33 @@ return [
     'blog_cta_button_primary' => 'Try for free',
     'blog_cta_button_secondary' => 'View features',
     'blog_cta_footnote' => '✓ 14 days free • ✓ No credit card • ✓ Instant activation',
+    
+    // ============================================
+    // NEW - Trial Without Card (2025-01-14)
+    // ============================================
+    
+    // Pricing Cards
+    'choose_your_plan' => 'Choose Your Plan',
+    'monthly_plan' => 'Monthly Plan',
+    'yearly_plan' => 'Yearly Plan',
+    'per_month' => 'per month',
+    'or' => 'or',
+    'best_value' => 'Best Value',
+    'save_percent' => 'Save :percent%',
+    'flexible_cancel_anytime' => 'Flexible, cancel anytime',
+    'choose_monthly' => 'Choose Monthly',
+    'choose_yearly' => 'Choose Yearly',
+    'no_charge_during_trial' => 'No charge during trial',
+    
+    // Trial Banner
+    'days_remaining' => '{0} No days|{1} 1 day|[2,*] :count days remaining',
+    'upgrade_now_save' => 'Upgrade now and save',
+    'upgrade_now' => 'Upgrade Now',
+    
+    // Homepage
+    'start_free_trial' => 'Start Free Trial',
+    'choose_plan_after_trial' => 'Choose your plan after trial:',
+    'save_with_yearly' => 'Save :percent% with yearly',
+    'start_free_trial_now' => 'Start Free Trial (No Card)',
+    'no_commitment' => 'No commitment',
 ];

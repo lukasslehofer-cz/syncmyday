@@ -41,8 +41,11 @@
                 <p style="margin: 0 0 10px 0; font-size: 18px; color: #065f46; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
                     {{ __('emails.trial_pricing_title') }}
                 </p>
-                <p style="margin: 0; font-size: 32px; color: #059669; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-                    €29 / {{ __('emails.per_year') }}
+                <p style="margin: 0 0 5px 0; font-size: 28px; color: #059669; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ \App\Helpers\PricingHelper::formatPrice($user->locale, 'monthly') }} / {{ __('emails.per_month') }}
+                </p>
+                <p style="margin: 0; font-size: 18px; color: #065f46; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.or') }} {{ \App\Helpers\PricingHelper::formatPrice($user->locale, 'yearly') }} / {{ __('emails.per_year') }}
                 </p>
                 <p style="margin: 10px 0 0 0; font-size: 14px; color: #047857; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
                     {{ __('emails.trial_pricing_note') }}

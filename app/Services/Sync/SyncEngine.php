@@ -94,6 +94,15 @@ class SyncEngine
      */
     public function syncRule(SyncRule $rule, CalendarConnection $sourceConnection): void
     {
+        // Check if user has active subscription (soft-lock for expired trials)
+        if (!$rule->user->hasActiveSubscription()) {
+            Log::channel('sync')->warning('Sync skipped - user subscription expired', [
+                'rule_id' => $rule->id,
+                'user_id' => $rule->user_id,
+            ]);
+            return;
+        }
+        
         Log::channel('sync')->info('Starting sync rule', [
             'rule_id' => $rule->id,
             'source_calendar_id' => $rule->source_calendar_id,

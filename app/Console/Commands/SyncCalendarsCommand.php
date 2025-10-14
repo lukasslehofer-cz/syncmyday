@@ -65,6 +65,16 @@ class SyncCalendarsCommand extends Command
             try {
                 $this->info("  → Syncing rule #{$rule->id}: {$rule->sourceConnection->provider_email}");
                 
+                // Check if user has active subscription (skip expired trials)
+                if (!$rule->user->hasActiveSubscription()) {
+                    $this->warn("    ⚠️  User subscription expired. Skipping sync.");
+                    Log::info('Sync skipped - user subscription expired', [
+                        'rule_id' => $rule->id,
+                        'user_id' => $rule->user_id,
+                    ]);
+                    continue;
+                }
+                
                 // Check connection status
                 if ($rule->sourceConnection->status !== 'active') {
                     $this->warn("    ⚠️  Source connection is not active. Skipping.");

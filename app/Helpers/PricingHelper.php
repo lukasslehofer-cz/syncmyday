@@ -5,68 +5,100 @@ namespace App\Helpers;
 class PricingHelper
 {
     /**
-     * Get Stripe Price ID for current locale
+     * Get Stripe Price ID for locale and interval
+     * 
+     * @param string|null $locale
+     * @param string $interval 'monthly' or 'yearly'
+     * @return string|null
      */
-    public static function getPriceId(?string $locale = null): string
+    public static function getPriceId(?string $locale = null, string $interval = 'yearly'): ?string
     {
         $locale = $locale ?? app()->getLocale();
+        $interval = in_array($interval, ['monthly', 'yearly']) ? $interval : 'yearly';
         
-        // Get price ID from config based on locale
-        $priceId = config("services.stripe.prices.{$locale}");
+        // Get price ID from config based on locale and interval
+        $priceId = config("services.stripe.prices_{$interval}.{$locale}");
         
-        // Fallback to default if not found
-        return $priceId ?? config('services.stripe.pro_price_id');
+        return $priceId;
     }
 
     /**
-     * Get currency information for current locale
+     * Get currency information for locale and interval
+     * 
+     * @param string|null $locale
+     * @param string $interval 'monthly' or 'yearly'
+     * @return array
      */
-    public static function getCurrency(?string $locale = null): array
+    public static function getCurrency(?string $locale = null, string $interval = 'yearly'): array
     {
         $locale = $locale ?? app()->getLocale();
+        $interval = in_array($interval, ['monthly', 'yearly']) ? $interval : 'yearly';
         
         // Get currency from config based on locale
         $currency = config("services.stripe.currencies.{$locale}");
         
         // Fallback to CZK if not found
-        return $currency ?? [
-            'code' => 'CZK',
-            'symbol' => 'Kč',
-            'amount' => 249,
+        if (!$currency) {
+            return [
+                'code' => 'CZK',
+                'symbol' => 'Kč',
+                'amount' => $interval === 'monthly' ? 29 : 249,
+            ];
+        }
+        
+        // Return currency with appropriate amount for interval
+        return [
+            'code' => $currency['code'],
+            'symbol' => $currency['symbol'],
+            'amount' => $currency["amount_{$interval}"] ?? 0,
         ];
     }
 
     /**
-     * Format price with currency
+     * Format price with currency and interval
+     * 
+     * @param string|null $locale
+     * @param string $interval 'monthly' or 'yearly'
+     * @return string
      */
-    public static function formatPrice(?string $locale = null): string
+    public static function formatPrice(?string $locale = null, string $interval = 'yearly'): string
     {
-        $currency = self::getCurrency($locale);
+        $currency = self::getCurrency($locale, $interval);
+        $locale = $locale ?? app()->getLocale();
         
         // Format based on locale conventions
-        switch ($locale ?? app()->getLocale()) {
+        switch ($locale) {
             case 'cs':
             case 'sk':
-                return number_format($currency['amount'], 0, ',', ' ') . ' ' . $currency['symbol'];
+                $price = number_format($currency['amount'], 0, ',', ' ') . ' ' . $currency['symbol'];
+                break;
             
             case 'pl':
-                return number_format($currency['amount'], 2, ',', ' ') . ' ' . $currency['symbol'];
+                $price = number_format($currency['amount'], 2, ',', ' ') . ' ' . $currency['symbol'];
+                break;
             
             case 'de':
-                return $currency['symbol'] . ' ' . number_format($currency['amount'], 2, ',', '.');
+                $price = $currency['symbol'] . ' ' . number_format($currency['amount'], 2, ',', '.');
+                break;
             
             case 'en':
             default:
-                return $currency['symbol'] . number_format($currency['amount'], 2, '.', ',');
+                $price = $currency['symbol'] . number_format($currency['amount'], 2, '.', ',');
         }
+        
+        return $price;
     }
 
     /**
-     * Get price amount as float
+     * Get price amount as float for interval
+     * 
+     * @param string|null $locale
+     * @param string $interval 'monthly' or 'yearly'
+     * @return float
      */
-    public static function getAmount(?string $locale = null): float
+    public static function getAmount(?string $locale = null, string $interval = 'yearly'): float
     {
-        $currency = self::getCurrency($locale);
+        $currency = self::getCurrency($locale, $interval);
         return (float) $currency['amount'];
     }
 
@@ -77,6 +109,42 @@ class PricingHelper
     {
         $currency = self::getCurrency($locale);
         return $currency['code'];
+    }
+
+    /**
+     * Calculate yearly savings compared to monthly
+     * 
+     * @param string|null $locale
+     * @return float Percentage saved
+     */
+    public static function getYearlySavings(?string $locale = null): float
+    {
+        $monthlyAmount = self::getAmount($locale, 'monthly');
+        $yearlyAmount = self::getAmount($locale, 'yearly');
+        
+        if ($monthlyAmount <= 0) {
+            return 0;
+        }
+        
+        $monthlyYearTotal = $monthlyAmount * 12;
+        $savings = (($monthlyYearTotal - $yearlyAmount) / $monthlyYearTotal) * 100;
+        
+        return round($savings, 0);
+    }
+
+    /**
+     * Get formatted price with interval label
+     * 
+     * @param string|null $locale
+     * @param string $interval 'monthly' or 'yearly'
+     * @return string
+     */
+    public static function formatPriceWithInterval(?string $locale = null, string $interval = 'yearly'): string
+    {
+        $price = self::formatPrice($locale, $interval);
+        $intervalLabel = $interval === 'monthly' ? __('messages.per_month') : __('messages.per_year');
+        
+        return $price . ' ' . $intervalLabel;
     }
 }
 

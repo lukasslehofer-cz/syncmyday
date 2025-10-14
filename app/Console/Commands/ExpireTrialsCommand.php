@@ -43,29 +43,30 @@ class ExpireTrialsCommand extends Command
             try {
                 $this->line("Processing user: {$user->email} (trial ended: {$user->subscription_ends_at->format('Y-m-d')})");
                 
-                $user->expireTrial();
+                // Soft-lock: User stays on Pro tier but sync is disabled (hasActiveSubscription returns false)
+                // Data is preserved, but no new syncs will run until they subscribe
                 
-                Log::info('Trial expired and user downgraded', [
+                Log::info('Trial expired - user soft-locked', [
                     'user_id' => $user->id,
                     'email' => $user->email,
                     'trial_ended_at' => $user->subscription_ends_at,
                 ]);
 
-                $this->line("✓ Expired trial for: {$user->email}");
+                $this->line("✓ Soft-locked user (trial expired): {$user->email}");
                 $expired++;
 
                 // TODO: Send trial expired notification email
                 
             } catch (\Exception $e) {
-                $this->error("✗ Failed to expire trial for {$user->email}: {$e->getMessage()}");
-                Log::error('Failed to expire trial', [
+                $this->error("✗ Failed to process expired trial for {$user->email}: {$e->getMessage()}");
+                Log::error('Failed to process expired trial', [
                     'user_id' => $user->id,
                     'error' => $e->getMessage(),
                 ]);
             }
         }
 
-        $this->info("Finished! Total trials expired: {$expired}");
+        $this->info("Finished! Total trials soft-locked: {$expired}");
 
         return Command::SUCCESS;
     }

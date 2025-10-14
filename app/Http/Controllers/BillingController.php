@@ -39,91 +39,26 @@ class BillingController extends Controller
         return view('billing.index', [
             'user' => $user,
             'subscription' => $subscription,
-            'proPriceId' => config('services.stripe.pro_price_id'),
-            'currency' => PricingHelper::getCurrency(),
-            'formattedPrice' => PricingHelper::formatPrice(),
+            'monthlyPrice' => PricingHelper::formatPrice($user->locale, 'monthly'),
+            'yearlyPrice' => PricingHelper::formatPrice($user->locale, 'yearly'),
+            'yearlySavings' => PricingHelper::getYearlySavings($user->locale),
+            'trialDaysRemaining' => $user->getRemainingTrialDays(),
         ]);
     }
 
     /**
-     * Create Stripe Checkout session for trial (used after registration)
-     */
-    public function createTrialCheckoutSession(Request $request)
-    {
-        $user = auth()->user();
-
-        // Only allow trial checkout for users in trial without payment method
-        if (!$user->isInTrial()) {
-            return redirect()->route('billing')
-                ->with('error', 'Trial checkout is only available for new users.');
-        }
-
-        try {
-            // Create or retrieve Stripe customer
-            if (!$user->stripe_customer_id) {
-                $customer = \Stripe\Customer::create([
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'metadata' => [
-                        'user_id' => $user->id,
-                    ],
-                ]);
-
-                $user->update(['stripe_customer_id' => $customer->id]);
-            }
-
-            // Calculate trial end timestamp
-            $trialEnd = $user->subscription_ends_at->timestamp;
-
-            // Get correct Price ID based on user's locale
-            $priceId = PricingHelper::getPriceId($user->locale);
-
-            // Create Checkout Session with trial
-            $session = Session::create([
-                'customer' => $user->stripe_customer_id,
-                'payment_method_types' => ['card'],
-                'line_items' => [[
-                    'price' => $priceId,
-                    'quantity' => 1,
-                ]],
-                'mode' => 'subscription',
-                'subscription_data' => [
-                    'trial_end' => $trialEnd,
-                    'metadata' => [
-                        'user_id' => $user->id,
-                    ],
-                ],
-                'success_url' => route('onboarding.start') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('register'),
-                'metadata' => [
-                    'user_id' => $user->id,
-                    'is_trial' => true,
-                ],
-            ]);
-
-            return redirect($session->url);
-
-        } catch (\Exception $e) {
-            Log::error('Stripe trial checkout session creation failed', [
-                'error' => $e->getMessage(),
-                'error_class' => get_class($e),
-                'user_id' => $user->id,
-                'locale' => $user->locale ?? 'N/A',
-                'price_id' => $priceId ?? 'N/A',
-                'stripe_customer_id' => $user->stripe_customer_id ?? 'N/A',
-            ]);
-
-            return redirect()->back()
-                ->with('error', 'Stripe Error: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Create Stripe Checkout session for Pro subscription (for expired trials)
+     * Create Stripe Checkout session for subscription (monthly or yearly)
      */
     public function createCheckoutSession(Request $request)
     {
         $user = auth()->user();
+        $interval = $request->input('interval', 'yearly'); // monthly or yearly
+        
+        // Validate interval
+        if (!in_array($interval, ['monthly', 'yearly'])) {
+            return redirect()->back()
+                ->with('error', 'Invalid subscription interval.');
+        }
 
         try {
             // Create or retrieve Stripe customer
@@ -139,10 +74,19 @@ class BillingController extends Controller
                 $user->update(['stripe_customer_id' => $customer->id]);
             }
 
-            // Get correct Price ID based on user's locale
-            $priceId = PricingHelper::getPriceId($user->locale);
+            // Get correct Price ID based on user's locale and interval
+            $priceId = PricingHelper::getPriceId($user->locale, $interval);
+            
+            if (!$priceId) {
+                Log::error('Price ID not found', [
+                    'locale' => $user->locale,
+                    'interval' => $interval,
+                ]);
+                return redirect()->back()
+                    ->with('error', 'Pricing configuration error. Please contact support.');
+            }
 
-            // Create Checkout Session (no trial)
+            // Create Checkout Session
             $session = Session::create([
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
@@ -155,7 +99,14 @@ class BillingController extends Controller
                 'cancel_url' => route('billing'),
                 'metadata' => [
                     'user_id' => $user->id,
+                    'interval' => $interval,
                 ],
+            ]);
+
+            Log::info('Checkout session created', [
+                'user_id' => $user->id,
+                'interval' => $interval,
+                'price_id' => $priceId,
             ]);
 
             return redirect($session->url);
@@ -164,6 +115,7 @@ class BillingController extends Controller
             Log::error('Stripe checkout session creation failed', [
                 'error' => $e->getMessage(),
                 'user_id' => $user->id,
+                'interval' => $interval,
             ]);
 
             return redirect()->back()
@@ -581,9 +533,7 @@ class BillingController extends Controller
                     'subscription_id' => $user->stripe_subscription_id,
                 ]);
 
-                // Create Checkout Session to add payment method
-                $priceId = PricingHelper::getPriceId($user->locale);
-                
+                // Create Checkout Session to add payment method (setup mode)
                 $session = Session::create([
                     'customer' => $user->stripe_customer_id,
                     'payment_method_types' => ['card'],
