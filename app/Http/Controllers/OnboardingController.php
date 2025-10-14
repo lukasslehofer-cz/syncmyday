@@ -55,10 +55,14 @@ class OnboardingController extends Controller
     }
     
     /**
-     * Dismiss onboarding progress bar (for current session)
+     * Dismiss onboarding progress bar (permanently)
      */
     public function dismissProgress(Request $request)
     {
+        // Mark onboarding as completed in database (won't show again)
+        auth()->user()->update(['onboarding_completed' => true]);
+        
+        // Also dismiss for current session
         $request->session()->put('onboarding_progress_dismissed', true);
         
         return redirect()->back();

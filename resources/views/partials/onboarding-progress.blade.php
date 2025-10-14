@@ -12,9 +12,9 @@
     
     // Show if:
     // - User is in trial
-    // - NOT all steps completed
-    // - User hasn't dismissed it (resets on new login)
-    $shouldShow = $user->isInTrial() && !$onboardingComplete && !$dismissedProgress;
+    // - Onboarding not permanently completed (DB flag - set on dismiss or logout)
+    // - User hasn't dismissed it in current session
+    $shouldShow = $user->isInTrial() && !$user->onboarding_completed && !$dismissedProgress;
 @endphp
 
 @if($shouldShow)

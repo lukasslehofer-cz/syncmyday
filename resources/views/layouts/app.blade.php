@@ -163,13 +163,10 @@
     @if(auth()->user()->isInTrial())
     @php
         $user = auth()->user();
-        $hasConnections = $user->calendarConnections()->count() >= 2; // Need at least 2 calendars
-        $hasRules = $user->syncRules()->count() > 0;
-        $onboardingComplete = $hasConnections && $hasRules;
         $dismissedProgress = session('onboarding_progress_dismissed', false);
         
         // Show trial banner only if onboarding progress is NOT showing
-        $showOnboardingProgress = $user->isInTrial() && !$onboardingComplete && !$dismissedProgress;
+        $showOnboardingProgress = $user->isInTrial() && !$user->onboarding_completed && !$dismissedProgress;
         $showTrialBanner = !$showOnboardingProgress;
     @endphp
     

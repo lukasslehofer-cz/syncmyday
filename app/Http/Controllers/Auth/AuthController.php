@@ -116,6 +116,18 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        
+        // If user completed onboarding steps, mark it in DB so progress bar won't show on next login
+        if ($user && $user->isInTrial() && !$user->onboarding_completed) {
+            $hasConnections = $user->calendarConnections()->count() >= 2;
+            $hasRules = $user->syncRules()->count() > 0;
+            
+            if ($hasConnections && $hasRules) {
+                $user->update(['onboarding_completed' => true]);
+            }
+        }
+        
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
