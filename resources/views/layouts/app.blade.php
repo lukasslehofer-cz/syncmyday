@@ -163,7 +163,7 @@
     @if(auth()->user()->isInTrial())
     @php
         $user = auth()->user();
-        $hasConnections = $user->calendarConnections()->count() > 0;
+        $hasConnections = $user->calendarConnections()->count() >= 2; // Need at least 2 calendars
         $hasRules = $user->syncRules()->count() > 0;
         $onboardingComplete = $hasConnections && $hasRules;
         $dismissedProgress = session('onboarding_progress_dismissed', false);
@@ -220,7 +220,7 @@
     <!-- Flash Messages -->
     @if(session('success') || session('error') || session('warning'))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6" x-data="{ show: true }">
-        @if(session('success'))
+        @if(session('success') && !request()->routeIs('onboarding.start'))
         <div x-show="show" class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">

@@ -3,7 +3,7 @@
 @php
     $user = auth()->user();
     // Check if user has completed onboarding steps
-    $hasConnections = $user->calendarConnections()->count() > 0;
+    $hasConnections = $user->calendarConnections()->count() >= 2; // Need at least 2 calendars for sync
     $hasRules = $user->syncRules()->count() > 0;
     $onboardingComplete = $hasConnections && $hasRules;
     
