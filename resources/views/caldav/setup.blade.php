@@ -51,129 +51,137 @@
         </div>
     @endif
 
-    <!-- How it works / Provider Selection -->
-    <div class="mb-8 bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6 lg:p-8">
-        <div class="flex items-center space-x-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center shadow-md">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-            </div>
-            <h3 class="text-xl font-bold text-gray-900">{{ __('messages.choose_calendar_provider') }}</h3>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Apple iCloud -->
-            <label class="relative cursor-pointer block" id="label-icloud">
-                <input 
-                    type="radio" 
-                    name="provider_type" 
-                    value="icloud" 
-                    checked
-                    class="peer/icloud absolute opacity-0"
-                    onchange="toggleProviderFields(); updateRadioStyles();"
-                >
-                <div class="h-full bg-gray-50 peer-checked/icloud:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/icloud:border-purple-500 peer-checked/icloud:shadow-lg hover:border-purple-400 transition-all">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-gray-800 to-black flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                                </svg>
-                            </div>
-                            <h4 class="font-bold text-gray-900">Apple iCloud</h4>
-                        </div>
-                        <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-purple-600 bg-purple-600 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="radio-check w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
-                                <path d="M3 8l4 4 6-8"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="space-y-2 text-sm text-gray-600">
-                        <p><strong>{{ __('messages.username') }}:</strong> {{ __('messages.your_apple_id_email') }}</p>
-                        <p><strong>{{ __('messages.password') }}:</strong> <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-purple-600 hover:text-purple-700 underline">{{ __('messages.app_specific_password') }}</a></p>
-                        <p class="text-xs text-gray-500 mt-2">✓ {{ __('messages.easy_setup_auto_config') }}</p>
-                    </div>
-                </div>
-            </label>
-            
-            <!-- Other CalDAV -->
-            <label class="relative cursor-pointer block" id="label-other">
-                <input 
-                    type="radio" 
-                    name="provider_type" 
-                    value="other" 
-                    class="peer/other absolute opacity-0"
-                    onchange="toggleProviderFields(); updateRadioStyles();"
-                >
-                <div class="h-full bg-gray-50 peer-checked/other:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/other:border-purple-500 peer-checked/other:shadow-lg hover:border-purple-400 transition-all">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
-                                </svg>
-                            </div>
-                            <h4 class="font-bold text-gray-900">{{ __('messages.other_caldav') }}</h4>
-                        </div>
-                        <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 flex items-center justify-center transition-all shadow-sm">
-                            <svg class="radio-check w-4 h-4 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
-                                <path d="M3 8l4 4 6-8"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="space-y-2 text-sm text-gray-600">
-                        <p><strong>{{ __('messages.server_url') }}:</strong> {{ __('messages.your_caldav_server') }}</p>
-                        <p><strong>{{ __('messages.username') }}:</strong> {{ __('messages.your_account_username') }}</p>
-                        <p><strong>{{ __('messages.password') }}:</strong> {{ __('messages.your_account_password') }}</p>
-                        <p class="text-xs text-gray-500 mt-2">{{ __('messages.caldav_examples') }}</p>
-                    </div>
-                </div>
-            </label>
-        </div>
-        
-        <script>
-        function updateRadioStyles() {
-            // Get all radio indicators
-            const indicators = document.querySelectorAll('.radio-indicator');
-            const checks = document.querySelectorAll('.radio-check');
-            
-            // Get radio buttons
-            const icloudRadio = document.querySelector('input[value="icloud"]');
-            const otherRadio = document.querySelector('input[value="other"]');
-            
-            // Reset all to unchecked state
-            indicators.forEach(indicator => {
-                indicator.classList.remove('border-purple-600', 'bg-purple-600');
-                indicator.classList.add('border-gray-300');
-            });
-            checks.forEach(check => {
-                check.classList.add('opacity-0');
-            });
-            
-            // Apply checked state to selected radio
-            if (icloudRadio.checked) {
-                const icloudIndicator = document.querySelector('#label-icloud .radio-indicator');
-                const icloudCheck = document.querySelector('#label-icloud .radio-check');
-                icloudIndicator.classList.remove('border-gray-300');
-                icloudIndicator.classList.add('border-purple-600', 'bg-purple-600');
-                icloudCheck.classList.remove('opacity-0');
-            } else if (otherRadio.checked) {
-                const otherIndicator = document.querySelector('#label-other .radio-indicator');
-                const otherCheck = document.querySelector('#label-other .radio-check');
-                otherIndicator.classList.remove('border-gray-300');
-                otherIndicator.classList.add('border-purple-600', 'bg-purple-600');
-                otherCheck.classList.remove('opacity-0');
-            }
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', updateRadioStyles);
-        </script>
-    </div>
-
     <!-- Form -->
     <form action="{{ route('caldav.test') }}" method="POST" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         @csrf
+
+        <!-- Provider Selection (inside form now) -->
+        <div class="mb-8 bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6 lg:p-8">
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center shadow-md">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">{{ __('messages.choose_calendar_provider') }}</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Apple iCloud -->
+                <label class="relative cursor-pointer block" id="label-icloud">
+                    <input 
+                        type="radio" 
+                        name="provider_type" 
+                        value="icloud" 
+                        checked
+                        class="peer/icloud absolute opacity-0"
+                        onchange="toggleProviderFields(); updateRadioStyles();"
+                    >
+                    <div class="h-full bg-gray-50 peer-checked/icloud:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/icloud:border-purple-500 peer-checked/icloud:shadow-lg hover:border-purple-400 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-r from-gray-800 to-black flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                                    </svg>
+                                </div>
+                                <h4 class="font-bold text-gray-900">Apple iCloud</h4>
+                            </div>
+                            <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-purple-600 bg-purple-600 flex items-center justify-center transition-all shadow-sm">
+                                <svg class="radio-check w-4 h-4 text-white transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                                    <path d="M3 8l4 4 6-8"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <p><strong>{{ __('messages.username') }}:</strong> {{ __('messages.your_apple_id_email') }}</p>
+                            <p><strong>{{ __('messages.password') }}:</strong> <a href="https://appleid.apple.com/account/manage" target="_blank" class="text-purple-600 hover:text-purple-700 underline">{{ __('messages.app_specific_password') }}</a></p>
+                            <p class="text-xs text-gray-500 mt-2">✓ {{ __('messages.easy_setup_auto_config') }}</p>
+                        </div>
+                    </div>
+                </label>
+                
+                <!-- Other CalDAV -->
+                <label class="relative cursor-pointer block" id="label-other">
+                    <input 
+                        type="radio" 
+                        name="provider_type" 
+                        value="other" 
+                        class="peer/other absolute opacity-0"
+                        onchange="toggleProviderFields(); updateRadioStyles();"
+                    >
+                    <div class="h-full bg-gray-50 peer-checked/other:bg-white rounded-xl p-4 border-2 border-purple-200 peer-checked/other:border-purple-500 peer-checked/other:shadow-lg hover:border-purple-400 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-lg bg-gray-600 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                                    </svg>
+                                </div>
+                                <h4 class="font-bold text-gray-900">{{ __('messages.other_caldav') }}</h4>
+                            </div>
+                            <div class="radio-indicator relative flex-shrink-0 w-7 h-7 rounded-full border-[3px] border-gray-300 flex items-center justify-center transition-all shadow-sm">
+                                <svg class="radio-check w-4 h-4 text-white opacity-0 transition-opacity" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 16 16">
+                                    <path d="M3 8l4 4 6-8"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <p><strong>{{ __('messages.server_url') }}:</strong> {{ __('messages.your_caldav_server') }}</p>
+                            <p><strong>{{ __('messages.username') }}:</strong> {{ __('messages.your_account_username') }}</p>
+                            <p><strong>{{ __('messages.password') }}:</strong> {{ __('messages.your_account_password') }}</p>
+                            <p class="text-xs text-gray-500 mt-2">{{ __('messages.caldav_examples') }}</p>
+                        </div>
+                    </div>
+                </label>
+            </div>
+            
+            <script>
+            function updateRadioStyles() {
+                // Get all radio indicators
+                const indicators = document.querySelectorAll('.radio-indicator');
+                const checks = document.querySelectorAll('.radio-check');
+                
+                // Get radio buttons
+                const icloudRadio = document.querySelector('input[value="icloud"]');
+                const otherRadio = document.querySelector('input[value="other"]');
+                
+                // Reset all to unchecked state
+                indicators.forEach(indicator => {
+                    indicator.classList.remove('border-purple-600', 'bg-purple-600');
+                    indicator.classList.add('border-gray-300');
+                });
+                checks.forEach(check => {
+                    check.classList.add('opacity-0');
+                });
+                
+                // Apply checked state to selected radio
+                if (icloudRadio && icloudRadio.checked) {
+                    const icloudIndicator = document.querySelector('#label-icloud .radio-indicator');
+                    const icloudCheck = document.querySelector('#label-icloud .radio-check');
+                    if (icloudIndicator) {
+                        icloudIndicator.classList.remove('border-gray-300');
+                        icloudIndicator.classList.add('border-purple-600', 'bg-purple-600');
+                    }
+                    if (icloudCheck) {
+                        icloudCheck.classList.remove('opacity-0');
+                    }
+                } else if (otherRadio && otherRadio.checked) {
+                    const otherIndicator = document.querySelector('#label-other .radio-indicator');
+                    const otherCheck = document.querySelector('#label-other .radio-check');
+                    if (otherIndicator) {
+                        otherIndicator.classList.remove('border-gray-300');
+                        otherIndicator.classList.add('border-purple-600', 'bg-purple-600');
+                    }
+                    if (otherCheck) {
+                        otherCheck.classList.remove('opacity-0');
+                    }
+                }
+            }
+            
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', updateRadioStyles);
+            </script>
+        </div>
 
         <div class="p-6 lg:p-8 space-y-6">
             <!-- Apple iCloud Fields -->
