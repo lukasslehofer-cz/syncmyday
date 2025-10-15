@@ -32,6 +32,14 @@ class CalDavController extends Controller
     {
         $providerType = $request->input('provider_type', 'other');
         
+        Log::info('CalDAV testConnection called', [
+            'user_id' => auth()->id(),
+            'provider_type' => $providerType,
+            'has_apple_id' => $request->has('apple_id'),
+            'has_app_password' => $request->has('app_password'),
+            'has_url' => $request->has('url'),
+        ]);
+        
         if ($providerType === 'icloud') {
             // Apple iCloud - automatic discovery
             $validated = $request->validate([
@@ -44,29 +52,47 @@ class CalDavController extends Controller
                 'apple_id' => $validated['apple_id'],
             ]);
             
-            // Use iCloud discovery
-            $result = CalDavCalendarService::discoverICloud(
-                $validated['apple_id'],
-                $validated['app_password']
-            );
-            
-            if (!$result['success']) {
+            try {
+                // Use iCloud discovery
+                $result = CalDavCalendarService::discoverICloud(
+                    $validated['apple_id'],
+                    $validated['app_password']
+                );
+                
+                if (!$result['success']) {
+                    Log::warning('iCloud connection failed', [
+                        'user_id' => auth()->id(),
+                        'error' => $result['error'],
+                    ]);
+                    
+                    return back()
+                        ->withInput()
+                        ->with('error', $result['error'] ?? __('messages.caldav_connection_failed'));
+                }
+                
+                // Store credentials in session for calendar selection
+                session([
+                    'caldav_url' => $result['url'],
+                    'caldav_username' => $validated['apple_id'],
+                    'caldav_password' => $validated['app_password'],
+                    'caldav_email' => $validated['apple_id'],
+                    'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
+                    'caldav_calendars' => $result['calendars'],
+                ]);
+
+                return redirect()->route('caldav.select-calendars');
+                
+            } catch (\Exception $e) {
+                Log::error('Unexpected error during iCloud connection', [
+                    'user_id' => auth()->id(),
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                
                 return back()
                     ->withInput()
-                    ->with('error', __('messages.caldav_connection_failed') . ': ' . $result['error']);
+                    ->with('error', 'Unexpected error: ' . $e->getMessage());
             }
-            
-            // Store credentials in session for calendar selection
-            session([
-                'caldav_url' => $result['url'],
-                'caldav_username' => $validated['apple_id'],
-                'caldav_password' => $validated['app_password'],
-                'caldav_email' => $validated['apple_id'],
-                'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
-                'caldav_calendars' => $result['calendars'],
-            ]);
-
-            return redirect()->route('caldav.select-calendars');
             
         } else {
             // Other CalDAV - manual configuration
@@ -83,30 +109,50 @@ class CalDavController extends Controller
                 'username' => $validated['username'],
             ]);
             
-            // Test connection
-            $result = CalDavCalendarService::testConnection(
-                $validated['url'],
-                $validated['username'],
-                $validated['password']
-            );
-            
-            if (!$result['success']) {
+            try {
+                // Test connection
+                $result = CalDavCalendarService::testConnection(
+                    $validated['url'],
+                    $validated['username'],
+                    $validated['password']
+                );
+                
+                if (!$result['success']) {
+                    Log::warning('CalDAV connection failed', [
+                        'user_id' => auth()->id(),
+                        'url' => $validated['url'],
+                        'error' => $result['error'],
+                    ]);
+                    
+                    return back()
+                        ->withInput()
+                        ->with('error', $result['error'] ?? __('messages.caldav_connection_failed'));
+                }
+                
+                // Store credentials in session for calendar selection
+                session([
+                    'caldav_url' => $validated['url'],
+                    'caldav_username' => $validated['username'],
+                    'caldav_password' => $validated['password'],
+                    'caldav_email' => $validated['email'] ?? $validated['username'],
+                    'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
+                    'caldav_calendars' => $result['calendars'],
+                ]);
+                
+                return redirect()->route('caldav.select-calendars');
+                
+            } catch (\Exception $e) {
+                Log::error('Unexpected error during CalDAV connection', [
+                    'user_id' => auth()->id(),
+                    'url' => $validated['url'],
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                
                 return back()
                     ->withInput()
-                    ->with('error', __('messages.caldav_connection_failed') . ': ' . $result['error']);
+                    ->with('error', 'Unexpected error: ' . $e->getMessage());
             }
-            
-            // Store credentials in session for calendar selection
-            session([
-                'caldav_url' => $validated['url'],
-                'caldav_username' => $validated['username'],
-                'caldav_password' => $validated['password'],
-                'caldav_email' => $validated['email'] ?? $validated['username'],
-                'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
-                'caldav_calendars' => $result['calendars'],
-            ]);
-            
-            return redirect()->route('caldav.select-calendars');
         }
     }
     
