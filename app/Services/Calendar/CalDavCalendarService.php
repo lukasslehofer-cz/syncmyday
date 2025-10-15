@@ -106,7 +106,32 @@ class CalDavCalendarService
                         'principal_url' => $principalUrl,
                     ]);
                 }
+            } catch (\Sabre\HTTP\ClientHttpException $e) {
+                // Catch HTTP errors (401, 403, etc.)
+                $statusCode = $e->getHttpStatus();
+                
+                Log::error('iCloud discovery: HTTP error during authentication', [
+                    'status_code' => $statusCode,
+                    'error' => $e->getMessage(),
+                    'apple_id' => $appleId,
+                ]);
+                
+                if ($statusCode === 401 || $statusCode === 403) {
+                    throw new \Exception('Authentication failed. Please check your Apple ID and App-Specific Password. Make sure you generated a new App-Specific Password at appleid.apple.com (do not use your regular Apple password).');
+                }
+                
+                throw new \Exception('HTTP error ' . $statusCode . ': ' . $e->getMessage());
             } catch (\Exception $e) {
+                // Check if it's a connection error
+                if (str_contains($e->getMessage(), 'Could not connect') || 
+                    str_contains($e->getMessage(), 'Connection refused') ||
+                    str_contains($e->getMessage(), 'Failed to connect')) {
+                    Log::error('iCloud discovery: Connection error', [
+                        'error' => $e->getMessage(),
+                    ]);
+                    throw new \Exception('Cannot connect to iCloud servers. Please check your internet connection.');
+                }
+                
                 Log::warning('iCloud discovery: .well-known failed, trying root', [
                     'error' => $e->getMessage(),
                 ]);
@@ -114,27 +139,42 @@ class CalDavCalendarService
             
             // If .well-known didn't work, try root
             if (!$principalUrl) {
-                $response = $client->propfind('/', [
-                    '{DAV:}current-user-principal',
-                ], 0);
-                
-                if (!isset($response['{DAV:}current-user-principal'])) {
-                    throw new \Exception('Could not discover CalDAV principal for iCloud');
+                try {
+                    $response = $client->propfind('/', [
+                        '{DAV:}current-user-principal',
+                    ], 0);
+                    
+                    if (!isset($response['{DAV:}current-user-principal'])) {
+                        throw new \Exception('Could not discover CalDAV principal for iCloud');
+                    }
+                    
+                    $principal = $response['{DAV:}current-user-principal'];
+                    
+                    Log::debug('iCloud discovery: Principal raw response (root)', [
+                        'type' => gettype($principal),
+                        'value' => is_array($principal) ? json_encode($principal) : (string)$principal,
+                    ]);
+                    
+                    // Extract URL from response
+                    $principalUrl = self::extractUrlFromPropfindResponse($principal);
+                    
+                    Log::info('iCloud discovery: Found principal via root', [
+                        'principal_url' => $principalUrl,
+                    ]);
+                } catch (\Sabre\HTTP\ClientHttpException $e) {
+                    $statusCode = $e->getHttpStatus();
+                    
+                    Log::error('iCloud discovery: HTTP error during root principal discovery', [
+                        'status_code' => $statusCode,
+                        'error' => $e->getMessage(),
+                    ]);
+                    
+                    if ($statusCode === 401 || $statusCode === 403) {
+                        throw new \Exception('Authentication failed. Please verify: 1) Your Apple ID email is correct, 2) You are using an App-Specific Password (not your regular password), generated at appleid.apple.com.');
+                    }
+                    
+                    throw new \Exception('HTTP error ' . $statusCode . ' while connecting to iCloud: ' . $e->getMessage());
                 }
-                
-                $principal = $response['{DAV:}current-user-principal'];
-                
-                Log::debug('iCloud discovery: Principal raw response (root)', [
-                    'type' => gettype($principal),
-                    'value' => is_array($principal) ? json_encode($principal) : (string)$principal,
-                ]);
-                
-                // Extract URL from response
-                $principalUrl = self::extractUrlFromPropfindResponse($principal);
-                
-                Log::info('iCloud discovery: Found principal via root', [
-                    'principal_url' => $principalUrl,
-                ]);
             }
             
             // Get calendar home set
@@ -142,34 +182,45 @@ class CalDavCalendarService
                 'principal_url' => $principalUrl,
             ]);
             
-            $response = $client->propfind($principalUrl, [
-                '{urn:ietf:params:xml:ns:caldav}calendar-home-set',
-            ], 0);
-            
-            if (!isset($response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'])) {
-                throw new \Exception('Could not discover calendar home for iCloud');
+            try {
+                $response = $client->propfind($principalUrl, [
+                    '{urn:ietf:params:xml:ns:caldav}calendar-home-set',
+                ], 0);
+                
+                if (!isset($response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'])) {
+                    throw new \Exception('Could not discover calendar home for iCloud. Your account may not have CalDAV access enabled.');
+                }
+                
+                $calendarHome = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'];
+                
+                Log::debug('iCloud discovery: Calendar home raw response', [
+                    'type' => gettype($calendarHome),
+                    'value' => is_array($calendarHome) ? json_encode($calendarHome) : (string)$calendarHome,
+                ]);
+                
+                // Extract URL from response
+                $calendarHomeUrl = self::extractUrlFromPropfindResponse($calendarHome);
+                
+                Log::info('iCloud discovery: Step 3 - Listing calendars', [
+                    'calendar_home_url' => $calendarHomeUrl,
+                ]);
+                
+                // List calendars
+                $calendars = self::listCalendarsFromUrl($client, $calendarHomeUrl);
+                
+                Log::info('iCloud discovery: Success!', [
+                    'calendars_found' => count($calendars),
+                ]);
+            } catch (\Sabre\HTTP\ClientHttpException $e) {
+                $statusCode = $e->getHttpStatus();
+                
+                Log::error('iCloud discovery: HTTP error during calendar discovery', [
+                    'status_code' => $statusCode,
+                    'error' => $e->getMessage(),
+                ]);
+                
+                throw new \Exception('Failed to access iCloud calendars (HTTP ' . $statusCode . '). Please check your credentials.');
             }
-            
-            $calendarHome = $response['{urn:ietf:params:xml:ns:caldav}calendar-home-set'];
-            
-            Log::debug('iCloud discovery: Calendar home raw response', [
-                'type' => gettype($calendarHome),
-                'value' => is_array($calendarHome) ? json_encode($calendarHome) : (string)$calendarHome,
-            ]);
-            
-            // Extract URL from response
-            $calendarHomeUrl = self::extractUrlFromPropfindResponse($calendarHome);
-            
-            Log::info('iCloud discovery: Step 3 - Listing calendars', [
-                'calendar_home_url' => $calendarHomeUrl,
-            ]);
-            
-            // List calendars
-            $calendars = self::listCalendarsFromUrl($client, $calendarHomeUrl);
-            
-            Log::info('iCloud discovery: Success!', [
-                'calendars_found' => count($calendars),
-            ]);
             
             return [
                 'success' => true,
