@@ -73,14 +73,15 @@
 
                 <div class="space-y-3">
                     @forelse($calendars as $calendar)
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer group">
+                        <label class="calendar-option flex items-center p-4 border-2 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer group {{ ($calendar['id'] === old('selected_calendar_id', $primaryCalendarId)) ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200' }}">
                             <input 
                                 type="radio" 
                                 name="selected_calendar_id" 
                                 value="{{ $calendar['id'] }}"
-                                class="w-5 h-5 text-indigo-600 border-2 border-gray-300 focus:ring-indigo-500 focus:ring-2"
+                                class="calendar-radio w-5 h-5 text-indigo-600 border-2 border-gray-300 focus:ring-indigo-500 focus:ring-2"
                                 {{ ($calendar['id'] === old('selected_calendar_id', $primaryCalendarId)) ? 'checked' : '' }}
                                 required
+                                onchange="updateCalendarSelection()"
                             >
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center space-x-3">
@@ -106,6 +107,24 @@
                         <p class="text-gray-600">{{ __('messages.no_calendars_found') }}</p>
                     @endforelse
                 </div>
+
+                <script>
+                function updateCalendarSelection() {
+                    // Remove highlight from all options
+                    document.querySelectorAll('.calendar-option').forEach(label => {
+                        label.classList.remove('border-indigo-400', 'bg-indigo-50');
+                        label.classList.add('border-gray-200');
+                    });
+                    
+                    // Add highlight to selected option
+                    const checkedRadio = document.querySelector('.calendar-radio:checked');
+                    if (checkedRadio) {
+                        const label = checkedRadio.closest('.calendar-option');
+                        label.classList.remove('border-gray-200');
+                        label.classList.add('border-indigo-400', 'bg-indigo-50');
+                    }
+                }
+                </script>
 
                 @error('selected_calendar_id')
                     <p class="mt-4 text-sm text-red-600 font-medium">{{ $message }}</p>
