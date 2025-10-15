@@ -234,8 +234,13 @@ class CalDavController extends Controller
             // Clear session
             session()->forget(['caldav_url', 'caldav_username', 'caldav_password', 'caldav_email', 'caldav_principal_url', 'caldav_calendars', 'caldav_provider']);
             
+            // Different success message for Apple vs CalDAV
+            $successMessage = $provider === 'apple' 
+                ? __('messages.apple_connected_success') 
+                : __('messages.caldav_connected_success');
+            
             return redirect()->route('connections.index')
-                ->with('success', __('messages.caldav_connected_success'));
+                ->with('success', $successMessage);
                 
         } catch (\Exception $e) {
             Log::error('Failed to create CalDAV connection', [

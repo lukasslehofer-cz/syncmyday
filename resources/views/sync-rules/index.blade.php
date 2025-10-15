@@ -166,7 +166,7 @@
                                     <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold 
                                         @if($rule->sourceConnection->provider === 'google') bg-blue-100 text-blue-700
                                         @elseif($rule->sourceConnection->provider === 'microsoft') bg-purple-100 text-purple-700
-                                        @elseif($rule->sourceConnection->provider === 'apple') bg-gray-800 text-white
+                                        @elseif($rule->sourceConnection->provider === 'apple') bg-gray-100 text-gray-800
                                         @else bg-gray-100 text-gray-700
                                         @endif rounded-full">
                                         @if($rule->sourceConnection->provider === 'apple')
@@ -243,7 +243,7 @@
                                         <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold 
                                             @if($target->targetConnection->provider === 'google') bg-blue-100 text-blue-700
                                             @elseif($target->targetConnection->provider === 'microsoft') bg-purple-100 text-purple-700
-                                            @elseif($target->targetConnection->provider === 'apple') bg-gray-800 text-white
+                                            @elseif($target->targetConnection->provider === 'apple') bg-gray-100 text-gray-800
                                             @else bg-gray-100 text-gray-700
                                             @endif rounded-full">
                                             @if($target->targetConnection->provider === 'apple')

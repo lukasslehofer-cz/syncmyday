@@ -360,6 +360,9 @@ return [
     'caldav_connection_save_failed' => 'Uložení CalDAV připojení se nezdařilo. Zkuste to prosím znovu.',
     'session_expired' => 'Platnost relace vypršela. Zkuste to prosím znovu.',
     
+    // Apple iCloud
+    'apple_connected_success' => 'Apple kalendář byl úspěšně připojen!',
+    
     // Login page
     'sign_in_description' => 'Přihlaste se ke správě synchronizace kalendářů.',
     'realtime_sync' => 'Synchronizace v reálném čase',

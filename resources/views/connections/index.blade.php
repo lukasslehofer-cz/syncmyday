@@ -184,7 +184,7 @@
                                             Microsoft
                                         </span>
                                     @elseif($connection->provider === 'apple')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-800 text-white">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
                                             Apple
                                         </span>
                                     @elseif($connection->provider === 'caldav')
