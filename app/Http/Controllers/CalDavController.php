@@ -78,6 +78,7 @@ class CalDavController extends Controller
                     'caldav_email' => $validated['apple_id'],
                     'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
                     'caldav_calendars' => $result['calendars'],
+                    'caldav_provider' => 'apple', // Mark as Apple iCloud
                 ]);
 
                 return redirect()->route('caldav.select-calendars');
@@ -137,6 +138,7 @@ class CalDavController extends Controller
                     'caldav_email' => $validated['email'] ?? $validated['username'],
                     'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
                     'caldav_calendars' => $result['calendars'],
+                    'caldav_provider' => 'caldav', // Mark as generic CalDAV
                 ]);
                 
                 return redirect()->route('caldav.select-calendars');
@@ -193,6 +195,7 @@ class CalDavController extends Controller
         $email = session('caldav_email');
         $principalUrl = session('caldav_principal_url');
         $allCalendars = session('caldav_calendars', []);
+        $provider = session('caldav_provider', 'caldav'); // Default to 'caldav' if not set
         
         if (!$url || !$username || !$password) {
             return redirect()->route('caldav.setup')
@@ -207,7 +210,7 @@ class CalDavController extends Controller
             $connection = CalendarConnection::create([
                 'user_id' => auth()->id(),
                 'name' => $validated['name'],
-                'provider' => 'caldav',
+                'provider' => $provider, // Use provider from session (apple or caldav)
                 'provider_account_id' => $username,
                 'provider_email' => $email,
                 'account_email' => $email,

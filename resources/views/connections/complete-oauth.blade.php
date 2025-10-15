@@ -59,51 +59,58 @@
                 <p class="mt-2 text-sm text-gray-500">{{ __('messages.calendar_name_hint') }}</p>
             </div>
 
-            <!-- Calendar Selection -->
+            <!-- Select Calendar -->
             <div>
-                <label for="selected_calendar_id" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <span>{{ __('messages.select_calendar_to_use') }} <span class="text-red-500">*</span></span>
-                </label>
-                
-                @if(count($calendars) === 1)
-                    <!-- Only one calendar - show as read-only -->
-                    <div class="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3">
-                        <div class="flex items-center space-x-3">
-                            @if($calendars[0]['primary'] ?? false)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
-                                    {{ __('messages.primary') }}
-                                </span>
-                            @endif
-                            <span class="font-medium text-gray-900">{{ $calendars[0]['name'] }}</span>
-                        </div>
-                    </div>
-                    <input type="hidden" name="selected_calendar_id" value="{{ $calendars[0]['id'] }}">
-                @else
-                    <!-- Multiple calendars - show dropdown -->
-                    <select 
-                        name="selected_calendar_id" 
-                        id="selected_calendar_id"
-                        required
-                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition"
-                    >
-                        <option value="">{{ __('messages.select_calendar') }}</option>
-                        @foreach($calendars as $calendar)
-                            <option value="{{ $calendar['id'] }}" {{ (old('selected_calendar_id', $primaryCalendarId) === $calendar['id']) ? 'selected' : '' }}>
-                                {{ $calendar['name'] }}
-                                @if($calendar['primary'] ?? false)
-                                    ({{ __('messages.primary') }})
-                                @endif
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('selected_calendar_id')
-                        <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                    @enderror
-                    <p class="mt-2 text-sm text-gray-500">{{ __('messages.select_calendar_hint') }}</p>
-                @endif
+                <div class="flex items-center justify-between mb-4">
+                    <label class="flex items-center space-x-2 text-sm font-bold text-gray-900">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>{{ __('messages.select_calendar_to_use') }} <span class="text-red-500">*</span></span>
+                    </label>
+                    <span class="text-sm text-gray-500">{{ count($calendars) }} calendar(s) found</span>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($calendars as $calendar)
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50 transition cursor-pointer group">
+                            <input 
+                                type="radio" 
+                                name="selected_calendar_id" 
+                                value="{{ $calendar['id'] }}"
+                                class="w-5 h-5 text-indigo-600 border-2 border-gray-300 focus:ring-indigo-500 focus:ring-2"
+                                {{ ($calendar['id'] === old('selected_calendar_id', $primaryCalendarId)) ? 'checked' : '' }}
+                                required
+                            >
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center space-x-3">
+                                    @if(isset($calendar['color']))
+                                        <div class="w-4 h-4 rounded-full border-2 border-gray-300" style="background-color: {{ $calendar['color'] }}"></div>
+                                    @endif
+                                    <span class="font-semibold text-gray-900 group-hover:text-indigo-700">
+                                        {{ $calendar['name'] }}
+                                        @if($calendar['primary'] ?? false)
+                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                {{ __('messages.primary') }}
+                                            </span>
+                                        @endif
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1 font-mono">{{ $calendar['id'] }}</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </label>
+                    @empty
+                        <p class="text-gray-600">{{ __('messages.no_calendars_found') }}</p>
+                    @endforelse
+                </div>
+
+                @error('selected_calendar_id')
+                    <p class="mt-4 text-sm text-red-600 font-medium">{{ $message }}</p>
+                @enderror
+                <p class="mt-2 text-sm text-gray-500">{{ __('messages.select_calendar_hint') }}</p>
             </div>
 
             <!-- Info box -->
