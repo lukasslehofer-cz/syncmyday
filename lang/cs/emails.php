@@ -28,6 +28,26 @@ return [
     'go_to_dashboard' => 'Přejít na přehled',
     'start_onboarding' => 'Spustit průvodce nastavením',
 
+    // Email Calendar Verification
+    'verify_email_calendar_subject' => 'Ověřte e-mailovou adresu kalendáře',
+    'verify_email_calendar_title' => 'Ověřte e-mailovou adresu',
+    'verify_email_calendar_message' => 'Pro zahájení synchronizace událostí prosím ověřte e-mailovou adresu pro tento e-mailový kalendář.',
+    'verify_email_calendar_greeting' => 'Ahoj!',
+    'verify_email_calendar_intro' => 'Vytvořili jste nový e-mailový kalendář v SyncMyDay. Pro zajištění, že události budou odesílány na správnou adresu, prosím ověřte tento e-mail.',
+    'verify_email_calendar_button' => 'Ověřit e-mailovou adresu',
+    'verify_email_calendar_security_note' => 'Tento odkaz vyprší za 60 minut z bezpečnostních důvodů.',
+    'verify_email_calendar_alternative' => 'Pokud tlačítko nefunguje, zkopírujte a vložte tento odkaz do prohlížeče:',
+    'verify_email_calendar_footer' => 'Pokud jste nevytvářeli tento e-mailový kalendář, můžete tuto zprávu bezpečně ignorovat.',
+    'email_calendar_name_label' => 'E-mailový kalendář',
+    'back_to_connections' => 'Zpět na připojení',
+    
+    // Email Calendar Verified Success
+    'email_calendar_verified_title' => 'E-mail ověřen!',
+    'email_calendar_verified_message' => 'E-mailová adresa pro tento kalendář byla úspěšně ověřena. Události budou nyní synchronizovány.',
+    'email_calendar_verified_confirmation' => 'E-mailová adresa ověřena',
+    'email_calendar_verified_next_steps' => 'Nyní můžete vytvořit synchronizační pravidla pro zahájení synchronizace událostí s tímto e-mailovým kalendářem.',
+    'view_email_calendar' => 'Zobrazit e-mailový kalendář',
+
     // Welcome Email
     'welcome_subject' => 'Vítejte v SyncMyDay!',
     'welcome_greeting' => 'Ahoj :name!',

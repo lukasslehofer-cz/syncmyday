@@ -28,6 +28,26 @@ return [
     'go_to_dashboard' => 'Go to Dashboard',
     'start_onboarding' => 'Start Setup Guide',
 
+    // Email Calendar Verification
+    'verify_email_calendar_subject' => 'Verify Email Calendar Address',
+    'verify_email_calendar_title' => 'Verify Email Address',
+    'verify_email_calendar_message' => 'To start synchronizing events, please verify the email address for this email calendar.',
+    'verify_email_calendar_greeting' => 'Hello!',
+    'verify_email_calendar_intro' => 'You have created a new email calendar in SyncMyDay. To ensure that events are sent to the correct address, please verify this email.',
+    'verify_email_calendar_button' => 'Verify Email Address',
+    'verify_email_calendar_security_note' => 'This link will expire in 60 minutes for your security.',
+    'verify_email_calendar_alternative' => 'If the button doesn\'t work, copy and paste this link into your browser:',
+    'verify_email_calendar_footer' => 'If you did not create this email calendar, you can safely ignore this message.',
+    'email_calendar_name_label' => 'Email Calendar',
+    'back_to_connections' => 'Back to Connections',
+    
+    // Email Calendar Verified Success
+    'email_calendar_verified_title' => 'Email Verified!',
+    'email_calendar_verified_message' => 'The email address for this calendar has been successfully verified. Events will now be synchronized.',
+    'email_calendar_verified_confirmation' => 'Email address verified',
+    'email_calendar_verified_next_steps' => 'You can now create sync rules to start synchronizing events with this email calendar.',
+    'view_email_calendar' => 'View Email Calendar',
+
     // Welcome Email
     'welcome_subject' => 'Welcome to SyncMyDay!',
     'welcome_greeting' => 'Hello :name!',

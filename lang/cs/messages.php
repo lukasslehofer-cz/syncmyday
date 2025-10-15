@@ -130,8 +130,10 @@ return [
     
     // Email Calendars
     'email_calendar_created' => 'Emailový kalendář byl úspěšně vytvořen! Přeposílejte pozvánky na svou jedinečnou emailovou adresu.',
+    'email_calendar_created_verify' => 'Emailový kalendář vytvořen! Prosím zkontrolujte svou e-mailovou schránku a ověřte adresu pro zahájení synchronizace událostí.',
     'email_calendar_creation_failed' => 'Vytvoření emailového kalendáře se nezdařilo. Zkuste to prosím znovu.',
     'email_calendar_deleted' => 'Emailové připojení kalendáře bylo odstraněno.',
+    'email_calendar_already_verified' => 'Tato e-mailová adresa již byla ověřena.',
     'connection_deleted_failed' => 'Smazání připojení se nezdařilo.',
     'email_processed_successfully' => 'Email byl úspěšně zpracován! Synchronizováno %d událostí.',
     'email_processing_failed' => 'Zpracování emailu se nezdařilo.',

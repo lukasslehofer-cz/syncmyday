@@ -11,10 +11,9 @@
     $dismissedProgress = session('onboarding_progress_dismissed', false);
     
     // Show if:
-    // - User is in trial
-    // - Onboarding not permanently completed (DB flag - set on dismiss or logout)
+    // - shouldShowOnboardingProgress() returns true (checks trial + completion timestamp)
     // - User hasn't dismissed it in current session
-    $shouldShow = $user->isInTrial() && !$user->onboarding_completed && !$dismissedProgress;
+    $shouldShow = $user->shouldShowOnboardingProgress() && !$dismissedProgress;
 @endphp
 
 @if($shouldShow)

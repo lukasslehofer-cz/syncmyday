@@ -625,6 +625,14 @@ class SyncEngine
             return;
         }
         
+        if (!$targetEmailConnection->hasVerifiedTargetEmail()) {
+            Log::channel('sync')->warning('Email calendar target_email not verified', [
+                'email_calendar_id' => $targetEmailConnection->id,
+                'target_email' => $targetEmailConnection->target_email,
+            ]);
+            return;
+        }
+        
         $sourceEventId = $this->getEventId($sourceEvent);
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);

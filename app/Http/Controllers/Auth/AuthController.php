@@ -118,13 +118,14 @@ class AuthController extends Controller
     {
         $user = Auth::user();
         
-        // If user completed onboarding steps, mark it in DB so progress bar won't show on next login
-        if ($user && $user->isInTrial() && !$user->onboarding_completed) {
+        // If user completed onboarding steps, mark completion time in DB
+        // Progress bar won't show on next login
+        if ($user && $user->isInTrial() && !$user->onboarding_completed_at) {
             $hasConnections = $user->calendarConnections()->count() >= 2;
             $hasRules = $user->syncRules()->count() > 0;
             
             if ($hasConnections && $hasRules) {
-                $user->update(['onboarding_completed' => true]);
+                $user->update(['onboarding_completed_at' => now()]);
             }
         }
         

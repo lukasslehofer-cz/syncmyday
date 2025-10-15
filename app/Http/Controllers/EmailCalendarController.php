@@ -56,7 +56,7 @@ class EmailCalendarController extends Controller
                 $senderWhitelist = $emails;
             }
 
-            // Create connection
+            // Create connection (without verified target_email)
             $connection = EmailCalendarConnection::create([
                 'user_id' => auth()->id(),
                 'email_address' => $emailData['email_address'],
@@ -68,14 +68,18 @@ class EmailCalendarController extends Controller
                 'status' => 'active',
             ]);
 
+            // Send verification email
+            $connection->sendTargetEmailVerificationNotification();
+
             Log::info('Email calendar connection created', [
                 'connection_id' => $connection->id,
                 'email_address' => $connection->email_address,
+                'target_email' => $connection->target_email,
                 'user_id' => auth()->id(),
             ]);
 
-            return redirect()->route('email-calendars.show', $connection)
-                ->with('success', __('messages.email_calendar_created'));
+            return redirect()->route('email-calendars.verification.notice', $connection)
+                ->with('success', __('messages.email_calendar_created_verify'));
 
         } catch (\Exception $e) {
             Log::error('Failed to create email calendar connection', [

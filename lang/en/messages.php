@@ -129,8 +129,10 @@ return [
     
     // Email Calendars
     'email_calendar_created' => 'Email calendar created successfully! Forward calendar invitations to your unique email address.',
+    'email_calendar_created_verify' => 'Email calendar created! Please check your email and verify the address to start synchronizing events.',
     'email_calendar_creation_failed' => 'Failed to create email calendar. Please try again.',
     'email_calendar_deleted' => 'Email calendar connection removed.',
+    'email_calendar_already_verified' => 'This email address has already been verified.',
     'connection_deleted_failed' => 'Failed to delete connection.',
     'email_processed_successfully' => 'Email processed successfully! %d event(s) synced.',
     'email_processing_failed' => 'Failed to process email.',

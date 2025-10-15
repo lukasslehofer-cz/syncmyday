@@ -28,6 +28,26 @@ return [
     'go_to_dashboard' => 'Prejsť na prehľad',
     'start_onboarding' => 'Spustiť sprievodcu nastavením',
 
+    // Email Calendar Verification
+    'verify_email_calendar_subject' => 'Overte e-mailovú adresu kalendára',
+    'verify_email_calendar_title' => 'Overte e-mailovú adresu',
+    'verify_email_calendar_message' => 'Pre začatie synchronizácie udalostí prosím overte e-mailovú adresu pre tento e-mailový kalendár.',
+    'verify_email_calendar_greeting' => 'Ahoj!',
+    'verify_email_calendar_intro' => 'Vytvorili ste nový e-mailový kalendár v SyncMyDay. Pre zabezpečenie, že udalosti budú odosielané na správnu adresu, prosím overte tento e-mail.',
+    'verify_email_calendar_button' => 'Overiť e-mailovú adresu',
+    'verify_email_calendar_security_note' => 'Tento odkaz vyprší za 60 minút z bezpečnostných dôvodov.',
+    'verify_email_calendar_alternative' => 'Ak tlačidlo nefunguje, skopírujte a vložte tento odkaz do prehliadača:',
+    'verify_email_calendar_footer' => 'Ak ste nevytvorili tento e-mailový kalendár, môžete túto správu bezpečne ignorovať.',
+    'email_calendar_name_label' => 'E-mailový kalendár',
+    'back_to_connections' => 'Späť na pripojenia',
+    
+    // Email Calendar Verified Success
+    'email_calendar_verified_title' => 'E-mail overený!',
+    'email_calendar_verified_message' => 'E-mailová adresa pre tento kalendár bola úspešne overená. Udalosti budú teraz synchronizované.',
+    'email_calendar_verified_confirmation' => 'E-mailová adresa overená',
+    'email_calendar_verified_next_steps' => 'Teraz môžete vytvoriť synchronizačné pravidlá pre začatie synchronizácie udalostí s týmto e-mailovým kalendárom.',
+    'view_email_calendar' => 'Zobraziť e-mailový kalendár',
+
     // Welcome Email
     'welcome_subject' => 'Vitajte v SyncMyDay!',
     'welcome_greeting' => 'Ahoj :name!',

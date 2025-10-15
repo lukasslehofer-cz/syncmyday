@@ -28,6 +28,26 @@ return [
     'go_to_dashboard' => 'Przejdź do panelu',
     'start_onboarding' => 'Rozpocznij przewodnik konfiguracji',
 
+    // Email Calendar Verification
+    'verify_email_calendar_subject' => 'Zweryfikuj adres e-mail kalendarza',
+    'verify_email_calendar_title' => 'Zweryfikuj adres e-mail',
+    'verify_email_calendar_message' => 'Aby rozpocząć synchronizację wydarzeń, zweryfikuj adres e-mail dla tego kalendarza e-mail.',
+    'verify_email_calendar_greeting' => 'Witaj!',
+    'verify_email_calendar_intro' => 'Utworzyłeś nowy kalendarz e-mail w SyncMyDay. Aby upewnić się, że wydarzenia są wysyłane na właściwy adres, zweryfikuj ten e-mail.',
+    'verify_email_calendar_button' => 'Zweryfikuj adres e-mail',
+    'verify_email_calendar_security_note' => 'Ten link wygaśnie za 60 minut ze względów bezpieczeństwa.',
+    'verify_email_calendar_alternative' => 'Jeśli przycisk nie działa, skopiuj i wklej ten link do przeglądarki:',
+    'verify_email_calendar_footer' => 'Jeśli nie utworzyłeś tego kalendarza e-mail, możesz zignorować tę wiadomość.',
+    'email_calendar_name_label' => 'Kalendarz e-mail',
+    'back_to_connections' => 'Powrót do połączeń',
+    
+    // Email Calendar Verified Success
+    'email_calendar_verified_title' => 'E-mail zweryfikowany!',
+    'email_calendar_verified_message' => 'Adres e-mail dla tego kalendarza został pomyślnie zweryfikowany. Wydarzenia będą teraz synchronizowane.',
+    'email_calendar_verified_confirmation' => 'Adres e-mail zweryfikowany',
+    'email_calendar_verified_next_steps' => 'Możesz teraz utworzyć reguły synchronizacji, aby rozpocząć synchronizację wydarzeń z tym kalendarzem e-mail.',
+    'view_email_calendar' => 'Wyświetl kalendarz e-mail',
+
     // Welcome Email
     'welcome_subject' => 'Witamy w SyncMyDay!',
     'welcome_greeting' => 'Cześć :name!',

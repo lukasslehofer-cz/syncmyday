@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 class EmailCalendarConnection extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'user_id',
@@ -16,6 +17,7 @@ class EmailCalendarConnection extends Model
         'email_token',
         'name',
         'target_email',
+        'target_email_verified_at',
         'description',
         'sender_whitelist',
         'emails_received',
@@ -28,6 +30,7 @@ class EmailCalendarConnection extends Model
     protected $casts = [
         'sender_whitelist' => 'array',
         'last_email_at' => 'datetime',
+        'target_email_verified_at' => 'datetime',
         'emails_received' => 'integer',
         'events_processed' => 'integer',
     ];
@@ -169,6 +172,40 @@ class EmailCalendarConnection extends Model
         })->get();
         
         return $asSource->merge($asTarget)->unique('id');
+    }
+
+    /**
+     * Check if target email has been verified
+     */
+    public function hasVerifiedTargetEmail(): bool
+    {
+        return !is_null($this->target_email_verified_at);
+    }
+
+    /**
+     * Mark target email as verified
+     */
+    public function markTargetEmailAsVerified(): bool
+    {
+        return $this->forceFill([
+            'target_email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
+    /**
+     * Send target email verification notification
+     */
+    public function sendTargetEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmailCalendarNotification());
+    }
+
+    /**
+     * Get the notification routing information for mail channel
+     */
+    public function routeNotificationForMail($notification)
+    {
+        return $this->target_email;
     }
 }
 

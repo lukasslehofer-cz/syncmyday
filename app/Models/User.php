@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'stripe_customer_id',
         'stripe_subscription_id',
         'subscription_ends_at',
+        'onboarding_completed_at',
     ];
 
     protected $hidden = [
@@ -35,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
+        'onboarding_completed_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
 
@@ -104,6 +106,27 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $remainingDays = $this->getRemainingTrialDays();
         return $remainingDays <= 3 && $remainingDays > 0;
+    }
+
+    /**
+     * Check if onboarding progress should be shown
+     * Shows until logout after completion OR next calendar day
+     */
+    public function shouldShowOnboardingProgress(): bool
+    {
+        // Don't show if not in trial
+        if (!$this->isInTrial()) {
+            return false;
+        }
+        
+        // Don't show if permanently completed
+        if ($this->onboarding_completed_at) {
+            // Show if completed today (same calendar day)
+            // This allows it to stay visible until logout or next day
+            return $this->onboarding_completed_at->isToday();
+        }
+        
+        return true;
     }
 
     /**

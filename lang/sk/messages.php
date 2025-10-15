@@ -81,8 +81,10 @@ return [
     
     // Email Calendars
     'email_calendar_created' => 'Emailový kalendár bol úspešne vytvorený! Preposielajte pozvánky na svoju jedinečnú emailovú adresu.',
+    'email_calendar_created_verify' => 'Emailový kalendár vytvorený! Prosím skontrolujte svoju e-mailovú schránku a overte adresu pre začatie synchronizácie udalostí.',
     'email_calendar_creation_failed' => 'Vytvorenie emailového kalendára sa nepodarilo. Skúste to prosím znova.',
     'email_calendar_deleted' => 'Emailové pripojenie kalendára bolo odstránené.',
+    'email_calendar_already_verified' => 'Táto e-mailová adresa už bola overená.',
     'connection_deleted_failed' => 'Zmazanie pripojenia sa nepodarilo.',
     'email_processed_successfully' => 'Email bol úspešne spracovaný! Synchronizovaných %d udalostí.',
     'email_processing_failed' => 'Spracovanie emailu sa nepodarilo.',

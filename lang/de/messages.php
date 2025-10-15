@@ -81,8 +81,10 @@ return [
     
     // Email Calendars
     'email_calendar_created' => 'E-Mail-Kalender erfolgreich erstellt! Leiten Sie Kalendereinladungen an Ihre eindeutige E-Mail-Adresse weiter.',
+    'email_calendar_created_verify' => 'E-Mail-Kalender erstellt! Bitte überprüfen Sie Ihre E-Mail und bestätigen Sie die Adresse, um mit der Synchronisierung von Ereignissen zu beginnen.',
     'email_calendar_creation_failed' => 'E-Mail-Kalender konnte nicht erstellt werden. Bitte versuchen Sie es erneut.',
     'email_calendar_deleted' => 'E-Mail-Kalenderverbindung entfernt.',
+    'email_calendar_already_verified' => 'Diese E-Mail-Adresse wurde bereits bestätigt.',
     'connection_deleted_failed' => 'Verbindung konnte nicht gelöscht werden.',
     'email_processed_successfully' => 'E-Mail erfolgreich verarbeitet! %d Ereignis(se) synchronisiert.',
     'email_processing_failed' => 'E-Mail-Verarbeitung fehlgeschlagen.',

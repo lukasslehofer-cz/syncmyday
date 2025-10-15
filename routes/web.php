@@ -174,6 +174,11 @@ Route::middleware('auth')->group(function () {
         ->name('verification.resend');
 });
 
+// Email Calendar Verification (public route - user clicks link from their email)
+Route::get('/email-calendars/verify/{id}/{hash}', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('email-calendars.verify');
+
 // OAuth
 Route::middleware('auth')->prefix('oauth')->group(function () {
     Route::get('/google', [OAuthController::class, 'redirectToGoogle'])->name('oauth.google');
@@ -203,6 +208,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [\App\Http\Controllers\EmailCalendarController::class, 'store'])->name('store');
         Route::get('/{emailCalendar}', [\App\Http\Controllers\EmailCalendarController::class, 'show'])->name('show');
         Route::delete('/{emailCalendar}', [\App\Http\Controllers\EmailCalendarController::class, 'destroy'])->name('destroy');
+        
+        // Email Calendar Verification
+        Route::get('/{emailCalendar}/verify-notice', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'notice'])->name('verification.notice');
+        Route::get('/{emailCalendar}/verified', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'success'])->name('verification.success');
+        Route::post('/{emailCalendar}/resend-verification', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'resend'])
+            ->middleware('throttle:6,1')
+            ->name('verification.resend');
         Route::get('/{emailCalendar}/test', [\App\Http\Controllers\EmailCalendarController::class, 'test'])->name('test');
         Route::post('/{emailCalendar}/test', [\App\Http\Controllers\EmailCalendarController::class, 'processTest'])->name('test.process');
     });

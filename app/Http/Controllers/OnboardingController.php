@@ -59,8 +59,8 @@ class OnboardingController extends Controller
      */
     public function dismissProgress(Request $request)
     {
-        // Mark onboarding as completed in database (won't show again)
-        auth()->user()->update(['onboarding_completed' => true]);
+        // Mark onboarding as completed with timestamp (won't show again)
+        auth()->user()->update(['onboarding_completed_at' => now()]);
         
         // Also dismiss for current session
         $request->session()->put('onboarding_progress_dismissed', true);

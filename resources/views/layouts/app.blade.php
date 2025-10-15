@@ -166,7 +166,7 @@
         $dismissedProgress = session('onboarding_progress_dismissed', false);
         
         // Show trial banner only if onboarding progress is NOT showing
-        $showOnboardingProgress = $user->isInTrial() && !$user->onboarding_completed && !$dismissedProgress;
+        $showOnboardingProgress = $user->shouldShowOnboardingProgress() && !$dismissedProgress;
         $showTrialBanner = !$showOnboardingProgress;
     @endphp
     

@@ -81,8 +81,10 @@ return [
     
     // Email Calendars
     'email_calendar_created' => 'Kalendarz e-mail został utworzony! Przekazuj zaproszenia na swój unikalny adres e-mail.',
+    'email_calendar_created_verify' => 'Kalendarz e-mail utworzony! Sprawdź swoją skrzynkę e-mail i zweryfikuj adres, aby rozpocząć synchronizację wydarzeń.',
     'email_calendar_creation_failed' => 'Nie udało się utworzyć kalendarza e-mail. Spróbuj ponownie.',
     'email_calendar_deleted' => 'Połączenie kalendarza e-mail zostało usunięte.',
+    'email_calendar_already_verified' => 'Ten adres e-mail został już zweryfikowany.',
     'connection_deleted_failed' => 'Nie udało się usunąć połączenia.',
     'email_processed_successfully' => 'E-mail przetworzony pomyślnie! Zsynchronizowano %d wydarzeń.',
     'email_processing_failed' => 'Przetwarzanie e-maila nie powiodło się.',
