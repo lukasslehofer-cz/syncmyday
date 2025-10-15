@@ -171,7 +171,7 @@
     @endphp
     
     @if($showTrialBanner)
-    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg border-b-4 border-indigo-800">
+    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
             <div class="flex items-center justify-between flex-wrap gap-4">
                 <div class="flex items-center space-x-4">
@@ -185,14 +185,16 @@
                     <div>
                         <p class="text-lg md:text-xl font-bold text-white mb-1">
                             @if(auth()->user()->isTrialExpiringSoon())
-                                🔥 {{ __('messages.trial_ending_soon') }}
+                                🔥 {{ __('messages.trial_ending_soon') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                             @else
-                                ✨ {{ __('messages.trial_active') }}
+                                ✨ {{ __('messages.trial_active') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                             @endif
                         </p>
+                        <!--
                         <p class="text-base md:text-lg font-semibold text-white/90">
                             {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                         </p>
+                        -->
                         <p class="text-sm text-white/80 mt-1">
                             {{ __('messages.upgrade_now_save') }}
                         </p>
