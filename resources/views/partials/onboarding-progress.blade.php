@@ -7,6 +7,20 @@
     $hasRules = $user->syncRules()->count() > 0;
     $onboardingComplete = $hasConnections && $hasRules;
     
+    // Track completion date in session for "next day" auto-hide
+    if ($onboardingComplete && !session('onboarding_completed_date')) {
+        session(['onboarding_completed_date' => now()->toDateString()]);
+    }
+    
+    // Auto-hide on next calendar day if completed
+    if ($onboardingComplete && session('onboarding_completed_date')) {
+        $completedDate = session('onboarding_completed_date');
+        if ($completedDate !== now()->toDateString() && !$user->onboarding_completed_at) {
+            // Next day - permanently hide
+            $user->update(['onboarding_completed_at' => now()]);
+        }
+    }
+    
     // Check if user has dismissed the progress bar (for current session only)
     $dismissedProgress = session('onboarding_progress_dismissed', false);
     

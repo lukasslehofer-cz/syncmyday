@@ -119,11 +119,10 @@ class User extends Authenticatable implements MustVerifyEmail
             return false;
         }
         
-        // Don't show if permanently completed
+        // Don't show if completed and user logged out or dismissed
+        // Once onboarding_completed_at is set, never show again
         if ($this->onboarding_completed_at) {
-            // Show if completed today (same calendar day)
-            // This allows it to stay visible until logout or next day
-            return $this->onboarding_completed_at->isToday();
+            return false;
         }
         
         return true;
