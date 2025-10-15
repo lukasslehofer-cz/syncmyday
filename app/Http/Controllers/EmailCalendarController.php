@@ -94,13 +94,110 @@ class EmailCalendarController extends Controller
     }
 
     /**
+     * Show edit form
+     */
+    public function edit(EmailCalendarConnection $emailCalendar)
+    {
+        $this->authorize('view', $emailCalendar);
+
+        return view('email-calendars.edit', compact('emailCalendar'));
+    }
+
+    /**
+     * Update email calendar connection
+     */
+    public function update(Request $request, EmailCalendarConnection $emailCalendar)
+    {
+        $this->authorize('update', $emailCalendar);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'sender_whitelist' => 'nullable|string',
+        ]);
+
+        try {
+            // Parse sender whitelist (one email per line)
+            $senderWhitelist = null;
+            if (!empty($validated['sender_whitelist'])) {
+                $emails = array_filter(
+                    array_map('trim', explode("\n", $validated['sender_whitelist'])),
+                    fn($email) => !empty($email)
+                );
+                $senderWhitelist = $emails;
+            }
+
+            // Update connection
+            $emailCalendar->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'sender_whitelist' => $senderWhitelist,
+            ]);
+
+            Log::info('Email calendar connection updated', [
+                'connection_id' => $emailCalendar->id,
+                'user_id' => auth()->id(),
+                'name' => $validated['name'],
+            ]);
+
+            return redirect()->route('connections.index')
+                ->with('success', __('messages.email_calendar_updated'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to update email calendar connection', [
+                'connection_id' => $emailCalendar->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', __('messages.email_calendar_update_failed'));
+        }
+    }
+
+    /**
      * Show single email calendar connection
      */
     public function show(EmailCalendarConnection $emailCalendar)
     {
         $this->authorize('view', $emailCalendar);
 
-        return view('email-calendars.show', compact('emailCalendar'));
+        // Get sync rules where this email calendar is source
+        $syncRulesAsSource = \App\Models\SyncRule::where('source_email_connection_id', $emailCalendar->id)
+            ->with(['targets.targetConnection', 'targets.targetEmailConnection'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get sync rules where this email calendar is target
+        $syncRulesAsTarget = \App\Models\SyncRule::whereHas('targets', function($query) use ($emailCalendar) {
+                $query->where('target_email_connection_id', $emailCalendar->id);
+            })
+            ->with(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection', 'targets.targetEmailConnection'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Statistics - Received blockers (where this email calendar is target)
+        $receivedBlockers = \App\Models\SyncEventMapping::where('target_email_connection_id', $emailCalendar->id)->count();
+
+        // Statistics - Sent blockers (where this email calendar is source)
+        $sentBlockers = \App\Models\SyncEventMapping::where('email_connection_id', $emailCalendar->id)->count();
+
+        // Statistics - Last sync event
+        $lastSyncEvent = \App\Models\SyncEventMapping::where(function($query) use ($emailCalendar) {
+                $query->where('email_connection_id', $emailCalendar->id)
+                      ->orWhere('target_email_connection_id', $emailCalendar->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        return view('email-calendars.show', [
+            'emailCalendar' => $emailCalendar,
+            'syncRulesAsSource' => $syncRulesAsSource,
+            'syncRulesAsTarget' => $syncRulesAsTarget,
+            'receivedBlockers' => $receivedBlockers,
+            'sentBlockers' => $sentBlockers,
+            'lastSyncEvent' => $lastSyncEvent,
+        ]);
     }
 
     /**

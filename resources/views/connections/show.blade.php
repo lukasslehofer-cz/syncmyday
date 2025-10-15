@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('messages.email_calendar_details'))
+@section('title', __('messages.calendar_details'))
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,151 +13,125 @@
                 </svg>
             </a>
             <div class="flex-1">
-                <h1 class="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                    {{ $emailCalendar->name }}
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    {{ $connection->name ?? __('messages.calendar') }}
                 </h1>
             </div>
-            @if($emailCalendar->status === 'active')
+            @if($connection->status === 'active')
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm">
                     {{ __('messages.active') }}
                 </span>
-            @elseif($emailCalendar->status === 'paused')
+            @elseif($connection->status === 'expired')
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 shadow-sm">
-                    {{ __('messages.paused') }}
+                    {{ __('messages.expired') }}
                 </span>
             @else
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm">
-                    {{ __('messages.error') }}
+                    {{ ucfirst($connection->status) }}
                 </span>
             @endif
         </div>
         <p class="text-lg text-gray-600">
-            {{ __('messages.email_calendar_details_description') }}
+            @if($connection->provider === 'google')
+                {{ __('messages.google_calendar_details_description') }}
+            @elseif($connection->provider === 'microsoft')
+                {{ __('messages.microsoft_calendar_details_description') }}
+            @elseif($connection->provider === 'caldav')
+                {{ __('messages.caldav_calendar_details_description') }}
+            @endif
         </p>
     </div>
 
-    <!-- Email Address -->
+    <!-- Connection Info -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6 overflow-hidden">
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 px-6 py-5">
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
-                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.your_unique_email') }}</h2>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.connection_details') }}</h2>
             </div>
         </div>
         
         <div class="p-6 lg:p-8">
-            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-4 mb-6">
-                <div class="flex items-center gap-3">
-                    <code class="flex-1 text-base font-mono text-gray-900 break-all font-semibold">{{ $emailCalendar->email_address }}</code>
-                    <button 
-                        onclick="navigator.clipboard.writeText('{{ $emailCalendar->email_address }}'); this.textContent='✓'; setTimeout(() => this.textContent='{{ __('messages.copy') }}', 2000)"
-                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white text-sm font-semibold rounded-lg shadow-md transition transform hover:scale-105"
-                    >
-                        {{ __('messages.copy') }}
-                    </button>
-                </div>
-            </div>
-            
-            <div class="space-y-4 text-sm text-gray-700">
-                <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <svg class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                    <div>
-                        <p class="font-bold text-gray-900">{{ __('messages.as_source') }}:</p>
-                        <p class="mt-1">{{ __('messages.as_source_description') }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.provider') }}</label>
+                    <div class="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3">
+                        @if($connection->provider === 'google')
+                            <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-4 h-4 mr-2" viewBox="0 0 24 24">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                                </svg>
+                                Google Calendar
+                            </span>
+                        @elseif($connection->provider === 'microsoft')
+                            <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-purple-100 text-purple-700">
+                                <svg class="w-4 h-4 mr-2" viewBox="0 0 23 23">
+                                    <path fill="#f35325" d="M1 1h10v10H1z"/>
+                                    <path fill="#81bc06" d="M12 1h10v10H12z"/>
+                                    <path fill="#05a6f0" d="M1 12h10v10H1z"/>
+                                    <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                                </svg>
+                                Microsoft 365
+                            </span>
+                        @elseif($connection->provider === 'caldav')
+                            <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-700">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                </svg>
+                                CalDAV
+                            </span>
+                        @endif
                     </div>
                 </div>
                 
-                @if($emailCalendar->target_email)
-                <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                    <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <div>
-                        <p class="font-bold text-gray-900">{{ __('messages.as_target') }}:</p>
-                        <p class="mt-1">{{ __('messages.as_target_description') }} <code class="bg-green-100 px-2 py-0.5 rounded text-xs font-mono">{{ $emailCalendar->target_email }}</code></p>
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.account_email') }}</label>
+                    <div class="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3">
+                        <p class="text-sm text-gray-900 font-mono break-all">{{ $connection->account_email ?? $connection->provider_email }}</p>
                     </div>
                 </div>
-                @else
-                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <svg class="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <div>
-                        <p class="font-bold text-gray-900">{{ __('messages.as_target') }}:</p>
-                        <p class="mt-1 text-gray-500">{{ __('messages.as_target_not_configured') }}</p>
+
+                @if($selectedCalendar)
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.selected_calendar') }}</label>
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl px-4 py-3">
+                        <div class="flex items-center space-x-3">
+                            @if($selectedCalendar['primary'] ?? false)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+                                    {{ __('messages.primary') }}
+                                </span>
+                            @endif
+                            <span class="font-semibold text-gray-900">{{ $selectedCalendar['name'] }}</span>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if($connection->available_calendars)
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.available_calendars') }}</label>
+                    <div class="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3">
+                        <p class="text-sm text-gray-900 font-medium">{{ count($connection->available_calendars) }} {{ __('messages.calendars_count') }}</p>
+                    </div>
+                </div>
+                @endif
+
+                @if($connection->last_sync_at)
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-2">{{ __('messages.last_sync') }}</label>
+                    <div class="bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3">
+                        <p class="text-sm text-gray-900 font-medium">{{ $connection->last_sync_at->diffForHumans() }}</p>
                     </div>
                 </div>
                 @endif
             </div>
-        </div>
-    </div>
-
-    <!-- Setup Instructions -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6 overflow-hidden">
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100 px-6 py-5">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                </div>
-                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.setup_instructions') }}</h2>
-            </div>
-        </div>
-        
-        <div class="p-6 lg:p-8">
-        
-        <div class="space-y-4">
-            <!-- Outlook/Exchange -->
-            <details class="border border-gray-200 rounded-lg">
-                <summary class="px-4 py-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-900">
-                    📌 Microsoft Outlook / Exchange
-                </summary>
-                <div class="px-4 py-3 border-t border-gray-200 text-sm text-gray-700 space-y-2">
-                    <p class="font-medium">Email Forwarding Rule:</p>
-                    <ol class="list-decimal list-inside space-y-1 ml-2">
-                        <li>Open Outlook → <strong>File → Manage Rules & Alerts</strong></li>
-                        <li>Click <strong>New Rule</strong></li>
-                        <li>Choose "Apply rule on messages I receive"</li>
-                        <li>Add conditions:
-                            <ul class="list-disc list-inside ml-4 mt-1">
-                                <li>with specific words in the subject: <code class="bg-gray-100 px-1">meeting, invitation</code></li>
-                                <li>with an attachment</li>
-                            </ul>
-                        </li>
-                        <li>Action: <strong>Forward it to</strong> <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
-                        <li>Click <strong>Finish</strong></li>
-                    </ol>
-                </div>
-            </details>
-
-            <!-- Gmail -->
-            <details class="border border-gray-200 rounded-lg">
-                <summary class="px-4 py-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-900">
-                    📌 Gmail
-                </summary>
-                <div class="px-4 py-3 border-t border-gray-200 text-sm text-gray-700 space-y-2">
-                    <p class="font-medium">Gmail Forwarding Filter:</p>
-                    <ol class="list-decimal list-inside space-y-1 ml-2">
-                        <li>Open Gmail → <strong>Settings (⚙️) → See all settings</strong></li>
-                        <li>Go to <strong>Filters and Blocked Addresses</strong></li>
-                        <li>Click <strong>Create a new filter</strong></li>
-                        <li>In "Has the words" enter: <code class="bg-gray-100 px-1">filename:ics</code></li>
-                        <li>Click <strong>Create filter</strong></li>
-                        <li>Check <strong>Forward it to</strong> and select/add <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
-                        <li>Click <strong>Create filter</strong></li>
-                    </ol>
-                    <p class="text-xs text-gray-600 mt-2">Note: You may need to verify the forwarding address first.</p>
-                </div>
-            </details>
-        </div>
         </div>
     </div>
 
@@ -179,7 +153,7 @@
                 @if($syncRulesAsSource->count() > 0)
                 <div class="mb-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
                         {{ __('messages.as_source') }} ({{ $syncRulesAsSource->count() }})
@@ -213,7 +187,7 @@
                 @if($syncRulesAsTarget->count() > 0)
                 <div>
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
                         {{ __('messages.as_target') }} ({{ $syncRulesAsTarget->count() }})
@@ -256,6 +230,28 @@
         </div>
     </div>
 
+    @if($connection->last_error)
+    <!-- Error Information -->
+    <div class="bg-white rounded-2xl shadow-xl border-2 border-red-200 mb-6 overflow-hidden">
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-200 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-red-900">{{ __('messages.connection_error') }}</h2>
+            </div>
+        </div>
+        <div class="p-6 lg:p-8">
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+                <p class="text-sm font-bold text-red-900 mb-2">{{ __('messages.last_error') }}:</p>
+                <p class="text-sm text-red-700">{{ $connection->last_error }}</p>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Statistics -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6 overflow-hidden">
         <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
@@ -270,7 +266,6 @@
         </div>
         
         <div class="p-6 lg:p-8">
-        
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center">
                     <p class="text-sm font-bold text-gray-600 mb-2">{{ __('messages.received_blockers') }}</p>
@@ -297,15 +292,6 @@
                     </div>
                 </div>
             </div>
-
-            @if($emailCalendar->last_error)
-            <div class="mt-6 pt-6 border-t border-gray-200">
-                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-                    <p class="text-sm font-bold text-red-900 mb-2">{{ __('messages.last_error') }}:</p>
-                    <p class="text-sm text-red-700">{{ $emailCalendar->last_error }}</p>
-                </div>
-            </div>
-            @endif
         </div>
     </div>
 
@@ -315,12 +301,25 @@
             {{ __('messages.back') }}
         </a>
         
-        <a href="{{ route('email-calendars.edit', $emailCalendar) }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-            {{ __('messages.edit') }}
-        </a>
+        <div class="flex gap-3">
+            <form action="{{ route('connections.refresh', $connection) }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-lg transform hover:scale-105 transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    {{ __('messages.refresh') }}
+                </button>
+            </form>
+            
+            <a href="{{ route('connections.edit', $connection) }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                {{ __('messages.edit') }}
+            </a>
+        </div>
     </div>
 </div>
 @endsection
+

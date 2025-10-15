@@ -136,8 +136,8 @@ class CalDavController extends Controller
     public function complete(Request $request)
     {
         $validated = $request->validate([
-            'selected_calendars' => 'required|array|min:1',
-            'selected_calendars.*' => 'required|string',
+            'name' => 'required|string|max:255',
+            'selected_calendar_id' => 'required|string',
         ]);
         
         // Get credentials from session
@@ -157,14 +157,10 @@ class CalDavController extends Controller
             // Encrypt password
             $encryptedPassword = $this->encryptionService->encrypt($password);
             
-            // Filter selected calendars
-            $selectedCalendars = array_filter($allCalendars, function ($calendar) use ($validated) {
-                return in_array($calendar['id'], $validated['selected_calendars']);
-            });
-            
             // Create connection
             $connection = CalendarConnection::create([
                 'user_id' => auth()->id(),
+                'name' => $validated['name'],
                 'provider' => 'caldav',
                 'provider_account_id' => $username,
                 'provider_email' => $email,
@@ -173,7 +169,8 @@ class CalDavController extends Controller
                 'caldav_username' => $username,
                 'caldav_password_encrypted' => $encryptedPassword,
                 'caldav_principal_url' => $principalUrl,
-                'available_calendars' => array_values($selectedCalendars),
+                'available_calendars' => $allCalendars,
+                'selected_calendar_id' => $validated['selected_calendar_id'],
                 'status' => 'active',
             ]);
             
@@ -181,7 +178,7 @@ class CalDavController extends Controller
                 'connection_id' => $connection->id,
                 'user_id' => auth()->id(),
                 'url' => $url,
-                'calendar_count' => count($selectedCalendars),
+                'name' => $validated['name'],
             ]);
             
             // Clear session

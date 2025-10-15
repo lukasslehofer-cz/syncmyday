@@ -185,6 +185,8 @@ Route::middleware('auth')->prefix('oauth')->group(function () {
     Route::get('/google/callback', [OAuthController::class, 'handleGoogleCallback'])->name('oauth.google.callback');
     Route::get('/microsoft', [OAuthController::class, 'redirectToMicrosoft'])->name('oauth.microsoft');
     Route::get('/microsoft/callback', [OAuthController::class, 'handleMicrosoftCallback'])->name('oauth.microsoft.callback');
+    Route::get('/complete', [OAuthController::class, 'showCompleteForm'])->name('oauth.complete');
+    Route::post('/complete', [OAuthController::class, 'completeSetup'])->name('oauth.complete.submit');
 });
 
 // CalDAV
@@ -207,6 +209,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [\App\Http\Controllers\EmailCalendarController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\EmailCalendarController::class, 'store'])->name('store');
         Route::get('/{emailCalendar}', [\App\Http\Controllers\EmailCalendarController::class, 'show'])->name('show');
+        Route::get('/{emailCalendar}/edit', [\App\Http\Controllers\EmailCalendarController::class, 'edit'])->name('edit');
+        Route::put('/{emailCalendar}', [\App\Http\Controllers\EmailCalendarController::class, 'update'])->name('update');
         Route::delete('/{emailCalendar}', [\App\Http\Controllers\EmailCalendarController::class, 'destroy'])->name('destroy');
         
         // Email Calendar Verification
@@ -231,6 +235,11 @@ Route::middleware('auth')->group(function () {
     // Calendar connections
     Route::prefix('connections')->name('connections.')->group(function () {
         Route::get('/', [ConnectionsController::class, 'index'])->name('index');
+        Route::get('/complete-oauth', [OAuthController::class, 'showCompleteForm'])->name('complete-oauth');
+        Route::post('/complete-oauth', [OAuthController::class, 'completeSetup'])->name('complete-oauth.submit');
+        Route::get('/{connection}', [ConnectionsController::class, 'show'])->name('show');
+        Route::get('/{connection}/edit', [ConnectionsController::class, 'edit'])->name('edit');
+        Route::put('/{connection}', [ConnectionsController::class, 'update'])->name('update');
         Route::delete('/{connection}', [ConnectionsController::class, 'destroy'])->name('destroy');
         Route::post('/{connection}/refresh', [ConnectionsController::class, 'refresh'])->name('refresh');
     });
@@ -240,6 +249,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [SyncRulesController::class, 'index'])->name('index');
         Route::get('/create', [SyncRulesController::class, 'create'])->name('create');
         Route::post('/', [SyncRulesController::class, 'store'])->name('store');
+        Route::get('/{rule}/edit', [SyncRulesController::class, 'edit'])->name('edit');
+        Route::put('/{rule}', [SyncRulesController::class, 'update'])->name('update');
         Route::post('/{rule}/toggle', [SyncRulesController::class, 'toggle'])->name('toggle');
         Route::delete('/{rule}', [SyncRulesController::class, 'destroy'])->name('destroy');
     });

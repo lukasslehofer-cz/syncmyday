@@ -83,15 +83,10 @@ class SyncRulesController extends Controller
         ]);
 
         $validated = $request->validate([
-            'source_type' => 'required|in:api,email',
-            'source_connection_id' => 'nullable|exists:calendar_connections,id',
-            'source_email_connection_id' => 'nullable|exists:email_calendar_connections,id',
-            'source_calendar_id' => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'source_type_and_id' => 'required|string',
             'target_connections' => 'required|array|min:1',
-            'target_connections.*.type' => 'required|in:api,email',
-            'target_connections.*.connection_id' => 'nullable|exists:calendar_connections,id',
-            'target_connections.*.email_connection_id' => 'nullable|exists:email_calendar_connections,id',
-            'target_connections.*.calendar_id' => 'nullable|string',
+            'target_connections.*.type_and_id' => 'required|string',
             'direction' => 'required|in:one_way,two_way',
             'blocker_title' => 'nullable|string|max:100',
             'filters' => 'nullable|array',
@@ -105,20 +100,54 @@ class SyncRulesController extends Controller
             'time_filter_days.*' => 'integer|between:1,7',
         ]);
 
-        // Custom validation: ensure correct fields are filled based on type
-        if ($validated['source_type'] === 'api' && empty($validated['source_connection_id'])) {
-            return back()->withErrors(['source_connection_id' => 'Source calendar connection is required for API calendars'])->withInput();
-        }
-        if ($validated['source_type'] === 'email' && empty($validated['source_email_connection_id'])) {
-            return back()->withErrors(['source_email_connection_id' => 'Source email calendar is required for email calendars'])->withInput();
+        // Parse source connection
+        list($sourceType, $sourceId) = explode('-', $validated['source_type_and_id'], 2);
+        $sourceConnectionId = null;
+        $sourceEmailConnectionId = null;
+        $sourceCalendarId = null;
+        
+        if ($sourceType === 'api') {
+            $sourceConnection = CalendarConnection::findOrFail($sourceId);
+            if ($sourceConnection->user_id !== auth()->id()) {
+                abort(403);
+            }
+            $sourceConnectionId = $sourceConnection->id;
+            $sourceCalendarId = $sourceConnection->selected_calendar_id;
+        } else {
+            $sourceEmailConnection = EmailCalendarConnection::findOrFail($sourceId);
+            if ($sourceEmailConnection->user_id !== auth()->id()) {
+                abort(403);
+            }
+            $sourceEmailConnectionId = $sourceEmailConnection->id;
         }
         
-        foreach ($validated['target_connections'] as $idx => $target) {
-            if ($target['type'] === 'api' && empty($target['connection_id'])) {
-                return back()->withErrors(["target_connections.{$idx}.connection_id" => 'Target calendar connection is required for API calendars'])->withInput();
-            }
-            if ($target['type'] === 'email' && empty($target['email_connection_id'])) {
-                return back()->withErrors(["target_connections.{$idx}.email_connection_id" => 'Target email calendar is required for email calendars'])->withInput();
+        // Parse target connections
+        $processedTargets = [];
+        foreach ($validated['target_connections'] as $targetData) {
+            list($targetType, $targetId) = explode('-', $targetData['type_and_id'], 2);
+            
+            if ($targetType === 'api') {
+                $targetConnection = CalendarConnection::findOrFail($targetId);
+                if ($targetConnection->user_id !== auth()->id()) {
+                    abort(403);
+                }
+                $processedTargets[] = [
+                    'type' => 'api',
+                    'connection_id' => $targetConnection->id,
+                    'email_connection_id' => null,
+                    'calendar_id' => $targetConnection->selected_calendar_id,
+                ];
+            } else {
+                $targetEmailConnection = EmailCalendarConnection::findOrFail($targetId);
+                if ($targetEmailConnection->user_id !== auth()->id()) {
+                    abort(403);
+                }
+                $processedTargets[] = [
+                    'type' => 'email',
+                    'connection_id' => null,
+                    'email_connection_id' => $targetEmailConnection->id,
+                    'calendar_id' => null,
+                ];
             }
         }
 
@@ -154,9 +183,10 @@ class SyncRulesController extends Controller
             // Create sync rule (forward direction)
             $rule = SyncRule::create([
                 'user_id' => auth()->id(),
-                'source_connection_id' => $validated['source_type'] === 'api' ? $validated['source_connection_id'] : null,
-                'source_email_connection_id' => $validated['source_type'] === 'email' ? $validated['source_email_connection_id'] : null,
-                'source_calendar_id' => $validated['source_calendar_id'] ?? null,
+                'name' => $validated['name'],
+                'source_connection_id' => $sourceConnectionId,
+                'source_email_connection_id' => $sourceEmailConnectionId,
+                'source_calendar_id' => $sourceCalendarId,
                 'direction' => $validated['direction'],
                 'blocker_title' => $validated['blocker_title'] ?? 'Busy — Sync',
                 'filters' => $validated['filters'] ?? [
@@ -173,24 +203,35 @@ class SyncRulesController extends Controller
             ]);
 
             // Create targets for forward rule
-            foreach ($validated['target_connections'] as $target) {
+            foreach ($processedTargets as $target) {
                 SyncRuleTarget::create([
                     'sync_rule_id' => $rule->id,
-                    'target_connection_id' => $target['type'] === 'api' ? $target['connection_id'] : null,
-                    'target_email_connection_id' => $target['type'] === 'email' ? $target['email_connection_id'] : null,
-                    'target_calendar_id' => $target['calendar_id'] ?? null,
+                    'target_connection_id' => $target['connection_id'],
+                    'target_email_connection_id' => $target['email_connection_id'],
+                    'target_calendar_id' => $target['calendar_id'],
                 ]);
             }
 
             // For bidirectional sync, create reverse rules
             if ($validated['direction'] === 'two_way') {
-                foreach ($validated['target_connections'] as $target) {
+                foreach ($processedTargets as $target) {
+                    // Get target name for reverse rule name
+                    $targetName = '';
+                    if ($target['connection_id']) {
+                        $targetConn = CalendarConnection::find($target['connection_id']);
+                        $targetName = $targetConn->name ?? $targetConn->provider_email;
+                    } else {
+                        $targetEmail = EmailCalendarConnection::find($target['email_connection_id']);
+                        $targetName = $targetEmail->name;
+                    }
+                    
                     // Create reverse rule: target -> source
                     $reverseRule = SyncRule::create([
                         'user_id' => auth()->id(),
-                        'source_connection_id' => $target['type'] === 'api' ? $target['connection_id'] : null,
-                        'source_email_connection_id' => $target['type'] === 'email' ? $target['email_connection_id'] : null,
-                        'source_calendar_id' => $target['calendar_id'] ?? null,
+                        'name' => $validated['name'] . ' (' . $targetName . ' → reverse)',
+                        'source_connection_id' => $target['connection_id'],
+                        'source_email_connection_id' => $target['email_connection_id'],
+                        'source_calendar_id' => $target['calendar_id'],
                         'direction' => 'two_way', // Both forward and reverse use 'two_way'
                         'blocker_title' => $validated['blocker_title'] ?? 'Busy — Sync',
                         'filters' => $validated['filters'] ?? [
@@ -209,13 +250,13 @@ class SyncRulesController extends Controller
                     // Create target for reverse rule (original source)
                     SyncRuleTarget::create([
                         'sync_rule_id' => $reverseRule->id,
-                        'target_connection_id' => $validated['source_type'] === 'api' ? $validated['source_connection_id'] : null,
-                        'target_email_connection_id' => $validated['source_type'] === 'email' ? $validated['source_email_connection_id'] : null,
-                        'target_calendar_id' => $validated['source_calendar_id'] ?? null,
+                        'target_connection_id' => $sourceConnectionId,
+                        'target_email_connection_id' => $sourceEmailConnectionId,
+                        'target_calendar_id' => $sourceCalendarId,
                     ]);
 
                     // Create webhook subscription for reverse rule (only for API calendars)
-                    if ($target['type'] === 'api') {
+                    if ($target['connection_id']) {
                         $targetConnection = CalendarConnection::find($target['connection_id']);
                         if ($targetConnection) {
                             $this->ensureWebhookSubscription($targetConnection, $target['calendar_id']);
@@ -225,10 +266,10 @@ class SyncRulesController extends Controller
             }
 
             // Create webhook subscription for source calendar (only for API calendars)
-            if ($validated['source_type'] === 'api' && $rule->sourceConnection) {
+            if ($sourceConnectionId && $rule->sourceConnection) {
                 $this->ensureWebhookSubscription(
                     $rule->sourceConnection,
-                    $validated['source_calendar_id']
+                    $sourceCalendarId
                 );
             }
 
@@ -270,6 +311,115 @@ class SyncRulesController extends Controller
 
             return redirect()->back()
                 ->with('error', __('messages.sync_rule_creation_failed'))
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show form to edit sync rule
+     */
+    public function edit(SyncRule $rule)
+    {
+        // Authorization
+        if ($rule->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $apiConnections = auth()->user()
+            ->calendarConnections()
+            ->where('status', 'active')
+            ->get();
+        
+        $emailConnections = auth()->user()
+            ->emailCalendarConnections()
+            ->where('status', 'active')
+            ->get();
+
+        // Load relationships
+        $rule->load(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection', 'targets.targetEmailConnection']);
+
+        return view('sync-rules.edit', compact('rule', 'apiConnections', 'emailConnections'));
+    }
+
+    /**
+     * Update sync rule
+     */
+    public function update(Request $request, SyncRule $rule)
+    {
+        // Authorization
+        if ($rule->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'blocker_title' => 'nullable|string|max:100',
+            'filters' => 'nullable|array',
+            'time_filter_enabled' => 'nullable|boolean',
+            'time_filter_type' => 'nullable|in:workdays,weekends,custom',
+            'workdays_time_start' => 'nullable|date_format:H:i',
+            'workdays_time_end' => 'nullable|date_format:H:i',
+            'time_filter_start' => 'nullable|date_format:H:i',
+            'time_filter_end' => 'nullable|date_format:H:i',
+            'time_filter_days' => 'nullable|array',
+            'time_filter_days.*' => 'integer|between:1,7',
+        ]);
+
+        try {
+            // Process time filter based on type
+            $timeFilterEnabled = $validated['time_filter_enabled'] ?? false;
+            $timeFilterType = $validated['time_filter_type'] ?? null;
+            $timeFilterStart = null;
+            $timeFilterEnd = null;
+            $timeFilterDays = null;
+
+            if ($timeFilterEnabled && $timeFilterType) {
+                if ($timeFilterType === 'workdays') {
+                    $timeFilterDays = [1, 2, 3, 4, 5];
+                    $timeFilterStart = $request->input('workdays_time_start', '08:00') . ':00';
+                    $timeFilterEnd = $request->input('workdays_time_end', '18:00') . ':00';
+                } elseif ($timeFilterType === 'weekends') {
+                    $timeFilterDays = [6, 7];
+                    $timeFilterStart = '00:00:00';
+                    $timeFilterEnd = '23:59:59';
+                } elseif ($timeFilterType === 'custom') {
+                    $timeFilterDays = $validated['time_filter_days'] ?? null;
+                    $timeFilterStart = $validated['time_filter_start'] ? $validated['time_filter_start'] . ':00' : null;
+                    $timeFilterEnd = $validated['time_filter_end'] ? $validated['time_filter_end'] . ':00' : null;
+                }
+            }
+
+            $rule->update([
+                'name' => $validated['name'],
+                'blocker_title' => $validated['blocker_title'] ?? 'Busy — Sync',
+                'filters' => $validated['filters'] ?? [
+                    'busy_only' => true,
+                    'ignore_all_day' => false,
+                ],
+                'time_filter_enabled' => $timeFilterEnabled,
+                'time_filter_type' => $timeFilterType,
+                'time_filter_start' => $timeFilterStart,
+                'time_filter_end' => $timeFilterEnd,
+                'time_filter_days' => $timeFilterDays,
+            ]);
+
+            Log::info('Sync rule updated', [
+                'user_id' => auth()->id(),
+                'rule_id' => $rule->id,
+            ]);
+
+            return redirect()->route('sync-rules.index')
+                ->with('success', __('messages.sync_rule_updated'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to update sync rule', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+                'rule_id' => $rule->id,
+            ]);
+
+            return redirect()->back()
+                ->with('error', __('messages.sync_rule_update_failed'))
                 ->withInput();
         }
     }

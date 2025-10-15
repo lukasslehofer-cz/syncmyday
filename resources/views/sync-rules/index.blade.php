@@ -68,11 +68,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900">
-                                    @if($rule->isEmailSource())
-                                        {{ $rule->sourceEmailConnection->name }}
-                                    @else
-                                        {{ $rule->sourceConnection->provider_email }}
-                                    @endif
+                                    {{ $rule->name ?? __('messages.unnamed_rule') }}
                                 </h3>
                                 <p class="text-xs text-gray-500">
                                     {{ trans_choice('messages.syncing_to_targets', $rule->targets->count(), ['count' => $rule->targets->count()]) }}
@@ -82,6 +78,13 @@
                     </div>
                     
                     <div class="flex items-center space-x-3">
+                        <a href="{{ route('sync-rules.edit', $rule) }}" class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-xl font-semibold text-sm shadow-sm transition">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            {{ __('messages.edit') }}
+                        </a>
+                        
                         <form action="{{ route('sync-rules.toggle', $rule) }}" method="POST">
                             @csrf
                             <button type="submit" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition {{ $rule->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
@@ -96,17 +99,6 @@
                                 </svg>
                                 {{ __('messages.paused') }}
                                 @endif
-                            </button>
-                        </form>
-                        
-                        <form action="{{ route('sync-rules.destroy', $rule) }}" method="POST" onsubmit="return confirm('⚠️ Are you sure?\n\nThis will:\n• Delete this sync rule\n• Remove ALL blocker events created by this rule from target calendars\n\nThis action cannot be undone.')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-semibold text-sm shadow-sm transition">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                {{ __('messages.delete') }}
                             </button>
                         </form>
                     </div>
@@ -139,7 +131,7 @@
                                     <p class="text-sm text-gray-600 font-mono bg-white/70 px-2 py-1 rounded mt-1 truncate">
                                         {{ $rule->sourceEmailConnection->email_address }}
                                     </p>
-                                    <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">{{ __('messages.email_calendar_type') }}</span>
+                                    <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Email</span>
                                 </div>
                             </div>
                             @else
@@ -167,9 +159,9 @@
                                 </div>
                                 @endif
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-gray-900">{{ $rule->sourceConnection->provider_email }}</p>
-                                    <p class="text-sm text-gray-600 bg-white/70 px-2 py-1 rounded mt-1 truncate">
-                                        {{ $rule->source_calendar_id }}
+                                    <p class="font-semibold text-gray-900">{{ $rule->sourceConnection->name ?? $rule->sourceConnection->provider_email }}</p>
+                                    <p class="text-sm text-gray-600 font-mono bg-white/70 px-2 py-1 rounded mt-1 truncate">
+                                        {{ $rule->sourceConnection->account_email ?? $rule->sourceConnection->provider_email }}
                                     </p>
                                     <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold 
                                         @if($rule->sourceConnection->provider === 'google') bg-blue-100 text-blue-700
@@ -206,12 +198,10 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="font-semibold text-gray-900">{{ $target->targetEmailConnection->name }}</p>
-                                        @if($target->targetEmailConnection->target_email)
                                         <p class="text-sm text-gray-600 font-mono bg-white/70 px-2 py-1 rounded mt-1 truncate">
-                                            {{ $target->targetEmailConnection->target_email }}
+                                            {{ $target->targetEmailConnection->email_address }}
                                         </p>
-                                        @endif
-                                        <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">{{ __('messages.email_type') }}</span>
+                                        <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Email</span>
                                     </div>
                                 </div>
                                 @else
@@ -239,7 +229,10 @@
                                     </div>
                                     @endif
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-semibold text-gray-900">{{ $target->targetConnection->provider_email }}</p>
+                                        <p class="font-semibold text-gray-900">{{ $target->targetConnection->name ?? $target->targetConnection->provider_email }}</p>
+                                        <p class="text-sm text-gray-600 font-mono bg-white/70 px-2 py-1 rounded mt-1 truncate">
+                                            {{ $target->targetConnection->account_email ?? $target->targetConnection->provider_email }}
+                                        </p>
                                         <span class="inline-block mt-2 px-2 py-1 text-xs font-semibold 
                                             @if($target->targetConnection->provider === 'google') bg-blue-100 text-blue-700
                                             @elseif($target->targetConnection->provider === 'microsoft') bg-purple-100 text-purple-700

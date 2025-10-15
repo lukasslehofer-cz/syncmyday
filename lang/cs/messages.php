@@ -140,6 +140,7 @@ return [
     
     // Sync Rules
     'sync_rule_created' => 'Synchronizační pravidlo bylo úspěšně vytvořeno!',
+    'unnamed_rule' => 'Nepojmenované pravidlo',
     'sync_rule_updated' => 'Synchronizační pravidlo bylo aktualizováno.',
     'sync_rule_deleted' => 'Synchronizační pravidlo bylo smazáno.',
     'sync_rule_limit_reached' => 'Dosáhli jste limitu pro váš tarif. Přejděte na Pro pro neomezená pravidla.',
@@ -167,6 +168,9 @@ return [
     // Create Sync Rule
     'create_sync_rule' => 'Vytvořit synchronizační pravidlo',
     'create_sync_rule_description' => 'Nastavte automatickou synchronizaci kalendářů',
+    'rule_name' => 'Název pravidla',
+    'rule_name_placeholder' => 'Např. Pracovní → Soukromý',
+    'rule_name_hint' => 'Zadejte popisný název pro toto synchronizační pravidlo',
     'source_calendar_description' => 'Události z tohoto kalendáře vytvoří blokující události v cílových kalendářích',
     'api_calendars' => 'API kalendáře (Google/Microsoft)',
     'email_calendars' => 'Emailové kalendáře',
@@ -203,6 +207,25 @@ return [
     'sunday' => 'Neděle',
     'cancel' => 'Zrušit',
     'target_email_address' => 'Cílová emailová adresa',
+    
+    // Edit Sync Rule
+    'edit_sync_rule' => 'Upravit synchronizační pravidlo',
+    'edit_sync_rule_description' => 'Upravte nastavení synchronizace kalendářů',
+    'cannot_change_source' => 'Zdrojový kalendář nelze změnit',
+    'cannot_change_targets' => 'Cílové kalendáře nelze změnit',
+    'delete_sync_rule' => 'Smazat synchronizační pravidlo',
+    'delete_sync_rule_warning' => 'Smazání tohoto synchronizačního pravidla odstraní všechny blokující události vytvořené tímto pravidlem z cílových kalendářů.',
+    'delete_sync_rule_warning_1' => 'Odstraníte toto synchronizační pravidlo trvale',
+    'delete_sync_rule_warning_2' => 'Odstraníte VŠECHNY blokující události vytvořené tímto pravidlem z cílových kalendářů',
+    'delete_sync_rule_warning_3' => 'Tato akce je nevratná a nemůže být vrácena zpět',
+    'delete_sync_rule_confirm' => '⚠️ Jste si jisti?\n\nTím:\n• Odstraníte toto synchronizační pravidlo\n• Odstraníte VŠECHNY blokující události vytvořené tímto pravidlem z cílových kalendářů\n\nTato akce je nevratná.',
+    'delete_this_sync_rule' => 'Smazat toto pravidlo',
+    
+    // Statistics
+    'statistics' => 'Statistiky',
+    'received_blockers' => 'Přijaté blockery',
+    'sent_blockers' => 'Odeslané blockery',
+    'last_sync_event' => 'Poslední synchronizace',
     
     // Dashboard
     'dashboard' => 'Přehled',
@@ -711,4 +734,86 @@ return [
     'onboarding_step3_title' => 'Relaxovat',
     'onboarding_step3_desc' => 'Vše je hotovo!',
     'dismiss' => 'Zavřít',
+    
+    // Calendar Connection Setup (OAuth & CalDAV)
+    'complete_calendar_setup' => 'Dokončit nastavení kalendáře',
+    'complete_calendar_setup_description' => 'Téměř hotovo! Stačí jen zadat název kalendáře a vybrat, který kalendář chcete používat.',
+    'oauth_authorization_successful' => 'Autorizace úspěšná!',
+    'oauth_authorization_successful_description' => 'Úspěšně připojeno k účtu :provider :email.',
+    'select_calendar_to_use' => 'Vyberte kalendář k použití',
+    'select_calendar' => 'Vyberte kalendář',
+    'select_calendar_hint' => 'Zvolte, který kalendář chcete synchronizovat. Můžete to později změnit.',
+    'primary' => 'Primární',
+    'why_select_calendar' => 'Proč vybrat kalendář?',
+    'why_select_calendar_description' => 'Většina účtů má více kalendářů (Osobní, Svátky, atd.). Výběrem jednoho se vyhnete synchronizaci svátků nebo nežádoucích událostí.',
+    'complete_calendar_setup_button' => 'Dokončit nastavení',
+    'session_expired' => 'Vaše relace vypršela. Zkuste to prosím znovu.',
+    
+    // Calendar Editing
+    'edit_calendar' => 'Upravit kalendář',
+    'edit_calendar_description' => 'Aktualizujte název kalendáře nebo změňte, který kalendář používat.',
+    'edit_email_calendar' => 'Upravit e-mailový kalendář',
+    'edit_email_calendar_description' => 'Aktualizujte nastavení vašeho e-mailového kalendáře.',
+    'calendar_email_address' => 'E-mailová adresa kalendáře',
+    'email_calendar_cannot_change_email' => 'E-mailovou adresu nelze po vytvoření změnit.',
+    'save_changes' => 'Uložit změny',
+    'connection_updated' => 'Kalendář byl úspěšně aktualizován!',
+    'connection_update_failed' => 'Nepodařilo se aktualizovat kalendář. Zkuste to prosím znovu.',
+    'email_calendar_updated' => 'E-mailový kalendář byl úspěšně aktualizován!',
+    'email_calendar_update_failed' => 'Nepodařilo se aktualizovat e-mailový kalendář. Zkuste to prosím znovu.',
+    'email_calendar_type' => 'Email',
+    'edit' => 'Upravit',
+    'calendar_singular' => 'Kalendář',
+    
+    // Connection Details
+    'back_to_calendars' => 'Zpět na kalendáře',
+    'calendar' => 'Kalendář',
+    'connection_details' => 'Detaily připojení',
+    'provider' => 'Poskytovatel',
+    'account_email' => 'E-mail účtu',
+    'selected_calendar' => 'Vybraný kalendář',
+    'available_calendars' => 'Dostupné kalendáře',
+    'last_sync' => 'Poslední synchronizace',
+    'configure_sync_rules_description' => 'Nastavte, jak se tento kalendář synchronizuje s vašimi ostatními kalendáři.',
+    'manage_sync_rules' => 'Spravovat pravidla synchronizace',
+    'back' => 'Zpět',
+    
+    // Delete Calendar
+    'delete_calendar_warning' => 'Smazání tohoto kalendáře bude mít následující důsledky:',
+    'delete_calendar_warning_1' => 'Všechna synchronizační pravidla používající tento kalendář jako ZDROJ budou smazána',
+    'delete_calendar_warning_2' => 'Synchronizační pravidla, kde je tento kalendář JEDINÝM cílem, budou smazána',
+    'delete_calendar_warning_3' => 'Všechny blocker události vytvořené z tohoto kalendáře budou odstraněny',
+    'delete_calendar_warning_4' => 'Všechny webhooky budou zastaveny',
+    'delete_calendar_confirm' => 'Opravdu chcete smazat tento kalendář? Tuto akci nelze vrátit zpět!',
+    'delete_this_calendar' => 'Smazat tento kalendář',
+    
+    // Delete Email Calendar
+    'delete_email_calendar' => 'Smazat e-mailový kalendář',
+    'delete_email_calendar_warning' => 'Smazání tohoto e-mailového kalendáře bude mít následující důsledky:',
+    'delete_email_calendar_warning_email' => 'E-mailová adresa přestane přijímat přeposílané pozvánky',
+    'delete_email_calendar_confirm' => 'Opravdu chcete smazat tento e-mailový kalendář? Tuto akci nelze vrátit zpět!',
+    'delete_this_email_calendar' => 'Smazat tento e-mailový kalendář',
+    
+    // Calendar Details Descriptions
+    'calendar_details' => 'Detaily kalendáře',
+    'email_calendar_details' => 'Detaily e-mailového kalendáře',
+    'google_calendar_details_description' => 'Prohlédněte si a spravujte detaily připojení Google kalendáře.',
+    'microsoft_calendar_details_description' => 'Prohlédněte si a spravujte detaily připojení Microsoft 365 kalendáře.',
+    'caldav_calendar_details_description' => 'Prohlédněte si a spravujte detaily připojení CalDAV kalendáře.',
+    'email_calendar_details_description' => 'Prohlédněte si a spravujte detaily připojení e-mailového kalendáře.',
+    'calendars_count' => 'kalendářů',
+    'as_source' => 'Jako zdroj',
+    'as_source_description' => 'Přeposílejte kalendářové pozvánky na tuto adresu pro vytvoření blocker událostí v ostatních kalendářích (nastavte v pravidlech synchronizace).',
+    'as_target' => 'Jako cíl',
+    'as_target_description' => 'iMIP pozvánky budou odesílány na',
+    'as_target_not_configured' => 'Žádný cílový e-mail není nastaven - nastavte jej pro použití tohoto kalendáře jako cíle v pravidlech synchronizace.',
+    'setup_instructions' => 'Pokyny k nastavení',
+    
+    // Sync Rules Display
+    'sync_rules_as_source' => 'Pravidla jako zdroj',
+    'sync_rules_as_target' => 'Pravidla jako cíl',
+    'no_sync_rules_for_calendar' => 'Pro tento kalendář zatím nejsou nastavena žádná synchronizační pravidla.',
+    'create_first_rule' => 'Vytvořit první pravidlo',
+    'inactive' => 'Neaktivní',
+    'sync_rule_update_failed' => 'Nepodařilo se aktualizovat synchronizační pravidlo. Zkuste to prosím znovu.',
 ];

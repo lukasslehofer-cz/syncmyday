@@ -125,7 +125,7 @@
         </div>
         
         <ul class="divide-y divide-gray-200">
-            {{-- API Connections (Google, Microsoft) --}}
+            {{-- API Connections (Google, Microsoft, CalDAV) --}}
             @foreach($connections as $connection)
             <li class="p-6 hover:bg-gray-50 transition">
                 <div class="flex items-center justify-between">
@@ -156,19 +156,24 @@
                         </div>
                         <div>
                             <p class="text-lg font-bold text-gray-900">
-                                @if($connection->provider === 'caldav')
-                                    {{ __('messages.caldav_calendar') }}
-                                @else
-                                    {{ ucfirst($connection->provider) }} {{ __('messages.calendar_singular') }}
-                                @endif
+                                {{ $connection->name ?? ($connection->provider === 'caldav' ? __('messages.caldav_calendar') : ucfirst($connection->provider) . ' ' . __('messages.calendar_singular')) }}
                             </p>
                             <p class="text-sm text-gray-600 font-medium">{{ $connection->account_email ?? $connection->provider_email }}</p>
                             <div class="flex items-center mt-2 space-x-4">
                                 <span class="text-xs text-gray-500">
-                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    {{ $connection->available_calendars ? count($connection->available_calendars) : 0 }} {{ __('messages.calendars_count') }}
+                                    @if($connection->provider === 'google')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                            Google
+                                        </span>
+                                    @elseif($connection->provider === 'microsoft')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
+                                            Microsoft
+                                        </span>
+                                    @elseif($connection->provider === 'caldav')
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                            CalDAV
+                                        </span>
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -188,39 +193,20 @@
                         </span>
                         @endif
                         
-                        <form action="{{ route('connections.refresh', $connection) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                </svg>
-                                {{ __('messages.refresh') }}
-                            </button>
-                        </form>
+                        <a href="{{ route('connections.show', $connection) }}" class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
+                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            {{ __('messages.view_details') }}
+                        </a>
                         
-                        @if($connection->provider === 'caldav')
-                        <form action="{{ route('caldav.disconnect', $connection) }}" method="POST" class="inline" onsubmit="return confirm('⚠️ Are you sure you want to disconnect this CalDAV calendar?\n\nThis will automatically:\n• Delete all sync rules using this calendar as SOURCE\n• Delete sync rules where this is the ONLY target\n• Remove ALL blocker events created from this calendar\n\nThis action cannot be undone!')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                {{ __('messages.remove') }}
-                            </button>
-                        </form>
-                        @else
-                        <form action="{{ route('connections.destroy', $connection) }}" method="POST" class="inline" onsubmit="return confirm('⚠️ Are you sure you want to disconnect this calendar?\n\nThis will automatically:\n• Delete all sync rules using this calendar as SOURCE\n• Delete sync rules where this is the ONLY target\n• Remove ALL blocker events created from this calendar\n• Stop all webhooks\n\nThis action cannot be undone!')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                {{ __('messages.remove') }}
-                            </button>
-                        </form>
-                        @endif
+                        <a href="{{ route('connections.edit', $connection) }}" class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
+                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            {{ __('messages.edit') }}
+                        </a>
                     </div>
                 </div>
                 
@@ -256,21 +242,12 @@
                             <p class="text-lg font-bold text-gray-900">
                                 {{ $emailCalendar->name }}
                             </p>
-                            <p class="text-sm text-gray-600 font-mono bg-gray-100 px-3 py-1 rounded-lg inline-block mt-1">
-                                {{ $emailCalendar->email_address }}
-                            </p>
+                            <p class="text-sm text-gray-600 font-medium">{{ $emailCalendar->target_email }}</p>
                             <div class="flex items-center mt-2 space-x-4">
                                 <span class="text-xs text-gray-500">
-                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    {{ $emailCalendar->events_processed }} {{ __('messages.events') }}
-                                </span>
-                                <span class="text-xs text-gray-500">
-                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                    </svg>
-                                    {{ $emailCalendar->emails_received }} {{ __('messages.emails') }}
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                                        {{ __('messages.email_calendar_type') }}
+                                    </span>
                                 </span>
                             </div>
                         </div>
@@ -295,19 +272,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                                {{ __('messages.view_details') }}
+                            {{ __('messages.view_details') }}
                         </a>
                         
-                        <form action="{{ route('email-calendars.destroy', $emailCalendar) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this email calendar?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition">
-                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
-                                {{ __('messages.remove') }}
-                            </button>
-                        </form>
+                        <a href="{{ route('email-calendars.edit', $emailCalendar) }}" class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
+                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            {{ __('messages.edit') }}
+                        </a>
                     </div>
                 </div>
                 

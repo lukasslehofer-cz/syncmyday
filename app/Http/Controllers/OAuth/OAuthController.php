@@ -114,92 +114,10 @@ class OAuthController extends Controller
                 ];
             }
 
-            // Try to update or create connection with retry logic for race conditions
-            $maxAttempts = 3;
-            $attempt = 0;
-            $connection = null;
-            
-            while ($attempt < $maxAttempts && !$connection) {
-                try {
-                    // Find or create new connection (don't save yet)
-                    $connection = CalendarConnection::firstOrNew([
-                        'user_id' => auth()->id(),
-                        'provider' => 'google',
-                        'provider_account_id' => $accountInfo['id'],
-                    ]);
-                    
-                    // Set all attributes
-                    $connection->provider_email = $accountInfo['email'];
-                    $connection->available_calendars = $calendars;
-                    $connection->token_expires_at = now()->addSeconds($tokens['expires_in'] ?? 3600);
-                    $connection->status = 'active';
-                    $connection->last_error = null;
-                    
-                    // Set encrypted tokens BEFORE saving
-                    $connection->setAccessToken($tokens['access_token']);
-                    if (isset($tokens['refresh_token'])) {
-                        $connection->setRefreshToken($tokens['refresh_token']);
-                    }
-                    
-                    // Now save everything at once
-                    $connection->save();
-                    
-                } catch (\Illuminate\Database\QueryException $e) {
-                    // Handle duplicate key error (race condition)
-                    if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
-                        Log::warning('Duplicate connection detected, attempting to update existing', [
-                            'attempt' => $attempt + 1,
-                            'user_id' => auth()->id(),
-                            'provider' => 'google',
-                        ]);
-                        
-                        // Clear any transaction state and try to load existing connection
-                        \DB::rollBack();
-                        $connection = null;
-                        
-                        // Wait a moment and try again with fresh query
-                        usleep(100000); // 100ms
-                        $attempt++;
-                        
-                        if ($attempt >= $maxAttempts) {
-                            // Last attempt - force update using updateOrCreate
-                            $connection = CalendarConnection::updateOrCreate(
-                                [
-                                    'user_id' => auth()->id(),
-                                    'provider' => 'google',
-                                    'provider_account_id' => $accountInfo['id'],
-                                ],
-                                [
-                                    'provider_email' => $accountInfo['email'],
-                                    'available_calendars' => $calendars,
-                                    'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
-                                    'status' => 'active',
-                                    'last_error' => null,
-                                ]
-                            );
-                            
-                            // Set tokens after updateOrCreate
-                            $connection->setAccessToken($tokens['access_token']);
-                            if (isset($tokens['refresh_token'])) {
-                                $connection->setRefreshToken($tokens['refresh_token']);
-                            }
-                            $connection->save();
-                        }
-                    } else {
-                        // Different error - rethrow
-                        throw $e;
-                    }
-                }
-            }
-
-            Log::info('Google calendar connected', [
-                'user_id' => auth()->id(),
-                'connection_id' => $connection->id,
-                'from_account' => $fromAccountSettings,
-            ]);
-
-            // If from account settings, update oauth_provider for backup login
-            if ($fromAccountSettings && auth()->check()) {
+            // If from account settings, directly save the connection
+            if ($fromAccountSettings) {
+                $this->saveConnection('google', $accountInfo, $tokens, $calendars);
+                
                 $user = auth()->user();
                 if (!$user->oauth_provider) {
                     // User doesn't have OAuth yet, add Google as OAuth provider
@@ -218,8 +136,15 @@ class OAuthController extends Controller
                     ->with('success', 'Google connected successfully! You can now login with Google.');
             }
 
-            return redirect()->route('connections.index')
-                ->with('success', __('messages.calendar_connected'));
+            // Store data in session and redirect to completion form
+            session([
+                'oauth_provider' => 'google',
+                'oauth_account_info' => $accountInfo,
+                'oauth_tokens' => $tokens,
+                'oauth_calendars' => $calendars,
+            ]);
+
+            return redirect()->route('connections.complete-oauth');
 
         } catch (\Exception $e) {
             Log::error('Google OAuth failed', [
@@ -352,92 +277,10 @@ class OAuthController extends Controller
                 ];
             }
 
-            // Try to update or create connection with retry logic for race conditions
-            $maxAttempts = 3;
-            $attempt = 0;
-            $connection = null;
-            
-            while ($attempt < $maxAttempts && !$connection) {
-                try {
-                    // Find or create new connection (don't save yet)
-                    $connection = CalendarConnection::firstOrNew([
-                        'user_id' => auth()->id(),
-                        'provider' => 'microsoft',
-                        'provider_account_id' => $accountInfo['id'],
-                    ]);
-                    
-                    // Set all attributes
-                    $connection->provider_email = $accountInfo['email'];
-                    $connection->available_calendars = $calendars;
-                    $connection->token_expires_at = now()->addSeconds($tokens['expires_in'] ?? 3600);
-                    $connection->status = 'active';
-                    $connection->last_error = null;
-                    
-                    // Set encrypted tokens BEFORE saving
-                    $connection->setAccessToken($tokens['access_token']);
-                    if (isset($tokens['refresh_token'])) {
-                        $connection->setRefreshToken($tokens['refresh_token']);
-                    }
-                    
-                    // Now save everything at once
-                    $connection->save();
-                    
-                } catch (\Illuminate\Database\QueryException $e) {
-                    // Handle duplicate key error (race condition)
-                    if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
-                        Log::warning('Duplicate connection detected, attempting to update existing', [
-                            'attempt' => $attempt + 1,
-                            'user_id' => auth()->id(),
-                            'provider' => 'microsoft',
-                        ]);
-                        
-                        // Clear any transaction state and try to load existing connection
-                        \DB::rollBack();
-                        $connection = null;
-                        
-                        // Wait a moment and try again with fresh query
-                        usleep(100000); // 100ms
-                        $attempt++;
-                        
-                        if ($attempt >= $maxAttempts) {
-                            // Last attempt - force update using updateOrCreate
-                            $connection = CalendarConnection::updateOrCreate(
-                                [
-                                    'user_id' => auth()->id(),
-                                    'provider' => 'microsoft',
-                                    'provider_account_id' => $accountInfo['id'],
-                                ],
-                                [
-                                    'provider_email' => $accountInfo['email'],
-                                    'available_calendars' => $calendars,
-                                    'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
-                                    'status' => 'active',
-                                    'last_error' => null,
-                                ]
-                            );
-                            
-                            // Set tokens after updateOrCreate
-                            $connection->setAccessToken($tokens['access_token']);
-                            if (isset($tokens['refresh_token'])) {
-                                $connection->setRefreshToken($tokens['refresh_token']);
-                            }
-                            $connection->save();
-                        }
-                    } else {
-                        // Different error - rethrow
-                        throw $e;
-                    }
-                }
-            }
-
-            Log::info('Microsoft calendar connected', [
-                'user_id' => auth()->id(),
-                'connection_id' => $connection->id,
-                'from_account' => $fromAccountSettings,
-            ]);
-
-            // If from account settings, update oauth_provider for backup login
-            if ($fromAccountSettings && auth()->check()) {
+            // If from account settings, directly save the connection
+            if ($fromAccountSettings) {
+                $this->saveConnection('microsoft', $accountInfo, $tokens, $calendars);
+                
                 $user = auth()->user();
                 if (!$user->oauth_provider) {
                     // User doesn't have OAuth yet, add Microsoft as OAuth provider
@@ -456,8 +299,15 @@ class OAuthController extends Controller
                     ->with('success', 'Microsoft connected successfully! You can now login with Microsoft.');
             }
 
-            return redirect()->route('connections.index')
-                ->with('success', __('messages.calendar_connected'));
+            // Store data in session and redirect to completion form
+            session([
+                'oauth_provider' => 'microsoft',
+                'oauth_account_info' => $accountInfo,
+                'oauth_tokens' => $tokens,
+                'oauth_calendars' => $calendars,
+            ]);
+
+            return redirect()->route('connections.complete-oauth');
 
         } catch (\Exception $e) {
             Log::error('Microsoft OAuth failed', [
@@ -469,6 +319,200 @@ class OAuthController extends Controller
             return redirect()->route('connections.index')
                 ->with('error', $this->getFriendlyErrorMessage($e, 'Microsoft'));
         }
+    }
+
+    /**
+     * Show OAuth completion form (name + calendar selection)
+     */
+    public function showCompleteForm()
+    {
+        $provider = session('oauth_provider');
+        $accountInfo = session('oauth_account_info');
+        $calendars = session('oauth_calendars', []);
+
+        if (!$provider || !$accountInfo) {
+            return redirect()->route('connections.index')
+                ->with('error', __('messages.session_expired'));
+        }
+
+        // Find primary calendar
+        $primaryCalendarId = null;
+        foreach ($calendars as $calendar) {
+            if ($calendar['primary'] ?? false) {
+                $primaryCalendarId = $calendar['id'];
+                break;
+            }
+        }
+
+        // If no primary found, use first calendar
+        if (!$primaryCalendarId && count($calendars) > 0) {
+            $primaryCalendarId = $calendars[0]['id'];
+        }
+
+        // Suggested name based on provider
+        $suggestedName = ucfirst($provider) . ' Calendar';
+
+        return view('connections.complete-oauth', [
+            'provider' => $provider,
+            'email' => $accountInfo['email'],
+            'calendars' => $calendars,
+            'primaryCalendarId' => $primaryCalendarId,
+            'suggestedName' => $suggestedName,
+        ]);
+    }
+
+    /**
+     * Complete OAuth setup by saving connection with user's choices
+     */
+    public function completeSetup(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'selected_calendar_id' => 'required|string',
+        ]);
+
+        // Get data from session
+        $provider = session('oauth_provider');
+        $accountInfo = session('oauth_account_info');
+        $tokens = session('oauth_tokens');
+        $calendars = session('oauth_calendars', []);
+
+        if (!$provider || !$accountInfo || !$tokens) {
+            return redirect()->route('connections.index')
+                ->with('error', __('messages.session_expired'));
+        }
+
+        try {
+            // Save connection
+            $connection = $this->saveConnection(
+                $provider, 
+                $accountInfo, 
+                $tokens, 
+                $calendars,
+                $validated['name'],
+                $validated['selected_calendar_id']
+            );
+
+            // Clear session
+            session()->forget(['oauth_provider', 'oauth_account_info', 'oauth_tokens', 'oauth_calendars']);
+
+            Log::info('OAuth calendar connected via form', [
+                'user_id' => auth()->id(),
+                'connection_id' => $connection->id,
+                'provider' => $provider,
+                'name' => $validated['name'],
+            ]);
+
+            return redirect()->route('connections.index')
+                ->with('success', __('messages.calendar_connected'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to complete OAuth setup', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id(),
+                'provider' => $provider,
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', __('messages.calendar_connection_failed'));
+        }
+    }
+
+    /**
+     * Save calendar connection (shared method)
+     */
+    private function saveConnection(
+        string $provider, 
+        array $accountInfo, 
+        array $tokens, 
+        array $calendars,
+        ?string $name = null,
+        ?string $selectedCalendarId = null
+    ): CalendarConnection {
+        // Try to update or create connection with retry logic for race conditions
+        $maxAttempts = 3;
+        $attempt = 0;
+        $connection = null;
+        
+        while ($attempt < $maxAttempts && !$connection) {
+            try {
+                // Find or create new connection (don't save yet)
+                $connection = CalendarConnection::firstOrNew([
+                    'user_id' => auth()->id(),
+                    'provider' => $provider,
+                    'provider_account_id' => $accountInfo['id'],
+                ]);
+                
+                // Set all attributes
+                $connection->name = $name;
+                $connection->provider_email = $accountInfo['email'];
+                $connection->available_calendars = $calendars;
+                $connection->selected_calendar_id = $selectedCalendarId;
+                $connection->token_expires_at = now()->addSeconds($tokens['expires_in'] ?? 3600);
+                $connection->status = 'active';
+                $connection->last_error = null;
+                
+                // Set encrypted tokens BEFORE saving
+                $connection->setAccessToken($tokens['access_token']);
+                if (isset($tokens['refresh_token'])) {
+                    $connection->setRefreshToken($tokens['refresh_token']);
+                }
+                
+                // Now save everything at once
+                $connection->save();
+                
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Handle duplicate key error (race condition)
+                if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
+                    Log::warning('Duplicate connection detected, attempting to update existing', [
+                        'attempt' => $attempt + 1,
+                        'user_id' => auth()->id(),
+                        'provider' => $provider,
+                    ]);
+                    
+                    // Clear any transaction state and try to load existing connection
+                    \DB::rollBack();
+                    $connection = null;
+                    
+                    // Wait a moment and try again with fresh query
+                    usleep(100000); // 100ms
+                    $attempt++;
+                    
+                    if ($attempt >= $maxAttempts) {
+                        // Last attempt - force update using updateOrCreate
+                        $connection = CalendarConnection::updateOrCreate(
+                            [
+                                'user_id' => auth()->id(),
+                                'provider' => $provider,
+                                'provider_account_id' => $accountInfo['id'],
+                            ],
+                            [
+                                'name' => $name,
+                                'provider_email' => $accountInfo['email'],
+                                'available_calendars' => $calendars,
+                                'selected_calendar_id' => $selectedCalendarId,
+                                'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
+                                'status' => 'active',
+                                'last_error' => null,
+                            ]
+                        );
+                        
+                        // Set tokens after updateOrCreate
+                        $connection->setAccessToken($tokens['access_token']);
+                        if (isset($tokens['refresh_token'])) {
+                            $connection->setRefreshToken($tokens['refresh_token']);
+                        }
+                        $connection->save();
+                    }
+                } else {
+                    // Different error - rethrow
+                    throw $e;
+                }
+            }
+        }
+
+        return $connection;
     }
 
     /**

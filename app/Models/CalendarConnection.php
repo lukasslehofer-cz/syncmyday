@@ -12,6 +12,7 @@ class CalendarConnection extends Model
 
     protected $fillable = [
         'user_id',
+        'name',
         'provider',
         'provider_account_id',
         'provider_email',
@@ -20,6 +21,7 @@ class CalendarConnection extends Model
         'refresh_token_encrypted',
         'token_expires_at',
         'available_calendars',
+        'selected_calendar_id',
         'status',
         'last_error',
         'last_sync_at',

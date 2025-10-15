@@ -29,6 +29,139 @@ class ConnectionsController extends Controller
     }
 
     /**
+     * Show calendar connection details
+     */
+    public function show(CalendarConnection $connection)
+    {
+        // Authorization check
+        if ($connection->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Get selected calendar details
+        $selectedCalendar = null;
+        if ($connection->selected_calendar_id && $connection->available_calendars) {
+            foreach ($connection->available_calendars as $calendar) {
+                if ($calendar['id'] === $connection->selected_calendar_id) {
+                    $selectedCalendar = $calendar;
+                    break;
+                }
+            }
+        }
+
+        // Get sync rules where this connection is source
+        $syncRulesAsSource = \App\Models\SyncRule::where('source_connection_id', $connection->id)
+            ->with(['targets.targetConnection', 'targets.targetEmailConnection'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get sync rules where this connection is target
+        $syncRulesAsTarget = \App\Models\SyncRule::whereHas('targets', function($query) use ($connection) {
+                $query->where('target_connection_id', $connection->id);
+            })
+            ->with(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection', 'targets.targetEmailConnection'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Statistics - Received blockers (where this connection is target)
+        $receivedBlockers = \App\Models\SyncEventMapping::where('target_connection_id', $connection->id)->count();
+
+        // Statistics - Sent blockers (where this connection is source)
+        $sentBlockers = \App\Models\SyncEventMapping::where('source_connection_id', $connection->id)->count();
+
+        // Statistics - Last sync event
+        $lastSyncEvent = \App\Models\SyncEventMapping::where(function($query) use ($connection) {
+                $query->where('source_connection_id', $connection->id)
+                      ->orWhere('target_connection_id', $connection->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        return view('connections.show', [
+            'connection' => $connection,
+            'selectedCalendar' => $selectedCalendar,
+            'syncRulesAsSource' => $syncRulesAsSource,
+            'syncRulesAsTarget' => $syncRulesAsTarget,
+            'receivedBlockers' => $receivedBlockers,
+            'sentBlockers' => $sentBlockers,
+            'lastSyncEvent' => $lastSyncEvent,
+        ]);
+    }
+
+    /**
+     * Show edit form for calendar connection
+     */
+    public function edit(CalendarConnection $connection)
+    {
+        // Authorization check
+        if ($connection->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Find primary calendar if selected_calendar_id not set
+        $selectedCalendarId = $connection->selected_calendar_id;
+        if (!$selectedCalendarId && $connection->available_calendars) {
+            foreach ($connection->available_calendars as $calendar) {
+                if ($calendar['primary'] ?? false) {
+                    $selectedCalendarId = $calendar['id'];
+                    break;
+                }
+            }
+            // If no primary found, use first calendar
+            if (!$selectedCalendarId && count($connection->available_calendars) > 0) {
+                $selectedCalendarId = $connection->available_calendars[0]['id'];
+            }
+        }
+
+        return view('connections.edit', [
+            'connection' => $connection,
+            'selectedCalendarId' => $selectedCalendarId,
+        ]);
+    }
+
+    /**
+     * Update calendar connection
+     */
+    public function update(Request $request, CalendarConnection $connection)
+    {
+        // Authorization check
+        if ($connection->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'selected_calendar_id' => 'required|string',
+        ]);
+
+        try {
+            $connection->update([
+                'name' => $validated['name'],
+                'selected_calendar_id' => $validated['selected_calendar_id'],
+            ]);
+
+            Log::info('Calendar connection updated', [
+                'connection_id' => $connection->id,
+                'user_id' => auth()->id(),
+                'name' => $validated['name'],
+            ]);
+
+            return redirect()->route('connections.index')
+                ->with('success', __('messages.connection_updated'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to update calendar connection', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()
+                ->withInput()
+                ->with('error', __('messages.connection_update_failed'));
+        }
+    }
+
+    /**
      * Delete a calendar connection
      */
     public function destroy(CalendarConnection $connection)
