@@ -15,6 +15,11 @@ ADD COLUMN `selected_calendar_id` VARCHAR(255) NULL AFTER `available_calendars`;
 ALTER TABLE `sync_rules`
 ADD COLUMN `name` VARCHAR(255) NULL AFTER `user_id`;
 
+-- 3. Expand provider ENUM to include 'apple' and 'caldav'
+-- This allows Apple iCloud and generic CalDAV calendar connections
+ALTER TABLE `calendar_connections` 
+MODIFY COLUMN `provider` ENUM('google', 'microsoft', 'apple', 'caldav') NOT NULL;
+
 -- ==================================================================
 -- Optional: Add indexes for better query performance
 -- ==================================================================

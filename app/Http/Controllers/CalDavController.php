@@ -228,10 +228,11 @@ class CalDavController extends Controller
                 'user_id' => auth()->id(),
                 'url' => $url,
                 'name' => $validated['name'],
+                'provider' => $provider,
             ]);
             
             // Clear session
-            session()->forget(['caldav_url', 'caldav_username', 'caldav_password', 'caldav_email', 'caldav_principal_url', 'caldav_calendars']);
+            session()->forget(['caldav_url', 'caldav_username', 'caldav_password', 'caldav_email', 'caldav_principal_url', 'caldav_calendars', 'caldav_provider']);
             
             return redirect()->route('connections.index')
                 ->with('success', __('messages.caldav_connected_success'));
