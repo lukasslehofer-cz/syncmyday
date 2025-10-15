@@ -93,15 +93,9 @@
                                         onchange="updateCalendarSelection()"
                                     >
                                     <div class="ml-4 flex-1">
-                                        <div class="flex items-center space-x-3">
-                                            @if(isset($calendar['color']))
-                                                <div class="w-4 h-4 rounded-full border-2 border-gray-300" style="background-color: {{ $calendar['color'] }}"></div>
-                                            @endif
-                                            <span class="font-semibold text-gray-900 group-hover:text-purple-700">
-                                                {{ $calendar['name'] }}
-                                            </span>
-                                        </div>
-                                        <p class="text-sm text-gray-500 mt-1 font-mono">{{ basename($calendar['id']) }}</p>
+                                        <span class="font-semibold text-gray-900 group-hover:text-purple-700">
+                                            {{ $calendar['name'] }}
+                                        </span>
                                     </div>
                                     <svg class="w-5 h-5 text-gray-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

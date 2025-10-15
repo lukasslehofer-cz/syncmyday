@@ -85,19 +85,15 @@
                             >
                             <div class="ml-4 flex-1">
                                 <div class="flex items-center space-x-3">
-                                    @if(isset($calendar['color']))
-                                        <div class="w-4 h-4 rounded-full border-2 border-gray-300" style="background-color: {{ $calendar['color'] }}"></div>
+                                    @if($calendar['primary'] ?? false)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700">
+                                            {{ __('messages.primary') }}
+                                        </span>
                                     @endif
                                     <span class="font-semibold text-gray-900 group-hover:text-indigo-700">
                                         {{ $calendar['name'] }}
-                                        @if($calendar['primary'] ?? false)
-                                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                                {{ __('messages.primary') }}
-                                            </span>
-                                        @endif
                                     </span>
                                 </div>
-                                <p class="text-sm text-gray-500 mt-1 font-mono">{{ $calendar['id'] }}</p>
                             </div>
                             <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
