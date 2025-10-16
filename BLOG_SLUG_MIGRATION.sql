@@ -12,21 +12,27 @@ DELETE FROM `blog_articles`;
 DELETE FROM `blog_category_translations`;
 DELETE FROM `blog_categories`;
 
--- Step 1: Add slug column to blog_article_translations
+-- Step 1: Remove slug column from blog_article_translations if it exists (from previous failed attempt)
+ALTER TABLE `blog_article_translations` DROP COLUMN IF EXISTS `slug`;
+
+-- Step 2: Remove unique index if it exists
+ALTER TABLE `blog_article_translations` DROP INDEX IF EXISTS `blog_article_translations_locale_slug_unique`;
+
+-- Step 3: Add slug column to blog_article_translations
 ALTER TABLE `blog_article_translations` 
 ADD COLUMN `slug` VARCHAR(255) NOT NULL AFTER `locale`;
 
--- Step 2: Add unique index for locale + slug
+-- Step 4: Add unique index for locale + slug
 ALTER TABLE `blog_article_translations` 
 ADD UNIQUE INDEX `blog_article_translations_locale_slug_unique` (`locale`, `slug`);
 
--- Step 3: Drop unique index from blog_articles.slug
+-- Step 5: Drop unique index from blog_articles.slug if exists
 ALTER TABLE `blog_articles` 
-DROP INDEX `blog_articles_slug_unique`;
+DROP INDEX IF EXISTS `blog_articles_slug_unique`;
 
--- Step 4: Drop slug column from blog_articles
+-- Step 6: Drop slug column from blog_articles if exists
 ALTER TABLE `blog_articles` 
-DROP COLUMN `slug`;
+DROP COLUMN IF EXISTS `slug`;
 
 -- ============================================
 -- IMPORTANT: After running this migration
