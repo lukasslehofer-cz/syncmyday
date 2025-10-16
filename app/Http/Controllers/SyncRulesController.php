@@ -112,7 +112,22 @@ class SyncRulesController extends Controller
                 abort(403);
             }
             $sourceConnectionId = $sourceConnection->id;
+            
+            // Get selected calendar ID with fallback to primary/first calendar
             $sourceCalendarId = $sourceConnection->selected_calendar_id;
+            if (!$sourceCalendarId && $sourceConnection->available_calendars) {
+                // Try to find primary calendar
+                foreach ($sourceConnection->available_calendars as $cal) {
+                    if ($cal['primary'] ?? false) {
+                        $sourceCalendarId = $cal['id'];
+                        break;
+                    }
+                }
+                // If no primary found, use first calendar
+                if (!$sourceCalendarId && count($sourceConnection->available_calendars) > 0) {
+                    $sourceCalendarId = $sourceConnection->available_calendars[0]['id'];
+                }
+            }
         } else {
             $sourceEmailConnection = EmailCalendarConnection::findOrFail($sourceId);
             if ($sourceEmailConnection->user_id !== auth()->id()) {
@@ -131,11 +146,28 @@ class SyncRulesController extends Controller
                 if ($targetConnection->user_id !== auth()->id()) {
                     abort(403);
                 }
+                
+                // Get selected calendar ID with fallback to primary/first calendar
+                $targetCalendarId = $targetConnection->selected_calendar_id;
+                if (!$targetCalendarId && $targetConnection->available_calendars) {
+                    // Try to find primary calendar
+                    foreach ($targetConnection->available_calendars as $cal) {
+                        if ($cal['primary'] ?? false) {
+                            $targetCalendarId = $cal['id'];
+                            break;
+                        }
+                    }
+                    // If no primary found, use first calendar
+                    if (!$targetCalendarId && count($targetConnection->available_calendars) > 0) {
+                        $targetCalendarId = $targetConnection->available_calendars[0]['id'];
+                    }
+                }
+                
                 $processedTargets[] = [
                     'type' => 'api',
                     'connection_id' => $targetConnection->id,
                     'email_connection_id' => null,
-                    'calendar_id' => $targetConnection->selected_calendar_id,
+                    'calendar_id' => $targetCalendarId,
                 ];
             } else {
                 $targetEmailConnection = EmailCalendarConnection::findOrFail($targetId);
@@ -256,7 +288,7 @@ class SyncRulesController extends Controller
                     ]);
 
                     // Create webhook subscription for reverse rule (only for API calendars)
-                    if ($target['connection_id']) {
+                    if ($target['connection_id'] && $target['calendar_id']) {
                         $targetConnection = CalendarConnection::find($target['connection_id']);
                         if ($targetConnection) {
                             $this->ensureWebhookSubscription($targetConnection, $target['calendar_id']);
@@ -266,7 +298,7 @@ class SyncRulesController extends Controller
             }
 
             // Create webhook subscription for source calendar (only for API calendars)
-            if ($sourceConnectionId && $rule->sourceConnection) {
+            if ($sourceConnectionId && $rule->sourceConnection && $sourceCalendarId) {
                 $this->ensureWebhookSubscription(
                     $rule->sourceConnection,
                     $sourceCalendarId
