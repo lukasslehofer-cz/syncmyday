@@ -96,15 +96,26 @@ https://syncmyday.de/auth/microsoft/callback
 
 The application automatically detects the current domain and uses the correct redirect URI:
 
-```php
-// config/services.php
-'redirect' => url('/oauth/microsoft/callback'),  // Uses current domain!
-```
+### Architecture:
+1. **Config** (`config/services.php`): Stores APP_URL-based redirect URIs
+   ```php
+   'redirect' => env('APP_URL') . '/oauth/microsoft/callback'
+   ```
 
-- User on **syncmyday.eu** → Redirects to **syncmyday.eu**
-- User on **syncmyday.cz** → Redirects to **syncmyday.cz**
-- User on **syncmyday.sk** → Redirects to **syncmyday.sk**
-- etc.
+2. **Services** (GoogleCalendarService, MicrosoftCalendarService): 
+   - Detect current domain in HTTP context
+   - Replace APP_URL with current domain
+   - Use config value as-is in CLI (for artisan commands)
+   
+3. **Controllers** (SocialAuthController):
+   - Use domain-aware helpers
+   - Ensure correct redirect URI per request
+
+### Result:
+- User on **syncmyday.eu** → Redirects to **syncmyday.eu** ✅
+- User on **syncmyday.cz** → Redirects to **syncmyday.cz** ✅
+- User on **syncmyday.sk** → Redirects to **syncmyday.sk** ✅
+- `php artisan config:cache` works in CLI ✅
 
 ---
 
