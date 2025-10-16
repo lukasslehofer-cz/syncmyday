@@ -5,9 +5,9 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        // Use current domain for redirect URIs (simpler approach)
-        'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL') . '/oauth/google/callback'),
-        'redirect_login' => env('APP_URL') . '/auth/google/callback',
+        // Use current domain for redirect URIs (works with multiple domains)
+        'redirect' => env('GOOGLE_REDIRECT_URI') ?: url('/oauth/google/callback'),
+        'redirect_login' => url('/auth/google/callback'),
         'scopes' => [
             'https://www.googleapis.com/auth/calendar',
             'https://www.googleapis.com/auth/calendar.events',
@@ -18,9 +18,9 @@ return [
     'microsoft' => [
         'client_id' => env('MICROSOFT_CLIENT_ID'),
         'client_secret' => env('MICROSOFT_CLIENT_SECRET'),
-        // Use current domain for redirect URIs (simpler approach)
-        'redirect' => env('MICROSOFT_REDIRECT_URI', env('APP_URL') . '/oauth/microsoft/callback'),
-        'redirect_login' => env('APP_URL') . '/auth/microsoft/callback',
+        // Use current domain for redirect URIs (works with multiple domains)
+        'redirect' => env('MICROSOFT_REDIRECT_URI') ?: url('/oauth/microsoft/callback'),
+        'redirect_login' => url('/auth/microsoft/callback'),
         'tenant' => env('MICROSOFT_TENANT', 'common'),
         'scopes' => [
             'Calendars.ReadWrite',
