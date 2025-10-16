@@ -32,8 +32,8 @@ class CalDavCalendarService
     {
         $this->connection = $connection;
         
-        if ($connection->provider !== 'caldav') {
-            throw new \Exception('Connection is not a CalDAV connection');
+        if (!in_array($connection->provider, ['caldav', 'apple'])) {
+            throw new \Exception('Connection is not a CalDAV/Apple connection');
         }
         
         // Decrypt password

@@ -1000,7 +1000,7 @@ class SyncEngine
         return match($connection->provider) {
             'google' => $this->googleService,
             'microsoft' => $this->microsoftService,
-            'caldav' => $this->calDavService,
+            'caldav', 'apple' => $this->calDavService, // Apple uses CalDAV protocol
             default => throw new \Exception("Unsupported provider: {$connection->provider}"),
         };
     }
@@ -1013,7 +1013,7 @@ class SyncEngine
         return match($provider) {
             'google' => $this->normalizeGoogleEvent($event),
             'microsoft' => $this->normalizeMicrosoftEvent($event),
-            'caldav' => $this->normalizeCalDavEvent($event),
+            'caldav', 'apple' => $this->normalizeCalDavEvent($event), // Apple uses CalDAV protocol
             default => throw new \Exception("Unsupported provider for normalization: {$provider}"),
         };
     }
@@ -1087,7 +1087,7 @@ class SyncEngine
             return match($provider) {
                 'google' => new \DateTime($event->getStart()->getDateTime() ?? $event->getStart()->getDate()),
                 'microsoft' => new \DateTime($event['start']['dateTime']),
-                'caldav' => $event['start'], // Already DateTime object
+                'caldav', 'apple' => $event['start'], // Already DateTime object
                 default => null,
             };
         } catch (\Exception $e) {
@@ -1101,7 +1101,7 @@ class SyncEngine
             return match($provider) {
                 'google' => new \DateTime($event->getEnd()->getDateTime() ?? $event->getEnd()->getDate()),
                 'microsoft' => new \DateTime($event['end']['dateTime']),
-                'caldav' => $event['end'], // Already DateTime object
+                'caldav', 'apple' => $event['end'], // Already DateTime object
                 default => null,
             };
         } catch (\Exception $e) {
@@ -1114,7 +1114,7 @@ class SyncEngine
         return match($provider) {
             'google' => $event->getStatus() === 'cancelled',
             'microsoft' => isset($event['@removed']) && $event['@removed'],
-            'caldav' => isset($event['status']) && $event['status'] === 'cancelled',
+            'caldav', 'apple' => isset($event['status']) && $event['status'] === 'cancelled',
             default => false,
         };
     }

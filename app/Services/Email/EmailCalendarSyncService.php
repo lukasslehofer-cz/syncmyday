@@ -265,9 +265,12 @@ class EmailCalendarSyncService
         ])->first();
 
         // Get target calendar service
-        $targetService = $targetConnection->provider === 'google'
-            ? app(\App\Services\Calendar\GoogleCalendarService::class)
-            : app(\App\Services\Calendar\MicrosoftCalendarService::class);
+        $targetService = match($targetConnection->provider) {
+            'google' => app(\App\Services\Calendar\GoogleCalendarService::class),
+            'microsoft' => app(\App\Services\Calendar\MicrosoftCalendarService::class),
+            'caldav', 'apple' => app(\App\Services\Calendar\CalDavCalendarService::class),
+            default => throw new \Exception("Unsupported provider: {$targetConnection->provider}"),
+        };
         
         $targetService->initializeWithConnection($targetConnection);
 
@@ -487,9 +490,12 @@ class EmailCalendarSyncService
             }
 
             try {
-                $targetService = $targetConnection->provider === 'google'
-                    ? app(\App\Services\Calendar\GoogleCalendarService::class)
-                    : app(\App\Services\Calendar\MicrosoftCalendarService::class);
+                $targetService = match($targetConnection->provider) {
+                    'google' => app(\App\Services\Calendar\GoogleCalendarService::class),
+                    'microsoft' => app(\App\Services\Calendar\MicrosoftCalendarService::class),
+                    'caldav', 'apple' => app(\App\Services\Calendar\CalDavCalendarService::class),
+                    default => throw new \Exception("Unsupported provider: {$targetConnection->provider}"),
+                };
                 
                 $targetService->initializeWithConnection($targetConnection);
                 $targetService->deleteBlocker($mapping->target_calendar_id, $mapping->target_event_id);
