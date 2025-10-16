@@ -87,6 +87,7 @@ try {
         
         $response = [
             'status' => 'success',
+            'mode' => $useQueue ? 'queue' : 'sync',
             'queued' => 0,
             'synced' => 0,
             'output' => implode("\n", $output),
