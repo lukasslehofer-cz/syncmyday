@@ -103,6 +103,12 @@ class SyncEngine
             return;
         }
         
+        // OPTIMIZATION: Eager load all targets and their connections to prevent N+1 queries
+        $rule->load([
+            'targets.targetConnection',
+            'targets.targetEmailConnection'
+        ]);
+        
         Log::channel('sync')->info('Starting sync rule', [
             'rule_id' => $rule->id,
             'source_calendar_id' => $rule->source_calendar_id,
@@ -140,6 +146,27 @@ class SyncEngine
             $subscription->update(['sync_token' => $changedData['sync_token']]);
         }
 
+        // OPTIMIZATION: Pre-fetch all existing mappings for this rule
+        // This reduces N queries to 1 query for all events
+        $sourceEventIds = [];
+        foreach ($changedData['events'] as $event) {
+            $sourceEventIds[] = $this->getEventId($event);
+        }
+        
+        $existingMappings = collect();
+        if (!empty($sourceEventIds)) {
+            $existingMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
+                ->whereIn('source_event_id', $sourceEventIds)
+                ->get()
+                ->groupBy(function ($mapping) {
+                    // Group by source_event_id and target key for quick lookup
+                    $targetKey = $mapping->target_connection_id 
+                        ? "{$mapping->target_connection_id}:{$mapping->target_calendar_id}"
+                        : "email:{$mapping->target_email_connection_id}";
+                    return "{$mapping->source_event_id}|{$targetKey}";
+                });
+        }
+
         // Process each event (with time range filtering)
         $pastDays = config('sync.time_range.past_days', 7);
         $futureMonths = config('sync.time_range.future_months', 6);
@@ -167,7 +194,7 @@ class SyncEngine
                 }
             }
             
-            $this->processEvent($event, $rule, $sourceService, $sourceConnection);
+            $this->processEvent($event, $rule, $sourceService, $sourceConnection, $existingMappings);
             $processedCount++;
         }
         
@@ -211,7 +238,8 @@ class SyncEngine
         $event,
         SyncRule $rule,
         $sourceService,
-        CalendarConnection $sourceConnection
+        CalendarConnection $sourceConnection,
+        $existingMappings = null
     ): void {
         $transactionId = Str::uuid()->toString();
         $sourceEventId = $this->getEventId($event);
@@ -256,9 +284,9 @@ class SyncEngine
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
                     if ($isDeleted) {
-                        $this->deleteBlockerInEmailTarget($event, $target, $rule, $transactionId);
+                        $this->deleteBlockerInEmailTarget($event, $target, $rule, $transactionId, $existingMappings);
                     } else {
-                        $this->createOrUpdateBlockerInEmailTarget($event, $target, $sourceConnection, $rule, $transactionId);
+                        $this->createOrUpdateBlockerInEmailTarget($event, $target, $sourceConnection, $rule, $transactionId, $existingMappings);
                     }
                 } else {
                     // Target is an API calendar (Google/Microsoft)
@@ -266,9 +294,9 @@ class SyncEngine
                     $targetService->initializeWithConnection($target->targetConnection);
 
                     if ($isDeleted) {
-                        $this->deleteBlockerInTarget($event, $target, $targetService, $rule, $transactionId);
+                        $this->deleteBlockerInTarget($event, $target, $targetService, $rule, $transactionId, $existingMappings);
                     } else {
-                        $this->createOrUpdateBlockerInTarget($event, $target, $targetService, $sourceConnection, $rule, $transactionId);
+                        $this->createOrUpdateBlockerInTarget($event, $target, $targetService, $sourceConnection, $rule, $transactionId, $existingMappings);
                     }
                 }
             } catch (\Exception $e) {
@@ -303,7 +331,8 @@ class SyncEngine
         $targetService,
         CalendarConnection $sourceConnection,
         SyncRule $rule,
-        string $transactionId
+        string $transactionId,
+        $existingMappings = null
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
@@ -344,12 +373,19 @@ class SyncEngine
         }
 
         // Check if we already have a mapping for this event -> target
-        $mapping = SyncEventMapping::findMapping(
-            $rule->id,
-            $sourceEventId,
-            $target->target_connection_id,
-            $target->target_calendar_id
-        );
+        // OPTIMIZATION: Use pre-loaded mappings if available
+        $mappingKey = $target->target_connection_id 
+            ? "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}"
+            : "{$sourceEventId}|email:{$target->target_email_connection_id}";
+        
+        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+            ? $existingMappings[$mappingKey]->first()
+            : SyncEventMapping::findMapping(
+                $rule->id,
+                $sourceEventId,
+                $target->target_connection_id,
+                $target->target_calendar_id
+            );
 
         $action = 'created';
         $blockerId = null;
@@ -532,17 +568,25 @@ class SyncEngine
         $target,
         $targetService,
         SyncRule $rule,
-        string $transactionId
+        string $transactionId,
+        $existingMappings = null
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
         
         // Find the mapping
-        $mapping = SyncEventMapping::findMapping(
-            $rule->id,
-            $sourceEventId,
-            $target->target_connection_id,
-            $target->target_calendar_id
-        );
+        // OPTIMIZATION: Use pre-loaded mappings if available
+        $mappingKey = $target->target_connection_id 
+            ? "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}"
+            : "{$sourceEventId}|email:{$target->target_email_connection_id}";
+        
+        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+            ? $existingMappings[$mappingKey]->first()
+            : SyncEventMapping::findMapping(
+                $rule->id,
+                $sourceEventId,
+                $target->target_connection_id,
+                $target->target_calendar_id
+            );
 
         if ($mapping) {
             try {
@@ -607,7 +651,8 @@ class SyncEngine
         $target,
         CalendarConnection $sourceConnection,
         SyncRule $rule,
-        string $transactionId
+        string $transactionId,
+        $existingMappings = null
     ): void {
         $targetEmailConnection = $target->targetEmailConnection;
         
@@ -638,11 +683,16 @@ class SyncEngine
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
 
         // Check if we already have a mapping for this event -> email target
-        $mapping = SyncEventMapping::where([
-            'sync_rule_id' => $rule->id,
-            'source_event_id' => $sourceEventId,
-            'target_email_connection_id' => $target->target_email_connection_id,
-        ])->first();
+        // OPTIMIZATION: Use pre-loaded mappings if available
+        $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
+        
+        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+            ? $existingMappings[$mappingKey]->first()
+            : SyncEventMapping::where([
+                'sync_rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_email_connection_id' => $target->target_email_connection_id,
+            ])->first();
         
         Log::channel('sync')->debug('Email target mapping check', [
             'source_event_id' => $sourceEventId,
@@ -854,16 +904,22 @@ class SyncEngine
         $sourceEvent,
         $target,
         SyncRule $rule,
-        string $transactionId
+        string $transactionId,
+        $existingMappings = null
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
         
         // Find the mapping
-        $mapping = SyncEventMapping::where([
-            'sync_rule_id' => $rule->id,
-            'source_event_id' => $sourceEventId,
-            'target_email_connection_id' => $target->target_email_connection_id,
-        ])->first();
+        // OPTIMIZATION: Use pre-loaded mappings if available
+        $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
+        
+        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+            ? $existingMappings[$mappingKey]->first()
+            : SyncEventMapping::where([
+                'sync_rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_email_connection_id' => $target->target_email_connection_id,
+            ])->first();
 
         if ($mapping) {
             $targetEmailConnection = $target->targetEmailConnection;

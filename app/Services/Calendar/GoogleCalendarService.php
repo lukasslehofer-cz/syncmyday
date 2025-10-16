@@ -3,6 +3,7 @@
 namespace App\Services\Calendar;
 
 use App\Models\CalendarConnection;
+use App\Helpers\CacheHelper;
 use Google\Client as GoogleClient;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\Channel;
@@ -22,6 +23,11 @@ class GoogleCalendarService
 {
     private GoogleClient $client;
     private ?GoogleCalendar $service = null;
+    private ?CalendarConnection $currentConnection = null;
+
+    // Google API rate limits: 1,000,000 queries/day, ~1000 queries/100 seconds per user
+    private const RATE_LIMIT_MAX = 100; // Max requests per minute per connection
+    private const RATE_LIMIT_DECAY = 1; // 1 minute window
 
     public function __construct()
     {
@@ -32,6 +38,49 @@ class GoogleCalendarService
         $this->client->setScopes(config('services.google.scopes'));
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent'); // Always show account picker + consent to get refresh token
+    }
+    
+    /**
+     * Execute API call with rate limiting
+     */
+    private function rateLimitedCall(string $operation, \Closure $callback)
+    {
+        if ($this->currentConnection) {
+            $identifier = "google_api:{$this->currentConnection->id}";
+            
+            // Check rate limit
+            if (!CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
+                Log::channel('sync')->warning('Google API rate limit exceeded', [
+                    'connection_id' => $this->currentConnection->id,
+                    'operation' => $operation,
+                ]);
+                
+                // Wait a bit and retry once
+                sleep(1);
+                
+                if (!CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
+                    throw new \Exception("Google API rate limit exceeded for connection {$this->currentConnection->id}");
+                }
+            }
+        }
+        
+        try {
+            return $callback();
+        } catch (\Google\Service\Exception $e) {
+            // Handle rate limit errors from Google
+            if ($e->getCode() === 429) {
+                Log::channel('sync')->error('Google API rate limit hit (429)', [
+                    'connection_id' => $this->currentConnection?->id,
+                    'operation' => $operation,
+                ]);
+                
+                // Back off and retry after delay
+                sleep(5);
+                return $callback();
+            }
+            
+            throw $e;
+        }
     }
 
     /**
@@ -62,6 +111,8 @@ class GoogleCalendarService
      */
     public function initializeWithConnection(CalendarConnection $connection): void
     {
+        $this->currentConnection = $connection;
+        
         $this->client->setAccessToken([
             'access_token' => $connection->getAccessToken(),
             'refresh_token' => $connection->getRefreshToken(),
@@ -91,19 +142,21 @@ class GoogleCalendarService
      */
     public function getCalendarList(): array
     {
-        $calendarList = $this->service->calendarList->listCalendarList();
-        $calendars = [];
+        return $this->rateLimitedCall('getCalendarList', function () {
+            $calendarList = $this->service->calendarList->listCalendarList();
+            $calendars = [];
 
-        foreach ($calendarList->getItems() as $calendar) {
-            $calendars[] = [
-                'id' => $calendar->getId(),
-                'name' => $calendar->getSummary(),
-                'primary' => $calendar->getPrimary() ?? false,
-                'access_role' => $calendar->getAccessRole(),
-            ];
-        }
+            foreach ($calendarList->getItems() as $calendar) {
+                $calendars[] = [
+                    'id' => $calendar->getId(),
+                    'name' => $calendar->getSummary(),
+                    'primary' => $calendar->getPrimary() ?? false,
+                    'access_role' => $calendar->getAccessRole(),
+                ];
+            }
 
-        return $calendars;
+            return $calendars;
+        });
     }
 
     /**
@@ -128,30 +181,32 @@ class GoogleCalendarService
         \DateTime $end,
         string $transactionId
     ): string {
-        $event = new Event([
-            'summary' => $title,
-            'description' => 'Auto-synced by SyncMyDay',
-            'start' => ['dateTime' => $start->format(\DateTime::RFC3339)],
-            'end' => ['dateTime' => $end->format(\DateTime::RFC3339)],
-            'transparency' => 'opaque', // Shows as busy
-            'visibility' => 'private',
-            'extendedProperties' => [
-                'private' => [
-                    'syncmyday' => 'true',
-                    'transaction_id' => $transactionId,
+        return $this->rateLimitedCall('createBlocker', function () use ($calendarId, $title, $start, $end, $transactionId) {
+            $event = new Event([
+                'summary' => $title,
+                'description' => 'Auto-synced by SyncMyDay',
+                'start' => ['dateTime' => $start->format(\DateTime::RFC3339)],
+                'end' => ['dateTime' => $end->format(\DateTime::RFC3339)],
+                'transparency' => 'opaque', // Shows as busy
+                'visibility' => 'private',
+                'extendedProperties' => [
+                    'private' => [
+                        'syncmyday' => 'true',
+                        'transaction_id' => $transactionId,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        $createdEvent = $this->service->events->insert($calendarId, $event);
-        
-        Log::channel('sync')->info('Google blocker created', [
-            'calendar_id' => $calendarId,
-            'event_id' => $createdEvent->getId(),
-            'transaction_id' => $transactionId,
-        ]);
+            $createdEvent = $this->service->events->insert($calendarId, $event);
+            
+            Log::channel('sync')->info('Google blocker created', [
+                'calendar_id' => $calendarId,
+                'event_id' => $createdEvent->getId(),
+                'transaction_id' => $transactionId,
+            ]);
 
-        return $createdEvent->getId();
+            return $createdEvent->getId();
+        });
     }
 
     /**
@@ -165,26 +220,28 @@ class GoogleCalendarService
         \DateTime $end,
         string $transactionId
     ): void {
-        $event = $this->service->events->get($calendarId, $eventId);
-        
-        // Update event details
-        $event->setSummary($title);
-        $event->setStart(new \Google_Service_Calendar_EventDateTime([
-            'dateTime' => $start->format(\DateTime::RFC3339),
-            'timeZone' => 'UTC',
-        ]));
-        $event->setEnd(new \Google_Service_Calendar_EventDateTime([
-            'dateTime' => $end->format(\DateTime::RFC3339),
-            'timeZone' => 'UTC',
-        ]));
+        $this->rateLimitedCall('updateBlocker', function () use ($calendarId, $eventId, $title, $start, $end, $transactionId) {
+            $event = $this->service->events->get($calendarId, $eventId);
+            
+            // Update event details
+            $event->setSummary($title);
+            $event->setStart(new \Google_Service_Calendar_EventDateTime([
+                'dateTime' => $start->format(\DateTime::RFC3339),
+                'timeZone' => 'UTC',
+            ]));
+            $event->setEnd(new \Google_Service_Calendar_EventDateTime([
+                'dateTime' => $end->format(\DateTime::RFC3339),
+                'timeZone' => 'UTC',
+            ]));
 
-        $this->service->events->update($calendarId, $eventId, $event);
-        
-        Log::channel('sync')->info('Google blocker updated', [
-            'calendar_id' => $calendarId,
-            'event_id' => $eventId,
-            'transaction_id' => $transactionId,
-        ]);
+            $this->service->events->update($calendarId, $eventId, $event);
+            
+            Log::channel('sync')->info('Google blocker updated', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'transaction_id' => $transactionId,
+            ]);
+        });
     }
 
     /**
@@ -192,12 +249,14 @@ class GoogleCalendarService
      */
     public function deleteBlocker(string $calendarId, string $eventId): void
     {
-        $this->service->events->delete($calendarId, $eventId);
-        
-        Log::channel('sync')->info('Google blocker deleted', [
-            'calendar_id' => $calendarId,
-            'event_id' => $eventId,
-        ]);
+        $this->rateLimitedCall('deleteBlocker', function () use ($calendarId, $eventId) {
+            $this->service->events->delete($calendarId, $eventId);
+            
+            Log::channel('sync')->info('Google blocker deleted', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+            ]);
+        });
     }
 
     /**
@@ -251,6 +310,7 @@ class GoogleCalendarService
      */
     public function getChangedEvents(string $calendarId, ?string $syncToken = null): array
     {
+        return $this->rateLimitedCall('getChangedEvents', function () use ($calendarId, $syncToken) {
         $optParams = [
             'singleEvents' => true,
             'orderBy' => 'startTime',
@@ -291,6 +351,7 @@ class GoogleCalendarService
             }
             throw $e;
         }
+        });
     }
 }
 

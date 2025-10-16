@@ -21,7 +21,22 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Performance optimizations
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', false), // Connection pooling
+                PDO::ATTR_EMULATE_PREPARES => false, // Use native prepared statements
+                PDO::ATTR_STRINGIFY_FETCHES => false, // Return native types
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false, // Reduce memory usage for large result sets
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET SESSION sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
             ]) : [],
+            // Connection timeout settings
+            'connect_timeout' => 10,
+            'read_timeout' => 30,
+            'write_timeout' => 30,
+            // Pool configuration (for Laravel 10+)
+            'pool' => [
+                'min_connections' => env('DB_POOL_MIN', 2),
+                'max_connections' => env('DB_POOL_MAX', 10),
+            ],
         ],
     ],
 

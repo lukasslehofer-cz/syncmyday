@@ -59,19 +59,35 @@ try {
     
     $output[] = '[' . date('Y-m-d H:i:s') . '] Starting calendar synchronization...';
     
-    // Get sync engine
-    $syncEngine = app(\App\Services\Sync\SyncEngine::class);
+    // Check if queue is available (for VPS/dedicated servers)
+    $queueDriver = config('queue.default');
+    $useQueue = in_array($queueDriver, ['database', 'redis', 'beanstalkd', 'sqs']);
     
-    // Get active sync rules
+    if ($useQueue) {
+        $output[] = "Using queue driver: {$queueDriver}";
+    } else {
+        $output[] = "Using synchronous processing (queue not available)";
+    }
+    
+    // OPTIMIZATION: Get only rules that need syncing
+    // Skip recently queued rules (processed in last 10 minutes)
     $rules = \App\Models\SyncRule::where('is_active', true)
-        ->with(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection', 'targets.targetEmailConnection'])
+        ->where(function ($q) {
+            $q->whereNull('queued_at')
+              ->orWhere('queued_at', '<', now()->subMinutes(10));
+        })
+        ->with(['sourceConnection'])
+        ->orderBy('queue_priority', 'desc') // High priority first
+        ->orderBy('last_triggered_at', 'asc') // Oldest first
+        ->limit($useQueue ? 200 : 50) // Process more with queue, less without
         ->get();
     
     if ($rules->isEmpty()) {
-        $output[] = 'No active sync rules found';
+        $output[] = 'No sync rules need processing';
         
         $response = [
             'status' => 'success',
+            'queued' => 0,
             'synced' => 0,
             'output' => implode("\n", $output),
             'duration' => round(microtime(true) - $startTime, 2) . 's',
@@ -86,7 +102,9 @@ try {
         exit(0);
     }
     
+    $queued = 0;
     $synced = 0;
+    $skipped = 0;
     $errors = 0;
     
     foreach ($rules as $rule) {
@@ -95,26 +113,46 @@ try {
             $sourceConnection = $rule->sourceConnection;
             
             if (!$sourceConnection) {
-                $output[] = "Skipping rule #{$rule->id}: No source connection (might be email calendar)";
-                continue;
+                $skipped++;
+                continue; // Email calendar - will be processed separately
             }
             
             if ($sourceConnection->status !== 'active') {
-                $output[] = "Skipping rule #{$rule->id}: Connection not active";
+                $skipped++;
                 continue;
             }
             
-            $output[] = "Syncing rule #{$rule->id}: {$sourceConnection->provider_email}";
-            
-            // Sync this rule with proper parameters
-            $syncEngine->syncRule($rule, $sourceConnection);
-            
-            $synced++;
-            $output[] = "  ✓ Synced successfully";
+            if ($useQueue) {
+                // QUEUE MODE: Dispatch job for async processing
+                $rule->update(['queued_at' => now()]);
+                
+                \App\Jobs\SyncRuleJob::dispatch($rule->id, $sourceConnection->id)
+                    ->onQueue('sync');
+                
+                $queued++;
+                
+                // Log only first few to avoid spam
+                if ($queued <= 5) {
+                    $output[] = "Queued rule #{$rule->id}: {$sourceConnection->provider_email}";
+                }
+            } else {
+                // SYNC MODE: Process immediately (for shared hosting)
+                $syncEngine = app(\App\Services\Sync\SyncEngine::class);
+                $syncEngine->syncRule($rule, $sourceConnection);
+                
+                $synced++;
+                
+                if ($synced <= 5) {
+                    $output[] = "Synced rule #{$rule->id}: {$sourceConnection->provider_email}";
+                }
+            }
             
         } catch (\Exception $e) {
             $errors++;
-            $output[] = "  ✗ Error: " . $e->getMessage();
+            
+            if ($errors <= 3) {
+                $output[] = "  ✗ Error (rule #{$rule->id}): " . $e->getMessage();
+            }
             
             \Illuminate\Support\Facades\Log::error('Calendar sync failed for rule', [
                 'rule_id' => $rule->id,
@@ -123,11 +161,25 @@ try {
         }
     }
     
-    $output[] = "Completed: {$synced} synced, {$errors} errors";
+    // Summary output
+    if ($useQueue) {
+        if ($queued > 5) {
+            $output[] = "... and " . ($queued - 5) . " more rules queued";
+        }
+        $output[] = "Completed: {$queued} queued, {$skipped} skipped, {$errors} errors";
+    } else {
+        if ($synced > 5) {
+            $output[] = "... and " . ($synced - 5) . " more rules synced";
+        }
+        $output[] = "Completed: {$synced} synced, {$skipped} skipped, {$errors} errors";
+    }
     
     $response = [
         'status' => 'success',
+        'mode' => $useQueue ? 'queue' : 'sync',
+        'queued' => $queued,
         'synced' => $synced,
+        'skipped' => $skipped,
         'errors' => $errors,
         'output' => implode("\n", $output),
         'duration' => round(microtime(true) - $startTime, 2) . 's',

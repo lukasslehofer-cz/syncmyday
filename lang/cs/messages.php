@@ -71,7 +71,7 @@ return [
     'home_step3_description' => 'Blockery jsou vytvářeny automaticky v reálném čase. Už žádné dvojí rezervace!',
     
     // Homepage Supported Platforms
-    'home_platforms_title' => 'Funguje s vašimi oblíbenými kalendářními službami',
+    'home_platforms_title' => 'Funguje s vašimi oblíbenými kalendářovými službami',
     'apple_icloud' => 'Apple iCloud',
     
     // Homepage Pricing
@@ -79,7 +79,7 @@ return [
     'real_time_sync' => 'Synchronizace v reálném čase',
     
     // Homepage Footer
-    'footer_description' => 'Kalendářní synchronizace se soukromím na prvním místě.',
+    'footer_description' => 'Kalendářová synchronizace se soukromím na prvním místě.',
     
     // Legacy (keep for compatibility)
     'real_time_synchronization' => 'Synchronizace v reálném čase',
@@ -292,7 +292,7 @@ return [
     'manage_subscription' => 'Spravovat předplatné',
     'get_first_month_free' => 'Získejte 14 dní zdarma!',
     'try_full_functionality' => 'Vyzkoušejte plnou funkčnost bez jakýchkoli omezení',
-    'no_credit_card_required' => 'Prvních 14 dní bez platby',
+    'no_credit_card_required' => 'Prvních 14 dní ZDARMA',
     'cancel_anytime' => '100% bezpečnost',
     'one_plan_for_all' => 'Jeden plán pro všechny',
     'first_month_free' => '14 dní ZDARMA',
@@ -389,8 +389,8 @@ return [
     'placeholder_password_confirm' => 'Zadejte heslo znovu',
     'password_requirements' => 'Heslo musí mít alespoň 8 znaků',
     'back_to_home' => 'Zpět na domovskou stránku',
-    'free_plan_info' => '✨ 14 dní ZDARMA s plnou funkčností a bez omezení',
-    'pro_plan_info' => '🚀 Následně jen 349,- Kč ročně',
+    'free_plan_info' => '🚀 14 dní ZDARMA s plnou funkčností, bez platební karty',
+    'pro_plan_info' => '',
     
     // Forgot password page
     'page_title_forgot_password' => 'Zapomenuté heslo - SyncMyDay',
@@ -636,7 +636,7 @@ return [
     
     // Email Calendar Setup
     'add_email_calendar' => 'Přidat e-mailový kalendář',
-    'add_email_calendar_description' => 'Vytvořte si jedinečnou e-mailovou adresu pro příjem kalendářních pozvánek',
+    'add_email_calendar_description' => 'Vytvořte si jedinečnou e-mailovou adresu pro příjem kalendářových pozvánek',
     'how_it_works' => 'Jak to funguje',
     'email_calendar_step_1' => 'Vygenerujeme vám jedinečnou e-mailovou adresu (např. <code class="bg-white px-2 py-1 rounded-lg font-mono text-sm border border-green-200">abc123@:domain</code>)',
     'email_calendar_step_2' => 'Nastavte v kalendáři (Outlook, Exchange, atd.) přeposílání pozvánek na tuto adresu',
@@ -647,7 +647,7 @@ return [
     'calendar_name_hint' => 'Dejte tomuto kalendáři popisný název',
     'source_email_address' => 'Zdrojová e-mailová adresa',
     'source_email_placeholder' => 'např. vase.jmeno@firma.cz',
-    'source_email_important' => '<strong>💡 Důležité:</strong> Toto je e-mailová adresa, ze které budou přeposílány kalendářní pozvánky. Z bezpečnostních důvodů budou zpracovány pouze e-maily z této adresy. Tato adresa také slouží jako identifikátor tohoto kalendáře v synchronizačních pravidlech.',
+    'source_email_important' => '<strong>💡 Důležité:</strong> Toto je e-mailová adresa, ze které budou přeposílány kalendářové pozvánky. Z bezpečnostních důvodů budou zpracovány pouze e-maily z této adresy. Tato adresa také slouží jako identifikátor tohoto kalendáře v synchronizačních pravidlech.',
     'description' => 'Popis',
     'description_placeholder' => 'např. Přeposílá z mého firemního Outlook kalendáře',
     'allowed_senders' => 'Povolení odesílatelé',
@@ -711,7 +711,7 @@ return [
     'per_month' => 'měsíčně',
     'or' => 'nebo',
     'best_value' => 'Nejlepší hodnota',
-    'save_percent' => 'Ušetři :percent%',
+    'save_percent' => 'Ušetříte :percent%',
     'flexible_cancel_anytime' => 'Flexibilní, zrušitelné kdykoliv',
     'choose_monthly' => 'Vybrat měsíční',
     'choose_yearly' => 'Vybrat roční',
@@ -725,9 +725,9 @@ return [
     // Homepage
     'start_free_trial' => 'Začni zdarma',
     'choose_plan_after_trial' => 'Po trialu si vyber plán:',
-    'save_with_yearly' => 'Ušetři :percent% s ročním plánem',
-    'start_free_trial_now' => 'Začít zdarma (bez karty)',
-    'no_commitment' => 'Žádné závazky',
+    'save_with_yearly' => 'Ušetříte :percent% s ročním plánem',
+    'start_free_trial_now' => 'Začít zdarma',
+    'no_commitment' => 'Bez platební karty',
     
     // Onboarding Progress Bar
     'onboarding_step1_title' => 'Napojit kalendáře',
