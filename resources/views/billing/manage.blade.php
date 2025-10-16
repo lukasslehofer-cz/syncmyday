@@ -68,7 +68,6 @@
         </div>
         
         <div class="p-6 lg:p-8">
-            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <p class="text-sm text-gray-600 font-medium">{{ __('messages.plan') }}</p>
@@ -113,27 +112,26 @@
                     </p>
                 </div>
             </div>
-        </div>
 
-        @if($subscription->cancel_at_period_end)
-        <div class="mt-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <div class="flex items-start">
-                <svg class="w-6 h-6 text-orange-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <div>
-                    <p class="text-orange-900 font-medium">{{ __('messages.subscription_will_end') }}</p>
-                    <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')]) }}</p>
-                    <form method="POST" action="{{ route('billing.reactivate') }}" class="mt-3">
-                        @csrf
-                        <button type="submit" class="text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition">
-                            {{ __('messages.reactivate_subscription') }}
-                        </button>
-                    </form>
+            @if($subscription->cancel_at_period_end)
+            <div class="mt-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <svg class="w-6 h-6 text-orange-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <div>
+                        <p class="text-orange-900 font-medium">{{ __('messages.subscription_will_end') }}</p>
+                        <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')]) }}</p>
+                        <form method="POST" action="{{ route('billing.reactivate') }}" class="mt-3">
+                            @csrf
+                            <button type="submit" class="text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                                {{ __('messages.reactivate_subscription') }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        @endif
+            @endif
         </div>
     </div>
     @endif
@@ -164,18 +162,16 @@
         <div class="p-6 lg:p-8">
 
         @if($paymentMethod)
-        <div class="bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-200 rounded-xl p-4">
-            <div class="flex items-center">
-                {{-- Card Icon --}}
-                <div class="w-16 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center mr-4">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                    </svg>
-                </div>
-                <div>
-                    <p class="text-gray-900 font-bold">{{ ucfirst($paymentMethod->card->brand) }} •••• {{ $paymentMethod->card->last4 }}</p>
-                    <p class="text-sm text-gray-600 font-medium">{{ __('messages.expires') }} {{ $paymentMethod->card->exp_month }}/{{ $paymentMethod->card->exp_year }}</p>
-                </div>
+        <div class="flex items-center">
+            {{-- Card Icon --}}
+            <div class="w-16 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center mr-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-gray-900 font-bold">{{ ucfirst($paymentMethod->card->brand) }} •••• {{ $paymentMethod->card->last4 }}</p>
+                <p class="text-sm text-gray-600 font-medium">{{ __('messages.expires') }} {{ $paymentMethod->card->exp_month }}/{{ $paymentMethod->card->exp_year }}</p>
             </div>
         </div>
             @else
@@ -264,7 +260,7 @@
 
     {{-- Cancel Subscription --}}
     @if($subscription && !$subscription->cancel_at_period_end)
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 mt-8">
+    <div class="bg-white rounded-2xl shadow-xl border-2 border-red-200 mt-8">
         <div class="p-6 lg:p-8">
             <h2 class="flex items-center space-x-2 text-lg font-bold text-gray-700 mb-3">
                 <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +274,7 @@
                 @csrf
                 <button 
                     type="submit" 
-                    class="text-sm text-gray-600 hover:text-red-600 font-medium underline transition"
+                    class="text-sm text-red-600 hover:text-red-700 font-bold underline transition"
                 >
                     {{ __('messages.cancel_subscription') }}
                 </button>
