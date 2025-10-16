@@ -310,10 +310,11 @@ class SyncRulesController extends Controller
             Log::info('Sync rule created', [
                 'user_id' => auth()->id(),
                 'rule_id' => $rule->id,
+                'name' => $validated['name'],
             ]);
 
             // Trigger initial sync immediately (only for API calendars)
-            if ($validated['source_type'] === 'api' && $rule->sourceConnection) {
+            if ($sourceType === 'api' && $rule->sourceConnection) {
                 try {
                     $syncEngine = app(\App\Services\Sync\SyncEngine::class);
                     $syncEngine->syncRule($rule, $rule->sourceConnection);
