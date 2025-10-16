@@ -74,16 +74,16 @@ class PricingHelper
                 break;
             
             case 'pl':
-                $price = number_format($currency['amount'], 2, ',', ' ') . ' ' . $currency['symbol'];
+                $price = number_format($currency['amount'], 0, ',', ' ') . ' ' . $currency['symbol'];
                 break;
             
             case 'de':
-                $price = $currency['symbol'] . ' ' . number_format($currency['amount'], 2, ',', '.');
+                $price = $currency['symbol'] . ' ' . number_format($currency['amount'], 0, ',', '.');
                 break;
             
             case 'en':
             default:
-                $price = $currency['symbol'] . number_format($currency['amount'], 2, '.', ',');
+                $price = $currency['symbol'] . number_format($currency['amount'], 0, '.', ',');
         }
         
         return $price;
