@@ -56,15 +56,19 @@
     {{-- Subscription Status --}}
     @if($subscription)
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
-        <div class="p-6 lg:p-8">
-            <h2 class="flex items-center space-x-2 text-xl font-bold text-gray-900 mb-4">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>{{ __('messages.subscription_status') }}</span>
-            </h2>
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.subscription_status') }}</h2>
+            </div>
+        </div>
         
-        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-6">
+        <div class="p-6 lg:p-8">
+            <div class="bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-xl p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <p class="text-sm text-gray-600 font-medium">{{ __('messages.plan') }}</p>
@@ -111,48 +115,53 @@
             </div>
         </div>
 
-            @if($subscription->cancel_at_period_end)
-            <div class="mt-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-orange-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    <div>
-                        <p class="text-orange-900 font-medium">{{ __('messages.subscription_will_end') }}</p>
-                        <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')]) }}</p>
-                        <form method="POST" action="{{ route('billing.reactivate') }}" class="mt-3">
-                            @csrf
-                            <button type="submit" class="text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition">
-                                {{ __('messages.reactivate_subscription') }}
-                            </button>
-                        </form>
-                    </div>
+        @if($subscription->cancel_at_period_end)
+        <div class="mt-6 bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div class="flex items-start">
+                <svg class="w-6 h-6 text-orange-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div>
+                    <p class="text-orange-900 font-medium">{{ __('messages.subscription_will_end') }}</p>
+                    <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')]) }}</p>
+                    <form method="POST" action="{{ route('billing.reactivate') }}" class="mt-3">
+                        @csrf
+                        <button type="submit" class="text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                            {{ __('messages.reactivate_subscription') }}
+                        </button>
+                    </form>
                 </div>
             </div>
-            @endif
+        </div>
+        @endif
         </div>
     </div>
     @endif
 
     {{-- Payment Method --}}
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
-        <div class="p-6 lg:p-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="flex items-center space-x-2 text-xl font-bold text-gray-900">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                    </svg>
-                    <span>{{ __('messages.payment_method') }}</span>
-                </h2>
-            @if($subscription && !$subscription->cancel_at_period_end && $paymentMethod)
-            <form method="POST" action="{{ route('billing.update-payment-method') }}">
-                @csrf
-                <button type="submit" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                    {{ __('messages.update_card') }}
-                </button>
-            </form>
-            @endif
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">{{ __('messages.payment_method') }}</h2>
+                </div>
+                @if($subscription && !$subscription->cancel_at_period_end && $paymentMethod)
+                <form method="POST" action="{{ route('billing.update-payment-method') }}">
+                    @csrf
+                    <button type="submit" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        {{ __('messages.update_card') }}
+                    </button>
+                </form>
+                @endif
+            </div>
         </div>
+
+        <div class="p-6 lg:p-8">
 
         @if($paymentMethod)
         <div class="bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-200 rounded-xl p-4">
@@ -180,13 +189,18 @@
 
     {{-- Invoices --}}
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.invoices') }}</h2>
+            </div>
+        </div>
+
         <div class="p-6 lg:p-8">
-            <h2 class="flex items-center space-x-2 text-xl font-bold text-gray-900 mb-4">
-                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span>{{ __('messages.invoices') }}</span>
-            </h2>
 
         @php
             // Filter out invoices with 0 amount (trial invoices)
