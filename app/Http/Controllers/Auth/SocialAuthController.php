@@ -18,6 +18,17 @@ use Illuminate\Support\Str;
 class SocialAuthController extends Controller
 {
     /**
+     * Get URL with current domain (multi-domain support)
+     */
+    private function getCurrentDomainUrl(string $path): string
+    {
+        $appUrl = rtrim(config('app.url'), '/');
+        $currentUrl = rtrim(url('/'), '/');
+        
+        return $currentUrl . $path;
+    }
+    
+    /**
      * Redirect to Google OAuth for login/registration
      */
     public function redirectToGoogle()
@@ -34,7 +45,7 @@ class SocialAuthController extends Controller
         $client = new \Google\Client();
         $client->setClientId(config('services.google.client_id'));
         $client->setClientSecret(config('services.google.client_secret'));
-        $client->setRedirectUri(url('/auth/google/callback'));
+        $client->setRedirectUri($this->getCurrentDomainUrl('/auth/google/callback'));
         $client->setScopes(config('services.google.scopes'));
         $client->setAccessType('offline');
         $client->setPrompt('select_account consent');
@@ -97,7 +108,7 @@ class SocialAuthController extends Controller
             $client = new \Google\Client();
             $client->setClientId(config('services.google.client_id'));
             $client->setClientSecret(config('services.google.client_secret'));
-            $client->setRedirectUri(url('/auth/google/callback'));
+            $client->setRedirectUri($this->getCurrentDomainUrl('/auth/google/callback'));
             
             // Exchange code for tokens
             $tokens = $client->fetchAccessTokenWithAuthCode($request->code);
@@ -204,7 +215,7 @@ class SocialAuthController extends Controller
         $scopes = implode(' ', config('services.microsoft.scopes'));
         $tenant = config('services.microsoft.tenant', 'common');
         $clientId = config('services.microsoft.client_id');
-        $redirectUri = url('/auth/microsoft/callback');
+        $redirectUri = $this->getCurrentDomainUrl('/auth/microsoft/callback');
         
         $authUrl = sprintf(
             'https://login.microsoftonline.com/%s/oauth2/v2.0/authorize?client_id=%s&response_type=code&redirect_uri=%s&response_mode=query&scope=%s&state=%s&prompt=select_account',
@@ -274,7 +285,7 @@ class SocialAuthController extends Controller
                     'client_id' => config('services.microsoft.client_id'),
                     'client_secret' => config('services.microsoft.client_secret'),
                     'code' => $request->code,
-                    'redirect_uri' => url('/auth/microsoft/callback'),
+                    'redirect_uri' => $this->getCurrentDomainUrl('/auth/microsoft/callback'),
                     'grant_type' => 'authorization_code',
                     'scope' => implode(' ', config('services.microsoft.scopes')),
                 ]

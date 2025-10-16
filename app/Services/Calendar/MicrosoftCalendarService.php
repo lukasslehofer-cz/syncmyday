@@ -29,8 +29,28 @@ class MicrosoftCalendarService
     {
         $this->clientId = config('services.microsoft.client_id');
         $this->clientSecret = config('services.microsoft.client_secret');
-        $this->redirectUri = config('services.microsoft.redirect');
+        
+        // Use current domain for redirect URI (multi-domain support)
+        $configRedirect = config('services.microsoft.redirect');
+        $this->redirectUri = $this->replaceWithCurrentDomain($configRedirect);
+        
         $this->tenant = config('services.microsoft.tenant');
+    }
+    
+    /**
+     * Replace APP_URL in redirect URI with current domain
+     */
+    private function replaceWithCurrentDomain(string $uri): string
+    {
+        // Only replace in web context, not CLI
+        if (app()->runningInConsole()) {
+            return $uri;
+        }
+        
+        $appUrl = rtrim(config('app.url'), '/');
+        $currentUrl = rtrim(url('/'), '/');
+        
+        return str_replace($appUrl, $currentUrl, $uri);
     }
 
     /**

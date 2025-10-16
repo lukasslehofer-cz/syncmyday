@@ -7,30 +7,35 @@ Since SyncMyDay runs on multiple domains (.cz, .eu, .sk, .pl, .de), you need to 
 For **each domain**, you need to add **4 redirect URIs**:
 
 ### syncmyday.cz
+
 - `https://syncmyday.cz/oauth/google/callback`
 - `https://syncmyday.cz/auth/google/callback`
 - `https://syncmyday.cz/oauth/microsoft/callback`
 - `https://syncmyday.cz/auth/microsoft/callback`
 
 ### syncmyday.eu
+
 - `https://syncmyday.eu/oauth/google/callback`
 - `https://syncmyday.eu/auth/google/callback`
 - `https://syncmyday.eu/oauth/microsoft/callback`
 - `https://syncmyday.eu/auth/microsoft/callback`
 
 ### syncmyday.sk
+
 - `https://syncmyday.sk/oauth/google/callback`
 - `https://syncmyday.sk/auth/google/callback`
 - `https://syncmyday.sk/oauth/microsoft/callback`
 - `https://syncmyday.sk/auth/microsoft/callback`
 
 ### syncmyday.pl
+
 - `https://syncmyday.pl/oauth/google/callback`
 - `https://syncmyday.pl/auth/google/callback`
 - `https://syncmyday.pl/oauth/microsoft/callback`
 - `https://syncmyday.pl/auth/microsoft/callback`
 
 ### syncmyday.de
+
 - `https://syncmyday.de/oauth/google/callback`
 - `https://syncmyday.de/auth/google/callback`
 - `https://syncmyday.de/oauth/microsoft/callback`
@@ -46,6 +51,7 @@ For **each domain**, you need to add **4 redirect URIs**:
 4. Click **Save**
 
 ### Complete List for Google (Copy & Paste):
+
 ```
 https://syncmyday.cz/oauth/google/callback
 https://syncmyday.cz/auth/google/callback
@@ -70,6 +76,7 @@ https://syncmyday.de/auth/google/callback
 5. Click **Save**
 
 ### Complete List for Microsoft (Copy & Paste):
+
 ```
 https://syncmyday.cz/oauth/microsoft/callback
 https://syncmyday.cz/auth/microsoft/callback
@@ -104,11 +111,13 @@ The application automatically detects the current domain and uses the correct re
 ## 🧪 Testing
 
 1. Clear config cache on all servers:
+
    ```bash
    php artisan config:cache
    ```
 
 2. Test OAuth on each domain:
+
    - https://syncmyday.cz/connections/connect
    - https://syncmyday.eu/connections/connect
    - https://syncmyday.sk/connections/connect
@@ -125,4 +134,3 @@ The application automatically detects the current domain and uses the correct re
 - If set, they override the dynamic URL (useful for testing)
 - In production, **don't set them** to use automatic domain detection
 - Make sure `APP_URL` is set correctly for each domain in their respective `.env` files
-

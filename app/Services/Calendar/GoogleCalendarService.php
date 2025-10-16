@@ -34,10 +34,30 @@ class GoogleCalendarService
         $this->client = new GoogleClient();
         $this->client->setClientId(config('services.google.client_id'));
         $this->client->setClientSecret(config('services.google.client_secret'));
-        $this->client->setRedirectUri(config('services.google.redirect'));
+        
+        // Use current domain for redirect URI (multi-domain support)
+        $configRedirect = config('services.google.redirect');
+        $this->client->setRedirectUri($this->replaceWithCurrentDomain($configRedirect));
+        
         $this->client->setScopes(config('services.google.scopes'));
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent'); // Always show account picker + consent to get refresh token
+    }
+    
+    /**
+     * Replace APP_URL in redirect URI with current domain
+     */
+    private function replaceWithCurrentDomain(string $uri): string
+    {
+        // Only replace in web context, not CLI
+        if (app()->runningInConsole()) {
+            return $uri;
+        }
+        
+        $appUrl = rtrim(config('app.url'), '/');
+        $currentUrl = rtrim(url('/'), '/');
+        
+        return str_replace($appUrl, $currentUrl, $uri);
     }
     
     /**
