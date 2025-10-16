@@ -13,7 +13,6 @@ class BlogArticle extends Model
 
     protected $fillable = [
         'category_id',
-        'slug',
         'featured_image',
         'is_published',
         'published_at',
@@ -55,7 +54,16 @@ class BlogArticle extends Model
     public function getTitle($locale = null)
     {
         $translation = $this->translation($locale);
-        return $translation ? $translation->title : $this->slug;
+        return $translation ? $translation->title : '';
+    }
+
+    /**
+     * Get translated slug
+     */
+    public function getSlug($locale = null)
+    {
+        $translation = $this->translation($locale);
+        return $translation ? $translation->slug : '';
     }
 
     /**
@@ -116,7 +124,8 @@ class BlogArticle extends Model
     public function getUrl($locale = null)
     {
         $locale = $locale ?? app()->getLocale();
-        return route('blog.show', ['slug' => $this->slug, 'locale' => $locale]);
+        $slug = $this->getSlug($locale);
+        return route('blog.show', ['slug' => $slug, 'locale' => $locale]);
     }
 
     /**

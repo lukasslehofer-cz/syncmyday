@@ -75,7 +75,6 @@ class BlogSeeder extends Seeder
         // Article 1 - With table and bullet points
         $article1 = BlogArticle::create([
             'category_id' => $guidesCategory->id,
-            'slug' => 'porovnani-kalendarnich-sluzeb',
             'is_published' => true,
             'published_at' => now()->subDays(5),
         ]);
@@ -83,6 +82,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article1->id,
             'locale' => 'cs',
+            'slug' => 'porovnani-kalendarnich-sluzeb',
             'title' => 'Porovnání kalendářních služeb pro firmy',
             'excerpt' => 'Detailní přehled a porovnání nejpopulárnějších kalendářních služeb pro firemní použití.',
             'content' => '<p>Výběr správné kalendářní služby je klíčový pro efektivní plánování a organizaci firemních aktivit. V tomto článku porovnáme nejpopulárnější možnosti.</p>
@@ -144,6 +144,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article1->id,
             'locale' => 'en',
+            'slug' => 'comparing-calendar-services-for-business',
             'title' => 'Comparing Calendar Services for Business',
             'excerpt' => 'A detailed overview and comparison of the most popular calendar services for business use.',
             'content' => '<p>Choosing the right calendar service is crucial for effective planning and organization of business activities. In this article, we compare the most popular options.</p>
@@ -205,7 +206,6 @@ class BlogSeeder extends Seeder
         // Article 2 - With embedded image
         $article2 = BlogArticle::create([
             'category_id' => $tipsCategory->id,
-            'slug' => '5-tipu-jak-predejit-double-booking',
             'is_published' => true,
             'published_at' => now()->subDays(2),
         ]);
@@ -213,6 +213,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article2->id,
             'locale' => 'cs',
+            'slug' => '5-tipu-jak-predejit-double-booking',
             'title' => '5 tipů jak předejít dvojitému bookingu',
             'excerpt' => 'Praktické tipy a osvědčené postupy pro eliminaci konfliktů v kalendáři.',
             'content' => '<p>Dvojité bookování (double booking) je noční můrou každého, kdo spravuje více kalendářů. Zde je 5 osvědčených tipů, jak se mu vyhnout.</p>
@@ -260,6 +261,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article2->id,
             'locale' => 'en',
+            'slug' => '5-tips-to-prevent-double-booking',
             'title' => '5 Tips to Prevent Double Booking',
             'excerpt' => 'Practical tips and best practices for eliminating calendar conflicts.',
             'content' => '<p>Double booking is the nightmare of anyone managing multiple calendars. Here are 5 proven tips to avoid it.</p>
@@ -307,7 +309,6 @@ class BlogSeeder extends Seeder
         // Article 3 - With steps and FAQ style
         $article3 = BlogArticle::create([
             'category_id' => $guidesCategory->id,
-            'slug' => 'jak-nastavit-synchronizaci-kalendaru',
             'is_published' => true,
             'published_at' => now()->subDays(1),
         ]);
@@ -315,6 +316,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article3->id,
             'locale' => 'cs',
+            'slug' => 'jak-nastavit-synchronizaci-kalendaru',
             'title' => 'Jak nastavit synchronizaci kalendářů: Krok za krokem',
             'excerpt' => 'Kompletní průvodce nastavením automatické synchronizace mezi vašimi kalendáři.',
             'content' => '<p>Správa více kalendářů nemusí být složitá. Tento průvodce vám ukáže, jak nastavit automatickou synchronizaci za pár minut.</p>
@@ -425,6 +427,7 @@ class BlogSeeder extends Seeder
         BlogArticleTranslation::create([
             'article_id' => $article3->id,
             'locale' => 'en',
+            'slug' => 'how-to-set-up-calendar-synchronization',
             'title' => 'How to Set Up Calendar Synchronization: Step by Step',
             'excerpt' => 'Complete guide to setting up automatic synchronization between your calendars.',
             'content' => '<p>Managing multiple calendars doesn\'t have to be complicated. This guide will show you how to set up automatic synchronization in just a few minutes.</p>

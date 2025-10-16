@@ -14,6 +14,7 @@ class BlogArticleTranslation extends Model
     protected $fillable = [
         'article_id',
         'locale',
+        'slug',
         'title',
         'excerpt',
         'content',

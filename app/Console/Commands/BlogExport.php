@@ -35,14 +35,18 @@ class BlogExport extends Command
 
         // Export článků
         foreach (BlogArticle::with('translations')->get() as $article) {
+            // Use CS slug as the main identifier for matching during import
+            $csTranslation = $article->translations->where('locale', 'cs')->first();
+            
             $data['articles'][] = [
-                'slug' => $article->slug,
+                'identifier_slug' => $csTranslation?->slug ?? 'unknown-' . $article->id,
                 'category_slug' => $article->category->slug,
                 'featured_image' => $article->featured_image,
                 'is_published' => $article->is_published,
                 'published_at' => $article->published_at?->toDateTimeString(),
                 'translations' => $article->translations->map(fn($t) => [
                     'locale' => $t->locale,
+                    'slug' => $t->slug,
                     'title' => $t->title,
                     'excerpt' => $t->excerpt,
                     'content' => $t->content,

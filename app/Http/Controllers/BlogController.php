@@ -48,10 +48,16 @@ class BlogController extends Controller
      */
     public function show($slug)
     {
-        $article = BlogArticle::where('slug', $slug)
-            ->with(['category', 'translations'])
-            ->published()
+        $locale = app()->getLocale();
+        
+        // Find article by translated slug
+        $translation = \App\Models\BlogArticleTranslation::where('slug', $slug)
+            ->where('locale', $locale)
             ->firstOrFail();
+        
+        $article = BlogArticle::with(['category', 'translations'])
+            ->published()
+            ->findOrFail($translation->article_id);
 
         $categories = BlogCategory::with('translations')
             ->ordered()

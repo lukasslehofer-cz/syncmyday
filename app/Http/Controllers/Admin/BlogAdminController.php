@@ -41,10 +41,19 @@ class BlogAdminController extends Controller
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:blog_categories,id',
-            'slug' => 'required|string|unique:blog_articles,slug',
             'is_published' => 'boolean',
             'featured_image' => 'nullable|string',
         ]);
+
+        // Validate slugs for uniqueness per locale
+        $locales = ['cs', 'de', 'en', 'pl', 'sk'];
+        foreach ($locales as $locale) {
+            if ($request->has("slug_{$locale}") && $request->input("slug_{$locale}")) {
+                $request->validate([
+                    "slug_{$locale}" => 'unique:blog_article_translations,slug,NULL,id,locale,' . $locale,
+                ]);
+            }
+        }
 
         // Set published_at if article is being published
         if ($request->is_published) {
@@ -54,12 +63,12 @@ class BlogAdminController extends Controller
         $article = BlogArticle::create($validated);
 
         // Save translations
-        $locales = ['cs', 'de', 'en', 'pl', 'sk'];
         foreach ($locales as $locale) {
             if ($request->has("title_{$locale}") && $request->input("title_{$locale}")) {
                 BlogArticleTranslation::create([
                     'article_id' => $article->id,
                     'locale' => $locale,
+                    'slug' => $request->input("slug_{$locale}"),
                     'title' => $request->input("title_{$locale}"),
                     'excerpt' => $request->input("excerpt_{$locale}"),
                     'content' => $request->input("content_{$locale}"),
@@ -94,10 +103,22 @@ class BlogAdminController extends Controller
 
         $validated = $request->validate([
             'category_id' => 'required|exists:blog_categories,id',
-            'slug' => 'required|string|unique:blog_articles,slug,' . $id,
             'is_published' => 'boolean',
             'featured_image' => 'nullable|string',
         ]);
+
+        // Validate slugs for uniqueness per locale (excluding current article's translations)
+        $locales = ['cs', 'de', 'en', 'pl', 'sk'];
+        foreach ($locales as $locale) {
+            if ($request->has("slug_{$locale}") && $request->input("slug_{$locale}")) {
+                $existingTranslation = $article->translations()->where('locale', $locale)->first();
+                $ignoreId = $existingTranslation ? $existingTranslation->id : 'NULL';
+                
+                $request->validate([
+                    "slug_{$locale}" => 'unique:blog_article_translations,slug,' . $ignoreId . ',id,locale,' . $locale,
+                ]);
+            }
+        }
 
         // Set published_at if article is being published for the first time
         if ($request->is_published && !$article->published_at) {
@@ -109,7 +130,6 @@ class BlogAdminController extends Controller
         $article->update($validated);
 
         // Update translations
-        $locales = ['cs', 'de', 'en', 'pl', 'sk'];
         foreach ($locales as $locale) {
             if ($request->has("title_{$locale}") && $request->input("title_{$locale}")) {
                 BlogArticleTranslation::updateOrCreate(
@@ -118,6 +138,7 @@ class BlogAdminController extends Controller
                         'locale' => $locale,
                     ],
                     [
+                        'slug' => $request->input("slug_{$locale}"),
                         'title' => $request->input("title_{$locale}"),
                         'excerpt' => $request->input("excerpt_{$locale}"),
                         'content' => $request->input("content_{$locale}"),

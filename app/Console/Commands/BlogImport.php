@@ -51,20 +51,35 @@ class BlogImport extends Command
                 continue;
             }
 
-            $article = BlogArticle::updateOrCreate(
-                ['slug' => $artData['slug']],
-                [
+            // Find existing article by matching CS slug in translations
+            $existingArticle = BlogArticle::whereHas('translations', function($query) use ($artData) {
+                $query->where('locale', 'cs')
+                      ->where('slug', $artData['identifier_slug']);
+            })->where('category_id', $category->id)->first();
+
+            if ($existingArticle) {
+                // Update existing article
+                $existingArticle->update([
+                    'featured_image' => $artData['featured_image'],
+                    'is_published' => $artData['is_published'],
+                    'published_at' => $artData['published_at'],
+                ]);
+                $article = $existingArticle;
+            } else {
+                // Create new article
+                $article = BlogArticle::create([
                     'category_id' => $category->id,
                     'featured_image' => $artData['featured_image'],
                     'is_published' => $artData['is_published'],
                     'published_at' => $artData['published_at'],
-                ]
-            );
+                ]);
+            }
 
             foreach ($artData['translations'] as $trans) {
                 $article->translations()->updateOrCreate(
                     ['locale' => $trans['locale']],
                     [
+                        'slug' => $trans['slug'],
                         'title' => $trans['title'],
                         'excerpt' => $trans['excerpt'],
                         'content' => $trans['content'],
