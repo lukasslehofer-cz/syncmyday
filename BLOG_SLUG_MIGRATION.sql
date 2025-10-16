@@ -6,6 +6,12 @@
 -- 
 -- Run this on production AFTER pulling the latest code from GitHub
 
+-- Step 0: Delete existing blog data (will be re-imported with new slugs)
+DELETE FROM `blog_article_translations`;
+DELETE FROM `blog_articles`;
+DELETE FROM `blog_category_translations`;
+DELETE FROM `blog_categories`;
+
 -- Step 1: Add slug column to blog_article_translations
 ALTER TABLE `blog_article_translations` 
 ADD COLUMN `slug` VARCHAR(255) NOT NULL AFTER `locale`;
