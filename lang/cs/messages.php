@@ -358,7 +358,6 @@ return [
     'caldav_connected_success' => 'CalDAV kalendář byl úspěšně připojen!',
     'caldav_disconnected_success' => 'CalDAV kalendář byl odpojen.',
     'caldav_connection_save_failed' => 'Uložení CalDAV připojení se nezdařilo. Zkuste to prosím znovu.',
-    'session_expired' => 'Platnost relace vypršela. Zkuste to prosím znovu.',
     
     // Apple iCloud
     'apple_connected_success' => 'Apple kalendář byl úspěšně připojen!',

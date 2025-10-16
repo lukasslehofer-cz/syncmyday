@@ -104,6 +104,11 @@ return [
     'connection_deleted' => 'Calendar connection removed.',
     'connection_refreshed' => 'Calendar connection refreshed.',
     'connection_refresh_failed' => 'Failed to refresh connection.',
+    'caldav_connection_failed' => 'CalDAV connection failed',
+    'caldav_connected_success' => 'CalDAV calendar successfully connected!',
+    'caldav_disconnected_success' => 'CalDAV calendar disconnected.',
+    'caldav_connection_save_failed' => 'Failed to save CalDAV connection. Please try again.',
+    'apple_connected_success' => 'Apple calendar successfully connected!',
     'need_two_calendars' => 'You need at least 2 connected calendars to create sync rules.',
     'calendar_connections' => 'Calendar Connections',
     'connect_calendars_to_start_syncing' => 'Connect your calendars to start synchronizing your schedule',
@@ -139,6 +144,7 @@ return [
     
     // Sync Rules
     'sync_rule_created' => 'Sync rule created successfully!',
+    'unnamed_rule' => 'Unnamed rule',
     'sync_rule_updated' => 'Sync rule updated.',
     'sync_rule_deleted' => 'Sync rule deleted.',
     'sync_rule_limit_reached' => 'You\'ve reached the limit for your subscription tier. Upgrade to Pro for unlimited rules.',
@@ -166,6 +172,9 @@ return [
     // Create Sync Rule
     'create_sync_rule' => 'Create Sync Rule',
     'create_sync_rule_description' => 'Set up automatic calendar synchronization',
+    'rule_name' => 'Rule Name',
+    'rule_name_placeholder' => 'E.g., Work → Personal',
+    'rule_name_hint' => 'Enter a descriptive name for this sync rule',
     'source_calendar_description' => 'Events from this calendar will create blockers in target calendars',
     'api_calendars' => 'API Calendars (Google/Microsoft)',
     'email_calendars' => 'Email Calendars',
@@ -202,6 +211,25 @@ return [
     'sunday' => 'Sunday',
     'cancel' => 'Cancel',
     'target_email_address' => 'Target Email Address',
+    
+    // Edit Sync Rule
+    'edit_sync_rule' => 'Edit Sync Rule',
+    'edit_sync_rule_description' => 'Update your calendar synchronization settings',
+    'cannot_change_source' => 'Source calendar cannot be changed',
+    'cannot_change_targets' => 'Target calendars cannot be changed',
+    'delete_sync_rule' => 'Delete Sync Rule',
+    'delete_sync_rule_warning' => 'Deleting this sync rule will remove all blockers created by this rule from target calendars.',
+    'delete_sync_rule_warning_1' => 'Permanently delete this sync rule',
+    'delete_sync_rule_warning_2' => 'Remove ALL blockers created by this rule from target calendars',
+    'delete_sync_rule_warning_3' => 'This action is irreversible and cannot be undone',
+    'delete_sync_rule_confirm' => '⚠️ Are you sure?\n\nThis will:\n• Remove this sync rule\n• Remove ALL blockers created by this rule from target calendars\n\nThis action cannot be undone.',
+    'delete_this_sync_rule' => 'Delete This Rule',
+    
+    // Statistics
+    'statistics' => 'Statistics',
+    'received_blockers' => 'Received Blockers',
+    'sent_blockers' => 'Sent Blockers',
+    'last_sync_event' => 'Last Sync',
     
     // Dashboard
     'dashboard' => 'Dashboard',
