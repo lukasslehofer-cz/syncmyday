@@ -499,7 +499,7 @@ return [
     
     // Dashboard
     'footer_tagline' => 'Sync your calendars effortlessly',
-    'home_stat_2mins' => 'Set up in 2 minutes',
+    'home_stat_2mins' => '2 minutes',
     'alert' => 'Alert',
     'none' => 'None',
     

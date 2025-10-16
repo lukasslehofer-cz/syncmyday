@@ -43,3 +43,6 @@ install.php
 # Blog images (upload via FTP/SFTP)
 /public/images/blog/*
 !/public/images/blog/.gitignore
+
+# Documentation (AI-generated documentation files)
+/documentation
