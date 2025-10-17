@@ -227,12 +227,29 @@ class TestEmailCommand extends Command
                 
             case 'verify-calendar':
             case 'verify-email-calendar':
-                $verificationUrl = route('email-calendars.verify', [
-                    'token' => 'test-verification-token-' . time()
-                ]);
+                // Create or use existing email calendar connection for testing
+                $emailCalendar = \App\Models\EmailCalendarConnection::firstOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'target_email' => $email,
+                    ],
+                    [
+                        'name' => 'Test Email Calendar',
+                        'target_email_verified_at' => null,
+                    ]
+                );
+                
+                $verificationUrl = URL::temporarySignedRoute(
+                    'email-calendars.verify',
+                    now()->addMinutes(60),
+                    [
+                        'id' => $emailCalendar->id,
+                        'hash' => sha1($emailCalendar->target_email),
+                    ]
+                );
                 
                 Mail::send('emails.verify-email-calendar', [
-                    'targetEmail' => $email,
+                    'emailCalendar' => $emailCalendar,
                     'verificationUrl' => $verificationUrl,
                 ], function ($message) use ($email) {
                     $message->to($email)
