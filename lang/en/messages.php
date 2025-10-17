@@ -144,6 +144,9 @@ return [
     
     // Sync Rules
     'sync_rule_created' => 'Sync rule created successfully!',
+    'creating_sync_rule' => 'Creating sync rule',
+    'loading_initial_events' => 'Loading existing events from your calendar...',
+    'sync_processing_time' => 'This may take 10-30 seconds, please wait',
     'unnamed_rule' => 'Unnamed rule',
     'sync_rule_updated' => 'Sync rule updated.',
     'sync_rule_deleted' => 'Sync rule deleted.',

@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 
-                <div style="background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-width: 28rem; margin: 0 1rem; border: 2px solid #e0e7ff;">
+                <div style="background: rgba(255, 255, 255, 0.98); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-width: 28rem; margin: 0 1rem; border: 2px solid #e0e7ff; backdrop-filter: blur(10px);">
                     <h3 style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">
                         {{ __('messages.creating_sync_rule') }}
                     </h3>

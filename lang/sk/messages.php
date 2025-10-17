@@ -91,6 +91,9 @@ return [
     
     // Sync Rules
     'sync_rule_created' => 'Synchronizačné pravidlo bolo úspešne vytvorené!',
+    'creating_sync_rule' => 'Vytvárame synchronizačné pravidlo',
+    'loading_initial_events' => 'Načítavame existujúce udalosti z vášho kalendára...',
+    'sync_processing_time' => 'Môže to trvať 10-30 sekúnd, prosím čakajte',
     'sync_rule_updated' => 'Synchronizačné pravidlo bolo aktualizované.',
     'sync_rule_deleted' => 'Synchronizačné pravidlo bolo zmazané.',
     'sync_rule_limit_reached' => 'Dosiahli ste limit pre váš tarif. Prejdite na Pro pre neobmedzené pravidlá.',
