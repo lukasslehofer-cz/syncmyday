@@ -621,22 +621,17 @@ class SyncEngine
                 $endToStore->setTimezone(new \DateTimeZone('UTC'));
             }
             
-            // Use updateOrCreate to handle race conditions (multiple webhooks processed simultaneously)
-            SyncEventMapping::updateOrCreate(
-                [
-                    'sync_rule_id' => $rule->id,
-                    'source_event_id' => $sourceEventId,
-                    'target_connection_id' => $target->target_connection_id,
-                    'target_calendar_id' => $target->target_calendar_id,
-                ],
-                [
-                    'source_connection_id' => $sourceConnection->id,
-                    'source_calendar_id' => $rule->source_calendar_id,
-                    'target_event_id' => $blockerId,
-                    'event_start' => $startToStore,
-                    'event_end' => $endToStore,
-                ]
-            );
+            SyncEventMapping::create([
+                'sync_rule_id' => $rule->id,
+                'source_connection_id' => $sourceConnection->id,
+                'source_calendar_id' => $rule->source_calendar_id,
+                'source_event_id' => $sourceEventId,
+                'target_connection_id' => $target->target_connection_id,
+                'target_calendar_id' => $target->target_calendar_id,
+                'target_event_id' => $blockerId,
+                'event_start' => $startToStore,
+                'event_end' => $endToStore,
+            ]);
         }
 
         SyncLog::logSync(
@@ -850,24 +845,20 @@ class SyncEngine
                 $endToStore->setTimezone(new \DateTimeZone('UTC'));
             }
             
-            // Use updateOrCreate to handle race conditions (multiple webhooks processed simultaneously)
-            SyncEventMapping::updateOrCreate(
-                [
-                    'sync_rule_id' => $rule->id,
-                    'source_event_id' => $sourceEventId,
-                    'target_email_connection_id' => $target->target_email_connection_id,
-                ],
-                [
-                    'source_connection_id' => $sourceConnection->id,
-                    'source_calendar_id' => $rule->source_calendar_id,
-                    'target_connection_id' => null,
-                    'target_calendar_id' => null,
-                    'target_event_id' => $eventUid,
-                    'event_start' => $startToStore,
-                    'event_end' => $endToStore,
-                    'sequence' => 0, // Not sent yet
-                ]
-            );
+            // Create mapping without sending email
+            SyncEventMapping::create([
+                'sync_rule_id' => $rule->id,
+                'source_connection_id' => $sourceConnection->id,
+                'source_calendar_id' => $rule->source_calendar_id,
+                'source_event_id' => $sourceEventId,
+                'target_connection_id' => null,
+                'target_email_connection_id' => $target->target_email_connection_id,
+                'target_calendar_id' => null,
+                'target_event_id' => $eventUid,
+                'event_start' => $startToStore,
+                'event_end' => $endToStore,
+                'sequence' => 0, // Not sent yet
+            ]);
             
             Log::channel('sync')->info('Initial sync: Mapping created without email', [
                 'rule_id' => $rule->id,
@@ -973,24 +964,20 @@ class SyncEngine
                         'event_uid' => $eventUid,
                     ]);
                 } else {
-                    // Use updateOrCreate to handle race conditions (multiple webhooks processed simultaneously)
-                    $newMapping = SyncEventMapping::updateOrCreate(
-                        [
-                            'sync_rule_id' => $rule->id,
-                            'source_event_id' => $sourceEventId,
-                            'target_email_connection_id' => $target->target_email_connection_id,
-                        ],
-                        [
-                            'source_connection_id' => $sourceConnection->id,
-                            'source_calendar_id' => $rule->source_calendar_id,
-                            'target_connection_id' => null, // Email target has no API connection
-                            'target_calendar_id' => null,
-                            'target_event_id' => $eventUid,
-                            'event_start' => $startToStore,
-                            'event_end' => $endToStore,
-                            'sequence' => 1,
-                        ]
-                    );
+                    // Create new mapping
+                    $newMapping = SyncEventMapping::create([
+                        'sync_rule_id' => $rule->id,
+                        'source_connection_id' => $sourceConnection->id,
+                        'source_calendar_id' => $rule->source_calendar_id,
+                        'source_event_id' => $sourceEventId,
+                        'target_connection_id' => null, // Email target has no API connection
+                        'target_email_connection_id' => $target->target_email_connection_id,
+                        'target_calendar_id' => null,
+                        'target_event_id' => $eventUid,
+                        'event_start' => $startToStore,
+                        'event_end' => $endToStore,
+                        'sequence' => 1,
+                    ]);
                     
                     Log::channel('sync')->info('Email blocker created and mapping saved', [
                         'event_id' => $sourceEventId,
