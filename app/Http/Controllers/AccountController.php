@@ -247,6 +247,21 @@ class AccountController extends Controller
             'email' => $userEmail,
         ]);
 
+        // Send account deleted confirmation email
+        try {
+            \Mail::to($userEmail)->send(new \App\Mail\AccountDeletedMail($user));
+            
+            Log::info('Account deleted email sent', [
+                'user_id' => $userId,
+                'email' => $userEmail,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send account deleted email', [
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+
         return redirect()->route('home')
             ->with('success', 'Your account has been deleted successfully.');
     }

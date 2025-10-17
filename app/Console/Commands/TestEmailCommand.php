@@ -18,14 +18,14 @@ class TestEmailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact)}';
+    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact, trial-expired, account-deleted, subscription-suspended)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Test email sending functionality - sends all 9 email types in selected language';
+    protected $description = 'Test email sending functionality - sends all 11 email types in selected language';
 
     /**
      * Execute the console command.
@@ -120,20 +120,22 @@ class TestEmailCommand extends Command
      */
     protected function sendAllEmails($email, $user)
     {
-        $this->info('📤 Sending ALL 9 email types to: ' . $email);
+        $this->info('📤 Sending ALL 11 email types to: ' . $email);
         $this->info('🌍 Language: ' . strtoupper(app()->getLocale()));
         $this->newLine();
         
         $emails = [
-            ['name' => '1️⃣  Welcome Email', 'type' => 'mailable', 'mail' => new WelcomeMail($user)],
-            ['name' => '2️⃣  Verify Email (User Registration)', 'type' => 'verify-email'],
-            ['name' => '3️⃣  Verify Email Calendar', 'type' => 'verify-email-calendar'],
-            ['name' => '4️⃣  Password Reset', 'type' => 'password-reset'],
-            ['name' => '5️⃣  Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
-            ['name' => '6️⃣  Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
-            ['name' => '7️⃣  Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
-            ['name' => '8️⃣  Payment Failed', 'type' => 'payment-failed'],
-            ['name' => '9️⃣  Contact Form', 'type' => 'contact'],
+            ['name' => '1️⃣   Welcome Email', 'type' => 'mailable', 'mail' => new WelcomeMail($user)],
+            ['name' => '2️⃣   Verify Email (User Registration)', 'type' => 'verify-email'],
+            ['name' => '3️⃣   Verify Email Calendar', 'type' => 'verify-email-calendar'],
+            ['name' => '4️⃣   Password Reset', 'type' => 'password-reset'],
+            ['name' => '5️⃣   Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
+            ['name' => '6️⃣   Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
+            ['name' => '7️⃣   Trial Expired', 'type' => 'mailable', 'mail' => new \App\Mail\TrialExpiredMail($user)],
+            ['name' => '8️⃣   Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
+            ['name' => '9️⃣   Payment Failed', 'type' => 'payment-failed'],
+            ['name' => '🔟  Subscription Suspended', 'type' => 'mailable', 'mail' => new \App\Mail\SubscriptionSuspendedMail($user)],
+            ['name' => '1️⃣1️⃣ Account Deleted', 'type' => 'mailable', 'mail' => new \App\Mail\AccountDeletedMail($user)],
         ];
         
         foreach ($emails as $emailData) {
@@ -153,7 +155,7 @@ class TestEmailCommand extends Command
             $this->newLine();
         }
         
-        $this->info('🎉 All 9 emails sent successfully!');
+        $this->info('🎉 All 11 emails sent successfully!');
         $this->line('🔗 Check your inbox: ' . $email);
     }
 
@@ -177,8 +179,17 @@ class TestEmailCommand extends Command
             case 'trial-1':
                 Mail::to($email)->send(new TrialEndingTomorrowMail($user));
                 break;
+            case 'trial-expired':
+                Mail::to($email)->send(new \App\Mail\TrialExpiredMail($user));
+                break;
             case 'payment-success':
                 Mail::to($email)->send(new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y')));
+                break;
+            case 'subscription-suspended':
+                Mail::to($email)->send(new \App\Mail\SubscriptionSuspendedMail($user));
+                break;
+            case 'account-deleted':
+                Mail::to($email)->send(new \App\Mail\AccountDeletedMail($user));
                 break;
             case 'verify':
             case 'verify-email':
@@ -190,7 +201,7 @@ class TestEmailCommand extends Command
                 return;
             default:
                 $this->error('Unknown email type: ' . $type);
-                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact');
+                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, trial-expired, payment-success, payment-failed, subscription-suspended, account-deleted, contact');
                 return;
         }
         
