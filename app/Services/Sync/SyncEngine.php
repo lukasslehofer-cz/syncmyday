@@ -1194,7 +1194,8 @@ class SyncEngine
     {
         $isDeleted = match($provider) {
             'google' => $event->getStatus() === 'cancelled',
-            'microsoft' => isset($event['@removed']) && $event['@removed'],
+            'microsoft' => (isset($event['@removed']) && $event['@removed']) || 
+                          (isset($event['@odata.removed']) && $event['@odata.removed']),
             'caldav', 'apple' => isset($event['status']) && $event['status'] === 'cancelled',
             default => false,
         };
@@ -1204,6 +1205,8 @@ class SyncEngine
                 'event_id' => $this->getEventId($event),
                 'provider' => $provider,
                 'status' => $provider === 'google' ? $event->getStatus() : ($event['status'] ?? 'unknown'),
+                'removed_property' => $provider === 'microsoft' ? 
+                    (isset($event['@removed']) ? '@removed' : '@odata.removed') : null,
             ]);
         }
         
