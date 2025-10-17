@@ -65,7 +65,7 @@
         <div class="max-w-2xl mx-auto text-center">
             <!-- Error Code -->
             <div class="mb-8">
-                <h1 class="text-8xl sm:text-9xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent float-animation">
+                <h1 class="text-8xl sm:text-9xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                     @yield('code')
                 </h1>
             </div>

@@ -81,7 +81,7 @@
                 
                 <!-- 404 Text -->
                 <div class="relative">
-                    <h1 class="text-9xl sm:text-[12rem] font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent float-animation">
+                    <h1 class="text-9xl sm:text-[12rem] font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                         404
                     </h1>
                 </div>
