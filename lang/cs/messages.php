@@ -680,6 +680,26 @@ return [
     'contact_success' => 'Děkujeme za vaši zprávu! Odpovíme co nejdříve.',
     'contact_error' => 'Omlouváme se, při odesílání zprávy došlo k chybě. Prosím zkuste to znovu.',
     
+    // Feedback Form
+    'share_feedback' => 'Sdílet zpětnou vazbu',
+    'feedback_description' => 'Je nám líto, že odcházíte. Vaše zpětná vazba nám pomáhá vylepšovat SyncMyDay pro všechny.',
+    'feedback_reason_label' => 'Proč jste smazali svůj účet?',
+    'feedback_reason_select' => '-- Prosím vyberte důvod --',
+    'feedback_reason_not_using' => 'Nevyužíval(a) jsem to dostatečně',
+    'feedback_reason_too_expensive' => 'Příliš drahé',
+    'feedback_reason_missing_features' => 'Chyběly mi potřebné funkce',
+    'feedback_reason_technical_issues' => 'Technické problémy nebo chyby',
+    'feedback_reason_found_alternative' => 'Našel(la) jsem lepší alternativu',
+    'feedback_reason_other' => 'Jiný důvod',
+    'feedback_additional_comments' => 'Další komentáře',
+    'feedback_placeholder' => 'Řekněte nám více o své zkušenosti... (nepovinné)',
+    'send_feedback' => 'Odeslat zpětnou vazbu',
+    'feedback_success' => 'Děkujeme za vaši zpětnou vazbu! Vážíme si, že jste si udělali čas nám ji sdělit.',
+    'feedback_error' => 'Omlouváme se, došlo k chybě při odesílání zpětné vazby. Zkuste to prosím znovu.',
+    'feedback_thank_you_title' => 'Děkujeme, že jste vyzkoušeli SyncMyDay!',
+    'feedback_thank_you_text' => 'Vaše zpětná vazba je pro nás cenná a pomáhá nám vylepšovat naši službu. Přejeme vám vše dobré!',
+    'optional' => 'nepovinné',
+    
     // Help Center Sidebar
     'help_overview' => 'Přehled',
     'help_connection_guides' => 'Průvodci připojením',

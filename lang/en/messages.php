@@ -676,6 +676,26 @@ return [
     'contact_success' => 'Thank you for your message! We\'ll respond as soon as possible.',
     'contact_error' => 'Sorry, there was an error sending your message. Please try again.',
     
+    // Feedback Form
+    'share_feedback' => 'Share Your Feedback',
+    'feedback_description' => 'We\'re sorry to see you go. Your feedback helps us improve SyncMyDay for everyone.',
+    'feedback_reason_label' => 'Why did you delete your account?',
+    'feedback_reason_select' => '-- Please select a reason --',
+    'feedback_reason_not_using' => 'I wasn\'t using it enough',
+    'feedback_reason_too_expensive' => 'Too expensive',
+    'feedback_reason_missing_features' => 'Missing features I needed',
+    'feedback_reason_technical_issues' => 'Technical issues or bugs',
+    'feedback_reason_found_alternative' => 'Found a better alternative',
+    'feedback_reason_other' => 'Other reason',
+    'feedback_additional_comments' => 'Additional comments',
+    'feedback_placeholder' => 'Tell us more about your experience... (optional)',
+    'send_feedback' => 'Send Feedback',
+    'feedback_success' => 'Thank you for your feedback! We appreciate you taking the time to share your thoughts.',
+    'feedback_error' => 'Sorry, there was an error sending your feedback. Please try again.',
+    'feedback_thank_you_title' => 'Thank you for trying SyncMyDay!',
+    'feedback_thank_you_text' => 'Your feedback is valuable to us and helps us improve our service. We wish you all the best!',
+    'optional' => 'optional',
+    
     // Help Center Sidebar
     'help_overview' => 'Overview',
     'help_connection_guides' => 'Connection Guides',

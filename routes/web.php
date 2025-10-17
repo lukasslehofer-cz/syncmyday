@@ -38,6 +38,10 @@ Route::view('/terms', 'legal.terms')->name('terms');
 Route::get('/contact', [App\Http\Controllers\ContactController::class, 'show'])->name('contact');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
 
+// Feedback (for deleted accounts)
+Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'show'])->name('feedback');
+Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'send'])->name('feedback.send');
+
 // Help Center
 Route::prefix('help')->name('help.')->group(function () {
     Route::get('/', function () {
