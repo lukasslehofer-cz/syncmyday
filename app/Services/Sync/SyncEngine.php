@@ -109,7 +109,17 @@ class SyncEngine
             'targets.targetEmailConnection'
         ]);
         
-        Log::channel('sync')->info('Starting sync rule', [
+        // Track sync statistics and start time
+        $startTime = microtime(true);
+        $stats = [
+            'events_fetched' => 0,
+            'events_processed' => 0,
+            'events_skipped' => 0,
+            'events_deleted' => 0,
+            'missing_start_end' => 0,
+        ];
+        
+        Log::channel('sync')->debug('Starting sync rule', [
             'rule_id' => $rule->id,
             'source_calendar_id' => $rule->source_calendar_id,
             'target_count' => $rule->targets->count(),
@@ -128,7 +138,7 @@ class SyncEngine
         $oldSyncToken = $subscription?->sync_token;
         $hadSyncToken = !empty($oldSyncToken);
 
-        Log::channel('sync')->info('Sync token status before fetch', [
+        Log::channel('sync')->debug('Sync token status before fetch', [
             'rule_id' => $rule->id,
             'has_subscription' => $subscription !== null,
             'had_sync_token' => $hadSyncToken,
@@ -143,21 +153,22 @@ class SyncEngine
             $subscription?->sync_token
         );
         
-        Log::channel('sync')->info('Fetched events from source', [
+        $stats['events_fetched'] = count($changedData['events'] ?? []);
+        
+        Log::channel('sync')->debug('Fetched events from source', [
             'rule_id' => $rule->id,
             'provider' => $sourceConnection->provider,
             'calendar_id' => $rule->source_calendar_id,
-            'event_count' => count($changedData['events'] ?? []),
+            'event_count' => $stats['events_fetched'],
             'had_sync_token' => $hadSyncToken,
             'received_sync_token' => isset($changedData['sync_token']),
-            'new_sync_token_preview' => isset($changedData['sync_token']) ? substr($changedData['sync_token'], 0, 50) . '...' : null,
         ]);
 
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
             $subscription->update(['sync_token' => $changedData['sync_token']]);
             
-            Log::channel('sync')->info('Sync token saved to database', [
+            Log::channel('sync')->debug('Sync token saved to database', [
                 'subscription_id' => $subscription->id,
                 'connection_id' => $sourceConnection->id,
                 'calendar_id' => $rule->source_calendar_id,
@@ -201,22 +212,17 @@ class SyncEngine
         $timeMin = now()->subDays($pastDays);
         $timeMax = now()->addMonths($futureMonths);
         
-        $processedCount = 0;
-        $skippedCount = 0;
-        
         foreach ($changedData['events'] as $event) {
             // Filter by time range even for incremental syncs
             $eventStart = $this->getEventStart($event, $sourceConnection->provider);
             
-            // DEBUG: Log if event is missing start/end
+            // Track events without start/end (usually metadata objects)
             if (!$eventStart && $sourceConnection->provider === 'microsoft') {
+                $stats['missing_start_end']++;
                 Log::channel('sync')->debug('Microsoft event missing start time', [
                     'event_id' => $this->getEventId($event),
                     'has_start_key' => isset($event['start']),
                     'has_end_key' => isset($event['end']),
-                    'has_@removed' => isset($event['@removed']),
-                    'has_@odata.removed' => isset($event['@odata.removed']),
-                    'subject' => $event['subject'] ?? 'N/A',
                     'event_keys' => array_keys($event),
                 ]);
             }
@@ -224,27 +230,17 @@ class SyncEngine
             if ($eventStart) {
                 // Skip events outside our sync range
                 if ($eventStart < $timeMin || $eventStart > $timeMax) {
-                    $skippedCount++;
+                    $stats['events_skipped']++;
                     Log::channel('sync')->debug('Event outside sync range, skipping', [
                         'event_id' => $this->getEventId($event),
                         'event_start' => $eventStart->format('Y-m-d H:i:s'),
-                        'time_min' => $timeMin->format('Y-m-d H:i:s'),
-                        'time_max' => $timeMax->format('Y-m-d H:i:s'),
                     ]);
                     continue;
                 }
             }
             
             $this->processEvent($event, $rule, $sourceService, $sourceConnection, $existingMappings);
-            $processedCount++;
-        }
-        
-        if ($skippedCount > 0) {
-            Log::channel('sync')->debug('Skipped events outside sync range', [
-                'rule_id' => $rule->id,
-                'processed' => $processedCount,
-                'skipped' => $skippedCount,
-            ]);
+            $stats['events_processed']++;
         }
 
         // DELETED EVENTS DETECTION
@@ -252,8 +248,14 @@ class SyncEngine
         // - Google: Deleted events not included in full sync (no syncToken)
         // - Microsoft: Deleted events not included in Delta Query despite documentation
         // Solution: Compare current events with existing mappings to detect deletions
-        if ($processedCount > 0 || !empty($sourceEventIds)) {
-            $this->detectDeletedEventsByMappingComparison($rule, $sourceEventIds, $sourceConnection, $sourceService, $existingMappings);
+        if ($stats['events_processed'] > 0 || !empty($sourceEventIds)) {
+            $stats['events_deleted'] = $this->detectDeletedEventsByMappingComparison(
+                $rule,
+                $sourceEventIds,
+                $sourceConnection,
+                $sourceService,
+                $existingMappings
+            );
         }
 
         // Mark initial sync as completed if this rule has email targets
@@ -269,9 +271,9 @@ class SyncEngine
                     'last_triggered_at' => now(),
                 ]);
                 
-                Log::channel('sync')->info('Initial sync completed for rule with email targets', [
+                Log::channel('sync')->debug('Initial sync completed for rule with email targets', [
                     'rule_id' => $rule->id,
-                    'processed_events' => $processedCount,
+                    'processed_events' => $stats['events_processed'],
                 ]);
             } else {
                 $rule->update(['last_triggered_at' => now()]);
@@ -279,6 +281,22 @@ class SyncEngine
         } else {
             $rule->update(['last_triggered_at' => now()]);
         }
+        
+        // Log sync summary
+        $duration = round((microtime(true) - $startTime) * 1000); // milliseconds
+        Log::channel('sync')->info('Sync completed', [
+            'rule_id' => $rule->id,
+            'source_provider' => $sourceConnection->provider,
+            'source_calendar' => $rule->source_calendar_id,
+            'stats' => [
+                'fetched' => $stats['events_fetched'],
+                'processed' => $stats['events_processed'],
+                'deleted' => $stats['events_deleted'],
+                'skipped' => $stats['events_skipped'],
+                'missing_start_end' => $stats['missing_start_end'],
+            ],
+            'duration_ms' => $duration,
+        ]);
     }
 
     /**
@@ -318,7 +336,7 @@ class SyncEngine
         // Check if event is deleted/cancelled
         $isDeleted = $this->isEventDeleted($event, $sourceConnection->provider);
 
-        Log::channel('sync')->info('Processing event', [
+        Log::channel('sync')->debug('Processing event', [
             'event_id' => $sourceEventId,
             'rule_id' => $rule->id,
             'is_deleted' => $isDeleted,
@@ -342,7 +360,7 @@ class SyncEngine
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
                     if ($isDeleted) {
-                        Log::channel('sync')->info('Deleting blocker in email target', [
+                        Log::channel('sync')->debug('Deleting blocker in email target', [
                             'event_id' => $sourceEventId,
                             'target_email_connection_id' => $target->target_email_connection_id,
                             'transaction_id' => $transactionId,
@@ -357,7 +375,7 @@ class SyncEngine
                     $targetService->initializeWithConnection($target->targetConnection);
 
                     if ($isDeleted) {
-                        Log::channel('sync')->info('Deleting blocker in API target', [
+                        Log::channel('sync')->debug('Deleting blocker in API target', [
                             'event_id' => $sourceEventId,
                             'target_connection_id' => $target->target_connection_id,
                             'target_calendar_id' => $target->target_calendar_id,
@@ -1236,12 +1254,9 @@ class SyncEngine
         };
         
         if ($isDeleted) {
-            Log::channel('sync')->info('Event detected as deleted', [
+            Log::channel('sync')->debug('Event detected as deleted', [
                 'event_id' => $this->getEventId($event),
                 'provider' => $provider,
-                'status' => $provider === 'google' ? $event->getStatus() : ($event['status'] ?? 'unknown'),
-                'removed_property' => $provider === 'microsoft' ? 
-                    (isset($event['@removed']) ? '@removed' : '@odata.removed') : null,
             ]);
         }
         
@@ -1257,6 +1272,8 @@ class SyncEngine
      * 
      * We compare all existing mappings with the current list of event IDs.
      * Any mapping whose source_event_id is NOT in the current list = deleted event.
+     * 
+     * @return int Number of deleted events processed
      */
     private function detectDeletedEventsByMappingComparison(
         SyncRule $rule,
@@ -1264,14 +1281,14 @@ class SyncEngine
         CalendarConnection $sourceConnection,
         $sourceService,
         $existingMappings
-    ): void {
+    ): int {
         // Get all mappings for this rule
         $allMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
             ->where('source_connection_id', $sourceConnection->id)
             ->get();
         
         if ($allMappings->isEmpty()) {
-            return;
+            return 0;
         }
         
         // Find mappings for events that are NOT in current event list
@@ -1280,14 +1297,12 @@ class SyncEngine
         });
         
         if ($deletedMappings->isEmpty()) {
-            return;
+            return 0;
         }
         
-        Log::channel('sync')->info('Detected deleted events by mapping comparison', [
+        Log::channel('sync')->debug('Detected deleted events by mapping comparison', [
             'rule_id' => $rule->id,
             'provider' => $sourceConnection->provider,
-            'total_mappings' => $allMappings->count(),
-            'current_events' => count($currentEventIds),
             'deleted_count' => $deletedMappings->count(),
             'deleted_event_ids' => $deletedMappings->pluck('source_event_id')->toArray(),
         ]);
@@ -1316,7 +1331,7 @@ class SyncEngine
             try {
                 if ($target->isEmailTarget()) {
                     // Delete blocker in email target
-                    Log::channel('sync')->info('Deleting orphaned blocker in email target', [
+                    Log::channel('sync')->debug('Deleting orphaned blocker in email target', [
                         'source_event_id' => $mapping->source_event_id,
                         'target_email_connection_id' => $target->target_email_connection_id,
                         'transaction_id' => $transactionId,
@@ -1339,7 +1354,7 @@ class SyncEngine
                     }
                 } else {
                     // Delete blocker in API target
-                    Log::channel('sync')->info('Deleting orphaned blocker in API target', [
+                    Log::channel('sync')->debug('Deleting orphaned blocker in API target', [
                         'source_event_id' => $mapping->source_event_id,
                         'target_connection_id' => $target->target_connection_id,
                         'target_calendar_id' => $target->target_calendar_id,
@@ -1357,7 +1372,7 @@ class SyncEngine
                             $mapping->target_event_id
                         );
                         
-                        Log::channel('sync')->info('Orphaned blocker deleted successfully', [
+                        Log::channel('sync')->debug('Orphaned blocker deleted successfully', [
                             'target_event_id' => $mapping->target_event_id,
                         ]);
                     } catch (\Exception $e) {
@@ -1393,6 +1408,8 @@ class SyncEngine
                 ]);
             }
         }
+        
+        return $deletedMappings->count();
     }
 }
 

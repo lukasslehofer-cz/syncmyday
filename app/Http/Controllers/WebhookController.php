@@ -21,11 +21,6 @@ class WebhookController extends Controller
             return response('OK', 200);
         }
 
-        Log::channel('webhook')->info('Google webhook received', [
-            'connection_id' => $connectionId,
-            'headers' => $request->headers->all(),
-        ]);
-
         // Get resource state from header
         $resourceState = $request->header('X-Goog-Resource-State');
         $channelId = $request->header('X-Goog-Channel-ID');
@@ -53,11 +48,6 @@ class WebhookController extends Controller
             // but 200 is safer and prevents unnecessary retries
             return response('OK', 200);
         }
-
-        Log::channel('webhook')->debug('Connection found, looking for subscription', [
-            'connection_id' => $connectionId,
-            'channel_id' => $channelId,
-        ]);
 
         // Find the webhook subscription to get calendar ID
         $subscription = $connection->webhookSubscriptions()
@@ -87,9 +77,10 @@ class WebhookController extends Controller
             return response('OK', 200); // Still return 200 to avoid retries
         }
 
-        Log::channel('webhook')->info('Processing webhook', [
+        // Single consolidated log for successful webhook processing
+        Log::channel('webhook')->info('Webhook processed', [
+            'provider' => 'google',
             'connection_id' => $connectionId,
-            'subscription_id' => $subscription->id,
             'calendar_id' => $subscription->calendar_id,
             'channel_id' => $channelId,
         ]);
@@ -105,11 +96,6 @@ class WebhookController extends Controller
      */
     public function microsoft(Request $request, string $connectionId)
     {
-        Log::channel('webhook')->info('Microsoft webhook received', [
-            'connection_id' => $connectionId,
-            'query' => $request->query->all(),
-        ]);
-
         // Validation token check (subscription validation)
         if ($request->has('validationToken')) {
             return response($request->validationToken, 200)
@@ -127,6 +113,7 @@ class WebhookController extends Controller
 
         // Parse notification payload
         $notifications = $request->input('value', []);
+        $processedCount = 0;
 
         foreach ($notifications as $notification) {
             $subscriptionId = $notification['subscriptionId'] ?? null;
@@ -152,6 +139,16 @@ class WebhookController extends Controller
 
             // Dispatch job to process changes
             ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id);
+            $processedCount++;
+        }
+
+        // Single consolidated log for successful webhook processing
+        if ($processedCount > 0) {
+            Log::channel('webhook')->info('Webhook processed', [
+                'provider' => 'microsoft',
+                'connection_id' => $connectionId,
+                'notifications_processed' => $processedCount,
+            ]);
         }
 
         return response('Accepted', 202);
