@@ -101,19 +101,27 @@ class BillingController extends Controller
                     'user_id' => $user->id,
                     'interval' => $interval,
                 ],
+                // Explicitly configure payment settings and smart retries
+                'payment_method_collection' => 'always',
+                'payment_settings' => [
+                    'payment_method_types' => ['card'],
+                    'save_default_payment_method' => 'on_subscription',
+                ],
+                'subscription_data' => [
+                    'description' => 'SyncMyDay Pro Subscription - ' . ucfirst($interval),
+                    'metadata' => [
+                        'user_id' => $user->id,
+                        'locale' => $user->locale,
+                        'interval' => $interval,
+                    ],
+                ],
             ];
 
             // If user is in trial, extend trial period until their current trial ends
             // This ensures they get the full trial period before being charged
             if ($user->isInTrial() && $user->subscription_ends_at) {
-                $sessionConfig['subscription_data'] = [
-                    'trial_end' => $user->subscription_ends_at->timestamp,
-                    'metadata' => [
-                        'user_id' => $user->id,
-                        'locale' => $user->locale,
-                        'had_trial' => 'true',
-                    ],
-                ];
+                $sessionConfig['subscription_data']['trial_end'] = $user->subscription_ends_at->timestamp;
+                $sessionConfig['subscription_data']['metadata']['had_trial'] = 'true';
                 
                 Log::info('Checkout session with trial extension', [
                     'user_id' => $user->id,
@@ -416,11 +424,18 @@ class BillingController extends Controller
         $amount = ($invoice->amount_due ?? 0) / 100;
         $currency = strtoupper($invoice->currency ?? 'USD');
         
-        Log::warning('Payment failed', [
+        // Set grace period: 3 days from now to fix payment issue
+        $gracePeriodEndsAt = now()->addDays(3);
+        $user->update([
+            'grace_period_ends_at' => $gracePeriodEndsAt,
+        ]);
+        
+        Log::warning('Payment failed - grace period activated', [
             'user_id' => $user->id,
             'invoice_id' => $invoice->id,
             'amount' => $amount,
             'currency' => $currency,
+            'grace_period_ends_at' => $gracePeriodEndsAt->toDateTimeString(),
         ]);
 
         // Send payment failed email
@@ -431,6 +446,7 @@ class BillingController extends Controller
                 'amount' => $amount,
                 'currency' => $currency,
                 'invoiceUrl' => $invoice->hosted_invoice_url ?? route('billing'),
+                'gracePeriodEndsAt' => $gracePeriodEndsAt,
             ], function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject(__('emails.payment_failed_subject'));

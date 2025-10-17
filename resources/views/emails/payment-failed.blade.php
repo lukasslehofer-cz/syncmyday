@@ -70,7 +70,11 @@
                     ⏰ {{ __('emails.payment_failed_deadline_title') }}
                 </p>
                 <p style="margin: 0; color: #92400e; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-                    {{ __('emails.payment_failed_deadline_text') }}
+                    @if(isset($gracePeriodEndsAt))
+                        {{ __('emails.payment_failed_grace_period', ['date' => $gracePeriodEndsAt->isoFormat('LL')]) }}
+                    @else
+                        {{ __('emails.payment_failed_deadline_text') }}
+                    @endif
                 </p>
             </td>
         </tr>

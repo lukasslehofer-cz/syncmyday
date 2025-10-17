@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'stripe_customer_id',
         'stripe_subscription_id',
         'subscription_ends_at',
+        'grace_period_ends_at',
         'onboarding_completed_at',
     ];
 
@@ -36,6 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
+        'grace_period_ends_at' => 'datetime',
         'onboarding_completed_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
@@ -65,11 +67,37 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Check if user has an active pro subscription
+     * Includes grace period for failed payments (3 days after subscription_ends_at)
      */
     public function hasActiveSubscription(): bool
     {
-        return $this->subscription_tier === 'pro' && 
-               (!$this->subscription_ends_at || $this->subscription_ends_at->isFuture());
+        if ($this->subscription_tier !== 'pro') {
+            return false;
+        }
+        
+        // Active subscription with no end date or future end date
+        if (!$this->subscription_ends_at || $this->subscription_ends_at->isFuture()) {
+            return true;
+        }
+        
+        // Grace period: 3 days after payment failure
+        if ($this->grace_period_ends_at && $this->grace_period_ends_at->isFuture()) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Check if user is in grace period (after payment failure)
+     */
+    public function isInGracePeriod(): bool
+    {
+        return $this->subscription_tier === 'pro' &&
+               $this->grace_period_ends_at &&
+               $this->grace_period_ends_at->isFuture() &&
+               $this->subscription_ends_at &&
+               $this->subscription_ends_at->isPast();
     }
 
     /**

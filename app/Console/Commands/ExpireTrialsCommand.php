@@ -55,7 +55,22 @@ class ExpireTrialsCommand extends Command
                 $this->line("✓ Soft-locked user (trial expired): {$user->email}");
                 $expired++;
 
-                // TODO: Send trial expired notification email
+                // Send trial expired notification email
+                try {
+                    \Mail::to($user->email)->send(new \App\Mail\TrialExpiredMail($user));
+                    $this->line("  ✉️  Trial expired email sent");
+                    
+                    Log::info('Trial expired email sent', [
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                    ]);
+                } catch (\Exception $emailError) {
+                    $this->error("  ✗ Failed to send trial expired email: {$emailError->getMessage()}");
+                    Log::error('Failed to send trial expired email', [
+                        'user_id' => $user->id,
+                        'error' => $emailError->getMessage(),
+                    ]);
+                }
                 
             } catch (\Exception $e) {
                 $this->error("✗ Failed to process expired trial for {$user->email}: {$e->getMessage()}");
