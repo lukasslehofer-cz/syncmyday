@@ -27,6 +27,18 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Get stats for last 24 hours
+        $recentSyncsCount = SyncLog::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->where('action', '!=', 'error')
+            ->count();
+        
+        $recentErrorsCount = SyncLog::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->where('action', 'error')
+            ->count();
+
+        // Get last 20 logs for activity list
         $recentLogs = SyncLog::where('user_id', $user->id)
             ->with(['syncRule.sourceConnection', 'syncRule.sourceEmailConnection', 'syncRule.targets.targetConnection', 'syncRule.targets.targetEmailConnection'])
             ->recent(20)
@@ -37,8 +49,8 @@ class DashboardController extends Controller
             'active_connections' => $connections->where('status', 'active')->count() + $emailCalendars->where('status', 'active')->count(),
             'total_rules' => $syncRules->count(),
             'active_rules' => $syncRules->where('is_active', true)->count(),
-            'recent_syncs' => $recentLogs->where('action', '!=', 'error')->count(),
-            'recent_errors' => $recentLogs->where('action', 'error')->count(),
+            'recent_syncs' => $recentSyncsCount,
+            'recent_errors' => $recentErrorsCount,
         ];
 
         return view('dashboard', compact('connections', 'emailCalendars', 'syncRules', 'recentLogs', 'stats'));

@@ -169,6 +169,7 @@ return [
     'recent_syncs' => 'Nedávne synchronizácie',
     'success' => 'Úspech!',
     'last_20_sync_actions' => 'Posledných 20 synchronizačných akcií',
+    'last_24_hours' => 'Za posledných 24 hodín',
     'recent_errors' => 'Nedávne chyby',
     'alert' => 'Upozornenie',
     'none' => 'Žiadne',

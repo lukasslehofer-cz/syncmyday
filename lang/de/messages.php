@@ -151,6 +151,7 @@ return [
     'recent_syncs' => 'Letzte Synchronisierungen',
     'success' => 'Erfolg!',
     'last_20_sync_actions' => 'Letzte 20 Synchronisierungsaktionen',
+    'last_24_hours' => 'Letzte 24 Stunden',
     'recent_errors' => 'Letzte Fehler',
     'alert' => 'Warnung',
     'none' => 'Keine',

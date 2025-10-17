@@ -54,7 +54,7 @@
             </div>
             <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.recent_syncs') }}</p>
             <p class="text-4xl font-bold text-green-600 mb-1">{{ $stats['recent_syncs'] }}</p>
-            <p class="text-xs text-gray-500">{{ __('messages.last_20_sync_actions') }}</p>
+            <p class="text-xs text-gray-500">{{ __('messages.last_24_hours') }}</p>
         </div>
         
         <!-- Errors Card -->
@@ -73,7 +73,7 @@
             </div>
             <p class="text-sm font-medium text-gray-600 mb-2">{{ __('messages.recent_errors') }}</p>
             <p class="text-4xl font-bold {{ $stats['recent_errors'] > 0 ? 'text-red-600' : 'text-gray-400' }} mb-1">{{ $stats['recent_errors'] }}</p>
-            <p class="text-xs text-gray-500">{{ __('messages.last_20_sync_actions') }}</p>
+            <p class="text-xs text-gray-500">{{ __('messages.last_24_hours') }}</p>
         </div>
     </div>
     

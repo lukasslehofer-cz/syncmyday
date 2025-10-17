@@ -62,7 +62,7 @@
                     </p>
                     <p class="text-sm text-gray-600 mt-1">
                         @if($rule->sourceConnection)
-                            {{ $rule->source_calendar_id }}
+                            {{ $rule->sourceConnection->account_email ?? $rule->sourceConnection->provider_email }}
                         @else
                             {{ $rule->sourceEmailConnection->email_address }}
                         @endif
@@ -96,7 +96,7 @@
                         </p>
                         <p class="text-sm text-gray-600 mt-1">
                             @if($target->targetConnection)
-                                {{ $target->target_calendar_id }}
+                                {{ $target->targetConnection->account_email ?? $target->targetConnection->provider_email }}
                             @else
                                 {{ $target->targetEmailConnection->email_address }}
                             @endif

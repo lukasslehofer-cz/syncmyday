@@ -169,6 +169,7 @@ return [
     'recent_syncs' => 'Ostatnie synchronizacje',
     'success' => 'Sukces!',
     'last_20_sync_actions' => 'Ostatnie 20 akcji synchronizacji',
+    'last_24_hours' => 'Ostatnie 24 godziny',
     'recent_errors' => 'Ostatnie błędy',
     'alert' => 'Alert',
     'none' => 'Brak',

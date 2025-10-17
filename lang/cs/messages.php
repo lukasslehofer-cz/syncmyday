@@ -241,6 +241,7 @@ return [
     'recent_syncs' => 'Nedávné synchronizace',
     'success' => 'Úspěch!',
     'last_20_sync_actions' => 'Posledních 20 synchronizačních akcí',
+    'last_24_hours' => 'Za posledních 24 hodin',
     'recent_errors' => 'Nedávné chyby',
     'alert' => 'Upozornění',
     'none' => 'Žádné',

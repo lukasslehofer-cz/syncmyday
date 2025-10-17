@@ -245,6 +245,7 @@ return [
     'recent_syncs' => 'Recent Syncs',
     'success' => 'Success',
     'last_20_sync_actions' => 'Last 20 sync actions',
+    'last_24_hours' => 'Last 24 hours',
     'recent_errors' => 'Recent Errors',
     'alert' => 'Alert',
     'none' => 'None',
