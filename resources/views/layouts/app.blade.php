@@ -79,7 +79,7 @@
                 </div>
                 
                 <div class="flex items-center space-x-4">
-                    @if(auth()->user()->subscription_tier === 'free')
+                    @if(!auth()->user()->hasActiveSubscription())
                     <a href="{{ route('billing') }}" class="hidden md:inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white gradient-bg hover:opacity-90 shadow-md">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
@@ -197,6 +197,81 @@
                 </div>
                 <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-indigo-50 text-indigo-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
                     {{ __('messages.upgrade_now') }}
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    @endif
+    @endif
+    @endauth
+    
+    <!-- Account Suspended Banner (for expired subscriptions) -->
+    @auth
+    @if(!auth()->user()->hasActiveSubscription())
+    @php
+        $user = auth()->user();
+        $isInGracePeriod = $user->isInGracePeriod();
+        $gracePeriodEndsAt = $user->grace_period_ends_at;
+    @endphp
+    
+    @if($isInGracePeriod)
+    <!-- Grace Period Warning (Orange) -->
+    <div class="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-lg md:text-xl font-bold text-white mb-1">
+                            ⚠️ {{ __('messages.payment_failed_banner_title') }}
+                        </p>
+                        <p class="text-sm md:text-base text-white/90">
+                            {{ __('messages.payment_failed_banner_grace_period', ['date' => $gracePeriodEndsAt->isoFormat('LL')]) }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-orange-50 text-orange-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
+                    {{ __('messages.update_payment_method') }}
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+    @else
+    <!-- Subscription Suspended (Red) -->
+    <div class="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-lg md:text-xl font-bold text-white mb-1">
+                            🔒 {{ __('messages.subscription_suspended_banner_title') }}
+                        </p>
+                        <p class="text-sm md:text-base text-white/90">
+                            {{ __('messages.subscription_suspended_banner_text') }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-red-50 text-red-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
+                    {{ __('messages.restore_subscription') }}
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>

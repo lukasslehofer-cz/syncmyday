@@ -616,4 +616,17 @@ return [
     'onboarding_step3_title' => 'Relaxovať',
     'onboarding_step3_desc' => 'Všetko hotové!',
     'dismiss' => 'Zavrieť',
+    
+    // Subscription & Billing Banners
+    'subscription_required' => 'An active subscription is required to access this feature.',
+    'subscription_activated' => 'Subscription has been successfully activated!',
+    'payment_verification_failed' => 'Payment verification failed. Please try again.',
+    'billing_error' => 'An error occurred while processing payment. Please try again.',
+    'no_subscription' => 'You do not have an active subscription.',
+    'payment_failed_banner_title' => 'Payment Failed - Action Required',
+    'payment_failed_banner_grace_period' => 'Your payment failed. Please update your payment method by :date to avoid service interruption.',
+    'subscription_suspended_banner_title' => 'Account Suspended',
+    'subscription_suspended_banner_text' => 'Your subscription has expired. Synchronization is disabled. Restore your subscription to continue.',
+    'update_payment_method' => 'Update Payment Method',
+    'restore_subscription' => 'Restore Subscription',
 ];

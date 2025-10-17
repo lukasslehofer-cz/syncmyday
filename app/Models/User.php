@@ -166,13 +166,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
-     * Expire the trial and downgrade to blocked state
+     * Expire the trial - keep Pro tier but mark as expired (soft-lock)
+     * User remains 'pro' tier but hasActiveSubscription() will return false
      */
     public function expireTrial(): void
     {
         $this->update([
-            'subscription_tier' => 'free',
+            // Keep 'pro' tier - soft-lock is determined by subscription_ends_at being in the past
             'subscription_ends_at' => now(),
+            'grace_period_ends_at' => null, // Clear any grace period
         ]);
     }
 

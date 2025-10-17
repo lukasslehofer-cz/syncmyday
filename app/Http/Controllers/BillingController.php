@@ -327,13 +327,17 @@ class BillingController extends Controller
             : \Carbon\Carbon::createFromTimestamp($subscription->current_period_end);
         
         $user->update([
-            'subscription_tier' => $isActive ? 'pro' : 'free',
+            // Always keep 'pro' tier - soft-lock is determined by hasActiveSubscription()
+            'subscription_tier' => 'pro',
             'subscription_ends_at' => $endsAt,
+            // Clear grace period if subscription is active again
+            'grace_period_ends_at' => $isActive ? null : $user->grace_period_ends_at,
         ]);
 
         Log::info('Subscription updated', [
             'user_id' => $user->id,
             'status' => $subscription->status,
+            'is_active' => $isActive,
         ]);
     }
 
@@ -402,11 +406,17 @@ class BillingController extends Controller
         }
 
         $user->update([
-            'subscription_tier' => 'free',
+            // Keep 'pro' tier - soft-lock is determined by subscription_ends_at being in the past
+            'subscription_tier' => 'pro',
             'subscription_ends_at' => now(),
+            'grace_period_ends_at' => null, // Clear grace period
+            'stripe_subscription_id' => null, // Clear subscription ID
         ]);
 
-        Log::info('Subscription cancelled', ['user_id' => $user->id]);
+        Log::info('Subscription cancelled - account soft-locked', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+        ]);
     }
 
     /**
