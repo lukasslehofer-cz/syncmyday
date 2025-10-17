@@ -228,16 +228,24 @@ class TestEmailCommand extends Command
             case 'verify-calendar':
             case 'verify-email-calendar':
                 // Create or use existing email calendar connection for testing
-                $emailCalendar = \App\Models\EmailCalendarConnection::firstOrCreate(
-                    [
+                $emailCalendar = \App\Models\EmailCalendarConnection::where('user_id', $user->id)
+                    ->where('target_email', $email)
+                    ->first();
+                
+                if (!$emailCalendar) {
+                    // Generate unique email address and token
+                    $emailData = \App\Models\EmailCalendarConnection::generateUniqueEmailAddress();
+                    
+                    $emailCalendar = \App\Models\EmailCalendarConnection::create([
                         'user_id' => $user->id,
-                        'target_email' => $email,
-                    ],
-                    [
+                        'email_address' => $emailData['email_address'],
+                        'email_token' => $emailData['email_token'],
                         'name' => 'Test Email Calendar',
+                        'target_email' => $email,
                         'target_email_verified_at' => null,
-                    ]
-                );
+                        'status' => 'active',
+                    ]);
+                }
                 
                 $verificationUrl = URL::temporarySignedRoute(
                     'email-calendars.verify',
