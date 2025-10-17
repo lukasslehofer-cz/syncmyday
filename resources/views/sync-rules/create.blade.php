@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create and show loading overlay
         const overlay = document.createElement('div');
         overlay.id = 'loading-overlay';
-        overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;';
+        overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;';
         
         overlay.innerHTML = `
             <div style="text-align: center;">
