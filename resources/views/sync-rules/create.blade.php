@@ -43,7 +43,63 @@
 .select-purple {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239333ea'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
 }
+
+/* Loading overlay */
+#loading-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 </style>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="text-center">
+        <!-- Spinner -->
+        <div class="relative mb-6">
+            <div class="w-24 h-24 mx-auto">
+                <svg class="animate-spin w-24 h-24 text-indigo-600" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Message -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md mx-4 border-2 border-indigo-100">
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                {{ __('messages.creating_sync_rule') }}
+            </h3>
+            <p class="text-gray-600 mb-4">
+                {{ __('messages.loading_initial_events') }}
+            </p>
+            <div class="flex items-center justify-center space-x-2 text-sm text-gray-500">
+                <div class="animate-pulse">●</div>
+                <div class="animate-pulse" style="animation-delay: 0.2s">●</div>
+                <div class="animate-pulse" style="animation-delay: 0.4s">●</div>
+            </div>
+            <p class="text-xs text-gray-500 mt-4">
+                {{ __('messages.sync_processing_time') }}
+            </p>
+        </div>
+    </div>
+</div>
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
@@ -408,6 +464,22 @@ document.querySelectorAll('.time-filter-radio').forEach(radio => {
             workdaysOptions.classList.remove('hidden');
         }
     });
+});
+
+// Show loading overlay on form submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Show loading overlay
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.remove('hidden');
+    
+    // Disable submit button to prevent double submission
+    const submitButton = this.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+    
+    // Note: Form will continue to submit normally, overlay will show until page redirect
 });
 </script>
 @endsection
