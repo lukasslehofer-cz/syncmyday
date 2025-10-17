@@ -205,21 +205,6 @@ class SyncEngine
         $skippedCount = 0;
         
         foreach ($changedData['events'] as $event) {
-            // DEBUG: Log raw Microsoft event data
-            if ($sourceConnection->provider === 'microsoft') {
-                Log::channel('sync')->info('DEBUG: Microsoft event raw data', [
-                    'rule_id' => $rule->id,
-                    'event_id' => $this->getEventId($event),
-                    'event_keys' => array_keys($event),
-                    'has_@removed' => isset($event['@removed']),
-                    'has_@odata.removed' => isset($event['@odata.removed']),
-                    'has_categories' => isset($event['categories']),
-                    'categories' => $event['categories'] ?? null,
-                    'subject' => $event['subject'] ?? null,
-                    'is_our_blocker' => $sourceService->isOurBlocker($event),
-                ]);
-            }
-            
             // Filter by time range even for incremental syncs
             $eventStart = $this->getEventStart($event, $sourceConnection->provider);
             
@@ -249,11 +234,13 @@ class SyncEngine
             ]);
         }
 
-        // DELETED EVENTS DETECTION for full sync (when no sync token)
-        // When using full sync, Google doesn't include deleted events
-        // We need to detect them by comparing existing mappings with current events
-        if (!$hadSyncToken && $processedCount > 0) {
-            $this->detectDeletedEventsInFullSync($rule, $sourceEventIds, $sourceConnection, $sourceService, $existingMappings);
+        // DELETED EVENTS DETECTION
+        // Both Google and Microsoft don't reliably return deleted events in their APIs:
+        // - Google: Deleted events not included in full sync (no syncToken)
+        // - Microsoft: Deleted events not included in Delta Query despite documentation
+        // Solution: Compare current events with existing mappings to detect deletions
+        if ($processedCount > 0 || !empty($sourceEventIds)) {
+            $this->detectDeletedEventsByMappingComparison($rule, $sourceEventIds, $sourceConnection, $sourceService, $existingMappings);
         }
 
         // Mark initial sync as completed if this rule has email targets
@@ -1229,10 +1216,16 @@ class SyncEngine
     }
 
     /**
-     * Detect deleted events during full sync by comparing existing mappings with current events
-     * This is necessary because Google/Microsoft don't return deleted events in full sync
+     * Detect deleted events by comparing existing mappings with current events
+     * 
+     * This is necessary because:
+     * - Google: Doesn't return deleted events in full sync (when no syncToken)
+     * - Microsoft: Doesn't return deleted events in Delta Query (despite @odata.removed in docs)
+     * 
+     * We compare all existing mappings with the current list of event IDs.
+     * Any mapping whose source_event_id is NOT in the current list = deleted event.
      */
-    private function detectDeletedEventsInFullSync(
+    private function detectDeletedEventsByMappingComparison(
         SyncRule $rule,
         array $currentEventIds,
         CalendarConnection $sourceConnection,
@@ -1257,8 +1250,9 @@ class SyncEngine
             return;
         }
         
-        Log::channel('sync')->info('Detected deleted events in full sync', [
+        Log::channel('sync')->info('Detected deleted events by mapping comparison', [
             'rule_id' => $rule->id,
+            'provider' => $sourceConnection->provider,
             'total_mappings' => $allMappings->count(),
             'current_events' => count($currentEventIds),
             'deleted_count' => $deletedMappings->count(),
