@@ -125,6 +125,16 @@ class SyncEngine
             ->where('status', 'active')
             ->first();
 
+        $oldSyncToken = $subscription?->sync_token;
+        $hadSyncToken = !empty($oldSyncToken);
+
+        Log::channel('sync')->info('Sync token status before fetch', [
+            'rule_id' => $rule->id,
+            'has_subscription' => $subscription !== null,
+            'had_sync_token' => $hadSyncToken,
+            'sync_token_preview' => $oldSyncToken ? substr($oldSyncToken, 0, 50) . '...' : null,
+        ]);
+
         // Fetch changed events
         $changedData = $this->fetchChangedEvents(
             $sourceService,
@@ -138,12 +148,30 @@ class SyncEngine
             'provider' => $sourceConnection->provider,
             'calendar_id' => $rule->source_calendar_id,
             'event_count' => count($changedData['events'] ?? []),
-            'has_sync_token' => isset($subscription?->sync_token),
+            'had_sync_token' => $hadSyncToken,
+            'received_sync_token' => isset($changedData['sync_token']),
+            'new_sync_token_preview' => isset($changedData['sync_token']) ? substr($changedData['sync_token'], 0, 50) . '...' : null,
         ]);
 
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
             $subscription->update(['sync_token' => $changedData['sync_token']]);
+            
+            Log::channel('sync')->info('Sync token saved to database', [
+                'subscription_id' => $subscription->id,
+                'connection_id' => $sourceConnection->id,
+                'calendar_id' => $rule->source_calendar_id,
+            ]);
+        } elseif ($subscription && !isset($changedData['sync_token'])) {
+            Log::channel('sync')->warning('No sync token received from provider', [
+                'subscription_id' => $subscription->id,
+                'provider' => $sourceConnection->provider,
+            ]);
+        } elseif (!$subscription) {
+            Log::channel('sync')->warning('No webhook subscription found - cannot save sync token', [
+                'connection_id' => $sourceConnection->id,
+                'calendar_id' => $rule->source_calendar_id,
+            ]);
         }
 
         // OPTIMIZATION: Pre-fetch all existing mappings for this rule
@@ -204,6 +232,13 @@ class SyncEngine
                 'processed' => $processedCount,
                 'skipped' => $skippedCount,
             ]);
+        }
+
+        // DELETED EVENTS DETECTION for full sync (when no sync token)
+        // When using full sync, Google doesn't include deleted events
+        // We need to detect them by comparing existing mappings with current events
+        if (!$hadSyncToken && $processedCount > 0) {
+            $this->detectDeletedEventsInFullSync($rule, $sourceEventIds, $sourceConnection, $sourceService, $existingMappings);
         }
 
         // Mark initial sync as completed if this rule has email targets
@@ -1173,6 +1208,146 @@ class SyncEngine
         }
         
         return $isDeleted;
+    }
+
+    /**
+     * Detect deleted events during full sync by comparing existing mappings with current events
+     * This is necessary because Google/Microsoft don't return deleted events in full sync
+     */
+    private function detectDeletedEventsInFullSync(
+        SyncRule $rule,
+        array $currentEventIds,
+        CalendarConnection $sourceConnection,
+        $sourceService,
+        $existingMappings
+    ): void {
+        // Get all mappings for this rule
+        $allMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
+            ->where('source_connection_id', $sourceConnection->id)
+            ->get();
+        
+        if ($allMappings->isEmpty()) {
+            return;
+        }
+        
+        // Find mappings for events that are NOT in current event list
+        $deletedMappings = $allMappings->filter(function ($mapping) use ($currentEventIds) {
+            return !in_array($mapping->source_event_id, $currentEventIds);
+        });
+        
+        if ($deletedMappings->isEmpty()) {
+            return;
+        }
+        
+        Log::channel('sync')->info('Detected deleted events in full sync', [
+            'rule_id' => $rule->id,
+            'total_mappings' => $allMappings->count(),
+            'current_events' => count($currentEventIds),
+            'deleted_count' => $deletedMappings->count(),
+            'deleted_event_ids' => $deletedMappings->pluck('source_event_id')->toArray(),
+        ]);
+        
+        // Process each deleted mapping
+        foreach ($deletedMappings as $mapping) {
+            $transactionId = \Str::uuid()->toString();
+            
+            // Find the target for this mapping
+            $target = $rule->targets()->where(function ($query) use ($mapping) {
+                if ($mapping->target_connection_id) {
+                    $query->where('target_connection_id', $mapping->target_connection_id);
+                } else {
+                    $query->where('target_email_connection_id', $mapping->target_email_connection_id);
+                }
+            })->first();
+            
+            if (!$target) {
+                Log::channel('sync')->warning('Target not found for deleted mapping', [
+                    'mapping_id' => $mapping->id,
+                    'source_event_id' => $mapping->source_event_id,
+                ]);
+                continue;
+            }
+            
+            try {
+                if ($target->isEmailTarget()) {
+                    // Delete blocker in email target
+                    Log::channel('sync')->info('Deleting orphaned blocker in email target', [
+                        'source_event_id' => $mapping->source_event_id,
+                        'target_email_connection_id' => $target->target_email_connection_id,
+                        'transaction_id' => $transactionId,
+                    ]);
+                    
+                    // Send cancellation email
+                    $targetEmail = $target->targetEmailConnection;
+                    if ($targetEmail && $targetEmail->target_email) {
+                        $imipService = app(\App\Services\Email\ImipEmailService::class);
+                        $imipService->sendBlockerInvitation(
+                            $targetEmail,
+                            $targetEmail->target_email,
+                            $mapping->target_event_id,
+                            'Cancelled',
+                            new \DateTime(),
+                            new \DateTime(),
+                            'CANCEL',
+                            $mapping->sequence ?? 0
+                        );
+                    }
+                } else {
+                    // Delete blocker in API target
+                    Log::channel('sync')->info('Deleting orphaned blocker in API target', [
+                        'source_event_id' => $mapping->source_event_id,
+                        'target_connection_id' => $target->target_connection_id,
+                        'target_calendar_id' => $target->target_calendar_id,
+                        'target_event_id' => $mapping->target_event_id,
+                        'target_provider' => $target->targetConnection->provider,
+                        'transaction_id' => $transactionId,
+                    ]);
+                    
+                    $targetService = $this->getService($target->targetConnection);
+                    $targetService->initializeWithConnection($target->targetConnection);
+                    
+                    try {
+                        $targetService->deleteBlocker(
+                            $target->target_calendar_id,
+                            $mapping->target_event_id
+                        );
+                        
+                        Log::channel('sync')->info('Orphaned blocker deleted successfully', [
+                            'target_event_id' => $mapping->target_event_id,
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::channel('sync')->warning('Failed to delete orphaned blocker', [
+                            'target_event_id' => $mapping->target_event_id,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
+                
+                // Delete the mapping
+                $mapping->delete();
+                
+                SyncLog::logSync(
+                    $rule->user_id,
+                    $rule->id,
+                    'deleted',
+                    'source_to_target',
+                    $mapping->source_event_id,
+                    $mapping->target_event_id,
+                    null,
+                    null,
+                    'Detected as deleted in full sync',
+                    $transactionId
+                );
+                
+            } catch (\Exception $e) {
+                Log::channel('sync')->error('Failed to process deleted mapping', [
+                    'mapping_id' => $mapping->id,
+                    'source_event_id' => $mapping->source_event_id,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
+        }
     }
 }
 
