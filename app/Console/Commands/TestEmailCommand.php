@@ -266,13 +266,11 @@ class TestEmailCommand extends Command
                 break;
                 
             case 'password-reset':
-                $resetUrl = route('password.reset', [
-                    'token' => 'test-reset-token-' . time(),
-                    'email' => $email
-                ]);
+                $token = 'test-reset-token-' . time();
                 
                 Mail::send('emails.password-reset', [
-                    'resetUrl' => $resetUrl,
+                    'user' => $user,
+                    'token' => $token,
                 ], function ($message) use ($email) {
                     $message->to($email)
                             ->subject(__('emails.password_reset_subject'));
