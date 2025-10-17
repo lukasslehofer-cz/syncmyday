@@ -38,11 +38,6 @@
     <style>
         [x-cloak] { display: none !important; }
         
-        /* Smooth transitions */
-        * {
-            transition: all 0.2s ease-in-out;
-        }
-        
         /* Gradient backgrounds */
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
