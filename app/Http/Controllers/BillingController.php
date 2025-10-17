@@ -341,11 +341,45 @@ class BillingController extends Controller
             return;
         }
 
+        $amount = $invoice->amount_paid / 100;
+        $currency = strtoupper($invoice->currency);
+        
+        // Get subscription to determine next billing date
+        $nextBillingDate = null;
+        if ($user->stripe_subscription_id) {
+            try {
+                $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+                $nextBillingDate = \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)
+                    ->format('d.m.Y');
+            } catch (\Exception $e) {
+                Log::warning('Could not retrieve subscription for payment success email', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
         Log::info('Payment succeeded', [
             'user_id' => $user->id,
-            'amount' => $invoice->amount_paid / 100,
-            'currency' => $invoice->currency,
+            'amount' => $amount,
+            'currency' => $currency,
+            'next_billing_date' => $nextBillingDate,
         ]);
+
+        // Send payment success email
+        try {
+            \Mail::to($user->email)->send(new \App\Mail\PaymentSuccessMail($user, $amount, $nextBillingDate));
+            
+            Log::info('Payment success email sent', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send payment success email', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -379,12 +413,39 @@ class BillingController extends Controller
             return;
         }
 
+        $amount = ($invoice->amount_due ?? 0) / 100;
+        $currency = strtoupper($invoice->currency ?? 'USD');
+        
         Log::warning('Payment failed', [
             'user_id' => $user->id,
             'invoice_id' => $invoice->id,
+            'amount' => $amount,
+            'currency' => $currency,
         ]);
 
-        // TODO: Send email notification to user
+        // Send payment failed email
+        try {
+            // Create simple text email for payment failure
+            \Mail::send('emails.payment-failed', [
+                'user' => $user,
+                'amount' => $amount,
+                'currency' => $currency,
+                'invoiceUrl' => $invoice->hosted_invoice_url ?? route('billing'),
+            ], function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject(__('emails.payment_failed_subject'));
+            });
+            
+            Log::info('Payment failed email sent', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send payment failed email', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

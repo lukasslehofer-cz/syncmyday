@@ -126,6 +126,28 @@ return [
     'payment_success_billing' => 'Rozliczenia i subskrypcja',
     'payment_success_thank_you' => 'Dziękujemy za wybranie SyncMyDay! Cieszymy się, że możemy pomóc Ci utrzymać kalendarz idealnie zsynchronizowane.',
 
+    // Payment Failed (TODO: Translate to Polish)
+    'payment_failed_subject' => 'Payment Failed - Action Required',
+    'payment_failed_greeting' => 'Hello :name,',
+    'payment_failed_intro' => 'We were unable to process your recent payment for SyncMyDay Pro subscription.',
+    'payment_failed_title' => 'Payment Failed',
+    'payment_failed_amount_due' => 'Amount due',
+    'payment_failed_why' => 'Why did this happen?',
+    'payment_failed_reason_1' => 'Insufficient funds in your account',
+    'payment_failed_reason_2' => 'Expired or invalid payment method',
+    'payment_failed_reason_3' => 'Security hold by your bank',
+    'payment_failed_reason_4' => 'Incorrect billing information',
+    'payment_failed_action_required' => 'Action Required',
+    'payment_failed_action_text' => 'Please update your payment information to continue your subscription and maintain access to all Pro features.',
+    'payment_failed_update_payment' => 'Update Payment Method',
+    'payment_failed_deadline_title' => 'Important',
+    'payment_failed_deadline_text' => 'If payment is not received within 7 days, your subscription will be downgraded to the Free plan.',
+    'payment_failed_need_help' => 'Need Help?',
+    'payment_failed_help_text' => 'If you need assistance with payment or have questions about your subscription:',
+    'payment_failed_billing' => 'Billing & Subscription',
+    'payment_failed_contact' => 'Contact Support',
+    'payment_failed_thank_you' => 'Thank you for your prompt attention to this matter.',
+
     // Password Reset
     'password_reset_subject' => 'Zresetuj hasło',
     'password_reset_greeting' => 'Witaj :name!',

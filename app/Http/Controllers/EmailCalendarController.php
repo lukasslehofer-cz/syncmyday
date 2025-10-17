@@ -68,18 +68,47 @@ class EmailCalendarController extends Controller
                 'status' => 'active',
             ]);
 
-            // Send verification email
-            $connection->sendTargetEmailVerificationNotification();
+            // Check if target email is the same as user's verified email
+            $user = auth()->user();
+            $targetEmailMatchesUser = strtolower(trim($validated['target_email'])) === strtolower(trim($user->email));
+            $userEmailVerified = $user->hasVerifiedEmail();
+            
+            if ($targetEmailMatchesUser && $userEmailVerified) {
+                // Skip verification email - automatically verify since user already verified this email
+                $connection->markTargetEmailAsVerified();
+                
+                Log::info('Email calendar target email auto-verified (matches user email)', [
+                    'connection_id' => $connection->id,
+                    'target_email' => $connection->target_email,
+                    'user_id' => $user->id,
+                ]);
+            } else {
+                // Send verification email
+                $connection->sendTargetEmailVerificationNotification();
+                
+                Log::info('Email calendar verification sent', [
+                    'connection_id' => $connection->id,
+                    'target_email' => $connection->target_email,
+                    'user_id' => $user->id,
+                ]);
+            }
 
             Log::info('Email calendar connection created', [
                 'connection_id' => $connection->id,
                 'email_address' => $connection->email_address,
                 'target_email' => $connection->target_email,
                 'user_id' => auth()->id(),
+                'auto_verified' => $targetEmailMatchesUser && $userEmailVerified,
             ]);
 
-            return redirect()->route('email-calendars.verification.notice', $connection)
-                ->with('success', __('messages.email_calendar_created_verify'));
+            // Redirect based on verification status
+            if ($targetEmailMatchesUser && $userEmailVerified) {
+                return redirect()->route('connections.index')
+                    ->with('success', __('messages.email_calendar_created'));
+            } else {
+                return redirect()->route('email-calendars.verification.notice', $connection)
+                    ->with('success', __('messages.email_calendar_created_verify'));
+            }
 
         } catch (\Exception $e) {
             Log::error('Failed to create email calendar connection', [

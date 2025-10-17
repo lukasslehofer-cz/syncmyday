@@ -126,6 +126,28 @@ return [
     'payment_success_billing' => 'Fakturace a předplatné',
     'payment_success_thank_you' => 'Děkujeme, že jste si vybrali SyncMyDay! Těšíme se, že vám pomůžeme udržet vaše kalendáře dokonale synchronizované.',
 
+    // Payment Failed
+    'payment_failed_subject' => 'Platba se nezdařila - Nutná akce',
+    'payment_failed_greeting' => 'Dobrý den :name,',
+    'payment_failed_intro' => 'Nepodařilo se nám zpracovat vaši platbu za předplatné SyncMyDay Pro.',
+    'payment_failed_title' => 'Platba se nezdařila',
+    'payment_failed_amount_due' => 'Dlužná částka',
+    'payment_failed_why' => 'Proč k tomu došlo?',
+    'payment_failed_reason_1' => 'Nedostatek prostředků na účtu',
+    'payment_failed_reason_2' => 'Platební metoda je neplatná nebo vypršela',
+    'payment_failed_reason_3' => 'Bezpečnostní blokace od vaší banky',
+    'payment_failed_reason_4' => 'Nesprávné fakturační údaje',
+    'payment_failed_action_required' => 'Nutná akce',
+    'payment_failed_action_text' => 'Prosím aktualizujte své platební údaje, abyste mohli pokračovat v používání všech Pro funkcí.',
+    'payment_failed_update_payment' => 'Aktualizovat platební metodu',
+    'payment_failed_deadline_title' => 'Důležité',
+    'payment_failed_deadline_text' => 'Pokud nezaplatíte do 7 dnů, vaše předplatné bude downgrádováno na Free plán.',
+    'payment_failed_need_help' => 'Potřebujete pomoc?',
+    'payment_failed_help_text' => 'Pokud potřebujete pomoc s platbou nebo máte dotazy k předplatnému:',
+    'payment_failed_billing' => 'Fakturace & Předplatné',
+    'payment_failed_contact' => 'Kontaktovat podporu',
+    'payment_failed_thank_you' => 'Děkujeme za vaši rychlou reakci na tuto záležitost.',
+
     // Password Reset
     'password_reset_subject' => 'Reset hesla',
     'password_reset_greeting' => 'Ahoj :name!',
