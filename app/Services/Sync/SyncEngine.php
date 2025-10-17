@@ -208,6 +208,19 @@ class SyncEngine
             // Filter by time range even for incremental syncs
             $eventStart = $this->getEventStart($event, $sourceConnection->provider);
             
+            // DEBUG: Log if event is missing start/end
+            if (!$eventStart && $sourceConnection->provider === 'microsoft') {
+                Log::channel('sync')->debug('Microsoft event missing start time', [
+                    'event_id' => $this->getEventId($event),
+                    'has_start_key' => isset($event['start']),
+                    'has_end_key' => isset($event['end']),
+                    'has_@removed' => isset($event['@removed']),
+                    'has_@odata.removed' => isset($event['@odata.removed']),
+                    'subject' => $event['subject'] ?? 'N/A',
+                    'event_keys' => array_keys($event),
+                ]);
+            }
+            
             if ($eventStart) {
                 // Skip events outside our sync range
                 if ($eventStart < $timeMin || $eventStart > $timeMax) {
@@ -1127,6 +1140,26 @@ class SyncEngine
     
     private function normalizeMicrosoftEvent($event): array
     {
+        // Defensive: Check if event has start/end (may be missing for deleted/malformed events)
+        if (!isset($event['start']['dateTime']) || !isset($event['end']['dateTime'])) {
+            Log::channel('sync')->warning('Microsoft event missing start/end datetime', [
+                'event_id' => $event['id'] ?? 'unknown',
+                'has_start' => isset($event['start']),
+                'has_end' => isset($event['end']),
+                'event_keys' => array_keys($event),
+            ]);
+            
+            // Return minimal structure with dummy dates to prevent crashes
+            return [
+                'id' => $event['id'] ?? 'unknown',
+                'start' => now()->format('c'),
+                'end' => now()->addHour()->format('c'),
+                'isAllDay' => false,
+                'busyStatus' => 'free',
+                'showAs' => 'free',
+            ];
+        }
+        
         $isAllDay = $event['isAllDay'] ?? false;
         
         // Same logic for Microsoft: all-day events are 'busy' by default
@@ -1169,7 +1202,7 @@ class SyncEngine
         try {
             return match($provider) {
                 'google' => new \DateTime($event->getStart()->getDateTime() ?? $event->getStart()->getDate()),
-                'microsoft' => new \DateTime($event['start']['dateTime']),
+                'microsoft' => isset($event['start']['dateTime']) ? new \DateTime($event['start']['dateTime']) : null,
                 'caldav', 'apple' => $event['start'], // Already DateTime object
                 default => null,
             };
@@ -1183,7 +1216,7 @@ class SyncEngine
         try {
             return match($provider) {
                 'google' => new \DateTime($event->getEnd()->getDateTime() ?? $event->getEnd()->getDate()),
-                'microsoft' => new \DateTime($event['end']['dateTime']),
+                'microsoft' => isset($event['end']['dateTime']) ? new \DateTime($event['end']['dateTime']) : null,
                 'caldav', 'apple' => $event['end'], // Already DateTime object
                 default => null,
             };
