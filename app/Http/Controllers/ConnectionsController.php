@@ -171,8 +171,39 @@ class ConnectionsController extends Controller
             abort(403);
         }
 
+        // Log webhook subscriptions before attempting to stop them
+        $webhookSubscriptions = $connection->webhookSubscriptions()->get();
+        $webhookCount = $webhookSubscriptions->count();
+        
+        Log::info('Stopping webhook subscriptions before deleting connection', [
+            'connection_id' => $connection->id,
+            'provider' => $connection->provider,
+            'webhook_count' => $webhookCount,
+            'subscriptions' => $webhookSubscriptions->map(function($sub) {
+                return [
+                    'id' => $sub->id,
+                    'channel_id' => $sub->provider_subscription_id,
+                    'resource_id' => $sub->resource_id,
+                    'calendar_id' => $sub->calendar_id,
+                    'status' => $sub->status,
+                    'expires_at' => $sub->expires_at,
+                ];
+            })->toArray(),
+        ]);
+        
+        if ($webhookCount === 0) {
+            Log::warning('No webhook subscriptions found in database - channel may still be active on provider side', [
+                'connection_id' => $connection->id,
+                'provider' => $connection->provider,
+                'provider_email' => $connection->provider_email,
+            ]);
+        }
+
         // Stop all webhook subscriptions for this connection
-        foreach ($connection->webhookSubscriptions as $subscription) {
+        $stoppedCount = 0;
+        $failedCount = 0;
+        
+        foreach ($webhookSubscriptions as $subscription) {
             try {
                 if ($connection->provider === 'google') {
                     $service = app(GoogleCalendarService::class);
@@ -183,13 +214,34 @@ class ConnectionsController extends Controller
                     $service->initializeWithConnection($connection);
                     $service->stopWebhook($subscription->provider_subscription_id);
                 }
-            } catch (\Exception $e) {
-                Log::warning('Failed to stop webhook during connection deletion', [
+                
+                $stoppedCount++;
+                Log::info('Webhook stopped successfully', [
+                    'connection_id' => $connection->id,
                     'subscription_id' => $subscription->id,
+                    'channel_id' => $subscription->provider_subscription_id,
+                    'calendar_id' => $subscription->calendar_id,
+                ]);
+                
+            } catch (\Exception $e) {
+                $failedCount++;
+                Log::warning('Failed to stop webhook during connection deletion', [
+                    'connection_id' => $connection->id,
+                    'subscription_id' => $subscription->id,
+                    'channel_id' => $subscription->provider_subscription_id,
+                    'resource_id' => $subscription->resource_id,
                     'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
                 ]);
             }
         }
+        
+        Log::info('Webhook cleanup completed', [
+            'connection_id' => $connection->id,
+            'total' => $webhookCount,
+            'stopped' => $stoppedCount,
+            'failed' => $failedCount,
+        ]);
 
         $provider = $connection->provider;
         $connection->delete();

@@ -39,11 +39,25 @@ class WebhookController extends Controller
         // Verify connection exists
         $connection = CalendarConnection::find($connectionId);
         if (!$connection) {
-            Log::channel('webhook')->warning('Connection not found', [
+            Log::channel('webhook')->warning('Connection not found - orphaned webhook channel detected', [
                 'connection_id' => $connectionId,
+                'channel_id' => $channelId,
+                'resource_id' => $resourceId,
+                'resource_state' => $resourceState,
+                'message' => 'This webhook channel was not properly stopped when connection was deleted. ' .
+                            'Google will continue sending notifications until channel expires or is manually stopped.',
             ]);
-            return response('Not Found', 404);
+            
+            // Return 200 instead of 404 to prevent Google from retrying
+            // Note: Google will eventually stop sending to channels that consistently return errors,
+            // but 200 is safer and prevents unnecessary retries
+            return response('OK', 200);
         }
+
+        Log::channel('webhook')->debug('Connection found, looking for subscription', [
+            'connection_id' => $connectionId,
+            'channel_id' => $channelId,
+        ]);
 
         // Find the webhook subscription to get calendar ID
         $subscription = $connection->webhookSubscriptions()
@@ -52,12 +66,33 @@ class WebhookController extends Controller
             ->first();
 
         if (!$subscription) {
-            Log::channel('webhook')->warning('Subscription not found', [
+            // Log all subscriptions for this connection to help debug
+            $allSubscriptions = $connection->webhookSubscriptions()->get();
+            
+            Log::channel('webhook')->warning('Subscription not found for channel', [
                 'connection_id' => $connectionId,
                 'channel_id' => $channelId,
+                'resource_id' => $resourceId,
+                'all_subscriptions_count' => $allSubscriptions->count(),
+                'all_subscriptions' => $allSubscriptions->map(function($sub) {
+                    return [
+                        'id' => $sub->id,
+                        'channel_id' => $sub->provider_subscription_id,
+                        'calendar_id' => $sub->calendar_id,
+                        'status' => $sub->status,
+                        'expires_at' => $sub->expires_at,
+                    ];
+                })->toArray(),
             ]);
             return response('OK', 200); // Still return 200 to avoid retries
         }
+
+        Log::channel('webhook')->info('Processing webhook', [
+            'connection_id' => $connectionId,
+            'subscription_id' => $subscription->id,
+            'calendar_id' => $subscription->calendar_id,
+            'channel_id' => $channelId,
+        ]);
 
         // Dispatch job to process changes
         ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id);
