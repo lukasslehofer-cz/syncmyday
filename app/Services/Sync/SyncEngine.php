@@ -268,6 +268,14 @@ class SyncEngine
         // Check if event is deleted/cancelled
         $isDeleted = $this->isEventDeleted($event, $sourceConnection->provider);
 
+        Log::channel('sync')->info('Processing event', [
+            'event_id' => $sourceEventId,
+            'rule_id' => $rule->id,
+            'is_deleted' => $isDeleted,
+            'provider' => $sourceConnection->provider,
+            'transaction_id' => $transactionId,
+        ]);
+
         // Apply filters
         if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
             // Don't log filtered events to DB - would spam dashboard
@@ -284,6 +292,11 @@ class SyncEngine
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
                     if ($isDeleted) {
+                        Log::channel('sync')->info('Deleting blocker in email target', [
+                            'event_id' => $sourceEventId,
+                            'target_email_connection_id' => $target->target_email_connection_id,
+                            'transaction_id' => $transactionId,
+                        ]);
                         $this->deleteBlockerInEmailTarget($event, $target, $rule, $transactionId, $existingMappings);
                     } else {
                         $this->createOrUpdateBlockerInEmailTarget($event, $target, $sourceConnection, $rule, $transactionId, $existingMappings);
@@ -294,6 +307,13 @@ class SyncEngine
                     $targetService->initializeWithConnection($target->targetConnection);
 
                     if ($isDeleted) {
+                        Log::channel('sync')->info('Deleting blocker in API target', [
+                            'event_id' => $sourceEventId,
+                            'target_connection_id' => $target->target_connection_id,
+                            'target_calendar_id' => $target->target_calendar_id,
+                            'target_provider' => $target->targetConnection->provider,
+                            'transaction_id' => $transactionId,
+                        ]);
                         $this->deleteBlockerInTarget($event, $target, $targetService, $rule, $transactionId, $existingMappings);
                     } else {
                         $this->createOrUpdateBlockerInTarget($event, $target, $targetService, $sourceConnection, $rule, $transactionId, $existingMappings);
@@ -573,6 +593,14 @@ class SyncEngine
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
         
+        Log::channel('sync')->info('Looking for mapping to delete', [
+            'source_event_id' => $sourceEventId,
+            'rule_id' => $rule->id,
+            'target_connection_id' => $target->target_connection_id,
+            'target_calendar_id' => $target->target_calendar_id,
+            'transaction_id' => $transactionId,
+        ]);
+        
         // Find the mapping
         // OPTIMIZATION: Use pre-loaded mappings if available
         $mappingKey = $target->target_connection_id 
@@ -589,12 +617,25 @@ class SyncEngine
             );
 
         if ($mapping) {
+            Log::channel('sync')->info('Mapping found, deleting blocker', [
+                'mapping_id' => $mapping->id,
+                'source_event_id' => $sourceEventId,
+                'target_event_id' => $mapping->target_event_id,
+                'target_calendar_id' => $target->target_calendar_id,
+                'transaction_id' => $transactionId,
+            ]);
+            
             try {
                 // Delete the blocker in target calendar
                 $targetService->deleteBlocker(
                     $target->target_calendar_id,
                     $mapping->target_event_id
                 );
+                
+                Log::channel('sync')->info('Blocker deleted successfully in target', [
+                    'target_event_id' => $mapping->target_event_id,
+                    'target_calendar_id' => $target->target_calendar_id,
+                ]);
                 
                 // Delete the mapping
                 $mapping->delete();
@@ -615,7 +656,9 @@ class SyncEngine
                 // Blocker might be already deleted manually
                 Log::channel('sync')->warning('Failed to delete blocker', [
                     'target_event_id' => $mapping->target_event_id,
+                    'target_calendar_id' => $target->target_calendar_id,
                     'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
                 ]);
                 
                 // Still delete the mapping
@@ -636,9 +679,12 @@ class SyncEngine
             }
         } else {
             // No mapping found - event was probably never synced or filtered out
-            Log::channel('sync')->debug('No mapping found for deleted event', [
-                'event_id' => $sourceEventId,
+            Log::channel('sync')->warning('No mapping found for deleted event', [
+                'source_event_id' => $sourceEventId,
                 'rule_id' => $rule->id,
+                'target_connection_id' => $target->target_connection_id,
+                'target_calendar_id' => $target->target_calendar_id,
+                'transaction_id' => $transactionId,
             ]);
         }
     }
@@ -1111,12 +1157,22 @@ class SyncEngine
 
     private function isEventDeleted($event, string $provider): bool
     {
-        return match($provider) {
+        $isDeleted = match($provider) {
             'google' => $event->getStatus() === 'cancelled',
             'microsoft' => isset($event['@removed']) && $event['@removed'],
             'caldav', 'apple' => isset($event['status']) && $event['status'] === 'cancelled',
             default => false,
         };
+        
+        if ($isDeleted) {
+            Log::channel('sync')->info('Event detected as deleted', [
+                'event_id' => $this->getEventId($event),
+                'provider' => $provider,
+                'status' => $provider === 'google' ? $event->getStatus() : ($event['status'] ?? 'unknown'),
+            ]);
+        }
+        
+        return $isDeleted;
     }
 }
 

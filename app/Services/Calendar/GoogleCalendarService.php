@@ -269,13 +269,28 @@ class GoogleCalendarService
      */
     public function deleteBlocker(string $calendarId, string $eventId): void
     {
+        Log::channel('sync')->info('Attempting to delete Google blocker', [
+            'calendar_id' => $calendarId,
+            'event_id' => $eventId,
+        ]);
+        
         $this->rateLimitedCall('deleteBlocker', function () use ($calendarId, $eventId) {
-            $this->service->events->delete($calendarId, $eventId);
-            
-            Log::channel('sync')->info('Google blocker deleted', [
-                'calendar_id' => $calendarId,
-                'event_id' => $eventId,
-            ]);
+            try {
+                $this->service->events->delete($calendarId, $eventId);
+                
+                Log::channel('sync')->info('Google blocker deleted successfully', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                ]);
+            } catch (\Exception $e) {
+                Log::channel('sync')->error('Failed to delete Google blocker', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+                throw $e;
+            }
         });
     }
 

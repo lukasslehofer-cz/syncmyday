@@ -265,13 +265,28 @@ class MicrosoftCalendarService
      */
     public function deleteBlocker(string $calendarId, string $eventId): void
     {
-        $this->graph->createRequest('DELETE', "/me/calendars/{$calendarId}/events/{$eventId}")
-            ->execute();
-
-        Log::channel('sync')->info('Microsoft blocker deleted', [
+        Log::channel('sync')->info('Attempting to delete Microsoft blocker', [
             'calendar_id' => $calendarId,
             'event_id' => $eventId,
         ]);
+        
+        try {
+            $this->graph->createRequest('DELETE', "/me/calendars/{$calendarId}/events/{$eventId}")
+                ->execute();
+
+            Log::channel('sync')->info('Microsoft blocker deleted successfully', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+            ]);
+        } catch (\Exception $e) {
+            Log::channel('sync')->error('Failed to delete Microsoft blocker', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            throw $e;
+        }
     }
 
     /**
