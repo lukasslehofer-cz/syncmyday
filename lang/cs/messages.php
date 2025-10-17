@@ -683,6 +683,8 @@ return [
     // Feedback Form
     'share_feedback' => 'Sdílet zpětnou vazbu',
     'feedback_description' => 'Je nám líto, že odcházíte. Vaše zpětná vazba nám pomáhá vylepšovat SyncMyDay pro všechny.',
+    'feedback_from' => 'Zpětná vazba od',
+    'invalid_feedback_link' => 'Tento odkaz na zpětnou vazbu je neplatný nebo vypršel.',
     'feedback_reason_label' => 'Proč jste smazali svůj účet?',
     'feedback_reason_select' => '-- Prosím vyberte důvod --',
     'feedback_reason_not_using' => 'Nevyužíval(a) jsem to dostatečně',

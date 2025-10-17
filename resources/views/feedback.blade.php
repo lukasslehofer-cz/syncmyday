@@ -3,6 +3,24 @@
 @section('title', __('messages.share_feedback'))
 
 @section('content')
+<style>
+/* Custom select styling to match sync-rules/create */
+.custom-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.5em 1.5em;
+    padding-right: 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.custom-select option {
+    font-family: inherit;
+    font-weight: normal;
+}
+</style>
+
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="mb-8">
         <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.share_feedback') }}</h1>
@@ -32,31 +50,27 @@
     @endif
 
     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-        <form action="{{ route('feedback.send') }}" method="POST">
+        <!-- User Info Display (read-only) -->
+        <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-indigo-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-indigo-900 mb-1">{{ __('messages.feedback_from') }}</p>
+                    <p class="text-sm text-indigo-700">{{ $userName }}</p>
+                    <p class="text-xs text-indigo-600">{{ $userEmail }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <form action="{{ route('feedback.send', ['email' => $userEmail, 'name' => $userName, 'signature' => request()->query('signature'), 'expires' => request()->query('expires')]) }}" method="POST">
             @csrf
             
             <div class="mb-6">
-                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.your_name') }}</label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('name') border-red-300 @enderror">
-                @error('name')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-6">
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.your_email') }}</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('email') border-red-300 @enderror">
-                @error('email')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-6">
                 <label for="reason" class="block text-sm font-semibold text-gray-700 mb-2">{{ __('messages.feedback_reason_label') }}</label>
                 <select id="reason" name="reason" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 @error('reason') border-red-300 @enderror">
+                    class="custom-select w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white transition shadow-sm hover:border-indigo-300 @error('reason') border-red-300 @enderror">
                     <option value="">{{ __('messages.feedback_reason_select') }}</option>
                     <option value="not_using" {{ old('reason') === 'not_using' ? 'selected' : '' }}>{{ __('messages.feedback_reason_not_using') }}</option>
                     <option value="too_expensive" {{ old('reason') === 'too_expensive' ? 'selected' : '' }}>{{ __('messages.feedback_reason_too_expensive') }}</option>

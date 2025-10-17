@@ -324,6 +324,8 @@ return [
     // Feedback Form
     'share_feedback' => 'Share Your Feedback',
     'feedback_description' => 'We\'re sorry to see you go. Your feedback helps us improve SyncMyDay for everyone.',
+    'feedback_from' => 'Feedback from',
+    'invalid_feedback_link' => 'This feedback link is invalid or has expired.',
     'feedback_reason_label' => 'Why did you delete your account?',
     'feedback_reason_select' => '-- Please select a reason --',
     'feedback_reason_not_using' => 'I wasn\'t using it enough',
