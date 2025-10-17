@@ -18,14 +18,14 @@ class TestEmailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'email:test {email?} {--type=all : Type of email to send (all, welcome, trial-7, trial-1, verify, payment)}';
+    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Test email sending functionality';
+    protected $description = 'Test email sending functionality - sends all 9 email types in selected language';
 
     /**
      * Execute the console command.
@@ -43,17 +43,37 @@ class TestEmailCommand extends Command
             return Command::FAILURE;
         }
 
-        // Find or create a test user
+        // Get and validate locale
+        $locale = $this->option('locale');
+        $supportedLocales = ['cs', 'en', 'de', 'pl', 'sk'];
+        
+        if (!in_array($locale, $supportedLocales)) {
+            $this->error('Invalid locale! Supported: ' . implode(', ', $supportedLocales));
+            return Command::FAILURE;
+        }
+
+        // Set application locale
+        app()->setLocale($locale);
+        $this->line('  🌍 Language: ' . strtoupper($locale));
+        $this->newLine();
+
+        // Find or create a test user with selected locale
         $testUser = User::firstOrCreate(
             ['email' => $email],
             [
                 'name' => 'Test User',
                 'password' => bcrypt('test-password'),
-                'locale' => 'cs',
+                'locale' => $locale,
                 'subscription_tier' => 'pro',
                 'subscription_ends_at' => now()->addDays(30),
             ]
         );
+
+        // Update locale if user exists but has different locale
+        if (!$testUser->wasRecentlyCreated && $testUser->locale !== $locale) {
+            $testUser->update(['locale' => $locale]);
+            $this->line('  Updated user locale to: ' . $locale);
+        }
 
         if ($testUser->wasRecentlyCreated) {
             $this->line('  Created test user in database');
@@ -100,36 +120,41 @@ class TestEmailCommand extends Command
      */
     protected function sendAllEmails($email, $user)
     {
-        $this->info('📤 Sending ALL email types to: ' . $email);
+        $this->info('📤 Sending ALL 9 email types to: ' . $email);
+        $this->info('🌍 Language: ' . strtoupper(app()->getLocale()));
         $this->newLine();
         
         $emails = [
-            ['name' => '1️⃣  Welcome Email', 'mail' => new WelcomeMail($user)],
-            ['name' => '2️⃣  Verification Email', 'mail' => null, 'custom' => true],
-            ['name' => '3️⃣  Trial Ending (7 days)', 'mail' => new TrialEndingInSevenDaysMail($user)],
-            ['name' => '4️⃣  Trial Ending (1 day)', 'mail' => new TrialEndingTomorrowMail($user)],
-            ['name' => '5️⃣  Payment Success', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
+            ['name' => '1️⃣  Welcome Email', 'type' => 'mailable', 'mail' => new WelcomeMail($user)],
+            ['name' => '2️⃣  Verify Email (User Registration)', 'type' => 'verify-email'],
+            ['name' => '3️⃣  Verify Email Calendar', 'type' => 'verify-email-calendar'],
+            ['name' => '4️⃣  Password Reset', 'type' => 'password-reset'],
+            ['name' => '5️⃣  Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
+            ['name' => '6️⃣  Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
+            ['name' => '7️⃣  Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
+            ['name' => '8️⃣  Payment Failed', 'type' => 'payment-failed'],
+            ['name' => '9️⃣  Contact Form', 'type' => 'contact'],
         ];
         
         foreach ($emails as $emailData) {
             $this->line($emailData['name']);
             
-            if (isset($emailData['custom']) && $emailData['custom']) {
-                $this->sendVerificationEmail($email, $user);
-            } else {
+            if ($emailData['type'] === 'mailable') {
                 Mail::to($email)->send($emailData['mail']);
                 $this->call('queue:work', ['--once' => true, '--tries' => 1, '--quiet' => true]);
+            } else {
+                $this->sendCustomEmail($email, $user, $emailData['type']);
             }
             
             $this->line('  ✅ Sent');
             
             // Add delay to avoid rate limiting
-            sleep(2);
+            sleep(1);
             $this->newLine();
         }
         
-        $this->info('🎉 All emails sent successfully!');
-        $this->line('🔗 Check Mailtrap: https://mailtrap.io/inboxes');
+        $this->info('🎉 All 9 emails sent successfully!');
+        $this->line('🔗 Check your inbox: ' . $email);
     }
 
     /**
@@ -139,6 +164,8 @@ class TestEmailCommand extends Command
     {
         $this->info('📤 Sending email to: ' . $email);
         $this->line('  Type: ' . $type);
+        $this->line('  Language: ' . strtoupper(app()->getLocale()));
+        $this->newLine();
         
         switch ($type) {
             case 'welcome':
@@ -150,47 +177,113 @@ class TestEmailCommand extends Command
             case 'trial-1':
                 Mail::to($email)->send(new TrialEndingTomorrowMail($user));
                 break;
-            case 'payment':
+            case 'payment-success':
                 Mail::to($email)->send(new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y')));
                 break;
             case 'verify':
-                $this->sendVerificationEmail($email, $user);
+            case 'verify-email':
+            case 'verify-calendar':
+            case 'password-reset':
+            case 'payment-failed':
+            case 'contact':
+                $this->sendCustomEmail($email, $user, $type);
                 return;
             default:
                 $this->error('Unknown email type: ' . $type);
+                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact');
                 return;
         }
         
-        $this->newLine();
-        $this->info('✅ Email queued successfully!');
-        $this->line('⏳ Processing queue job...');
-        
-        $this->call('queue:work', ['--once' => true, '--tries' => 1]);
+        $this->info('⏳ Processing queue job...');
+        $this->call('queue:work', ['--once' => true, '--tries' => 1, '--quiet' => true]);
         
         $this->newLine();
         $this->info('✅ Email sent successfully!');
-        $this->line('🔗 Mailtrap: https://mailtrap.io/inboxes');
+        $this->line('🔗 Check your inbox: ' . $email);
     }
 
     /**
-     * Send verification email
+     * Send custom email types (using Mail::send)
      */
-    protected function sendVerificationEmail($email, $user)
+    protected function sendCustomEmail($email, $user, $type)
     {
-        // Generate verification URL
-        $verificationUrl = URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(60),
-            ['id' => $user->id, 'hash' => sha1($user->email)]
-        );
-        
-        // Send email directly (not queued)
-        Mail::send('emails.verify-email', [
-            'user' => $user,
-            'verificationUrl' => $verificationUrl,
-        ], function ($message) use ($email) {
-            $message->to($email)
-                    ->subject(__('emails.verify_email_subject'));
-        });
+        switch ($type) {
+            case 'verify':
+            case 'verify-email':
+                $verificationUrl = URL::temporarySignedRoute(
+                    'verification.verify',
+                    now()->addMinutes(60),
+                    ['id' => $user->id, 'hash' => sha1($user->email)]
+                );
+                
+                Mail::send('emails.verify-email', [
+                    'user' => $user,
+                    'verificationUrl' => $verificationUrl,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                            ->subject(__('emails.verify_email_subject'));
+                });
+                break;
+                
+            case 'verify-calendar':
+            case 'verify-email-calendar':
+                $verificationUrl = route('email-calendars.verify', [
+                    'token' => 'test-verification-token-' . time()
+                ]);
+                
+                Mail::send('emails.verify-email-calendar', [
+                    'targetEmail' => $email,
+                    'verificationUrl' => $verificationUrl,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                            ->subject(__('emails.verify_email_calendar_subject'));
+                });
+                break;
+                
+            case 'password-reset':
+                $resetUrl = route('password.reset', [
+                    'token' => 'test-reset-token-' . time(),
+                    'email' => $email
+                ]);
+                
+                Mail::send('emails.password-reset', [
+                    'resetUrl' => $resetUrl,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                            ->subject(__('emails.password_reset_subject'));
+                });
+                break;
+                
+            case 'payment-failed':
+                $invoiceUrl = 'https://syncmyday.cz/billing';
+                
+                Mail::send('emails.payment-failed', [
+                    'user' => $user,
+                    'amount' => '29.00',
+                    'currency' => 'EUR',
+                    'invoiceUrl' => $invoiceUrl,
+                ], function ($message) use ($email) {
+                    $message->to($email)
+                            ->subject(__('emails.payment_failed_subject'));
+                });
+                break;
+                
+            case 'contact':
+                $supportEmail = app()->getLocale() === 'cs' ? 'support@syncmyday.cz' : 'support@syncmyday.eu';
+                
+                Mail::send('emails.contact', [
+                    'contactName' => 'Test User',
+                    'contactEmail' => $email,
+                    'contactSubject' => 'Test Contact Message',
+                    'contactMessage' => 'This is a test contact form submission to verify the email template.',
+                ], function ($message) use ($supportEmail, $email) {
+                    $message->to($supportEmail)
+                            ->replyTo($email, 'Test User')
+                            ->subject('Contact Form: Test Contact Message');
+                });
+                
+                $this->line('  📧 Sent to support: ' . $supportEmail);
+                break;
+        }
     }
 }
