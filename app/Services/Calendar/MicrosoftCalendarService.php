@@ -24,6 +24,7 @@ class MicrosoftCalendarService
     private string $redirectUri;
     private string $tenant;
     private ?Graph $graph = null;
+    private ?string $userTimezone = null;
 
     public function __construct()
     {
@@ -108,6 +109,13 @@ class MicrosoftCalendarService
 
         $this->graph = new Graph();
         $this->graph->setAccessToken($accessToken);
+        
+        // Store user timezone for later use in createBlocker/updateBlocker
+        if ($connection->user) {
+            $this->userTimezone = $connection->user->timezone ?? 'UTC';
+        } else {
+            $this->userTimezone = 'UTC';
+        }
     }
 
     /**
@@ -191,6 +199,16 @@ class MicrosoftCalendarService
         \DateTime $end,
         string $transactionId
     ): string {
+        // Use stored user timezone (set during initializeWithConnection)
+        $userTimezone = $this->userTimezone ?? 'UTC';
+        
+        // Convert times to user's timezone
+        $startConverted = clone $start;
+        $startConverted->setTimezone(new \DateTimeZone($userTimezone));
+        
+        $endConverted = clone $end;
+        $endConverted->setTimezone(new \DateTimeZone($userTimezone));
+        
         $event = [
             'subject' => $title,
             'body' => [
@@ -198,12 +216,12 @@ class MicrosoftCalendarService
                 'content' => 'Auto-synced by SyncMyDay',
             ],
             'start' => [
-                'dateTime' => $start->format('Y-m-d\TH:i:s'),
-                'timeZone' => 'UTC',
+                'dateTime' => $startConverted->format('Y-m-d\TH:i:s'),
+                'timeZone' => $userTimezone,
             ],
             'end' => [
-                'dateTime' => $end->format('Y-m-d\TH:i:s'),
-                'timeZone' => 'UTC',
+                'dateTime' => $endConverted->format('Y-m-d\TH:i:s'),
+                'timeZone' => $userTimezone,
             ],
             'showAs' => 'busy',
             'sensitivity' => 'private',
@@ -221,6 +239,7 @@ class MicrosoftCalendarService
             'calendar_id' => $calendarId,
             'event_id' => $response->getId(),
             'transaction_id' => $transactionId,
+            'timezone' => $userTimezone,
         ]);
 
         return $response->getId();
@@ -237,15 +256,25 @@ class MicrosoftCalendarService
         \DateTime $end,
         string $transactionId
     ): void {
+        // Use stored user timezone (set during initializeWithConnection)
+        $userTimezone = $this->userTimezone ?? 'UTC';
+        
+        // Convert times to user's timezone
+        $startConverted = clone $start;
+        $startConverted->setTimezone(new \DateTimeZone($userTimezone));
+        
+        $endConverted = clone $end;
+        $endConverted->setTimezone(new \DateTimeZone($userTimezone));
+        
         $update = [
             'subject' => $title,
             'start' => [
-                'dateTime' => $start->format('Y-m-d\TH:i:s'),
-                'timeZone' => 'UTC',
+                'dateTime' => $startConverted->format('Y-m-d\TH:i:s'),
+                'timeZone' => $userTimezone,
             ],
             'end' => [
-                'dateTime' => $end->format('Y-m-d\TH:i:s'),
-                'timeZone' => 'UTC',
+                'dateTime' => $endConverted->format('Y-m-d\TH:i:s'),
+                'timeZone' => $userTimezone,
             ],
         ];
 
@@ -257,6 +286,7 @@ class MicrosoftCalendarService
             'calendar_id' => $calendarId,
             'event_id' => $eventId,
             'transaction_id' => $transactionId,
+            'timezone' => $userTimezone,
         ]);
     }
 

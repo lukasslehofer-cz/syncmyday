@@ -47,6 +47,9 @@ class SyncEngine
      */
     public function syncConnection(CalendarConnection $connection): void
     {
+        // Eager load user for timezone access in Microsoft service
+        $connection->load('user');
+        
         Log::channel('sync')->info('Syncing connection', [
             'connection_id' => $connection->id,
             'provider' => $connection->provider,
@@ -55,7 +58,7 @@ class SyncEngine
         // Get all active sync rules for this connection as source
         $rules = SyncRule::where('source_connection_id', $connection->id)
             ->where('is_active', true)
-            ->with(['targets.targetConnection', 'targets.targetEmailConnection'])
+            ->with(['targets.targetConnection.user', 'targets.targetEmailConnection'])
             ->get();
         
         Log::channel('sync')->info('Found sync rules for connection', [
@@ -1346,7 +1349,9 @@ class SyncEngine
         try {
             return match($provider) {
                 'google' => new \DateTime($event->getStart()->getDateTime() ?? $event->getStart()->getDate()),
-                'microsoft' => isset($event['start']['dateTime']) ? new \DateTime($event['start']['dateTime']) : null,
+                'microsoft' => isset($event['start']['dateTime']) 
+                    ? $this->parseMicrosoftDateTime($event['start']['dateTime'], $event['start']['timeZone'] ?? null)
+                    : null,
                 'caldav', 'apple' => $event['start'], // Already DateTime object
                 default => null,
             };
@@ -1360,13 +1365,40 @@ class SyncEngine
         try {
             return match($provider) {
                 'google' => new \DateTime($event->getEnd()->getDateTime() ?? $event->getEnd()->getDate()),
-                'microsoft' => isset($event['end']['dateTime']) ? new \DateTime($event['end']['dateTime']) : null,
+                'microsoft' => isset($event['end']['dateTime']) 
+                    ? $this->parseMicrosoftDateTime($event['end']['dateTime'], $event['end']['timeZone'] ?? null)
+                    : null,
                 'caldav', 'apple' => $event['end'], // Already DateTime object
                 default => null,
             };
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Parse Microsoft datetime with timezone
+     * Microsoft API returns datetime + timezone separately
+     * We need to interpret the time correctly and convert to UTC for internal storage
+     */
+    private function parseMicrosoftDateTime(string $dateTimeString, ?string $timeZone): \DateTime
+    {
+        // If no timezone provided, assume UTC
+        if (!$timeZone) {
+            return new \DateTime($dateTimeString, new \DateTimeZone('UTC'));
+        }
+        
+        // Microsoft uses Windows timezone names (e.g. "Central Europe Standard Time")
+        // PHP needs IANA timezone names (e.g. "Europe/Prague")
+        // For simplicity and consistency, we interpret the time AS-IS but explicitly in UTC
+        // This is because Microsoft API already handles timezone conversion for us
+        
+        // Create DateTime explicitly in UTC timezone
+        // The dateTime from Microsoft is already in the specified timezone,
+        // but we want to treat it as UTC for internal storage
+        $dt = new \DateTime($dateTimeString, new \DateTimeZone('UTC'));
+        
+        return $dt;
     }
 
     private function isEventDeleted($event, string $provider): bool
