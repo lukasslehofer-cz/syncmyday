@@ -91,7 +91,7 @@
             <!-- Rule Name -->
             <div>
                 <label for="rule_name" class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-1.5 sm:mb-2">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                     </svg>
                     <span>{{ __('messages.rule_name') }} <span class="text-red-500">*</span></span>
@@ -169,7 +169,7 @@
             <!-- Blocker Title -->
             <div>
                 <label for="blocker_title" class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-1.5 sm:mb-2">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                     </svg>
                     <span>{{ __('messages.blocker_title') }}</span>
@@ -182,7 +182,7 @@
             <!-- Direction -->
             <div>
                 <label class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                     </svg>
                     <span>{{ __('messages.sync_direction') }}</span>
@@ -208,7 +208,7 @@
             <!-- Filters -->
             <div>
                 <label class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                     </svg>
                     <span>{{ __('messages.filters') }}</span>
