@@ -171,10 +171,11 @@ class SyncRuleObserver
         
         // Log to SyncLog for Recent Activity display
         // This creates a user-visible log entry that sync rule was deleted
-        // Using 'deleted' action as it's closest match to rule deletion
+        // Note: Using NULL for sync_rule_id because the rule was already deleted from DB
+        // (foreign key constraint would fail if we used $rule->id here)
         \App\Models\SyncLog::logSync(
             $rule->user_id,
-            $rule->id,
+            null, // Rule already deleted, can't reference it
             'deleted',
             null,
             null,
