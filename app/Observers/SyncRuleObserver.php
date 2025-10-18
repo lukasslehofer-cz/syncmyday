@@ -14,13 +14,43 @@ class SyncRuleObserver
     /**
      * Handle the SyncRule "deleting" event.
      * 
-     * Clean up all blockers created by this sync rule
+     * Clean up all blockers created by this sync rule AND its child rules.
+     * This is important because CASCADE delete in DB doesn't trigger observer for child rules.
      */
     public function deleting(SyncRule $rule)
     {
         Log::info('Cleaning up blockers before deleting sync rule', [
             'rule_id' => $rule->id,
             'user_id' => $rule->user_id,
+        ]);
+
+        // IMPORTANT: If this is a main rule (parent_rule_id IS NULL), 
+        // also clean up blockers for child rules (reverse rules)
+        // because CASCADE delete won't trigger their observer
+        if ($rule->parent_rule_id === null) {
+            $childRules = SyncRule::where('parent_rule_id', $rule->id)->get();
+            
+            if ($childRules->isNotEmpty()) {
+                Log::info("Found {$childRules->count()} child rule(s), cleaning up their blockers first");
+                
+                foreach ($childRules as $childRule) {
+                    $this->cleanupBlockersForRule($childRule);
+                }
+            }
+        }
+
+        // Clean up blockers for this rule
+        $this->cleanupBlockersForRule($rule);
+    }
+    
+    /**
+     * Clean up all blockers for a specific rule
+     */
+    private function cleanupBlockersForRule(SyncRule $rule): void
+    {
+        Log::info('Cleaning up blockers for rule', [
+            'rule_id' => $rule->id,
+            'rule_name' => $rule->name,
         ]);
 
         // Find all mappings for this rule
