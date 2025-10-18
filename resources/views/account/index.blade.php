@@ -304,7 +304,7 @@
             
             <div class="space-y-4">
                 <!-- Email/Password -->
-                <div class="flex items-center justify-between p-4 border-2 border-gray-200 rounded-xl">
+                <div class="flex items-center justify-between p-4 border-2 {{ $user->password ? 'border-green-500' : 'border-gray-200' }} rounded-xl">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-full {{ $user->password ? 'bg-green-100' : 'bg-gray-100' }} flex items-center justify-center">
                             <svg class="w-5 h-5 {{ $user->password ? 'text-green-600' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,9 +329,9 @@
                 </div>
 
                 <!-- Google OAuth -->
-                <div class="flex items-center justify-between p-4 border-2 {{ $user->oauth_provider === 'google' ? 'border-blue-200 bg-blue-50' : 'border-gray-200' }} rounded-xl">
+                <div class="flex items-center justify-between p-4 border-2 {{ $user->oauth_provider === 'google' ? 'border-green-500' : 'border-gray-200' }} rounded-xl">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full {{ $user->oauth_provider === 'google' ? 'bg-blue-100' : 'bg-gray-100' }} flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full {{ $user->oauth_provider === 'google' ? 'bg-green-100' : 'bg-gray-100' }} flex items-center justify-center">
                             <svg class="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="{{ $user->oauth_provider === 'google' ? '#4285F4' : '#9CA3AF' }}" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                 <path fill="{{ $user->oauth_provider === 'google' ? '#34A853' : '#9CA3AF' }}" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -350,11 +350,11 @@
                     </div>
                     @if($user->oauth_provider === 'google')
                         <div class="flex items-center space-x-3">
-                            <span class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                            <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                {{ __('messages.connected') }}
+                                {{ __('messages.active') }}
                             </span>
                             @if($user->password)
                             <form method="POST" action="{{ route('account.disconnect-oauth') }}" class="inline">
@@ -373,9 +373,9 @@
                 </div>
 
                 <!-- Microsoft OAuth -->
-                <div class="flex items-center justify-between p-4 border-2 {{ $user->oauth_provider === 'microsoft' ? 'border-blue-200 bg-blue-50' : 'border-gray-200' }} rounded-xl">
+                <div class="flex items-center justify-between p-4 border-2 {{ $user->oauth_provider === 'microsoft' ? 'border-green-500' : 'border-gray-200' }} rounded-xl">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full {{ $user->oauth_provider === 'microsoft' ? 'bg-blue-100' : 'bg-gray-100' }} flex items-center justify-center">
+                        <div class="w-10 h-10 rounded-full {{ $user->oauth_provider === 'microsoft' ? 'bg-green-100' : 'bg-gray-100' }} flex items-center justify-center">
                             <svg class="w-5 h-5" viewBox="0 0 23 23">
                                 <path fill="{{ $user->oauth_provider === 'microsoft' ? '#f35325' : '#D1D5DB' }}" d="M1 1h10v10H1z"/>
                                 <path fill="{{ $user->oauth_provider === 'microsoft' ? '#81bc06' : '#D1D5DB' }}" d="M12 1h10v10H12z"/>
@@ -394,11 +394,11 @@
                     </div>
                     @if($user->oauth_provider === 'microsoft')
                         <div class="flex items-center space-x-3">
-                            <span class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                            <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                {{ __('messages.connected') }}
+                                {{ __('messages.active') }}
                             </span>
                             @if($user->password)
                             <form method="POST" action="{{ route('account.disconnect-oauth') }}" class="inline">
@@ -419,14 +419,14 @@
 
             <!-- Info for OAuth users without password -->
             @if($user->oauth_provider && !$user->password)
-            <div class="mt-4 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+            <div class="mt-4 bg-gray-50 border-2 border-gray-200 rounded-xl p-4">
                 <div class="flex items-start space-x-3">
-                    <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-5 h-5 text-gray-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                     </svg>
                     <div>
-                        <p class="text-sm font-medium text-blue-900">{{ __('messages.want_to_switch_provider') }}</p>
-                        <p class="text-xs text-blue-700 mt-1">{{ __('messages.switch_provider_instructions', ['provider' => $user->getOAuthProviderName()]) }}</p>
+                        <p class="text-sm font-medium text-gray-900">{{ __('messages.want_to_switch_provider') }}</p>
+                        <p class="text-xs text-gray-600 mt-1">{{ __('messages.switch_provider_instructions', ['provider' => $user->getOAuthProviderName()]) }}</p>
                     </div>
                 </div>
             </div>
