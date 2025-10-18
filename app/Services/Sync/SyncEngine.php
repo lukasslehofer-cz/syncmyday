@@ -466,7 +466,8 @@ class SyncEngine
             ? "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}"
             : "{$sourceEventId}|email:{$target->target_email_connection_id}";
         
-        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+        $foundInCache = $existingMappings && isset($existingMappings[$mappingKey]);
+        $mapping = $foundInCache
             ? $existingMappings[$mappingKey]->first()
             : SyncEventMapping::findMapping(
                 $rule->id,
@@ -474,6 +475,17 @@ class SyncEngine
                 $target->target_connection_id,
                 $target->target_calendar_id
             );
+        
+        Log::channel('sync')->debug('Mapping lookup before blocker creation', [
+            'rule_id' => $rule->id,
+            'source_event_id' => $sourceEventId,
+            'mapping_key' => $mappingKey,
+            'found_in_cache' => $foundInCache,
+            'found_in_db' => !$foundInCache && $mapping !== null,
+            'mapping_exists' => $mapping !== null,
+            'mapping_id' => $mapping?->id,
+            'transaction_id' => $transactionId,
+        ]);
 
         $action = 'created';
         $blockerId = null;
@@ -621,6 +633,14 @@ class SyncEngine
                 $endToStore->setTimezone(new \DateTimeZone('UTC'));
             }
             
+            Log::channel('sync')->debug('Creating new mapping for blocker', [
+                'rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_event_id' => $blockerId,
+                'mapping_key' => "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}",
+                'transaction_id' => $transactionId,
+            ]);
+            
             try {
                 $newMapping = SyncEventMapping::create([
                     'sync_rule_id' => $rule->id,
@@ -633,13 +653,22 @@ class SyncEngine
                     'event_start' => $startToStore,
                     'event_end' => $endToStore,
                 ]);
+                
+                Log::channel('sync')->debug('New mapping created successfully', [
+                    'mapping_id' => $newMapping->id,
+                    'source_event_id' => $sourceEventId,
+                    'transaction_id' => $transactionId,
+                ]);
             } catch (\Illuminate\Database\QueryException $e) {
                 // Race condition: Another webhook already created this mapping
                 // This can happen when provider sends multiple webhooks simultaneously
                 if ($e->getCode() === '23000') { // Duplicate entry error
-                    Log::channel('sync')->debug('Mapping already exists (race condition), loading from DB', [
+                    Log::channel('sync')->warning('⚠️ RACE CONDITION: Mapping already exists, loading from DB', [
+                        'rule_id' => $rule->id,
                         'source_event_id' => $sourceEventId,
                         'target_connection_id' => $target->target_connection_id,
+                        'error_code' => $e->getCode(),
+                        'transaction_id' => $transactionId,
                     ]);
                     
                     $newMapping = SyncEventMapping::findMapping(
@@ -648,6 +677,15 @@ class SyncEngine
                         $target->target_connection_id,
                         $target->target_calendar_id
                     );
+                    
+                    if (!$newMapping) {
+                        Log::channel('sync')->error('CRITICAL: Mapping not found after duplicate error!', [
+                            'rule_id' => $rule->id,
+                            'source_event_id' => $sourceEventId,
+                            'transaction_id' => $transactionId,
+                        ]);
+                        throw new \Exception("Mapping not found after race condition");
+                    }
                 } else {
                     throw $e; // Re-throw if it's a different error
                 }
@@ -656,6 +694,13 @@ class SyncEngine
             // Add to cache to prevent duplicate creation when rule has multiple targets
             $mappingKey = "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}";
             $existingMappings[$mappingKey] = collect([$newMapping]);
+            
+            Log::channel('sync')->debug('Mapping added to cache', [
+                'mapping_key' => $mappingKey,
+                'mapping_id' => $newMapping->id,
+                'cache_size' => count($existingMappings),
+                'transaction_id' => $transactionId,
+            ]);
         }
 
         SyncLog::logSync(
@@ -824,7 +869,8 @@ class SyncEngine
         // OPTIMIZATION: Use pre-loaded mappings if available
         $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
         
-        $mapping = $existingMappings && isset($existingMappings[$mappingKey])
+        $foundInCache = $existingMappings && isset($existingMappings[$mappingKey]);
+        $mapping = $foundInCache
             ? $existingMappings[$mappingKey]->first()
             : SyncEventMapping::where([
                 'sync_rule_id' => $rule->id,
@@ -832,12 +878,15 @@ class SyncEngine
                 'target_email_connection_id' => $target->target_email_connection_id,
             ])->first();
         
-        Log::channel('sync')->debug('Email target mapping check', [
+        Log::channel('sync')->debug('Email mapping lookup before blocker creation', [
+            'rule_id' => $rule->id,
             'source_event_id' => $sourceEventId,
-            'sync_rule_id' => $rule->id,
-            'target_email_connection_id' => $target->target_email_connection_id,
-            'mapping_found' => $mapping ? 'yes' : 'no',
-            'mapping_id' => $mapping ? $mapping->id : null,
+            'mapping_key' => $mappingKey,
+            'found_in_cache' => $foundInCache,
+            'found_in_db' => !$foundInCache && $mapping !== null,
+            'mapping_exists' => $mapping !== null,
+            'mapping_id' => $mapping?->id,
+            'transaction_id' => $transactionId,
         ]);
         
         // Generate a stable event UID for iMIP
@@ -870,6 +919,14 @@ class SyncEngine
             }
             
             // Create mapping without sending email
+            Log::channel('sync')->debug('Creating new email mapping (initial sync batch)', [
+                'rule_id' => $rule->id,
+                'source_event_id' => $sourceEventId,
+                'target_event_id' => $eventUid,
+                'mapping_key' => "{$sourceEventId}|email:{$target->target_email_connection_id}",
+                'transaction_id' => $transactionId,
+            ]);
+            
             try {
                 $newMapping = SyncEventMapping::create([
                     'sync_rule_id' => $rule->id,
@@ -884,12 +941,21 @@ class SyncEngine
                     'event_end' => $endToStore,
                     'sequence' => 0, // Not sent yet
                 ]);
+                
+                Log::channel('sync')->debug('New email mapping created successfully', [
+                    'mapping_id' => $newMapping->id,
+                    'source_event_id' => $sourceEventId,
+                    'transaction_id' => $transactionId,
+                ]);
             } catch (\Illuminate\Database\QueryException $e) {
                 // Race condition: Another webhook already created this mapping
                 if ($e->getCode() === '23000') { // Duplicate entry error
-                    Log::channel('sync')->debug('Email mapping already exists (race condition), loading from DB', [
+                    Log::channel('sync')->warning('⚠️ RACE CONDITION: Email mapping already exists, loading from DB', [
+                        'rule_id' => $rule->id,
                         'source_event_id' => $sourceEventId,
                         'target_email_connection_id' => $target->target_email_connection_id,
+                        'error_code' => $e->getCode(),
+                        'transaction_id' => $transactionId,
                     ]);
                     
                     $newMapping = SyncEventMapping::where([
@@ -897,6 +963,15 @@ class SyncEngine
                         'source_event_id' => $sourceEventId,
                         'target_email_connection_id' => $target->target_email_connection_id,
                     ])->first();
+                    
+                    if (!$newMapping) {
+                        Log::channel('sync')->error('CRITICAL: Email mapping not found after duplicate error!', [
+                            'rule_id' => $rule->id,
+                            'source_event_id' => $sourceEventId,
+                            'transaction_id' => $transactionId,
+                        ]);
+                        throw new \Exception("Email mapping not found after race condition");
+                    }
                 } else {
                     throw $e; // Re-throw if it's a different error
                 }
@@ -906,10 +981,11 @@ class SyncEngine
             $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
             $existingMappings[$mappingKey] = collect([$newMapping]);
             
-            Log::channel('sync')->info('Initial sync: Mapping created without email', [
-                'rule_id' => $rule->id,
-                'source_event_id' => $sourceEventId,
-                'target_email' => $targetEmailConnection->target_email,
+            Log::channel('sync')->debug('Email mapping added to cache', [
+                'mapping_key' => $mappingKey,
+                'mapping_id' => $newMapping->id,
+                'cache_size' => count($existingMappings),
+                'transaction_id' => $transactionId,
             ]);
             
             return; // Skip sending email during initial sync
@@ -1011,6 +1087,14 @@ class SyncEngine
                     ]);
                 } else {
                     // Create new mapping
+                    Log::channel('sync')->debug('Creating new email mapping (after email sent)', [
+                        'rule_id' => $rule->id,
+                        'source_event_id' => $sourceEventId,
+                        'target_event_id' => $eventUid,
+                        'mapping_key' => "{$sourceEventId}|email:{$target->target_email_connection_id}",
+                        'transaction_id' => $transactionId,
+                    ]);
+                    
                     try {
                         $newMapping = SyncEventMapping::create([
                             'sync_rule_id' => $rule->id,
@@ -1025,12 +1109,21 @@ class SyncEngine
                             'event_end' => $endToStore,
                             'sequence' => 1,
                         ]);
+                        
+                        Log::channel('sync')->debug('New email mapping created successfully', [
+                            'mapping_id' => $newMapping->id,
+                            'source_event_id' => $sourceEventId,
+                            'transaction_id' => $transactionId,
+                        ]);
                     } catch (\Illuminate\Database\QueryException $e) {
                         // Race condition: Another webhook already created this mapping
                         if ($e->getCode() === '23000') { // Duplicate entry error
-                            Log::channel('sync')->debug('Email mapping already exists (race condition), loading from DB', [
+                            Log::channel('sync')->warning('⚠️ RACE CONDITION: Email mapping already exists (after email sent), loading from DB', [
+                                'rule_id' => $rule->id,
                                 'source_event_id' => $sourceEventId,
                                 'target_email_connection_id' => $target->target_email_connection_id,
+                                'error_code' => $e->getCode(),
+                                'transaction_id' => $transactionId,
                             ]);
                             
                             $newMapping = SyncEventMapping::where([
@@ -1038,6 +1131,15 @@ class SyncEngine
                                 'source_event_id' => $sourceEventId,
                                 'target_email_connection_id' => $target->target_email_connection_id,
                             ])->first();
+                            
+                            if (!$newMapping) {
+                                Log::channel('sync')->error('CRITICAL: Email mapping not found after duplicate error!', [
+                                    'rule_id' => $rule->id,
+                                    'source_event_id' => $sourceEventId,
+                                    'transaction_id' => $transactionId,
+                                ]);
+                                throw new \Exception("Email mapping not found after race condition");
+                            }
                         } else {
                             throw $e; // Re-throw if it's a different error
                         }
@@ -1046,6 +1148,13 @@ class SyncEngine
                     // Add to cache to prevent duplicate creation when rule has multiple targets
                     $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
                     $existingMappings[$mappingKey] = collect([$newMapping]);
+                    
+                    Log::channel('sync')->debug('Email mapping added to cache', [
+                        'mapping_key' => $mappingKey,
+                        'mapping_id' => $newMapping->id,
+                        'cache_size' => count($existingMappings),
+                        'transaction_id' => $transactionId,
+                    ]);
                     
                     Log::channel('sync')->info('Email blocker created and mapping saved', [
                         'event_id' => $sourceEventId,
