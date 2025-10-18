@@ -70,53 +70,53 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="mb-8">
-        <div class="flex items-center space-x-3 mb-4">
+    <div class="mb-6 sm:mb-8">
+        <div class="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
             <a href="{{ route('sync-rules.index') }}" class="text-gray-400 hover:text-gray-600 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
             </a>
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 {{ __('messages.create_sync_rule') }}
             </h1>
         </div>
-        <p class="text-lg text-gray-600">{{ __('messages.create_sync_rule_description') }}</p>
+        <p class="text-base sm:text-lg text-gray-600">{{ __('messages.create_sync_rule_description') }}</p>
     </div>
     
     <form action="{{ route('sync-rules.store') }}" method="POST" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
         @csrf
         
-        <div class="p-6 lg:p-8 space-y-8">
+        <div class="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
             <!-- Rule Name -->
             <div>
-                <label for="rule_name" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label for="rule_name" class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-1.5 sm:mb-2">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                     </svg>
                     <span>{{ __('messages.rule_name') }} <span class="text-red-500">*</span></span>
                 </label>
                 <input type="text" name="name" id="rule_name" value="{{ old('name') }}" required
                     placeholder="{{ __('messages.rule_name_placeholder') }}"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
-                <p class="mt-2 text-sm text-gray-500">{{ __('messages.rule_name_hint') }}</p>
+                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
+                <p class="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">{{ __('messages.rule_name_hint') }}</p>
             </div>
             
             <!-- Source Calendar -->
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-                <div class="flex items-center space-x-3 mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 border border-blue-100">
+                <div class="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
                     </div>
                     <div>
-                        <label class="block text-lg font-bold text-gray-900">{{ __('messages.source_calendar') }}</label>
-                        <p class="text-sm text-gray-600">{{ __('messages.source_calendar_description') }}</p>
+                        <label class="block text-base sm:text-lg font-bold text-gray-900">{{ __('messages.source_calendar') }}</label>
+                        <p class="text-xs sm:text-sm text-gray-600">{{ __('messages.source_calendar_description') }}</p>
                     </div>
                 </div>
                 
-                <select name="source_type_and_id" id="source_connection_select" required class="custom-select select-blue w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition shadow-sm hover:border-blue-300">
+                <select name="source_type_and_id" id="source_connection_select" required class="custom-select select-blue w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition shadow-sm hover:border-blue-300">
                     <option value="">{{ __('messages.select_calendar') }}...</option>
                     @php
                         $allCalendars = collect([
@@ -139,67 +139,67 @@
             </div>
             
             <!-- Target Calendars -->
-            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 sm:p-6 border border-purple-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-3 sm:mb-4">
+                    <div class="flex items-center space-x-2 sm:space-x-3">
+                        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
                         </div>
                         <div>
-                            <label class="block text-lg font-bold text-gray-900">{{ __('messages.target_calendars') }}</label>
-                            <p class="text-sm text-gray-600">{{ __('messages.target_calendars_description') }}</p>
+                            <label class="block text-base sm:text-lg font-bold text-gray-900">{{ __('messages.target_calendars') }}</label>
+                            <p class="text-xs sm:text-sm text-gray-600">{{ __('messages.target_calendars_description') }}</p>
                         </div>
                     </div>
                     
-                    <button type="button" id="add-target" class="inline-flex items-center px-4 py-2 bg-purple-100 text-purple-700 font-semibold rounded-lg hover:bg-purple-200 transition">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="button" id="add-target" class="inline-flex items-center justify-center px-3 sm:px-4 py-2 bg-purple-100 text-purple-700 text-sm sm:text-base font-semibold rounded-lg hover:bg-purple-200 transition">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         {{ __('messages.add_target') }}
                     </button>
                 </div>
                 
-                <div id="targets-container" class="space-y-4">
+                <div id="targets-container" class="space-y-3 sm:space-y-4">
                     <!-- Target rows will be added here dynamically -->
                 </div>
             </div>
             
             <!-- Blocker Title -->
             <div>
-                <label for="blocker_title" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label for="blocker_title" class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-1.5 sm:mb-2">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                     </svg>
                     <span>{{ __('messages.blocker_title') }}</span>
                 </label>
                 <input type="text" name="blocker_title" id="blocker_title" value="Busy — Sync" required
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
-                <p class="mt-2 text-sm text-gray-500">{{ __('messages.blocker_title_description') }}</p>
+                    class="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
+                <p class="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">{{ __('messages.blocker_title_description') }}</p>
             </div>
             
             <!-- Direction -->
             <div>
-                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-3">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                     </svg>
                     <span>{{ __('messages.sync_direction') }}</span>
                 </label>
-                <div class="space-y-3">
-                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
-                        <input type="radio" name="direction" value="one_way" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                        <div class="ml-3">
-                            <span class="block font-semibold text-gray-900">{{ __('messages.one_way') }}</span>
-                            <span class="block text-sm text-gray-600">{{ __('messages.one_way_description') }}</span>
+                <div class="space-y-2.5 sm:space-y-3">
+                    <label class="flex items-center p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="radio" name="direction" value="one_way" checked class="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                        <div class="ml-2.5 sm:ml-3">
+                            <span class="block text-sm sm:text-base font-semibold text-gray-900">{{ __('messages.one_way') }}</span>
+                            <span class="block text-xs sm:text-sm text-gray-600">{{ __('messages.one_way_description') }}</span>
                         </div>
                     </label>
-                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
-                        <input type="radio" name="direction" value="two_way" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                        <div class="ml-3">
-                            <span class="block font-semibold text-gray-900">{{ __('messages.two_way') }}</span>
-                            <span class="block text-sm text-gray-600">{{ __('messages.two_way_description') }}</span>
+                    <label class="flex items-center p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="radio" name="direction" value="two_way" class="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                        <div class="ml-2.5 sm:ml-3">
+                            <span class="block text-sm sm:text-base font-semibold text-gray-900">{{ __('messages.two_way') }}</span>
+                            <span class="block text-xs sm:text-sm text-gray-600">{{ __('messages.two_way_description') }}</span>
                         </div>
                     </label>
                 </div>
@@ -207,30 +207,30 @@
             
             <!-- Filters -->
             <div>
-                <label class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-3">
-                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label class="flex items-center space-x-1.5 sm:space-x-2 text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                     </svg>
                     <span>{{ __('messages.filters') }}</span>
                 </label>
-                <div class="space-y-3">
-                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
-                        <input type="checkbox" name="filters[busy_only]" value="1" checked class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <div class="ml-3">
-                            <span class="block font-semibold text-gray-900">{{ __('messages.only_busy_events') }}</span>
-                            <span class="block text-sm text-gray-600">{{ __('messages.only_busy_events_description') }}</span>
+                <div class="space-y-2.5 sm:space-y-3">
+                    <label class="flex items-center p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="checkbox" name="filters[busy_only]" value="1" checked class="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <div class="ml-2.5 sm:ml-3">
+                            <span class="block text-sm sm:text-base font-semibold text-gray-900">{{ __('messages.only_busy_events') }}</span>
+                            <span class="block text-xs sm:text-sm text-gray-600">{{ __('messages.only_busy_events_description') }}</span>
                         </div>
                     </label>
-                    <label class="flex items-center p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
-                        <input type="checkbox" name="filters[ignore_all_day]" value="1" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                        <div class="ml-3">
-                            <span class="block font-semibold text-gray-900">{{ __('messages.ignore_all_day') }}</span>
-                            <span class="block text-sm text-gray-600">{{ __('messages.skip_all_day_description') }}</span>
+                    <label class="flex items-center p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-indigo-300 cursor-pointer transition">
+                        <input type="checkbox" name="filters[ignore_all_day]" value="1" class="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <div class="ml-2.5 sm:ml-3">
+                            <span class="block text-sm sm:text-base font-semibold text-gray-900">{{ __('messages.ignore_all_day') }}</span>
+                            <span class="block text-xs sm:text-sm text-gray-600">{{ __('messages.skip_all_day_description') }}</span>
                         </div>
                     </label>
                     
                     <!-- Time & Day Filter -->
-                    <div class="p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                    <div class="p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
                         <label class="flex items-center cursor-pointer">
                             <input type="checkbox" id="time_filter_enabled" name="time_filter_enabled" value="1" class="h-5 w-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
                             <div class="ml-3">
@@ -331,12 +331,12 @@
             </div>
         
         <!-- Footer Actions -->
-        <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-            <a href="{{ route('sync-rules.index') }}" class="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-100 transition">
+        <div class="bg-gray-50 px-4 sm:px-6 py-4 border-t border-gray-200 flex flex-col-reverse sm:flex-row justify-end gap-3 sm:space-x-3">
+            <a href="{{ route('sync-rules.index') }}" class="text-center px-4 sm:px-6 py-2.5 sm:py-3 border-2 border-gray-300 rounded-xl text-gray-700 text-sm sm:text-base font-semibold hover:bg-gray-100 transition">
                 {{ __('messages.cancel') }}
             </a>
-            <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button type="submit" class="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm sm:text-base font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
                 {{ __('messages.create_rule') }}

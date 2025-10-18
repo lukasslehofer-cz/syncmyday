@@ -64,7 +64,7 @@
     
     <!-- Hero Section -->
     <section class="relative overflow-hidden bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-32 relative z-10">
             <div class="text-center">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-semibold mb-6 shadow-lg">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -73,24 +73,24 @@
                     {{ __('messages.privacy_first') }}
                 </div>
                 
-                <h2 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
+                <h2 class="text-3xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 mb-4 sm:mb-6 leading-tight">
                     {{ __('messages.home_hero_title') }}<br>
                     <span class="gradient-text">{{ __('messages.home_hero_subtitle') }}</span>
                 </h2>
                 
-                <p class="text-xl sm:text-2xl text-gray-700 mb-10 max-w-3xl mx-auto leading-relaxed">
+                <p class="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
                     {{ __('messages.home_hero_description') }}<br>
                     <span class="text-indigo-600 font-semibold">{{ __('messages.home_hero_tagline') }}</span>
                 </p>
                 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition">
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4 sm:px-0">
+                    <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-6 sm:px-8 py-4 text-base sm:text-lg font-semibold text-white gradient-bg rounded-xl hover:opacity-90 shadow-xl transform hover:scale-105 transition">
                         {{ __('messages.start_with_first_month_free') }}
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                         </svg>
                     </a>
-                    <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-indigo-200 shadow-lg transform hover:scale-105 transition">
+                    <a href="#how-it-works" class="inline-flex items-center justify-center px-6 sm:px-8 py-4 text-base sm:text-lg font-semibold text-gray-700 bg-white rounded-xl hover:bg-gray-50 border-2 border-indigo-200 shadow-lg transform hover:scale-105 transition">
                         {{ __('messages.home_learn_more') }}
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -99,18 +99,18 @@
                 </div>
                 
                 <!-- Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-indigo-200 shadow-lg transform hover:scale-105 transition">
-                        <div class="text-4xl font-bold gradient-text mb-2">{{ __('messages.home_stat_realtime') }}</div>
-                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.home_stat_instant_sync') }}</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-3xl mx-auto px-4 sm:px-0">
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-indigo-200 shadow-lg transform hover:scale-105 transition">
+                        <div class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">{{ __('messages.home_stat_realtime') }}</div>
+                        <div class="text-xs sm:text-sm text-gray-600 font-medium">{{ __('messages.home_stat_instant_sync') }}</div>
                     </div>
-                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-purple-200 shadow-lg transform hover:scale-105 transition">
-                        <div class="text-4xl font-bold gradient-text mb-2">100%</div>
-                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.privacy_first') }}</div>
+                    <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-purple-200 shadow-lg transform hover:scale-105 transition">
+                        <div class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">100%</div>
+                        <div class="text-xs sm:text-sm text-gray-600 font-medium">{{ __('messages.privacy_first') }}</div>
                     </div>
-                    <div class="col-span-2 md:col-span-1 bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-pink-200 shadow-lg transform hover:scale-105 transition">
-                        <div class="text-4xl font-bold gradient-text mb-2">{{ __('messages.home_stat_2mins') }}</div>
-                        <div class="text-sm text-gray-600 font-medium">{{ __('messages.easy_setup') }}</div>
+                    <div class="col-span-2 md:col-span-1 bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-pink-200 shadow-lg transform hover:scale-105 transition">
+                        <div class="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">{{ __('messages.home_stat_2mins') }}</div>
+                        <div class="text-xs sm:text-sm text-gray-600 font-medium">{{ __('messages.easy_setup') }}</div>
                     </div>
                 </div>
             </div>
@@ -122,93 +122,93 @@
     </section>
     
     <!-- Features Section -->
-    <section id="features" class="py-20 bg-white">
+    <section id="features" class="py-12 sm:py-16 lg:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_features_section_title') }}</h3>
-                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_features_heading') }}</h2>
-                <p class="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">{{ __('messages.home_features_description') }}</p>
+            <div class="text-center mb-10 sm:mb-16">
+                <h3 class="text-sm sm:text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_features_section_title') }}</h3>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_features_heading') }}</h2>
+                <p class="mt-3 sm:mt-4 text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto">{{ __('messages.home_features_description') }}</p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
                 <!-- Feature 1 -->
-                <div class="relative p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.privacy_first') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_privacy_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.privacy_first') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_privacy_description') }}</p>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="relative p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.real_time_synchronization') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_realtime_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.real_time_synchronization') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_realtime_description') }}</p>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="relative p-8 bg-gradient-to-br from-pink-50 to-indigo-50 rounded-2xl border border-pink-100 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-gradient-to-br from-pink-50 to-indigo-50 rounded-2xl border border-pink-100 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.feature_smart_rules') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_smart_rules_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.feature_smart_rules') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_smart_rules_description') }}</p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.email_calendars_support') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_email_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.email_calendars_support') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_email_description') }}</p>
                 </div>
                 
                 <!-- Feature 5 -->
-                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.easy_setup') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_easy_setup_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.easy_setup') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_easy_setup_description') }}</p>
                 </div>
                 
                 <!-- Feature 6 -->
-                <div class="relative p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center mb-6">
+                <div class="relative p-6 sm:p-8 bg-white rounded-2xl border border-gray-200 hover:shadow-xl transition">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 flex items-center justify-center mb-4 sm:mb-6">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.feature_duplicate_prevention') }}</h3>
-                    <p class="text-gray-600 leading-relaxed">{{ __('messages.feature_duplicate_prevention_description') }}</p>
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">{{ __('messages.feature_duplicate_prevention') }}</h3>
+                    <p class="text-sm sm:text-base text-gray-600 leading-relaxed">{{ __('messages.feature_duplicate_prevention_description') }}</p>
                 </div>
             </div>
         </div>
     </section>
     
     <!-- How It Works -->
-    <section id="how-it-works" class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+    <section id="how-it-works" class="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h3 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_how_it_works_section_title') }}</h3>
-                <h2 class="text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_how_it_works_heading') }}</h2>
+            <div class="text-center mb-10 sm:mb-16">
+                <h3 class="text-sm sm:text-base font-semibold text-indigo-600 tracking-wide uppercase">{{ __('messages.home_how_it_works_section_title') }}</h3>
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mt-2">{{ __('messages.home_how_it_works_heading') }}</h2>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-12">
+            <div class="grid md:grid-cols-3 gap-8 sm:gap-12">
                 <div class="relative text-center">
                     <div class="w-16 h-16 mx-auto rounded-full gradient-bg flex items-center justify-center text-white text-2xl font-bold mb-6 shadow-lg">1</div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">{{ __('messages.calendar_connections') }}</h3>
@@ -269,11 +269,11 @@
     </section>
     
     <!-- Pricing Section -->
-    <section id="pricing" class="py-20 gradient-bg">
+    <section id="pricing" class="py-12 sm:py-16 lg:py-20 gradient-bg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold text-white mb-4">{{ __('messages.simple_pricing_for_powerful_sync') }}</h2>
-                <p class="text-xl text-indigo-100">{{ __('messages.full_functionality_no_limits') }}</p>
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-3 sm:mb-4">{{ __('messages.simple_pricing_for_powerful_sync') }}</h2>
+                <p class="text-base sm:text-lg lg:text-xl text-indigo-100">{{ __('messages.full_functionality_no_limits') }}</p>
                 <div class="mt-6 inline-flex items-center px-6 py-3 bg-green-100 border-2 border-green-500 rounded-xl">
                     <svg class="w-6 h-6 mr-2 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -283,16 +283,16 @@
             </div>
             
             <!-- Pricing Cards -->
-            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
                 <!-- Monthly Plan -->
-                <div class="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-200 hover:border-indigo-300 transition relative">
+                <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border-2 border-gray-200 hover:border-indigo-300 transition relative">
                     <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('messages.monthly_plan') }}</h3>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ __('messages.monthly_plan') }}</h3>
                         <div class="flex items-baseline justify-center mb-2">
-                            <span class="text-5xl font-bold text-gray-900">{{ \App\Helpers\PricingHelper::formatPrice(app()->getLocale(), 'monthly') }}</span>
+                            <span class="text-4xl sm:text-5xl font-bold text-gray-900">{{ \App\Helpers\PricingHelper::formatPrice(app()->getLocale(), 'monthly') }}</span>
                         </div>
-                        <p class="text-gray-600">{{ __('messages.per_month') }}</p>
-                        <p class="text-sm text-gray-500 mt-2">{{ __('messages.flexible_cancel_anytime') }}</p>
+                        <p class="text-sm sm:text-base text-gray-600">{{ __('messages.per_month') }}</p>
+                        <p class="text-xs sm:text-sm text-gray-500 mt-2">{{ __('messages.flexible_cancel_anytime') }}</p>
                     </div>
                     
                     <!-- Features -->
@@ -330,25 +330,25 @@
                 </div>
                 
                 <!-- Yearly Plan (Recommended) -->
-                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-2xl p-8 border-2 border-indigo-500 relative transform md:scale-105">
+                <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-2xl p-6 sm:p-8 border-2 border-indigo-500 relative transform md:scale-105">
                     <!-- Best Value Badge -->
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <span class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold rounded-full shadow-lg">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <div class="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="inline-flex items-center px-4 sm:px-6 py-1.5 sm:py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs sm:text-sm font-bold rounded-full shadow-lg">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                             {{ __('messages.best_value') }}
                         </span>
                     </div>
                     
-                    <div class="text-center mb-6 mt-4">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('messages.yearly_plan') }}</h3>
+                    <div class="text-center mb-6 mt-3 sm:mt-4">
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ __('messages.yearly_plan') }}</h3>
                         <div class="flex items-baseline justify-center mb-2">
-                            <span class="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ $formattedPrice }}</span>
+                            <span class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ $formattedPrice }}</span>
                         </div>
-                        <p class="text-gray-700 font-medium">{{ __('messages.per_year') }}</p>
-                        <div class="mt-3 inline-block px-4 py-2 bg-green-100 border-2 border-green-500 rounded-lg">
-                            <p class="text-sm font-bold text-green-700">💰 {{ __('messages.save_with_yearly', ['percent' => \App\Helpers\PricingHelper::getYearlySavings(app()->getLocale())]) }}</p>
+                        <p class="text-sm sm:text-base text-gray-700 font-medium">{{ __('messages.per_year') }}</p>
+                        <div class="mt-2 sm:mt-3 inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-green-100 border-2 border-green-500 rounded-lg">
+                            <p class="text-xs sm:text-sm font-bold text-green-700">💰 {{ __('messages.save_with_yearly', ['percent' => \App\Helpers\PricingHelper::getYearlySavings(app()->getLocale())]) }}</p>
                         </div>
                     </div>
                     

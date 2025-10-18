@@ -76,6 +76,7 @@ return [
     'active' => 'Aktiv',
     'refresh' => 'Aktualisieren',
     'view_details' => 'Details anzeigen',
+    'details' => 'Details',
     'connection_error' => 'Verbindungsfehler',
     'confirm_disconnect_calendar' => '⚠️ Sind Sie sicher, dass Sie diesen Kalender trennen möchten?\n\nDies wird automatisch:\n• Alle Synchronisierungsregeln löschen, die diesen Kalender als QUELLE verwenden\n• Regeln löschen, bei denen dieser Kalender das EINZIGE Ziel ist\n• ALLE Blocker-Ereignisse entfernen, die von diesem Kalender erstellt wurden\n• Alle Webhooks stoppen\n\nDiese Aktion kann nicht rückgängig gemacht werden!',
     'confirm_delete_email_calendar' => 'Sind Sie sicher, dass Sie diesen E-Mail-Kalender löschen möchten?',

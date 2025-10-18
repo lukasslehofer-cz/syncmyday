@@ -23,21 +23,16 @@ class SetLocaleFromDomain
         App::setLocale($locale);
         
         // Override with user's preference if authenticated and available for this domain
-        if ($request->user()) {
-            // Refresh user from database to get latest locale value
-            $user = $request->user()->fresh();
+        if ($request->user() && $request->user()->locale) {
+            $userLocale = $request->user()->locale;
             
-            if ($user && $user->locale) {
-                $userLocale = $user->locale;
-                
-                // Only use user locale if it's available for current domain
-                if (LocaleHelper::isLocaleAvailable($userLocale)) {
-                    App::setLocale($userLocale);
-                } else {
-                    // User's locale not available for this domain, reset to domain default
-                    // This happens when user switches domains
-                    $user->update(['locale' => $locale]);
-                }
+            // Only use user locale if it's available for current domain
+            if (LocaleHelper::isLocaleAvailable($userLocale)) {
+                App::setLocale($userLocale);
+            } else {
+                // User's locale not available for this domain, reset to domain default
+                // This happens when user switches domains
+                $request->user()->update(['locale' => $locale]);
             }
         }
 

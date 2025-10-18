@@ -129,6 +129,7 @@ return [
     'active' => 'Active',
     'refresh' => 'Refresh',
     'view_details' => 'View Details',
+    'details' => 'Details',
     'connection_error' => 'Connection Error',
     'confirm_disconnect_calendar' => 'Are you sure you want to disconnect this calendar?\n\nThis will automatically:\n• Delete all sync rules using this calendar as SOURCE\n• Delete sync rules where this is the ONLY target\n• Remove ALL blocker events created from this calendar\n• Stop all webhooks\n\nThis action cannot be undone!',
     'confirm_delete_email_calendar' => 'Are you sure you want to delete this email calendar?',

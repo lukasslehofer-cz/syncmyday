@@ -167,18 +167,18 @@
     
     @if($showTrialBanner)
     <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center space-x-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
+            <div class="flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     <div class="flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                     </div>
                     <div>
-                        <p class="text-lg md:text-xl font-bold text-white mb-1">
+                        <p class="text-base sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1">
                             @if(auth()->user()->isTrialExpiringSoon())
                                 🔥 {{ __('messages.trial_ending_soon') }} - {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                             @else
@@ -190,14 +190,15 @@
                             {{ trans_choice('messages.days_remaining', auth()->user()->getRemainingTrialDays(), ['count' => auth()->user()->getRemainingTrialDays()]) }}
                         </p>
                         -->
-                        <p class="text-sm text-white/80 mt-1">
+                        <p class="text-xs sm:text-sm text-white/80 mt-0.5 sm:mt-1">
                             {{ __('messages.upgrade_now_save') }}
                         </p>
                     </div>
                 </div>
-                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-indigo-50 text-indigo-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
-                    {{ __('messages.upgrade_now') }}
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-indigo-50 text-indigo-600 text-sm sm:text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
+                    <span class="hidden sm:inline">{{ __('messages.upgrade_now') }}</span>
+                    <span class="sm:hidden">Upgrade</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
@@ -220,28 +221,29 @@
     @if($isInGracePeriod)
     <!-- Grace Period Warning (Orange) -->
     <div class="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-600 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center space-x-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
+            <div class="flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     <div class="flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                         </div>
                     </div>
                     <div>
-                        <p class="text-lg md:text-xl font-bold text-white mb-1">
+                        <p class="text-base sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1">
                             ⚠️ {{ __('messages.payment_failed_banner_title') }}
                         </p>
-                        <p class="text-sm md:text-base text-white/90">
+                        <p class="text-xs sm:text-sm lg:text-base text-white/90">
                             {{ __('messages.payment_failed_banner_grace_period', ['date' => $gracePeriodEndsAt->isoFormat('LL')]) }}
                         </p>
                     </div>
                 </div>
-                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-orange-50 text-orange-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
-                    {{ __('messages.update_payment_method') }}
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-orange-50 text-orange-600 text-sm sm:text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
+                    <span class="hidden sm:inline">{{ __('messages.update_payment_method') }}</span>
+                    <span class="sm:hidden">Update</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
@@ -251,28 +253,29 @@
     @else
     <!-- Subscription Suspended (Red) -->
     <div class="bg-gradient-to-r from-red-600 via-rose-600 to-red-600 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex items-center justify-between flex-wrap gap-4">
-                <div class="flex items-center space-x-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
+            <div class="flex items-center justify-between flex-wrap gap-3 sm:gap-4">
+                <div class="flex items-center space-x-3 sm:space-x-4">
                     <div class="flex-shrink-0">
-                        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 backdrop-blur flex items-center justify-center shadow-xl">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                             </svg>
                         </div>
                     </div>
                     <div>
-                        <p class="text-lg md:text-xl font-bold text-white mb-1">
+                        <p class="text-base sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1">
                             🔒 {{ __('messages.subscription_suspended_banner_title') }}
                         </p>
-                        <p class="text-sm md:text-base text-white/90">
+                        <p class="text-xs sm:text-sm lg:text-base text-white/90">
                             {{ __('messages.subscription_suspended_banner_text') }}
                         </p>
                     </div>
                 </div>
-                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-6 py-3 bg-white hover:bg-red-50 text-red-600 text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
-                    {{ __('messages.restore_subscription') }}
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('billing') }}" class="flex-shrink-0 inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white hover:bg-red-50 text-red-600 text-sm sm:text-base font-bold rounded-xl shadow-2xl transition transform hover:scale-105">
+                    <span class="hidden sm:inline">{{ __('messages.restore_subscription') }}</span>
+                    <span class="sm:hidden">Restore</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                     </svg>
                 </a>
@@ -288,20 +291,20 @@
     
     <!-- Flash Messages -->
     @if(session('success') || session('error') || session('warning'))
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6" x-data="{ show: true }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 sm:mt-6" x-data="{ show: true }">
         @if(session('success') && !request()->routeIs('onboarding.start'))
-        <div x-show="show" class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+        <div x-show="show" class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-3 sm:p-4 shadow-sm">
+            <div class="flex items-start sm:items-center justify-between gap-2">
+                <div class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1">
                     <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                         </svg>
                     </div>
-                    <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+                    <p class="text-xs sm:text-sm font-medium text-green-800 break-words">{{ session('success') }}</p>
                 </div>
-                <button @click="show = false" class="text-green-400 hover:text-green-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <button @click="show = false" class="text-green-400 hover:text-green-600 flex-shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
                 </button>
@@ -310,18 +313,18 @@
         @endif
         
         @if(session('error'))
-        <div x-show="show" class="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-4 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+        <div x-show="show" class="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-3 sm:p-4 shadow-sm">
+            <div class="flex items-start sm:items-center justify-between gap-2">
+                <div class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1">
                     <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-500 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                         </svg>
                     </div>
-                    <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+                    <p class="text-xs sm:text-sm font-medium text-red-800 break-words">{{ session('error') }}</p>
                 </div>
-                <button @click="show = false" class="text-red-400 hover:text-red-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <button @click="show = false" class="text-red-400 hover:text-red-600 flex-shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
                 </button>
@@ -330,18 +333,18 @@
         @endif
         
         @if(session('warning'))
-        <div x-show="show" class="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-4 shadow-sm">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+        <div x-show="show" class="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-xl p-3 sm:p-4 shadow-sm">
+            <div class="flex items-start sm:items-center justify-between gap-2">
+                <div class="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1">
                     <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500 mt-0.5 sm:mt-0" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                         </svg>
                     </div>
-                    <p class="text-sm font-medium text-yellow-800">{{ session('warning') }}</p>
+                    <p class="text-xs sm:text-sm font-medium text-yellow-800 break-words">{{ session('warning') }}</p>
                 </div>
-                <button @click="show = false" class="text-yellow-400 hover:text-yellow-600">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <button @click="show = false" class="text-yellow-400 hover:text-yellow-600 flex-shrink-0">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
                 </button>
@@ -359,8 +362,8 @@
     <!-- Footer -->
     <footer class="bg-white/80 backdrop-blur-sm border-t border-gray-100 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="py-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="py-8 sm:py-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
                     <!-- Brand -->
                     <div class="col-span-1">
                         <div class="flex items-center space-x-2 mb-4">

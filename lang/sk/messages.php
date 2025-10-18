@@ -76,6 +76,7 @@ return [
     'active' => 'Aktívne',
     'refresh' => 'Obnoviť',
     'view_details' => 'Zobraziť detaily',
+    'details' => 'Detaily',
     'connection_error' => 'Chyba pripojenia',
     'confirm_disconnect_calendar' => '⚠️ Ste si istí, že chcete odpojiť tento kalendár?\n\nTým automaticky:\n• Odstránite všetky synchronizačné pravidlá používajúce tento kalendár ako ZDROJ\n• Odstránite pravidlá, kde je tento kalendár JEDINÝM cieľom\n• Odstránite VŠETKY blokovacie udalosti vytvorené z tohto kalendára\n• Zastavíte všetky webhooky\n\nTáto akcia je nevratná!',
     'confirm_delete_email_calendar' => 'Ste si istí, že chcete zmazať tento emailový kalendár?',

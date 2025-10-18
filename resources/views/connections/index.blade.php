@@ -4,20 +4,20 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="mb-8">
-        <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.calendar_connections') }}</h1>
-        <p class="text-lg text-gray-600">{{ __('messages.calendar_connections_description') }}</p>
+    <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.calendar_connections') }}</h1>
+        <p class="text-base sm:text-lg text-gray-600">{{ __('messages.calendar_connections_description') }}</p>
     </div>
     
     <!-- Add New Connection -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8 border border-gray-100">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ __('messages.add_new_calendar') }}</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 border border-gray-100">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{{ __('messages.add_new_calendar') }}</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <!-- Google Calendar -->
-            <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
+            <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
                 <div class="flex flex-col items-center text-center">
-                    <div class="flex-shrink-0 mb-4">
-                        <div class="h-16 w-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <div class="flex-shrink-0 mb-3 sm:mb-4">
+                        <div class="h-14 w-14 sm:h-16 sm:w-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
                             <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -27,11 +27,11 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.google_calendar') }}</p>
-                        <p class="text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
+                        <p class="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">{{ __('messages.google_calendar') }}</p>
+                        <p class="text-xs sm:text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
                     </div>
                 </div>
-                <div class="absolute top-4 right-4">
+                <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
                     <svg class="w-6 h-6 text-blue-400 group-hover:text-blue-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>
@@ -127,13 +127,13 @@
         <ul class="divide-y divide-gray-200">
             {{-- API Connections (Google, Microsoft, CalDAV) --}}
             @foreach($connections as $connection)
-            <li class="p-6 hover:bg-gray-50 transition">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
+            <li class="p-4 sm:p-6 hover:bg-gray-50 transition">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center space-x-3 sm:space-x-4">
                         <div class="flex-shrink-0">
                             @if($connection->provider === 'google')
-                            <div class="h-14 w-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-                                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -141,27 +141,27 @@
                                 </svg>
                             </div>
                             @elseif($connection->provider === 'microsoft')
-                            <div class="h-14 w-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
-                                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
                                 </svg>
                             </div>
                             @elseif($connection->provider === 'apple')
-                            <div class="h-14 w-14 bg-gradient-to-r from-gray-800 to-black rounded-xl flex items-center justify-center shadow-md">
-                                <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-gray-800 to-black rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
                                 </svg>
                             </div>
                             @elseif($connection->provider === 'caldav')
-                            <div class="h-14 w-14 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-md">
-                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-gray-600 to-gray-700 rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
                                 </svg>
                             </div>
                             @endif
                         </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-base sm:text-lg font-bold text-gray-900 truncate">
                                 @if($connection->name)
                                     {{ $connection->name }}
                                 @elseif($connection->provider === 'apple')
@@ -172,55 +172,57 @@
                                     {{ ucfirst($connection->provider) }} {{ __('messages.calendar_singular') }}
                                 @endif
                             </p>
-                            <p class="text-sm text-gray-600 font-medium">{{ $connection->account_email ?? $connection->provider_email }}</p>
-                            <div class="flex items-center mt-2 space-x-4">
-                                <span class="text-xs text-gray-500">
-                                    @if($connection->provider === 'google')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
-                                            Google
-                                        </span>
-                                    @elseif($connection->provider === 'microsoft')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
-                                            Microsoft
-                                        </span>
-                                    @elseif($connection->provider === 'apple')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-                                            Apple
-                                        </span>
-                                    @elseif($connection->provider === 'caldav')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-                                            CalDAV
-                                        </span>
-                                    @endif
-                                </span>
-                            </div>
+                            <p class="text-xs sm:text-sm text-gray-600 font-medium truncate">{{ $connection->account_email ?? $connection->provider_email }}</p>
                         </div>
                     </div>
                     
-                    <div class="flex items-center space-x-3">
+                    <!-- Mobile: Tag + Actions stacked, Desktop: Actions on right -->
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <!-- Provider Tag -->
+                        @if($connection->provider === 'google')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                Google
+                            </span>
+                        @elseif($connection->provider === 'microsoft')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
+                                Microsoft
+                            </span>
+                        @elseif($connection->provider === 'apple')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                Apple
+                            </span>
+                        @elseif($connection->provider === 'caldav')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                CalDAV
+                            </span>
+                        @endif
+                        
+                        <!-- Status Badge -->
                         @if($connection->status === 'active')
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm">
-                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             {{ __('messages.active') }}
                         </span>
                         @else
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm">
+                        <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm">
                             {{ ucfirst($connection->status) }}
                         </span>
                         @endif
                         
-                        <a href="{{ route('connections.show', $connection) }}" class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Action Buttons -->
+                        <a href="{{ route('connections.show', $connection) }}" class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            {{ __('messages.view_details') }}
+                            <span class="hidden sm:inline">{{ __('messages.view_details') }}</span>
+                            <span class="sm:hidden">{{ __('messages.details') }}</span>
                         </a>
                         
-                        <a href="{{ route('connections.edit', $connection) }}" class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a href="{{ route('connections.edit', $connection) }}" class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
                             {{ __('messages.edit') }}
@@ -246,55 +248,57 @@
 
             {{-- Email Calendar Connections --}}
             @foreach($emailCalendars as $emailCalendar)
-            <li class="p-6 hover:bg-gray-50 transition">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
+            <li class="p-4 sm:p-6 hover:bg-gray-50 transition">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="flex items-center space-x-3 sm:space-x-4">
                         <div class="flex-shrink-0">
-                            <div class="h-14 w-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
-                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                         </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-base sm:text-lg font-bold text-gray-900 truncate">
                                 {{ $emailCalendar->name }}
                             </p>
-                            <p class="text-sm text-gray-600 font-medium">{{ $emailCalendar->target_email }}</p>
-                            <div class="flex items-center mt-2 space-x-4">
-                                <span class="text-xs text-gray-500">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
-                                        {{ __('messages.email_calendar_type') }}
-                                    </span>
-                                </span>
-                            </div>
+                            <p class="text-xs sm:text-sm text-gray-600 font-medium truncate">{{ $emailCalendar->target_email }}</p>
                         </div>
                     </div>
                     
-                    <div class="flex items-center space-x-3">
+                    <!-- Mobile: Tag + Actions stacked, Desktop: Actions on right -->
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <!-- Provider Tag -->
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                            {{ __('messages.email_calendar_type') }}
+                        </span>
+                        
+                        <!-- Status Badge -->
                         @if($emailCalendar->status === 'active')
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm">
-                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm">
+                            <svg class="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                             </svg>
                             {{ __('messages.active') }}
                         </span>
                         @else
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm">
+                        <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm">
                             {{ ucfirst($emailCalendar->status) }}
                         </span>
                         @endif
                         
-                        <a href="{{ route('email-calendars.show', $emailCalendar) }}" class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Action Buttons -->
+                        <a href="{{ route('email-calendars.show', $emailCalendar) }}" class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                            {{ __('messages.view_details') }}
+                            <span class="hidden sm:inline">{{ __('messages.view_details') }}</span>
+                            <span class="sm:hidden">{{ __('messages.details') }}</span>
                         </a>
                         
-                        <a href="{{ route('email-calendars.edit', $emailCalendar) }}" class="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a href="{{ route('email-calendars.edit', $emailCalendar) }}" class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
                             {{ __('messages.edit') }}

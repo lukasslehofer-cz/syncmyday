@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+    <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
         <div>
-            <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.sync_rules') }}</h1>
-            <p class="text-lg text-gray-600">{{ __('messages.sync_rules_description') }}</p>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.sync_rules') }}</h1>
+            <p class="text-base sm:text-lg text-gray-600">{{ __('messages.sync_rules_description') }}</p>
         </div>
         
         @if(auth()->user()->canCreateSyncRule())
@@ -28,14 +28,14 @@
     </div>
     
     @if($rules->isEmpty())
-    <div class="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
-        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-            <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-2xl shadow-lg p-8 sm:p-12 text-center border border-gray-100">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
             </svg>
         </div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ __('messages.no_sync_rules_yet') }}</h3>
-        <p class="text-gray-500 mb-8 max-w-md mx-auto">{{ __('messages.no_sync_rules_description') }}</p>
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ __('messages.no_sync_rules_yet') }}</h3>
+        <p class="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 max-w-md mx-auto px-4">{{ __('messages.no_sync_rules_description') }}</p>
         @if(auth()->user()->canCreateSyncRule())
         <a href="{{ route('sync-rules.create') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 shadow-lg transform hover:scale-105 transition">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,21 +53,21 @@
         @endif
     </div>
     @else
-    <div class="space-y-6">
+    <div class="space-y-4 sm:space-y-6">
         @foreach($rules as $rule)
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex items-center space-x-3 sm:space-x-4">
+                        <div class="flex items-center space-x-2 sm:space-x-3">
+                            <div class="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">
+                                <h3 class="text-base sm:text-lg font-bold text-gray-900">
                                     {{ $rule->name ?? __('messages.unnamed_rule') }}
                                 </h3>
                                 <p class="text-xs text-gray-500">
@@ -77,17 +77,18 @@
                         </div>
                     </div>
                     
-                    <div class="flex items-center space-x-3">
-                        <a href="{{ route('sync-rules.edit', $rule) }}" class="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-xl font-semibold text-sm shadow-sm transition">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center gap-2 sm:space-x-3">
+                        <a href="{{ route('sync-rules.edit', $rule) }}" class="inline-flex items-center px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-xl font-semibold text-xs sm:text-sm shadow-sm transition">
+                            <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
-                            {{ __('messages.edit') }}
+                            <span class="hidden sm:inline">{{ __('messages.edit') }}</span>
+                            <span class="sm:hidden">Edit</span>
                         </a>
                         
                         <form action="{{ route('sync-rules.toggle', $rule) }}" method="POST">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm shadow-sm transition {{ $rule->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                            <button type="submit" class="inline-flex items-center px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm shadow-sm transition {{ $rule->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                                 @if($rule->is_active)
                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -106,19 +107,19 @@
             </div>
             
             <!-- Details -->
-            <div class="p-6">
-                <div class="grid md:grid-cols-2 gap-6">
+            <div class="p-4 sm:p-6">
+                <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Source -->
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 mb-3">
-                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="space-y-3 sm:space-y-4">
+                        <div class="flex items-center space-x-2 mb-2 sm:mb-3">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                                 </svg>
                             </div>
-                            <h4 class="font-bold text-gray-900">{{ __('messages.source_calendar') }}</h4>
+                            <h4 class="text-sm sm:text-base font-bold text-gray-900">{{ __('messages.source_calendar') }}</h4>
                         </div>
-                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 sm:p-4 border border-blue-100">
                             @if($rule->isEmailSource())
                             <div class="flex items-start space-x-3">
                                 <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
@@ -184,18 +185,18 @@
                     </div>
                     
                     <!-- Targets -->
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-2 mb-3">
-                            <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="space-y-3 sm:space-y-4">
+                        <div class="flex items-center space-x-2 mb-2 sm:mb-3">
+                            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                            <h4 class="font-bold text-gray-900">{{ __('messages.target_calendars') }}</h4>
+                            <h4 class="text-sm sm:text-base font-bold text-gray-900">{{ __('messages.target_calendars') }}</h4>
                         </div>
-                        <div class="space-y-3">
+                        <div class="space-y-2 sm:space-y-3">
                             @foreach($rule->targets as $target)
-                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 sm:p-4 border border-purple-100">
                                 @if($target->isEmailTarget())
                                 <div class="flex items-start space-x-3">
                                     <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
@@ -264,25 +265,25 @@
                 </div>
                 
                 <!-- Additional Info -->
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">{{ __('messages.direction') }}</p>
-                            <p class="text-sm font-semibold text-gray-900">{{ ucfirst(str_replace('_', ' ', $rule->direction)) }}</p>
+                <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        <div class="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                            <p class="text-xs text-gray-500 mb-0.5 sm:mb-1">{{ __('messages.direction') }}</p>
+                            <p class="text-xs sm:text-sm font-semibold text-gray-900">{{ ucfirst(str_replace('_', ' ', $rule->direction)) }}</p>
                         </div>
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">{{ __('messages.blocker_title') }}</p>
-                            <p class="text-sm font-semibold text-gray-900 truncate">"{{ $rule->blocker_title }}"</p>
+                        <div class="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                            <p class="text-xs text-gray-500 mb-0.5 sm:mb-1">{{ __('messages.blocker_title') }}</p>
+                            <p class="text-xs sm:text-sm font-semibold text-gray-900 truncate">"{{ $rule->blocker_title }}"</p>
                         </div>
                         @if($rule->last_triggered_at)
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">{{ __('messages.last_triggered') }}</p>
-                            <p class="text-sm font-semibold text-gray-900">{{ $rule->last_triggered_at->diffForHumans() }}</p>
+                        <div class="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                            <p class="text-xs text-gray-500 mb-0.5 sm:mb-1">{{ __('messages.last_triggered') }}</p>
+                            <p class="text-xs sm:text-sm font-semibold text-gray-900">{{ $rule->last_triggered_at->diffForHumans() }}</p>
                         </div>
                         @endif
-                        <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">{{ __('messages.status') }}</p>
-                            <p class="text-sm font-semibold {{ $rule->is_active ? 'text-green-600' : 'text-gray-600' }}">
+                        <div class="bg-gray-50 rounded-lg p-2.5 sm:p-3">
+                            <p class="text-xs text-gray-500 mb-0.5 sm:mb-1">{{ __('messages.status') }}</p>
+                            <p class="text-xs sm:text-sm font-semibold {{ $rule->is_active ? 'text-green-600' : 'text-gray-600' }}">
                                 {{ $rule->is_active ? __('messages.running') : __('messages.paused') }}
                             </p>
                         </div>

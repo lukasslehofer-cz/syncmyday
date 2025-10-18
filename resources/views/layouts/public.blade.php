@@ -374,9 +374,9 @@
 
     @auth
     <!-- Authenticated User Footer (Light) -->
-    <footer class="bg-white border-t border-gray-200 py-12 mt-16">
+    <footer class="bg-white border-t border-gray-200 py-8 sm:py-12 mt-12 sm:mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
@@ -417,8 +417,8 @@
                 </div>
             </div>
             
-            <div class="pt-8 border-t border-gray-200">
-                <p class="text-center text-sm text-gray-500">
+            <div class="pt-6 sm:pt-8 border-t border-gray-200">
+                <p class="text-center text-xs sm:text-sm text-gray-500">
                     &copy; {{ date('Y') }} SyncMyDay. {{ __('messages.all_rights_reserved') }}
                 </p>
             </div>
@@ -426,9 +426,9 @@
     </footer>
     @else
     <!-- Guest User Footer (Dark) -->
-    <footer class="bg-gray-900 text-gray-300 py-12">
+    <footer class="bg-gray-900 text-gray-300 py-8 sm:py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
@@ -468,8 +468,8 @@
                 </div>
             </div>
             
-            <div class="pt-8 border-t border-gray-800">
-                <p class="text-center text-sm text-gray-400">
+            <div class="pt-6 sm:pt-8 border-t border-gray-800">
+                <p class="text-center text-xs sm:text-sm text-gray-400">
                     &copy; {{ date('Y') }} SyncMyDay. {{ __('messages.all_rights_reserved') }}
                 </p>
             </div>
