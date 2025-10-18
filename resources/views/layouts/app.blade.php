@@ -136,15 +136,6 @@
                 <a href="{{ route('sync-rules.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('sync-rules.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
                     {{ __('messages.sync_rules') }}
                 </a>
-                <a href="{{ route('email-calendars.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('email-calendars.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    {{ __('messages.email_calendars') }}
-                </a>
-                <a href="{{ route('account.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('account.*') ? 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-500' : 'text-gray-600 hover:bg-gray-50' }}">
-                    {{ __('messages.account_settings') }}
-                </a>
-                <a href="{{ route('billing') }}" class="block px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50">
-                    {{ __('messages.billing') }}
-                </a>
             </div>
         </div>
     </nav>

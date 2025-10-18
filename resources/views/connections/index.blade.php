@@ -129,6 +129,7 @@
             @foreach($connections as $connection)
             <li class="p-4 sm:p-6 hover:bg-gray-50 transition">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <!-- Left side: Icon + Name + Email + Tag -->
                     <div class="flex items-center space-x-3 sm:space-x-4">
                         <div class="flex-shrink-0">
                             @if($connection->provider === 'google')
@@ -173,29 +174,52 @@
                                 @endif
                             </p>
                             <p class="text-xs sm:text-sm text-gray-600 font-medium truncate">{{ $connection->account_email ?? $connection->provider_email }}</p>
+                            
+                            <!-- Provider Tag - Desktop: below email, Mobile: hidden (shown in actions row) -->
+                            <div class="hidden sm:block mt-2">
+                                @if($connection->provider === 'google')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                        Google
+                                    </span>
+                                @elseif($connection->provider === 'microsoft')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
+                                        Microsoft
+                                    </span>
+                                @elseif($connection->provider === 'apple')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                        Apple
+                                    </span>
+                                @elseif($connection->provider === 'caldav')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                        CalDAV
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Mobile: Tag + Actions stacked, Desktop: Actions on right -->
+                    <!-- Right side: Status + Actions (Mobile also shows Tag) -->
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <!-- Provider Tag -->
-                        @if($connection->provider === 'google')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
-                                Google
-                            </span>
-                        @elseif($connection->provider === 'microsoft')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
-                                Microsoft
-                            </span>
-                        @elseif($connection->provider === 'apple')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-                                Apple
-                            </span>
-                        @elseif($connection->provider === 'caldav')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-                                CalDAV
-                            </span>
-                        @endif
+                        <!-- Provider Tag - Mobile only -->
+                        <div class="sm:hidden">
+                            @if($connection->provider === 'google')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                    Google
+                                </span>
+                            @elseif($connection->provider === 'microsoft')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700">
+                                    Microsoft
+                                </span>
+                            @elseif($connection->provider === 'apple')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                    Apple
+                                </span>
+                            @elseif($connection->provider === 'caldav')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                    CalDAV
+                                </span>
+                            @endif
+                        </div>
                         
                         <!-- Status Badge -->
                         @if($connection->status === 'active')
@@ -250,6 +274,7 @@
             @foreach($emailCalendars as $emailCalendar)
             <li class="p-4 sm:p-6 hover:bg-gray-50 transition">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <!-- Left side: Icon + Name + Email + Tag -->
                     <div class="flex items-center space-x-3 sm:space-x-4">
                         <div class="flex-shrink-0">
                             <div class="h-12 w-12 sm:h-14 sm:w-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
@@ -263,15 +288,24 @@
                                 {{ $emailCalendar->name }}
                             </p>
                             <p class="text-xs sm:text-sm text-gray-600 font-medium truncate">{{ $emailCalendar->target_email }}</p>
+                            
+                            <!-- Provider Tag - Desktop: below email, Mobile: hidden (shown in actions row) -->
+                            <div class="hidden sm:block mt-2">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                                    {{ __('messages.email_calendar_type') }}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     
-                    <!-- Mobile: Tag + Actions stacked, Desktop: Actions on right -->
+                    <!-- Right side: Status + Actions (Mobile also shows Tag) -->
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <!-- Provider Tag -->
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
-                            {{ __('messages.email_calendar_type') }}
-                        </span>
+                        <!-- Provider Tag - Mobile only -->
+                        <div class="sm:hidden">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                                {{ __('messages.email_calendar_type') }}
+                            </span>
+                        </div>
                         
                         <!-- Status Badge -->
                         @if($emailCalendar->status === 'active')

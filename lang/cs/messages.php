@@ -58,9 +58,9 @@ return [
     'feature_privacy_description' => 'Ukládáme pouze časy začátku/konce události. Nikdy názvy, popisy nebo účastníky. Všechna citlivá data šifrována.',
     'feature_realtime_description' => 'Změny detekujeme téměř okamžitě. Blockery jsou vytvořeny během minut a automaticky aktualizovány při změnách.',
     'feature_smart_rules' => 'Chytrá pravidla',
-    'feature_smart_rules_description' => 'Filtrujte podle zaneprázdněnosti, pracovní doby (9-17), nebo vylučte celodenní události. Plná kontrola nad tím, co se synchronizuje.',
+    'feature_smart_rules_description' => 'Filtrujte podle zaneprázdněnosti, pracovní doby, nebo vylučte celodenní události. Plná kontrola nad tím, co se synchronizuje.',
     'feature_email_description' => 'Přísná firemní politika pro Exchange? Nevadí, naše synchronizace pomocí e-mailových pozvánek si s tím poradí!',
-    'feature_easy_setup_description' => 'Připojte Google Calendar a Microsoft 365 pomocí vašich existujících účtů. Žádné komplikované technické nastavení.',
+    'feature_easy_setup_description' => 'Připojte Google Calendar, Microsoft Outlook nebo Apple Calendar pomocí vašich existujících účtů. Žádné komplikované nastavení.',
     'feature_duplicate_prevention' => 'Prevence duplikátů',
     'feature_duplicate_prevention_description' => 'Chytrá detekce zabraňuje vytváření duplikátních blockerů pro stejnou událost napříč vašimi kalendáři.',
     
@@ -251,7 +251,7 @@ return [
     'connect_google' => 'Připojit Google',
     'add_google_calendar' => 'Přidat Google Calendar',
     'connect_microsoft' => 'Připojit Microsoft',
-    'add_microsoft_365' => 'Přidat Microsoft 365',
+    'add_microsoft_365' => 'Přidat Microsoft Outlook',
     'new_sync_rule' => 'Nové pravidlo',
     'create_sync_rule_action' => 'Vytvořit pravidlo',
     'recent_activity' => 'Nedávná aktivita',
@@ -758,7 +758,7 @@ return [
     'upgrade_now' => 'Upgraduj nyní',
     
     // Homepage
-    'start_free_trial' => 'Začni zdarma',
+    'start_free_trial' => 'Vyzkoušejte zdarma',
     'choose_plan_after_trial' => 'Po trialu si vyber plán:',
     'save_with_yearly' => 'Ušetříte :percent% s ročním plánem',
     'start_free_trial_now' => 'Začít zdarma',
