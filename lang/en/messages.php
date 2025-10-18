@@ -189,6 +189,7 @@ return [
     'target_calendars_description' => 'Blockers will be created in these calendars',
     'add_target' => 'Add another target',
     'blocker_title' => 'Blocker Title',
+    'blocker_value_name' => 'Blocker — SyncMyDay',
     'blocker_title_description' => 'This will be the title of blocked events (no details from source)',
     'sync_direction' => 'Sync Direction',
     'one_way' => 'One-way (source → targets only)',

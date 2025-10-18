@@ -30,8 +30,15 @@
 
     <!-- Account Information -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
-        <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.account_information') }}</h2>
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.account_information') }}</h2>
+            </div>
         </div>
         <div class="p-6 lg:p-8">
             @if($user->isOAuthUser())
@@ -137,7 +144,14 @@
     @if($user->isOAuthUser() && !$user->password)
     <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl border-2 border-amber-200 mb-6">
         <div class="px-6 py-5 border-b border-amber-200">
-            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.add_backup_password') }}</h2>
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.add_backup_password') }}</h2>
+            </div>
         </div>
         <div class="p-6 lg:p-8">
             <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 mb-6">
@@ -202,8 +216,15 @@
     <!-- Change Password (for users with password) -->
     @if($user->password)
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
-        <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.change_password') }}</h2>
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.change_password') }}</h2>
+            </div>
         </div>
         <div class="p-6 lg:p-8">
             <form method="POST" action="{{ route('account.update-password') }}" class="space-y-6">
@@ -268,8 +289,15 @@
 
     <!-- Connected Login Methods -->
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 mb-6">
-        <div class="px-6 py-5 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900">{{ __('messages.login_methods') }}</h2>
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.login_methods') }}</h2>
+            </div>
         </div>
         <div class="p-6 lg:p-8">
             <p class="text-sm text-gray-600 mb-6">{{ __('messages.manage_login_methods') }}</p>

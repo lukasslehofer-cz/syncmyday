@@ -174,7 +174,7 @@
                     </svg>
                     <span>{{ __('messages.blocker_title') }}</span>
                 </label>
-                <input type="text" name="blocker_title" id="blocker_title" value="Busy — Sync" required
+                <input type="text" name="blocker_title" id="blocker_title" value="{{ __('messages.blocker_value_name') }}" required
                     class="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-medium transition">
                 <p class="mt-1.5 sm:mt-2 text-xs sm:text-sm text-gray-500">{{ __('messages.blocker_title_description') }}</p>
             </div>
