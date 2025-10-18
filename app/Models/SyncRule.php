@@ -11,6 +11,7 @@ class SyncRule extends Model
 
     protected $fillable = [
         'user_id',
+        'parent_rule_id',
         'name',
         'source_connection_id',
         'source_email_connection_id',

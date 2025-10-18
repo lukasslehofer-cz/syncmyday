@@ -18,11 +18,15 @@ class SyncRulesController extends Controller
 {
     /**
      * List all sync rules
+     * 
+     * Only show main rules (parent_rule_id IS NULL).
+     * Reverse rules are hidden from UI but work in background.
      */
     public function index()
     {
         $rules = auth()->user()
             ->syncRules()
+            ->whereNull('parent_rule_id') // Only show main rules, hide reverse rules
             ->with([
                 'sourceConnection',
                 'sourceEmailConnection',
@@ -260,6 +264,7 @@ class SyncRulesController extends Controller
                     // Create reverse rule: target -> source
                     $reverseRule = SyncRule::create([
                         'user_id' => auth()->id(),
+                        'parent_rule_id' => $rule->id, // Link to main rule
                         'name' => $validated['name'] . ' (' . $targetName . ' → reverse)',
                         'source_connection_id' => $target['connection_id'],
                         'source_email_connection_id' => $target['email_connection_id'],
@@ -459,6 +464,8 @@ class SyncRulesController extends Controller
 
     /**
      * Toggle sync rule active status
+     * 
+     * If this is a main rule, also toggle all child rules.
      */
     public function toggle(SyncRule $rule)
     {
@@ -467,7 +474,12 @@ class SyncRulesController extends Controller
             abort(403);
         }
 
-        $rule->update(['is_active' => !$rule->is_active]);
+        $newStatus = !$rule->is_active;
+        $rule->update(['is_active' => $newStatus]);
+        
+        // Also toggle all child rules (reverse rules)
+        SyncRule::where('parent_rule_id', $rule->id)
+            ->update(['is_active' => $newStatus]);
 
         return redirect()->back()
             ->with('success', __('messages.sync_rule_updated'));
@@ -475,6 +487,9 @@ class SyncRulesController extends Controller
 
     /**
      * Delete sync rule
+     * 
+     * If this is a main rule (parent_rule_id IS NULL), also delete all child rules.
+     * Child rules will be deleted automatically by CASCADE foreign key.
      */
     public function destroy(SyncRule $rule)
     {
@@ -483,11 +498,20 @@ class SyncRulesController extends Controller
             abort(403);
         }
 
+        $ruleName = $rule->name;
+        $ruleId = $rule->id;
+        
+        // Check if this is a main rule with children
+        $childCount = SyncRule::where('parent_rule_id', $rule->id)->count();
+        
+        // Delete the rule (CASCADE will delete children automatically)
         $rule->delete();
 
         Log::info('Sync rule deleted', [
             'user_id' => auth()->id(),
-            'rule_id' => $rule->id,
+            'rule_id' => $ruleId,
+            'rule_name' => $ruleName,
+            'child_rules_deleted' => $childCount,
         ]);
 
         return redirect()->route('sync-rules.index')
