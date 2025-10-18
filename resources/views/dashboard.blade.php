@@ -211,7 +211,7 @@
                         <p class="text-xs text-gray-600 mt-1.5 flex items-center space-x-1">
                             @php
                                 $source = $log->syncRule->sourceConnection ?? $log->syncRule->sourceEmailConnection;
-                                $sourceLabel = $source ? ($source->provider_email ?? $source->email_address ?? 'Email Calendar') : 'Unknown';
+                                $sourceLabel = $source ? ($source->name ?? 'Unknown Calendar') : 'Unknown';
                                 
                                 // Get target info - check if it's email or API target
                                 $targetLabel = '';
@@ -219,10 +219,10 @@
                                 if ($target) {
                                     if ($target->targetEmailConnection) {
                                         // Email target
-                                        $targetLabel = $target->targetEmailConnection->target_email;
+                                        $targetLabel = $target->targetEmailConnection->name ?? 'Unknown Calendar';
                                     } elseif ($target->targetConnection) {
                                         // API target
-                                        $targetLabel = $target->targetConnection->provider_email;
+                                        $targetLabel = $target->targetConnection->name ?? 'Unknown Calendar';
                                     }
                                 }
                             @endphp

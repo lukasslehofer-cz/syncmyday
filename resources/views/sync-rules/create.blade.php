@@ -118,26 +118,23 @@
                 
                 <select name="source_type_and_id" id="source_connection_select" required class="custom-select select-blue w-full px-4 py-3 border-2 border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white transition shadow-sm hover:border-blue-300">
                     <option value="">{{ __('messages.select_calendar') }}...</option>
-                    
-                    @if($apiConnections->count() > 0)
-                    <optgroup label="{{ __('messages.api_calendars') }}">
-                        @foreach($apiConnections as $connection)
-                        <option value="api-{{ $connection->id }}">
-                            {{ $connection->name ?? (ucfirst($connection->provider) . ' - ' . $connection->provider_email) }}
-                        </option>
-                        @endforeach
-                    </optgroup>
-                    @endif
-                    
-                    @if($emailConnections->count() > 0)
-                    <optgroup label="{{ __('messages.email_calendars') }}">
-                        @foreach($emailConnections as $connection)
-                        <option value="email-{{ $connection->id }}">
-                            {{ $connection->name }}
-                        </option>
-                        @endforeach
-                    </optgroup>
-                    @endif
+                    @php
+                        $allCalendars = collect([
+                            ...$apiConnections->map(fn($conn) => [
+                                'value' => 'api-' . $conn->id,
+                                'name' => $conn->name ?? (ucfirst($conn->provider) . ' - ' . $conn->provider_email)
+                            ]),
+                            ...$emailConnections->map(fn($conn) => [
+                                'value' => 'email-' . $conn->id,
+                                'name' => $conn->name
+                            ])
+                        ])->sortBy('name');
+                    @endphp
+                    @foreach($allCalendars as $calendar)
+                    <option value="{{ $calendar['value'] }}">
+                        {{ $calendar['name'] }}
+                    </option>
+                    @endforeach
                 </select>
             </div>
             
@@ -354,11 +351,57 @@ let targetIndex = 0;
 const apiConnections = @json($apiConnections);
 const emailConnections = @json($emailConnections);
 
+// Merge and sort all calendars by name
+const allCalendars = [
+    ...apiConnections.map(conn => ({
+        type: 'api',
+        id: conn.id,
+        name: conn.name || (conn.provider.charAt(0).toUpperCase() + conn.provider.slice(1) + ' - ' + conn.provider_email),
+        value: 'api-' + conn.id
+    })),
+    ...emailConnections.map(conn => ({
+        type: 'email',
+        id: conn.id,
+        name: conn.name,
+        value: 'email-' + conn.id
+    }))
+].sort((a, b) => a.name.localeCompare(b.name));
+
 // Add first target automatically
 addTargetRow();
 
 // Add target button
 document.getElementById('add-target').addEventListener('click', addTargetRow);
+
+// Add change event listener to source select
+document.getElementById('source_connection_select').addEventListener('change', updateDisabledOptions);
+
+// Update disabled options when any select changes
+function updateDisabledOptions() {
+    const sourceValue = document.getElementById('source_connection_select').value;
+    const targetSelects = document.querySelectorAll('.target-type-and-id-select');
+    const selectedTargetValues = Array.from(targetSelects).map(select => select.value).filter(v => v);
+    
+    // Update source select
+    const sourceSelect = document.getElementById('source_connection_select');
+    Array.from(sourceSelect.options).forEach(option => {
+        if (option.value) {
+            option.disabled = selectedTargetValues.includes(option.value);
+        }
+    });
+    
+    // Update each target select
+    targetSelects.forEach(select => {
+        const currentValue = select.value;
+        Array.from(select.options).forEach(option => {
+            if (option.value) {
+                const isSelectedInSource = option.value === sourceValue;
+                const isSelectedInOtherTarget = selectedTargetValues.includes(option.value) && option.value !== currentValue;
+                option.disabled = isSelectedInSource || isSelectedInOtherTarget;
+            }
+        });
+    });
+}
 
 function addTargetRow() {
     const container = document.getElementById('targets-container');
@@ -374,30 +417,28 @@ function addTargetRow() {
         
         <select name="target_connections[${index}][type_and_id]" class="target-type-and-id-select custom-select select-purple w-full px-4 py-3 border-2 border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white transition shadow-sm hover:border-purple-300" required>
             <option value="">{{ __('messages.select_calendar') }}...</option>
-            ${apiConnections.length > 0 ? `<optgroup label="{{ __('messages.api_calendars') }}">
-                ${apiConnections.map(conn => `
-                    <option value="api-${conn.id}">
-                        ${conn.name || (conn.provider.toUpperCase() + ' - ' + conn.provider_email)}
-                    </option>
-                `).join('')}
-            </optgroup>` : ''}
-            ${emailConnections.length > 0 ? `<optgroup label="{{ __('messages.email_calendars') }}">
-                ${emailConnections.map(conn => `
-                    <option value="email-${conn.id}">
-                        ${conn.name}
-                    </option>
-                `).join('')}
-            </optgroup>` : ''}
+            ${allCalendars.map(cal => `
+                <option value="${cal.value}">
+                    ${cal.name}
+                </option>
+            `).join('')}
         </select>
     `;
     
     container.appendChild(div);
     
+    // Add change event listener to update disabled options
+    const newSelect = div.querySelector('.target-type-and-id-select');
+    newSelect.addEventListener('change', updateDisabledOptions);
+    
     if (index > 0) {
         div.querySelector('.remove-target').addEventListener('click', function() {
             div.remove();
+            updateDisabledOptions();
         });
     }
+    
+    updateDisabledOptions();
 }
 
 // Time filter toggle logic
