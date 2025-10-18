@@ -104,10 +104,10 @@
                 </button>
                 <div x-show="open === 'payment-1'" x-collapse class="px-6 pb-4">
                     <p>Dostanete <strong>14 dní plného přístupu zdarma</strong> bez nutnosti zadávat platební kartu. Můžete připojit neomezený počet kalendářů a vytvořit libovolný počet pravidel synchronizace.</p>
-                    <p>Po skončení zkušebního období můžete:</p>
+                    <p>Po skončení zkušebního období:</p>
                     <ul>
-                        <li><strong>Přejít na Free plán:</strong> Zachovejte si až 2 připojené kalendáře zdarma navždy</li>
-                        <li><strong>Upgradovat na Pro:</strong> Získejte neomezené kalendáře a pokročilé funkce</li>
+                        <li><strong>Přidáte platební metodu:</strong> SyncMyDay bude pokračovat v plném rozsahu.</li>
+                        <li><strong>Nepřidáte platební metodu:</strong> Účet se zamkne a již se neprovedou žádné synchronizace.</li>
                     </ul>
                     <p>Žádné automatické poplatky. Žádné překvapení.</p>
                 </div>
@@ -121,25 +121,20 @@
                     </svg>
                 </button>
                 <div x-show="open === 'payment-2'" x-collapse class="px-6 pb-4">
-                    <p><strong>Ne!</strong> Nevyžadujeme platební kartu pro zkušební období, takže vás nemůžeme účtovat. Po skončení zkušebního období:</p>
-                    <ul>
-                        <li>Automaticky přejdete na Free plán (2 kalendáře zdarma)</li>
-                        <li>Pokud máte více než 2 kalendáře, nebudou se synchronizovat, dokud neupgradujete nebo neodstraníte některé</li>
-                        <li>Můžete kdykoli upgradovat na Pro, pokud potřebujete více kalendářů</li>
-                    </ul>
+                    <p><strong>Ne!</strong> Nevyžadujeme platební kartu pro zkušební období, takže vás nemůžeme účtovat. Máte 14 dní na vyzkoušení všech funkcí. A pokud si během tohoto období připojíte vaši platební kartu, stále dokončíme celých 14 dní zdarma a první platba proběhne až poté.</p>                   
                 </div>
             </div>
             
             <div class="border border-gray-200 rounded-lg overflow-hidden">
                 <button @click="open === 'payment-3' ? open = null : open = 'payment-3'" class="w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex items-center justify-between">
-                    <span>Můžu kdykoli zrušit?</span>
+                    <span>Můžu službu kdykoli zrušit?</span>
                     <svg class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'payment-3' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
                 <div x-show="open === 'payment-3'" x-collapse class="px-6 pb-4">
-                    <p><strong>Ano.</strong> Můžete kdykoli zrušit svůj Pro plán ze stránky Fakturace. Vaše předplatné zůstane aktivní do konce fakturačního období, poté budete automaticky převedeni na Free plán.</p>
-                    <p>Žádné zrušovací poplatky. Žádné otázky.</p>
+                    <p><strong>Ano.</strong> Můžete kdykoli zrušit svůj plán ze stránky Platby. Vaše předplatné zůstane aktivní do konce fakturačního období, poté bude váš účet pozastaven a již se neprovedou žádné synchronizace.</p>
+                    <p>Žádné další poplatky. Žádné otázky.</p>
                 </div>
             </div>
             
@@ -152,7 +147,7 @@
                 </button>
                 <div x-show="open === 'payment-4'" x-collapse class="px-6 pb-4">
                     <p>Přijímáme všechny hlavní platební karty (Visa, Mastercard, American Express) prostřednictvím Stripe, což je přední platební procesor.</p>
-                    <p>Vaše platební údaje jsou zpracovávány bezpečně Stripe a nikdy se nedostanou na naše servery.</p>
+                    <p>Vaše platební údaje jsou zpracovávány bezpečně přes službu Stripe a nikdy se nedostanou na naše servery.</p>
                 </div>
             </div>
         </div>
@@ -165,13 +160,13 @@
         <div class="space-y-4">
             <div class="border border-gray-200 rounded-lg overflow-hidden">
                 <button @click="open === 'how-1' ? open = null : open = 'how-1'" class="w-full px-6 py-4 text-left font-semibold text-gray-900 hover:bg-gray-50 transition flex items-center justify-between">
-                    <span>Co je to "blokující událost"?</span>
+                    <span>Co je to "blocker"?</span>
                     <svg class="w-5 h-5 transition-transform" :class="{ 'rotate-180': open === 'how-1' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
                 <div x-show="open === 'how-1'" x-collapse class="px-6 pb-4">
-                    <p>Blokující událost je jednoduchá událost, kterou vytvoříme ve vašich cílových kalendářích, aby ukázala, že jste zaneprázdněni. Obvykle se zobrazuje jako:</p>
+                    <p>Blocker je jednoduchá událost, kterou vytvoříme ve vašich cílových kalendářích, aby ukázala, že jste zaneprázdněni. Obvykle se zobrazuje jako:</p>
                     <ul>
                         <li><strong>Název:</strong> "Zaneprázdněn" (nebo vlastní text, který si nastavíte)</li>
                         <li><strong>Čas:</strong> Přesně stejný čas jako původní událost</li>
@@ -191,11 +186,11 @@
                 <div x-show="open === 'how-2'" x-collapse class="px-6 pb-4">
                     <p>Rychlost synchronizace závisí na typu kalendáře:</p>
                     <ul>
-                        <li><strong>Google Calendar:</strong> Okamžitě (díky webhookům v reálném čase)</li>
-                        <li><strong>Microsoft 365:</strong> Okamžitě (díky webhookům v reálném čase)</li>
-                        <li><strong>Apple iCloud:</strong> Každých ~15 minut (CalDAV polling)</li>
-                        <li><strong>CalDAV:</strong> Každých ~15 minut (CalDAV polling)</li>
-                        <li><strong>E-mailový kalendář:</strong> Okamžitě při obdržení e-mailu</li>
+                        <li><strong>Google Calendar:</strong> Okamžitě (cca do 1 minuty)</li>
+                        <li><strong>Microsoft 365:</strong> Okamžitě (cca do 1 minuty)</li>
+                        <li><strong>Apple iCloud:</strong> Každých ~5 minut</li>
+                        <li><strong>CalDAV:</strong> Každých ~5 minut</li>
+                        <li><strong>E-mailová synchronizace:</strong> Okamžitě při obdržení e-mailu</li>
                     </ul>
                 </div>
             </div>
@@ -225,8 +220,8 @@
                     </svg>
                 </button>
                 <div x-show="open === 'how-4'" x-collapse class="px-6 pb-4">
-                    <p><strong>Ano!</strong> Na Free plánu můžete připojit až 2 kalendáře. S Pro plánem můžete připojit neomezený počet kalendářů.</p>
-                    <p>Můžete vytvořit více pravidel synchronizace s různými směry:</p>
+                    <p><strong>Ano!</strong> Můžete připojit neomezený počet kalendářů.</p>
+                    <p>Také můžete vytvořit více pravidel synchronizace s různými směry:</p>
                     <ul>
                         <li>Osobní → Pracovní</li>
                         <li>Pracovní → Osobní</li>
@@ -308,7 +303,7 @@
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
         </svg>
-        Kontaktujte podporu
+        <span class="text-white">Kontaktujte podporu</span>
     </a>
 </div>
 </div>

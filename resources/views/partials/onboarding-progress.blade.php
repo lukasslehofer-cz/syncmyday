@@ -31,7 +31,7 @@
 @endphp
 
 @if($shouldShow)
-<div id="onboarding-progress" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg sticky top-0 z-40">
+<div id="onboarding-progress" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between flex-wrap gap-4">
             <!-- Progress Steps -->
