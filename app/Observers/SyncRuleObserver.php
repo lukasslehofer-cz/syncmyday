@@ -27,15 +27,19 @@ class SyncRuleObserver
         // IMPORTANT: If this is a main rule (parent_rule_id IS NULL), 
         // also clean up blockers for child rules (reverse rules)
         // because CASCADE delete won't trigger their observer
-        if ($rule->parent_rule_id === null) {
-            $childRules = SyncRule::where('parent_rule_id', $rule->id)->get();
+        // 
+        // Note: We need to check in DB, not rely on $rule->parent_rule_id
+        // because it might not be loaded
+        $childRules = SyncRule::where('parent_rule_id', $rule->id)->get();
+        
+        if ($childRules->isNotEmpty()) {
+            Log::info("Found {$childRules->count()} child rule(s), cleaning up their blockers first", [
+                'main_rule_id' => $rule->id,
+                'child_rule_ids' => $childRules->pluck('id')->toArray(),
+            ]);
             
-            if ($childRules->isNotEmpty()) {
-                Log::info("Found {$childRules->count()} child rule(s), cleaning up their blockers first");
-                
-                foreach ($childRules as $childRule) {
-                    $this->cleanupBlockersForRule($childRule);
-                }
+            foreach ($childRules as $childRule) {
+                $this->cleanupBlockersForRule($childRule);
             }
         }
 
