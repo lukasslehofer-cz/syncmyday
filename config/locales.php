@@ -14,11 +14,11 @@ return [
     'domains' => [
         'syncmyday.cz' => [
             'default' => 'cs',
-            'available' => ['cs', 'sk', 'en'],
+            'available' => ['cs', 'en'],
         ],
         'syncmyday.sk' => [
             'default' => 'sk',
-            'available' => ['sk', 'cs', 'en'],
+            'available' => ['sk', 'en'],
         ],
         'syncmyday.pl' => [
             'default' => 'pl',

@@ -47,6 +47,9 @@ class AccountController extends Controller
 
         $user->update($validated);
         
+        // Refresh user in session/auth guard to reflect changes immediately
+        auth()->setUser($user->fresh());
+        
         // Apply locale change immediately for current session
         \Illuminate\Support\Facades\App::setLocale($validated['locale']);
 
