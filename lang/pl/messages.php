@@ -512,6 +512,12 @@ return [
     'last_email' => 'Ostatni e-mail',
     
     // CalDAV Setup
+    'connection_failed' => 'Połączenie nie powiodło się',
+    'common_issues' => 'Częste problemy:',
+    'apple_issue_1' => '<strong>NIE UŻYWAJ</strong> zwykłego hasła Apple - musisz wygenerować hasło specyficzne dla aplikacji',
+    'apple_issue_2' => 'Upewnij się, że Twój Apple ID to e-mail używany do logowania do iCloud',
+    'apple_issue_3' => 'Skopiuj hasło specyficzne dla aplikacji zaraz po wygenerowaniu (nie zobaczysz go ponownie)',
+    'apple_issue_4' => 'Możesz uwzględnić lub pominąć kreski w haśle (oba działają)',
     'connect_caldav_calendar' => 'Połącz kalendarz CalDAV',
     'connect_caldav_description' => 'Połącz swój kalendarz Apple iCloud lub inny kalendarz CalDAV',
     'choose_calendar_provider' => 'Wybierz dostawcę kalendarza',

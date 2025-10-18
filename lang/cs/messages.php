@@ -619,10 +619,17 @@ return [
     'last_email' => 'Poslední e-mail',
     
     // CalDAV Setup
-    'connect_caldav_calendar' => 'Připojit CalDAV kalendář',
+    'connection_failed' => 'Připojení selhalo',
+    'common_issues' => 'Časté problémy:',
+    'apple_issue_1' => '<strong>NEPOUŽÍVEJTE</strong> běžné Apple heslo - musíte vygenerovat heslo pro aplikaci',
+    'apple_issue_2' => 'Ujistěte se, že vaše Apple ID je e-mail, který používáte k přihlášení do iCloudu',
+    'apple_issue_3' => 'Zkopírujte heslo pro aplikaci ihned po vygenerování (už ho neuvidíte)',
+    'apple_issue_4' => 'Můžete zahrnout nebo vynechat pomlčky v hesle (obojí funguje)',
+    'connect_caldav_calendar' => 'Připojit Apple/CalDAV kalendář',
     'connect_caldav_description' => 'Připojte svůj Apple iCloud nebo jiný CalDAV kalendář',
     'choose_calendar_provider' => 'Vyberte poskytovatele kalendáře',
     'your_apple_id_email' => 'Váš Apple ID e-mail',
+    'username' => 'Uživatelské jméno',
     'app_specific_password' => 'Heslo pro aplikaci',
     'easy_setup_auto_config' => 'Snadné nastavení - automatická konfigurace',
     'other_caldav' => 'Jiný CalDAV',

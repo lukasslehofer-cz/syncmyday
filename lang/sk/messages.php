@@ -512,6 +512,12 @@ return [
     'last_email' => 'Posledný e-mail',
     
     // CalDAV Setup
+    'connection_failed' => 'Pripojenie zlyhalo',
+    'common_issues' => 'Časté problémy:',
+    'apple_issue_1' => '<strong>NEPOUŽÍVAJTE</strong> bežné Apple heslo - musíte vygenerovať heslo pre aplikáciu',
+    'apple_issue_2' => 'Uistite sa, že vaše Apple ID je e-mail, ktorý používate na prihlásenie do iCloudu',
+    'apple_issue_3' => 'Skopírujte heslo pre aplikáciu ihneď po vygenerovaní (už ho neuvidíte)',
+    'apple_issue_4' => 'Môžete zahrnúť alebo vynechať pomlčky v hesle (oboje funguje)',
     'connect_caldav_calendar' => 'Pripojiť CalDAV kalendár',
     'connect_caldav_description' => 'Pripojte svoj Apple iCloud alebo iný CalDAV kalendár',
     'choose_calendar_provider' => 'Vyberte poskytovateľa kalendára',

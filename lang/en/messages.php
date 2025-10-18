@@ -615,6 +615,12 @@ return [
     'last_email' => 'Last Email',
     
     // CalDAV Setup
+    'connection_failed' => 'Connection Failed',
+    'common_issues' => 'Common issues:',
+    'apple_issue_1' => '<strong>DO NOT</strong> use your regular Apple password - you must generate an App-Specific Password',
+    'apple_issue_2' => 'Make sure your Apple ID is the email you use to sign in to iCloud',
+    'apple_issue_3' => 'Copy the App-Specific Password immediately after generation (you won\'t see it again)',
+    'apple_issue_4' => 'You can include or omit the dashes in the password (both work)',
     'connect_caldav_calendar' => 'Connect CalDAV Calendar',
     'connect_caldav_description' => 'Connect your Apple iCloud or other CalDAV calendar',
     'choose_calendar_provider' => 'Choose Your Calendar Provider',
