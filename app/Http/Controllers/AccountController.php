@@ -18,13 +18,9 @@ class AccountController extends Controller
         $user = auth()->user();
         
         $timezones = \DateTimeZone::listIdentifiers();
-        $locales = [
-            'en' => 'English',
-            'cs' => 'Čeština',
-            'sk' => 'Slovenčina',
-            'de' => 'Deutsch',
-            'pl' => 'Polski',
-        ];
+        
+        // Get available locales for current domain
+        $locales = \App\Helpers\LocaleHelper::getAvailableLocalesWithNames();
         
         return view('account.index', [
             'user' => $user,
@@ -40,13 +36,19 @@ class AccountController extends Controller
     {
         $user = auth()->user();
         
+        // Get available locales for validation
+        $availableLocales = \App\Helpers\LocaleHelper::getAvailableLocales();
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'timezone' => 'required|timezone',
-            'locale' => 'required|string|in:en,cs,sk,de,pl',
+            'locale' => 'required|string|in:' . implode(',', $availableLocales),
         ]);
 
         $user->update($validated);
+        
+        // Apply locale change immediately for current session
+        \Illuminate\Support\Facades\App::setLocale($validated['locale']);
 
         Log::info('User updated account info', [
             'user_id' => $user->id,
@@ -54,7 +56,7 @@ class AccountController extends Controller
         ]);
 
         return redirect()->route('account.index')
-            ->with('success', 'Account information updated successfully.');
+            ->with('success', __('messages.account_updated_successfully'));
     }
 
     /**

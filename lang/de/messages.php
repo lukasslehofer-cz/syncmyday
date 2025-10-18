@@ -30,6 +30,7 @@ return [
     'must_be_at_least_8_chars' => 'Muss mindestens 8 Zeichen lang sein',
     'logout' => 'Abmelden',
     'signed_in_as' => 'Angemeldet als',
+    'account_updated_successfully' => 'Kontoinformationen erfolgreich aktualisiert.',
     
     // Landing Page
     'back_to_home' => 'Zurück zur Startseite',

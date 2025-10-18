@@ -30,6 +30,7 @@ return [
     'must_be_at_least_8_chars' => 'Must be at least 8 characters long',
     'logout' => 'Logout',
     'signed_in_as' => 'Signed in as',
+    'account_updated_successfully' => 'Account information updated successfully.',
     
     // Landing Page / Homepage
     'back_to_home' => 'Back to home',

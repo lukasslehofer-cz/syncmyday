@@ -30,6 +30,7 @@ return [
     'must_be_at_least_8_chars' => 'Musí mít alespoň 8 znaků',
     'logout' => 'Odhlásit se',
     'signed_in_as' => 'Přihlášen jako',
+    'account_updated_successfully' => 'Informace o účtu byly úspěšně aktualizovány.',
     
     // Landing Page / Homepage
     'back_to_home' => 'Zpět na hlavní stránku',
