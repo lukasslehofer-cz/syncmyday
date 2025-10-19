@@ -36,13 +36,30 @@ class BillingController extends Controller
             }
         }
         
+        // Determine currency to use for pricing display
+        // Priority: 1) Saved Stripe currency, 2) Current locale currency
+        $effectiveCurrency = $user->stripe_currency ?? PricingHelper::getCurrencyCode($user->locale);
+        
+        // Get currency info for both intervals
+        $monthlyCurrency = PricingHelper::getCurrencyInfo($effectiveCurrency, 'monthly');
+        $yearlyCurrency = PricingHelper::getCurrencyInfo($effectiveCurrency, 'yearly');
+        
+        // Format prices
+        $monthlyPrice = $monthlyCurrency['symbol'] . number_format($monthlyCurrency['amount'], 0, '.', ',');
+        $yearlyPrice = $yearlyCurrency['symbol'] . number_format($yearlyCurrency['amount'], 0, '.', ',');
+        
+        // Calculate savings
+        $monthlyTotal = $monthlyCurrency['amount'] * 12;
+        $yearlySavings = $monthlyTotal > 0 ? round((($monthlyTotal - $yearlyCurrency['amount']) / $monthlyTotal) * 100, 0) : 0;
+        
         return view('billing.index', [
             'user' => $user,
             'subscription' => $subscription,
-            'monthlyPrice' => PricingHelper::formatPrice($user->locale, 'monthly'),
-            'yearlyPrice' => PricingHelper::formatPrice($user->locale, 'yearly'),
-            'yearlySavings' => PricingHelper::getYearlySavings($user->locale),
+            'monthlyPrice' => $monthlyPrice,
+            'yearlyPrice' => $yearlyPrice,
+            'yearlySavings' => $yearlySavings,
             'trialDaysRemaining' => $user->getRemainingTrialDays(),
+            'effectiveCurrency' => $effectiveCurrency,
         ]);
     }
 
@@ -61,6 +78,11 @@ class BillingController extends Controller
         }
 
         try {
+            // Determine currency to use
+            // If user doesn't have Stripe customer yet, use current locale currency
+            // If user has Stripe customer, use saved currency (prevents currency conflicts)
+            $currency = $user->stripe_currency ?? PricingHelper::getCurrencyCode($user->locale);
+            
             // Create or retrieve Stripe customer
             if (!$user->stripe_customer_id) {
                 $customer = \Stripe\Customer::create([
@@ -71,20 +93,36 @@ class BillingController extends Controller
                     ],
                 ]);
 
-                $user->update(['stripe_customer_id' => $customer->id]);
+                // Save customer ID and currency
+                $user->update([
+                    'stripe_customer_id' => $customer->id,
+                    'stripe_currency' => $currency,
+                ]);
+                
+                Log::info('Stripe customer created with currency', [
+                    'user_id' => $user->id,
+                    'currency' => $currency,
+                ]);
             }
 
-            // Get correct Price ID based on user's locale and interval
-            $priceId = PricingHelper::getPriceId($user->locale, $interval);
+            // Get correct Price ID based on saved currency and interval
+            $priceId = PricingHelper::getPriceIdByCurrency($currency, $interval);
             
             if (!$priceId) {
                 Log::error('Price ID not found', [
-                    'locale' => $user->locale,
+                    'currency' => $currency,
                     'interval' => $interval,
                 ]);
                 return redirect()->back()
                     ->with('error', 'Pricing configuration error. Please contact support.');
             }
+            
+            Log::info('Using Stripe price', [
+                'user_id' => $user->id,
+                'currency' => $currency,
+                'interval' => $interval,
+                'price_id' => $priceId,
+            ]);
 
             // Build Checkout Session configuration
             $sessionConfig = [

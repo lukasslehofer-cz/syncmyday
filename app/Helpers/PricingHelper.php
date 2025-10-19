@@ -23,6 +23,30 @@ class PricingHelper
     }
 
     /**
+     * Get Stripe Price ID by currency code and interval
+     * 
+     * @param string $currency 'CZK', 'EUR', 'PLN', etc.
+     * @param string $interval 'monthly' or 'yearly'
+     * @return string|null
+     */
+    public static function getPriceIdByCurrency(string $currency, string $interval = 'yearly'): ?string
+    {
+        $interval = in_array($interval, ['monthly', 'yearly']) ? $interval : 'yearly';
+        
+        // Map currency to locale
+        $currencyToLocale = [
+            'CZK' => 'cs',
+            'EUR' => 'en',
+            'PLN' => 'pl',
+        ];
+        
+        $locale = $currencyToLocale[$currency] ?? 'en';
+        
+        // Get price ID from config based on locale and interval
+        return config("services.stripe.prices_{$interval}.{$locale}");
+    }
+
+    /**
      * Get currency information for locale and interval
      * 
      * @param string|null $locale
@@ -109,6 +133,42 @@ class PricingHelper
     {
         $currency = self::getCurrency($locale);
         return $currency['code'];
+    }
+
+    /**
+     * Get currency information by currency code
+     * 
+     * @param string $currencyCode 'CZK', 'EUR', 'PLN', etc.
+     * @param string $interval 'monthly' or 'yearly'
+     * @return array
+     */
+    public static function getCurrencyInfo(string $currencyCode, string $interval = 'yearly'): array
+    {
+        $interval = in_array($interval, ['monthly', 'yearly']) ? $interval : 'yearly';
+        
+        // Map currency to locale to get config
+        $currencyToLocale = [
+            'CZK' => 'cs',
+            'EUR' => 'en',
+            'PLN' => 'pl',
+        ];
+        
+        $locale = $currencyToLocale[$currencyCode] ?? 'en';
+        $currency = config("services.stripe.currencies.{$locale}");
+        
+        if (!$currency) {
+            return [
+                'code' => $currencyCode,
+                'symbol' => '€',
+                'amount' => 0,
+            ];
+        }
+        
+        return [
+            'code' => $currency['code'],
+            'symbol' => $currency['symbol'],
+            'amount' => $currency["amount_{$interval}"] ?? 0,
+        ];
     }
 
     /**

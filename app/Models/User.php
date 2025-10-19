@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'subscription_tier',
         'stripe_customer_id',
         'stripe_subscription_id',
+        'stripe_currency',
         'subscription_ends_at',
         'grace_period_ends_at',
         'onboarding_completed_at',

@@ -101,6 +101,20 @@
     <!-- Pricing Cards -->
     @if(!$user->hasActiveSubscription())
     <div class="max-w-5xl mx-auto">
+        @php
+            $currentLocaleCurrency = \App\Helpers\PricingHelper::getCurrencyCode($user->locale);
+            $showCurrencyNote = $user->stripe_currency && $user->stripe_currency !== $currentLocaleCurrency;
+        @endphp
+        
+        @if($showCurrencyNote)
+        <div class="mb-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4 text-center">
+            <p class="text-sm text-blue-800">
+                <strong>ℹ️ {{ __('messages.pricing_in_your_currency') }}</strong><br>
+                {{ __('messages.prices_shown_in') }} <strong>{{ $effectiveCurrency }}</strong> {{ __('messages.based_on_first_registration') }}
+            </p>
+        </div>
+        @endif
+        
         <div class="text-center mb-6 sm:mb-8">
             <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">{{ __('messages.choose_your_plan') }}</h3>
             <p class="text-base sm:text-lg text-gray-600 px-4">{{ __('messages.full_features_no_limits') }}</p>
