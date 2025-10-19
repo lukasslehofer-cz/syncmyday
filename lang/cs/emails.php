@@ -232,5 +232,28 @@ return [
     'password_reset_security_info' => 'Pokud jste nepožadovali reset hesla, ignorujte tento email nebo kontaktujte podporu, pokud máte obavy o bezpečnost vašeho účtu.',
     'password_reset_signature' => 'S pozdravem,',
     'password_reset_team_name' => 'Tým SyncMyDay',
+
+    // Renewal Reminder
+    'renewal_reminder_subject' => 'Vaše předplatné se obnoví za 3 dny',
+    'renewal_reminder_greeting' => 'Ahoj :name!',
+    'renewal_reminder_intro' => 'Toto je přátelská připomínka, že vaše předplatné SyncMyDay Pro se automaticky obnoví za 3 dny.',
+    'renewal_reminder_title' => 'Připomínka obnovení předplatného',
+    'renewal_reminder_date' => 'Datum obnovení',
+    'renewal_reminder_amount' => 'Částka',
+    'renewal_reminder_what_happens' => 'Co se stane dál?',
+    'renewal_reminder_auto_renewal' => 'Vaše předplatné se automaticky obnoví a platba bude stržena z vaší platební metody dne :date.',
+    'renewal_reminder_what_you_keep' => 'Budete i nadále mít k dispozici:',
+    'renewal_reminder_benefit_1' => 'Neomezená synchronizační pravidla',
+    'renewal_reminder_benefit_2' => 'Neomezená připojení kalendářů',
+    'renewal_reminder_benefit_3' => 'Synchronizace v reálném čase',
+    'renewal_reminder_benefit_4' => 'Prioritní podpora',
+    'renewal_reminder_benefit_5' => 'Všechny budoucí aktualizace zahrnuty',
+    'renewal_reminder_no_action_title' => 'Není potřeba nic dělat',
+    'renewal_reminder_no_action_text' => 'Vaše předplatné se obnoví automaticky. Nemusíte dělat nic, pokud nechcete provést změny.',
+    'renewal_reminder_manage_title' => 'Chcete provést změny?',
+    'renewal_reminder_manage_text' => 'Můžete aktualizovat platební metodu, změnit svůj tarif nebo kdykoliv zrušit na stránce fakturace.',
+    'renewal_reminder_manage_button' => 'Spravovat předplatné',
+    'renewal_reminder_cancel_info' => 'Pokud si přejete zrušit, musíte tak učinit před :date, abyste se vyhnuli stržení platby.',
+    'renewal_reminder_thank_you' => 'Děkujeme, že jste cenným SyncMyDay Pro předplatitelem! Jsme odhodláni vám pomáhat udržet vaše kalendáře dokonale synchronizované.',
 ];
 

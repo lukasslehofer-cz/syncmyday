@@ -232,5 +232,28 @@ return [
     'password_reset_security_info' => 'If you did not request a password reset, please ignore this email or contact support if you have concerns about your account security.',
     'password_reset_signature' => 'Best regards,',
     'password_reset_team_name' => 'The SyncMyDay Team',
+
+    // Renewal Reminder
+    'renewal_reminder_subject' => 'Your Subscription Renews in 3 Days',
+    'renewal_reminder_greeting' => 'Hello :name!',
+    'renewal_reminder_intro' => 'This is a friendly reminder that your SyncMyDay Pro subscription will automatically renew in 3 days.',
+    'renewal_reminder_title' => 'Subscription Renewal Reminder',
+    'renewal_reminder_date' => 'Renewal date',
+    'renewal_reminder_amount' => 'Amount',
+    'renewal_reminder_what_happens' => 'What Happens Next?',
+    'renewal_reminder_auto_renewal' => 'Your subscription will automatically renew and your payment method will be charged on :date.',
+    'renewal_reminder_what_you_keep' => 'You\'ll continue to enjoy:',
+    'renewal_reminder_benefit_1' => 'Unlimited sync rules',
+    'renewal_reminder_benefit_2' => 'Unlimited calendar connections',
+    'renewal_reminder_benefit_3' => 'Real-time synchronization',
+    'renewal_reminder_benefit_4' => 'Priority support',
+    'renewal_reminder_benefit_5' => 'All future updates included',
+    'renewal_reminder_no_action_title' => 'No Action Needed',
+    'renewal_reminder_no_action_text' => 'Your subscription will renew automatically. You don\'t need to do anything unless you want to make changes.',
+    'renewal_reminder_manage_title' => 'Want to Make Changes?',
+    'renewal_reminder_manage_text' => 'You can update your payment method, change your subscription plan, or cancel anytime from your billing page.',
+    'renewal_reminder_manage_button' => 'Manage Subscription',
+    'renewal_reminder_cancel_info' => 'If you wish to cancel, you must do so before :date to avoid being charged.',
+    'renewal_reminder_thank_you' => 'Thank you for being a valued SyncMyDay Pro subscriber! We\'re committed to helping you keep your calendars perfectly synchronized.',
 ];
 
