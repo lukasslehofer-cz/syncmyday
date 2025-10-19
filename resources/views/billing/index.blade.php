@@ -98,8 +98,8 @@
     </div>
     @endif
     
-    <!-- Pricing Cards -->
-    @if(!$user->hasActiveSubscription())
+    <!-- Pricing Cards - Show for trial users AND users without active subscription -->
+    @if($user->isInTrial() || !$user->hasActiveSubscription())
     <div class="max-w-5xl mx-auto">
         @php
             $currentLocaleCurrency = \App\Helpers\PricingHelper::getCurrencyCode($user->locale);
