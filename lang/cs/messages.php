@@ -869,16 +869,25 @@ return [
     'inactive' => 'Neaktivní',
     'sync_rule_update_failed' => 'Nepodařilo se aktualizovat synchronizační pravidlo. Zkuste to prosím znovu.',
     
-    // Onboarding
+    // Onboarding Progress Bar (krátké texty pro horní lištu)
+    'onboarding_step1_title' => 'Napojit kalendáře',
+    'onboarding_step1_desc' => 'Připojte Google/Microsoft',
+    'onboarding_step2_title' => 'Vytvořit pravidla',
+    'onboarding_step2_desc' => 'Nastavte synchronizaci',
+    'onboarding_step3_title' => 'Relaxovat',
+    'onboarding_step3_desc' => 'Vše je hotovo!',
+    'dismiss' => 'Zavřít',
+    
+    // Onboarding Welcome Page (delší texty pro /onboarding/start)
     'onboarding_welcome' => 'Vítejte',
     'welcome_to_syncmyday' => 'Vítejte v SyncMyDay!',
     'onboarding_intro' => 'Nastavíme vás ve 3 jednoduchých krocích:',
-    'onboarding_step1_title' => 'Připojte své kalendáře',
-    'onboarding_step1_desc' => 'Propojte své Google a/nebo Microsoft kalendáře (min. 2 kalendáře)',
-    'onboarding_step2_title' => 'Vytvořte synchronizační pravidlo',
-    'onboarding_step2_desc' => 'Nastavte své první synchronizační pravidlo',
-    'onboarding_step3_title' => 'Relaxujte a synchronizujte',
-    'onboarding_step3_desc' => 'Vaše kalendáře se budou automaticky synchronizovat!',
+    'onboarding_welcome_step1_title' => 'Připojte své kalendáře',
+    'onboarding_welcome_step1_desc' => 'Propojte své Google a/nebo Microsoft kalendáře (min. 2 kalendáře)',
+    'onboarding_welcome_step2_title' => 'Vytvořte synchronizační pravidlo',
+    'onboarding_welcome_step2_desc' => 'Nastavte své první synchronizační pravidlo',
+    'onboarding_welcome_step3_title' => 'Relaxujte a synchronizujte',
+    'onboarding_welcome_step3_desc' => 'Vaše kalendáře se budou automaticky synchronizovat!',
     'get_started' => 'Začít',
     'onboarding_duration' => 'Zabere to méně než 2 minuty',
 ];

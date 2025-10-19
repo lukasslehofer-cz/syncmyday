@@ -666,16 +666,25 @@ return [
     'feedback_thank_you_text' => 'Your feedback is valuable to us and helps us improve our service. We wish you all the best!',
     'optional' => 'optional',
     
-    // Onboarding
+    // Onboarding Progress Bar (krátke texty pre hornú lištu)
+    'onboarding_step1_title' => 'Napojiť kalendáre',
+    'onboarding_step1_desc' => 'Pripojte Google/Microsoft',
+    'onboarding_step2_title' => 'Vytvoriť pravidlá',
+    'onboarding_step2_desc' => 'Nastavte synchronizáciu',
+    'onboarding_step3_title' => 'Relaxovať',
+    'onboarding_step3_desc' => 'Všetko je hotové!',
+    'dismiss' => 'Zavrieť',
+    
+    // Onboarding Welcome Page (dlhšie texty pre /onboarding/start)
     'onboarding_welcome' => 'Vitajte',
     'welcome_to_syncmyday' => 'Vitajte v SyncMyDay!',
     'onboarding_intro' => 'Nastavíme vás v 3 jednoduchých krokoch:',
-    'onboarding_step1_title' => 'Pripojte svoje kalendáre',
-    'onboarding_step1_desc' => 'Prepojte svoje Google a/alebo Microsoft kalendáre (min. 2 kalendáre)',
-    'onboarding_step2_title' => 'Vytvorte synchronizačné pravidlo',
-    'onboarding_step2_desc' => 'Nastavte svoje prvé synchronizačné pravidlo',
-    'onboarding_step3_title' => 'Relaxujte a synchronizujte',
-    'onboarding_step3_desc' => 'Vaše kalendáre sa budú automaticky synchronizovať!',
+    'onboarding_welcome_step1_title' => 'Pripojte svoje kalendáre',
+    'onboarding_welcome_step1_desc' => 'Prepojte svoje Google a/alebo Microsoft kalendáre (min. 2 kalendáre)',
+    'onboarding_welcome_step2_title' => 'Vytvorte synchronizačné pravidlo',
+    'onboarding_welcome_step2_desc' => 'Nastavte svoje prvé synchronizačné pravidlo',
+    'onboarding_welcome_step3_title' => 'Relaxujte a synchronizujte',
+    'onboarding_welcome_step3_desc' => 'Vaše kalendáre sa budú automaticky synchronizovať!',
     'get_started' => 'Začať',
     'onboarding_duration' => 'Zaberie to menej ako 2 minúty',
 ];

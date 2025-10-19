@@ -21,8 +21,8 @@
                     1
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step1_title') }}</h3>
-                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step1_desc') }}</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_welcome_step1_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_welcome_step1_desc') }}</p>
                 </div>
             </div>
             
@@ -31,8 +31,8 @@
                     2
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step2_title') }}</h3>
-                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step2_desc') }}</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_welcome_step2_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_welcome_step2_desc') }}</p>
                 </div>
             </div>
             
@@ -41,8 +41,8 @@
                     3
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step3_title') }}</h3>
-                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step3_desc') }}</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_welcome_step3_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_welcome_step3_desc') }}</p>
                 </div>
             </div>
         </div>
