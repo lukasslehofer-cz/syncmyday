@@ -868,4 +868,17 @@ return [
     'create_first_rule' => 'Vytvořit první pravidlo',
     'inactive' => 'Neaktivní',
     'sync_rule_update_failed' => 'Nepodařilo se aktualizovat synchronizační pravidlo. Zkuste to prosím znovu.',
+    
+    // Onboarding
+    'onboarding_welcome' => 'Vítejte',
+    'welcome_to_syncmyday' => 'Vítejte v SyncMyDay!',
+    'onboarding_intro' => 'Nastavíme vás ve 3 jednoduchých krocích:',
+    'onboarding_step1_title' => 'Připojte své kalendáře',
+    'onboarding_step1_desc' => 'Propojte své Google a/nebo Microsoft kalendáře (min. 2 kalendáře)',
+    'onboarding_step2_title' => 'Vytvořte synchronizační pravidlo',
+    'onboarding_step2_desc' => 'Nastavte své první synchronizační pravidlo',
+    'onboarding_step3_title' => 'Relaxujte a synchronizujte',
+    'onboarding_step3_desc' => 'Vaše kalendáře se budou automaticky synchronizovat!',
+    'get_started' => 'Začít',
+    'onboarding_duration' => 'Zabere to méně než 2 minuty',
 ];

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Welcome')
+@section('title', __('messages.onboarding_welcome'))
 
 @section('content')
 <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -8,11 +8,11 @@
         <div class="text-6xl mb-6">🎉</div>
         
         <h1 class="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to SyncMyDay!
+            {{ __('messages.welcome_to_syncmyday') }}
         </h1>
         
         <p class="text-lg text-gray-600 mb-8">
-            Let's get you set up in just 3 easy steps:
+            {{ __('messages.onboarding_intro') }}
         </p>
         
         <div class="space-y-4 text-left mb-8">
@@ -21,8 +21,8 @@
                     1
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">Connect Your Calendars</h3>
-                    <p class="text-gray-600 text-sm">Link your Google and/or Microsoft calendars (min. 2 calendars)</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step1_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step1_desc') }}</p>
                 </div>
             </div>
             
@@ -31,8 +31,8 @@
                     2
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">Create Sync Rule</h3>
-                    <p class="text-gray-600 text-sm">Set up your first synchronization rule</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step2_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step2_desc') }}</p>
                 </div>
             </div>
             
@@ -41,21 +41,21 @@
                     3
                 </div>
                 <div class="ml-4">
-                    <h3 class="font-bold text-gray-900 text-lg">Relax & Sync</h3>
-                    <p class="text-gray-600 text-sm">Your calendars will sync automatically!</p>
+                    <h3 class="font-bold text-gray-900 text-lg">{{ __('messages.onboarding_step3_title') }}</h3>
+                    <p class="text-gray-600 text-sm">{{ __('messages.onboarding_step3_desc') }}</p>
                 </div>
             </div>
         </div>
         
         <a href="{{ route('connections.index') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:opacity-90 font-bold text-lg shadow-xl transform hover:scale-105 transition">
-            Get Started
+            {{ __('messages.get_started') }}
             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
             </svg>
         </a>
         
         <p class="mt-6 text-sm text-gray-500">
-            Takes less than 2 minutes
+            {{ __('messages.onboarding_duration') }}
         </p>
     </div>
 </div>

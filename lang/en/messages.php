@@ -863,4 +863,17 @@ return [
     'create_first_rule' => 'Create First Rule',
     'inactive' => 'Inactive',
     'sync_rule_update_failed' => 'Failed to update sync rule. Please try again.',
+    
+    // Onboarding
+    'onboarding_welcome' => 'Welcome',
+    'welcome_to_syncmyday' => 'Welcome to SyncMyDay!',
+    'onboarding_intro' => 'Let\'s get you set up in just 3 easy steps:',
+    'onboarding_step1_title' => 'Connect Your Calendars',
+    'onboarding_step1_desc' => 'Link your Google and/or Microsoft calendars (min. 2 calendars)',
+    'onboarding_step2_title' => 'Create Sync Rule',
+    'onboarding_step2_desc' => 'Set up your first synchronization rule',
+    'onboarding_step3_title' => 'Relax & Sync',
+    'onboarding_step3_desc' => 'Your calendars will sync automatically!',
+    'get_started' => 'Get Started',
+    'onboarding_duration' => 'Takes less than 2 minutes',
 ];

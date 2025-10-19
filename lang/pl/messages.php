@@ -665,4 +665,17 @@ return [
     'feedback_thank_you_title' => 'Thank you for trying SyncMyDay!',
     'feedback_thank_you_text' => 'Your feedback is valuable to us and helps us improve our service. We wish you all the best!',
     'optional' => 'optional',
+    
+    // Onboarding
+    'onboarding_welcome' => 'Witamy',
+    'welcome_to_syncmyday' => 'Witamy w SyncMyDay!',
+    'onboarding_intro' => 'Skonfigurujemy Cię w 3 prostych krokach:',
+    'onboarding_step1_title' => 'Połącz swoje kalendarze',
+    'onboarding_step1_desc' => 'Połącz swoje kalendarze Google i/lub Microsoft (min. 2 kalendarze)',
+    'onboarding_step2_title' => 'Utwórz regułę synchronizacji',
+    'onboarding_step2_desc' => 'Skonfiguruj swoją pierwszą regułę synchronizacji',
+    'onboarding_step3_title' => 'Zrelaksuj się i synchronizuj',
+    'onboarding_step3_desc' => 'Twoje kalendarze będą synchronizowane automatycznie!',
+    'get_started' => 'Rozpocznij',
+    'onboarding_duration' => 'Zajmie to mniej niż 2 minuty',
 ];
