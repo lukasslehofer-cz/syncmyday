@@ -97,10 +97,12 @@ return [
     'token_encryption_key' => env('TOKEN_ENCRYPTION_KEY'),
 
     // Fakturoid API (Czech invoicing system)
+    // Uses OAuth 2.0 Client Credentials Flow
+    // Get credentials from: Settings → User account → API access
     'fakturoid' => [
-        'email' => env('FAKTUROID_EMAIL'),
-        'api_token' => env('FAKTUROID_API_TOKEN'), // Also called "Client Secret"
-        'slug' => env('FAKTUROID_SLUG'), // Account name (e.g. 'syncmyday')
+        'client_id' => env('FAKTUROID_CLIENT_ID'),
+        'client_secret' => env('FAKTUROID_CLIENT_SECRET'),
+        'slug' => env('FAKTUROID_SLUG'), // Account subdomain (e.g. 'digimix')
         'number_format' => env('FAKTUROID_NUMBER_FORMAT'), // Invoice number series ID (numeric)
         'user_agent' => env('FAKTUROID_USER_AGENT', 'SyncMyDay (support@syncmyday.com)'),
     ],

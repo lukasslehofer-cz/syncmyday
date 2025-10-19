@@ -2,24 +2,91 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class FakturoidService
 {
     private string $apiUrl;
-    private string $email;
-    private string $apiToken;
+    private string $clientId;
+    private string $clientSecret;
     private string $slug;
     private string $userAgent;
+    private ?string $accessToken = null;
 
     public function __construct()
     {
         $this->apiUrl = 'https://app.fakturoid.cz/api/v3';
-        $this->email = config('services.fakturoid.email');
-        $this->apiToken = config('services.fakturoid.api_token');
+        $this->clientId = config('services.fakturoid.client_id');
+        $this->clientSecret = config('services.fakturoid.client_secret');
         $this->slug = config('services.fakturoid.slug');
         $this->userAgent = config('services.fakturoid.user_agent', 'SyncMyDay (support@syncmyday.com)');
+    }
+
+    /**
+     * Get OAuth access token (cached for 2 hours)
+     */
+    private function getAccessToken(): ?string
+    {
+        // Return cached token if available
+        if ($this->accessToken) {
+            return $this->accessToken;
+        }
+
+        // Check cache (tokens expire after 2 hours)
+        $cacheKey = 'fakturoid_access_token';
+        $cachedToken = Cache::get($cacheKey);
+        
+        if ($cachedToken) {
+            $this->accessToken = $cachedToken;
+            return $cachedToken;
+        }
+
+        try {
+            // Request new access token using Client Credentials Flow
+            $response = Http::withBasicAuth($this->clientId, $this->clientSecret)
+                ->withHeaders([
+                    'User-Agent' => $this->userAgent,
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json',
+                ])
+                ->post("{$this->apiUrl}/oauth/token", [
+                    'grant_type' => 'client_credentials',
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $accessToken = $data['access_token'] ?? null;
+                $expiresIn = $data['expires_in'] ?? 7200; // Default 2 hours
+
+                if ($accessToken) {
+                    // Cache token for slightly less than expiry time (to be safe)
+                    Cache::put($cacheKey, $accessToken, now()->addSeconds($expiresIn - 60));
+                    $this->accessToken = $accessToken;
+                    
+                    Log::info('Fakturoid access token obtained', [
+                        'expires_in' => $expiresIn,
+                    ]);
+
+                    return $accessToken;
+                }
+            }
+
+            Log::error('Failed to obtain Fakturoid access token', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Exception obtaining Fakturoid access token', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 
     /**
@@ -30,8 +97,15 @@ class FakturoidService
      */
     public function createInvoice(array $invoiceData): ?array
     {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            Log::error('Cannot create invoice: No access token');
+            return null;
+        }
+
         try {
-            $response = Http::withBasicAuth($this->email, $this->apiToken)
+            $response = Http::withToken($accessToken) // Bearer token
                 ->withHeaders([
                     'User-Agent' => $this->userAgent,
                     'Content-Type' => 'application/json',
@@ -75,8 +149,15 @@ class FakturoidService
      */
     public function getInvoice(int $invoiceId): ?array
     {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            Log::error('Cannot get invoice: No access token');
+            return null;
+        }
+
         try {
-            $response = Http::withBasicAuth($this->email, $this->apiToken)
+            $response = Http::withToken($accessToken)
                 ->withHeaders([
                     'User-Agent' => $this->userAgent,
                 ])
@@ -111,8 +192,15 @@ class FakturoidService
      */
     public function downloadPdf(int $invoiceId): ?\Illuminate\Http\Response
     {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            Log::error('Cannot download PDF: No access token');
+            return null;
+        }
+
         try {
-            $response = Http::withBasicAuth($this->email, $this->apiToken)
+            $response = Http::withToken($accessToken)
                 ->withHeaders([
                     'User-Agent' => $this->userAgent,
                 ])
