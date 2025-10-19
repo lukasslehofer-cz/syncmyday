@@ -81,6 +81,21 @@ class SyncCalendarsCommand extends Command
                     continue;
                 }
                 
+                // OPTIMIZATION: Skip if recently synced (prevents overlap with webhooks)
+                // Webhooks provide real-time sync, cron is just a backup
+                if (!$this->option('force')) {
+                    $lastSync = $rule->sourceConnection->last_sync_at;
+                    if ($lastSync && $lastSync->diffInMinutes(now()) < 3) {
+                        $this->info("    ⏭️  Recently synced ({$lastSync->diffForHumans()}), skipping (webhook probably handled it)");
+                        Log::channel('sync')->debug('Cron sync skipped - recently synced by webhook', [
+                            'rule_id' => $rule->id,
+                            'connection_id' => $rule->sourceConnection->id,
+                            'last_sync_at' => $lastSync->toDateTimeString(),
+                        ]);
+                        continue;
+                    }
+                }
+                
                 // Sync the rule
                 $syncEngine->syncRule($rule, $rule->sourceConnection);
                 

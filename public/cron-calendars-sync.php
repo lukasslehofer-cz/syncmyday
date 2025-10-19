@@ -70,14 +70,8 @@ try {
     }
     
     // OPTIMIZATION: Get only rules that need syncing
-    // Skip recently queued rules (processed in last 10 minutes)
     $rules = \App\Models\SyncRule::where('is_active', true)
-        ->where(function ($q) {
-            $q->whereNull('queued_at')
-              ->orWhere('queued_at', '<', now()->subMinutes(10));
-        })
-        ->with(['sourceConnection'])
-        ->orderBy('queue_priority', 'desc') // High priority first
+        ->with(['sourceConnection', 'user'])
         ->orderBy('last_triggered_at', 'asc') // Oldest first
         ->limit($useQueue ? 200 : 50) // Process more with queue, less without
         ->get();
@@ -110,6 +104,12 @@ try {
     
     foreach ($rules as $rule) {
         try {
+            // Check if user has active subscription
+            if (!$rule->user->hasActiveSubscription()) {
+                $skipped++;
+                continue;
+            }
+            
             // Get source connection
             $sourceConnection = $rule->sourceConnection;
             
@@ -123,10 +123,16 @@ try {
                 continue;
             }
             
+            // CRITICAL OPTIMIZATION: Skip if recently synced (prevents overlap with webhooks)
+            // Webhooks provide real-time sync, cron is just a backup safety net
+            $lastSync = $sourceConnection->last_sync_at;
+            if ($lastSync && $lastSync->diffInMinutes(now()) < 3) {
+                $skipped++;
+                continue; // Webhook already handled it
+            }
+            
             if ($useQueue) {
                 // QUEUE MODE: Dispatch job for async processing
-                $rule->update(['queued_at' => now()]);
-                
                 \App\Jobs\SyncRuleJob::dispatch($rule->id, $sourceConnection->id)
                     ->onQueue('sync');
                 

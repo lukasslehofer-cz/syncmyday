@@ -9,29 +9,30 @@ class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
+     * 
+     * NOTE: This scheduler is NOT used on shared hosting (SyncMyDay.cz).
+     * Shared hosting uses standalone PHP cron files in /public/cron-*.php instead.
+     * 
+     * This scheduler is only for:
+     * - Local development
+     * - VPS/dedicated servers with Laravel scheduler support
+     * 
+     * For production shared hosting cron setup, see: documentation/SHARED_HOSTING_SETUP.md
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Sync calendars every 5 minutes (for localhost without webhooks)
-        // In production with webhooks, this serves as a backup sync
+        // NOTE: Calendar sync is handled by /public/cron-calendars-sync.php on shared hosting
+        // This is only for local/VPS environments
         $schedule->command('calendars:sync')->everyFiveMinutes();
 
-        // Renew webhook subscriptions before they expire (every 6 hours)
+        // NOTE: Webhook renewal is handled by /public/cron-webhooks-renew.php on shared hosting
         $schedule->command('webhooks:renew')->everySixHours();
 
-        // Clean up old sync logs (keep last 30 days)
+        // NOTE: Log cleanup and other maintenance handled by /public/cron-*.php files
         $schedule->command('logs:clean')->daily();
-
-        // Check for stale connections and notify users
         $schedule->command('connections:check')->hourly();
-
-        // Send trial ending notifications (3 days and 1 day before trial ends)
         $schedule->command('trial:send-ending-notifications')->dailyAt('09:00');
-
-        // Expire trials for users without active subscriptions
         $schedule->command('trial:expire')->dailyAt('00:00');
-
-        // Retry failed Fakturoid invoice creations
         $schedule->command('fakturoid:retry-failed')->daily();
     }
 

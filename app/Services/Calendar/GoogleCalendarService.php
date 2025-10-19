@@ -26,7 +26,9 @@ class GoogleCalendarService
     private ?CalendarConnection $currentConnection = null;
 
     // Google API rate limits: 1,000,000 queries/day, ~1000 queries/100 seconds per user
-    private const RATE_LIMIT_MAX = 100; // Max requests per minute per connection
+    // Increased from 100 to 350 to better utilize Google's actual capacity (~600/min)
+    // This prevents false rate limit errors while staying well below Google's limits
+    private const RATE_LIMIT_MAX = 350; // Max requests per minute per connection
     private const RATE_LIMIT_DECAY = 1; // 1 minute window
 
     public function __construct()
@@ -231,6 +233,10 @@ class GoogleCalendarService
 
     /**
      * Update a blocker event
+     * 
+     * OPTIMIZATION: Creates a new Event object instead of fetching existing one.
+     * This reduces API calls from 2 (GET + UPDATE) to 1 (UPDATE only).
+     * Google Calendar API allows partial updates - we only need to specify fields we're changing.
      */
     public function updateBlocker(
         string $calendarId,
@@ -241,18 +247,12 @@ class GoogleCalendarService
         string $transactionId
     ): void {
         $this->rateLimitedCall('updateBlocker', function () use ($calendarId, $eventId, $title, $start, $end, $transactionId) {
-            $event = $this->service->events->get($calendarId, $eventId);
-            
-            // Update event details
-            $event->setSummary($title);
-            $event->setStart(new \Google_Service_Calendar_EventDateTime([
-                'dateTime' => $start->format(\DateTime::RFC3339),
-                'timeZone' => 'UTC',
-            ]));
-            $event->setEnd(new \Google_Service_Calendar_EventDateTime([
-                'dateTime' => $end->format(\DateTime::RFC3339),
-                'timeZone' => 'UTC',
-            ]));
+            // Create event object directly without fetching (saves 1 API call)
+            $event = new Event([
+                'summary' => $title,
+                'start' => ['dateTime' => $start->format(\DateTime::RFC3339), 'timeZone' => 'UTC'],
+                'end' => ['dateTime' => $end->format(\DateTime::RFC3339), 'timeZone' => 'UTC'],
+            ]);
 
             $this->service->events->update($calendarId, $eventId, $event);
             
