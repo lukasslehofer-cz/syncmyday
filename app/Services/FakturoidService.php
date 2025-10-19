@@ -364,6 +364,8 @@ class FakturoidService
             'issued_on' => $today, // Date of issue
             'taxable_fulfillment_due' => $today, // Date of taxable fulfillment
             'due' => 0, // Due in 0 days (same day as issued_on, will calculate due_on)
+            'payment_method' => 'card', // Payment method: paid by card (Stripe)
+            'hide_bank_account' => true, // Don't show bank account on invoice (already paid)
             'lines' => [
                 [
                     'name' => $description,
