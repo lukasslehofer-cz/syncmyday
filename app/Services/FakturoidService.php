@@ -346,22 +346,30 @@ class FakturoidService
             return null;
         }
 
+        // Calculate price without VAT (amount from Stripe is already with VAT included)
+        // Formula: price_without_vat = price_with_vat / 1.21
+        $priceWithoutVat = round($amount / 1.21, 2);
+
+        // Use same date for issued, due and paid
+        $today = now()->format('Y-m-d');
+
         // Build invoice data according to Fakturoid API v3
         $invoiceData = [
             'subject_id' => $subjectId, // Required: ID of the contact/subject
             'number_format_id' => $numberFormatId, // Number series ID (numeric)
             'currency' => strtolower($currency), // Fakturoid uses lowercase currency codes
             'language' => $language,
-            'issued_on' => now()->format('Y-m-d'),
-            'due_on' => now()->format('Y-m-d'), // Immediate due date since already paid
-            'paid_on' => now()->format('Y-m-d'), // Mark as paid
+            'issued_on' => $today, // Date of issue
+            'taxable_fulfillment_due' => $today, // Date of taxable fulfillment
+            'due' => 0, // Due in 0 days (same day as issued_on, will calculate due_on)
+            'paid_on' => $today, // Mark as paid on the same day
             'lines' => [
                 [
                     'name' => $description,
                     'quantity' => 1,
                     'unit_name' => 'ks',
-                    'unit_price' => $amount,
-                    'vat_rate' => 21, // 21% DPH
+                    'unit_price' => $priceWithoutVat, // Price WITHOUT VAT
+                    'vat_rate' => 21, // 21% DPH will be added
                 ],
             ],
             'note' => __('messages.invoice_note', [], $user->locale),
