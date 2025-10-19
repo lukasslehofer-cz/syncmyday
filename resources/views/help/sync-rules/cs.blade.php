@@ -54,12 +54,14 @@
             <h3 class="!mt-0">Přejděte na Pravidla synchronizace</h3>
             <p>Přejděte na <strong>Pravidla synchronizace</strong> v hlavním menu, nebo jděte přímo na stránku Pravidla synchronizace z vašeho dashboardu.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard se zvýrazněným menu "Pravidla synchronizace"</p>
-                <p class="text-sm">Navigace zobrazující možnost Pravidla synchronizace</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-1.jpg') }}" 
+                         alt="Dashboard se zvýrazněným menu Pravidla synchronizace" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přejděte na stránku Synchronizační pravidla</p>
             </div>
         </div>
     </div>
@@ -71,13 +73,6 @@
             <h3 class="!mt-0">Klikněte na "Vytvořit nové pravidlo synchronizace"</h3>
             <p>Na stránce Pravidla synchronizace klikněte na tlačítko <strong>"Vytvořit nové pravidlo synchronizace"</strong> nebo <strong>"+ Nové pravidlo"</strong>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Stránka Pravidla synchronizace s tlačítkem "Vytvořit nové"</p>
-                <p class="text-sm">Zobrazuje tlačítko pro vytvoření nového pravidla synchronizace</p>
-            </div>
         </div>
     </div>
     
@@ -99,12 +94,14 @@
                 <li><strong>Pracovní kalendář</strong> (zdroj) → Osobní kalendář (cíl): Blokovat osobní čas, když máte pracovní schůzky</li>
             </ul>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Rozbalovací menu zdrojového kalendáře zobrazující připojené kalendáře</p>
-                <p class="text-sm">Rozbalovací menu se seznamem všech dostupných zdrojových kalendářů</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-3.jpg') }}" 
+                         alt="Rozbalovací menu zdrojového kalendáře zobrazující připojené kalendáře" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte zdrojový kalendář (odkud kopírovat události)</p>
             </div>
         </div>
     </div>
@@ -121,12 +118,14 @@
                 <p class="text-purple-800 text-sm mb-0">Můžete vybrat více cílových kalendářů! Například synchronizujte osobní události současně do pracovního kalendáře Google A pracovního kalendáře Outlook.</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Výběr cílového kalendáře se zaškrtávacími políčky</p>
-                <p class="text-sm">Zobrazuje více kalendářů, které lze vybrat jako cíle</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-4.jpg') }}" 
+                         alt="Výběr cílového kalendáře se zaškrtávacími políčky" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte cílové kalendáře (kam kopírovat události)</p>
             </div>
         </div>
     </div>
@@ -152,12 +151,14 @@
                 <p class="text-green-800 text-sm mb-0">Název blokátoru je to, co ostatní uvidí ve vašem kalendáři. Vyberte něco vhodného pro váš kontext (práce, osobní atd.).</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Vstupní pole názvu blokátoru</p>
-                <p class="text-sm">Textové pole zobrazující příklad názvu blokátoru "Zaneprázdněn"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-5.jpg') }}" 
+                         alt="Vstupní pole názvu blokátoru" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte název pro blokující události</p>
             </div>
         </div>
     </div>
@@ -186,7 +187,7 @@
             <!-- Ignorovat celodenní události -->
             <div class="mb-6 p-4 border-2 border-gray-200 rounded-lg">
                 <div class="flex items-start mb-2">
-                    <input type="checkbox" class="mt-1 mr-3" disabled>
+                    <input type="checkbox" class="mt-1 mr-3" disabled checked>
                     <div>
                         <h4 class="!mt-0 !mb-1 font-semibold text-gray-900">Ignorovat celodenní události</h4>
                         <p class="text-gray-700 text-sm mb-2">Nesynchronizovat celodenní události jako jsou svátky, narozeniny nebo dny mimo kancelář.</p>
@@ -196,35 +197,26 @@
             </div>
             
             <!-- Pouze pracovní doba -->
-            <div class="mb-6 p-4 border-2 border-indigo-300 rounded-lg bg-indigo-50">
+            <div class="mb-6 p-4 border-2 border-gray-200 rounded-lg">
                 <div class="flex items-start mb-2">
                     <input type="checkbox" class="mt-1 mr-3" disabled checked>
                     <div>
-                        <h4 class="!mt-0 !mb-1 font-semibold text-indigo-900">Pouze pracovní doba</h4>
-                        <p class="text-indigo-800 text-sm mb-3">Synchronizovat pouze události, které spadají do specifických hodin a dnů.</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-3">
-                            <div class="p-3 bg-white border border-indigo-200 rounded">
-                                <p class="text-xs font-semibold text-indigo-900 mb-1">Hodiny</p>
-                                <p class="text-sm text-indigo-700 mb-0">9:00 - 17:00</p>
-                            </div>
-                            <div class="p-3 bg-white border border-indigo-200 rounded">
-                                <p class="text-xs font-semibold text-indigo-900 mb-1">Dny</p>
-                                <p class="text-sm text-indigo-700 mb-0">Po, Út, St, Čt, Pá</p>
-                            </div>
-                        </div>
+                        <h4 class="!mt-0 !mb-1 font-semibold text-indigo-900">Zapnout časový a denní filtr</h4>
+                        <p class="text-indigo-800 text-sm mb-3">Synchronizovat pouze události, které spadají do specifických hodin a dnů.</p>                                                
                         
                         <p class="text-indigo-700 text-xs mt-3 mb-0"><strong>Použití:</strong> Blokovat pouze pracovní kalendář během pracovní doby. Osobní události večer nebo o víkendech se nebudou synchronizovat.</p>
                     </div>
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Možnosti filtrů se zaškrtávacími políčky a selektory času</p>
-                <p class="text-sm">Zobrazuje rozhraní pro konfiguraci filtrů</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-6.jpg') }}" 
+                         alt="Možnosti filtrů se zaškrtávacími políčky a selektory času" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Nastavte filtry (volitelné) pro specifické případy</p>
             </div>
         </div>
     </div>
@@ -246,12 +238,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Potvrzovací stránka zobrazující aktivní pravidlo synchronizace</p>
-                <p class="text-sm">Zobrazuje nově vytvořené pravidlo synchronizace s jeho nastavením</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/sync-7.jpg') }}" 
+                         alt="Potvrzovací stránka zobrazující aktivní pravidlo synchronizace" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vaše pravidlo synchronizace je aktivní a funkční!</p>
             </div>
         </div>
     </div>

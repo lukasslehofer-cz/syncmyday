@@ -62,10 +62,11 @@ class EmailCalendarSyncService
             // Parse email
             $emailData = $this->emailParser->parseEmail($rawEmail);
             
-            // Check sender whitelist
-            if ($emailData['from'] && !$connection->isSenderAllowed($emailData['from'])) {
+            // Security check: sender must match target_email (source address)
+            if ($emailData['from'] && strtolower($emailData['from']) !== strtolower($connection->target_email)) {
                 Log::warning('Email from unauthorized sender', [
                     'from' => $emailData['from'],
+                    'expected' => $connection->target_email,
                     'connection_id' => $connection->id,
                 ]);
                 
@@ -73,7 +74,7 @@ class EmailCalendarSyncService
                     'success' => false,
                     'ics_count' => 0,
                     'events_processed' => 0,
-                    'error' => 'Sender not whitelisted',
+                    'error' => 'Sender does not match source email',
                 ];
             }
 

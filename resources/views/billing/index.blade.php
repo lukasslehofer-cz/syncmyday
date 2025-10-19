@@ -84,8 +84,8 @@
         </div>
     </div>
     
-    <!-- Expired trial banner -->
-    @elseif($user->subscription_tier === 'free')
+    <!-- Expired trial / Soft-locked banner -->
+    @elseif($user->subscription_tier === 'pro' && !$user->hasActiveSubscription())
     <div class="mb-6 sm:mb-8 bg-gradient-to-r from-red-50 to-orange-50 border-2 border-red-200 rounded-2xl p-6 sm:p-8 text-center">
         <div class="flex items-center justify-center space-x-2 mb-2 sm:mb-3">
             <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@
     @endif
     
     <!-- Pricing Cards -->
-    @if($user->subscription_tier === 'free' || $user->isInTrial())
+    @if(!$user->hasActiveSubscription())
     <div class="max-w-5xl mx-auto">
         <div class="text-center mb-6 sm:mb-8">
             <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">{{ __('messages.choose_your_plan') }}</h3>

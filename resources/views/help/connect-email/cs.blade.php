@@ -96,12 +96,14 @@
             <h3 class="!mt-0">Přejděte na Připojení kalendářů</h3>
             <p>Přejděte na <strong>Kalendáře</strong> v menu, nebo jděte na <a href="{{ route('connections.index') }}">stránku Připojení kalendářů</a>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard se zvýrazněným menu Kalendáře</p>
-                <p class="text-sm">Navigační lišta zobrazující možnost Kalendáře</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/email-1.jpg') }}" 
+                         alt="Dashboard se zvýrazněným menu Kalendáře" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přejděte na stránku Připojení kalendářů</p>
             </div>
         </div>
     </div>
@@ -113,12 +115,14 @@
             <h3 class="!mt-0">Klikněte na "Připojit e-mailový kalendář"</h3>
             <p>Najděte a klikněte na tlačítko <strong>E-mailový kalendář</strong> s ikonou obálky.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Poskytovatelé kalendářů s možností E-mailový kalendář</p>
-                <p class="text-sm">Zobrazuje rozhraní pro připojení se zvýrazněným E-mailovým kalendářem</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/email-2.jpg') }}" 
+                         alt="Poskytovatelé kalendářů s možností E-mailový kalendář" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na zelené tlačítko "Emailový kalendář"</p>
             </div>
         </div>
     </div>
@@ -180,12 +184,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Úspěšně připojený e-mailový kalendář</p>
-                <p class="text-sm">Zobrazuje e-mailový kalendář v seznamu připojení se stavem</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/email-3.jpg') }}" 
+                         alt="Úspěšně připojený e-mailový kalendář" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Váš e-mailový kalendář je úspěšně připojen a aktivní</p>
             </div>
         </div>
     </div>

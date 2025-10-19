@@ -54,12 +54,14 @@
             <h3 class="!mt-0">Go to Sync Rules</h3>
             <p>Navigate to <strong>Sync Rules</strong> in the main menu, or go directly to the Sync Rules page from your dashboard.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard with "Sync Rules" menu highlighted</p>
-                <p class="text-sm">Navigation showing the Sync Rules option</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-1.jpg') }}" 
+                         alt="Dashboard with Sync Rules menu highlighted" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Go to the Sync Rules page</p>
             </div>
         </div>
     </div>
@@ -71,13 +73,6 @@
             <h3 class="!mt-0">Click "Create New Sync Rule"</h3>
             <p>On the Sync Rules page, click the <strong>"Create New Sync Rule"</strong> or <strong>"+ New Rule"</strong> button.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Sync Rules page with "Create New" button</p>
-                <p class="text-sm">Shows the button to create a new sync rule</p>
-            </div>
         </div>
     </div>
     
@@ -99,12 +94,14 @@
                 <li><strong>Work calendar</strong> (source) → Personal calendar (target): Block personal time when you're in work meetings</li>
             </ul>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Source calendar dropdown showing connected calendars</p>
-                <p class="text-sm">Dropdown menu listing all available source calendars</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-3.jpg') }}" 
+                         alt="Source calendar dropdown showing connected calendars" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Select the source calendar (where to copy events from)</p>
             </div>
         </div>
     </div>
@@ -121,12 +118,14 @@
                 <p class="text-purple-800 text-sm mb-0">You can select multiple target calendars! For example, sync your personal events to both your work Google Calendar AND your work Outlook calendar simultaneously.</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Target calendar selection with checkboxes</p>
-                <p class="text-sm">Shows multiple calendars that can be selected as targets</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-4.jpg') }}" 
+                         alt="Target calendar selection with checkboxes" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Select target calendars (where to copy events to)</p>
             </div>
         </div>
     </div>
@@ -152,12 +151,14 @@
                 <p class="text-green-800 text-sm mb-0">The blocker title is what others will see in your calendar. Choose something appropriate for your context (work, personal, etc.).</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Blocker title input field</p>
-                <p class="text-sm">Text field showing example blocker title "Busy"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-5.jpg') }}" 
+                         alt="Blocker title input field" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Enter a title for blocker events</p>
             </div>
         </div>
     </div>
@@ -186,7 +187,7 @@
             <!-- Ignore All-Day Events -->
             <div class="mb-6 p-4 border-2 border-gray-200 rounded-lg">
                 <div class="flex items-start mb-2">
-                    <input type="checkbox" class="mt-1 mr-3" disabled>
+                    <input type="checkbox" class="mt-1 mr-3" disabled checked>
                     <div>
                         <h4 class="!mt-0 !mb-1 font-semibold text-gray-900">Ignore All-Day Events</h4>
                         <p class="text-gray-700 text-sm mb-2">Don't sync all-day events like holidays, birthdays, or out-of-office days.</p>
@@ -196,35 +197,26 @@
             </div>
             
             <!-- Work Hours Only -->
-            <div class="mb-6 p-4 border-2 border-indigo-300 rounded-lg bg-indigo-50">
+            <div class="mb-6 p-4 border-2 border-gray-200 rounded-lg">
                 <div class="flex items-start mb-2">
                     <input type="checkbox" class="mt-1 mr-3" disabled checked>
                     <div>
                         <h4 class="!mt-0 !mb-1 font-semibold text-indigo-900">Work Hours Only</h4>
                         <p class="text-indigo-800 text-sm mb-3">Only sync events that fall within specific hours and days.</p>
                         
-                        <div class="grid md:grid-cols-2 gap-3">
-                            <div class="p-3 bg-white border border-indigo-200 rounded">
-                                <p class="text-xs font-semibold text-indigo-900 mb-1">Hours</p>
-                                <p class="text-sm text-indigo-700 mb-0">9:00 AM - 5:00 PM</p>
-                            </div>
-                            <div class="p-3 bg-white border border-indigo-200 rounded">
-                                <p class="text-xs font-semibold text-indigo-900 mb-1">Days</p>
-                                <p class="text-sm text-indigo-700 mb-0">Mon, Tue, Wed, Thu, Fri</p>
-                            </div>
-                        </div>
-                        
                         <p class="text-indigo-700 text-xs mt-3 mb-0"><strong>Use case:</strong> Only block your work calendar during work hours. Personal events in the evening or weekends won't sync.</p>
                     </div>
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Filter options with checkboxes and time selectors</p>
-                <p class="text-sm">Shows the filter configuration interface</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-6.jpg') }}" 
+                         alt="Filter options with checkboxes and time selectors" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Set filters (optional) for specific use cases</p>
             </div>
         </div>
     </div>
@@ -246,12 +238,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Confirmation page showing active sync rule</p>
-                <p class="text-sm">Shows the newly created sync rule with its settings</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/en/sync-7.jpg') }}" 
+                         alt="Confirmation page showing active sync rule" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Your sync rule is active and working!</p>
             </div>
         </div>
     </div>

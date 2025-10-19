@@ -200,12 +200,14 @@
             <h3 class="!mt-0">Přejděte na Připojení kalendářů</h3>
             <p>V SyncMyDay přejděte na <strong>Kalendáře</strong> v menu, nebo jděte na <a href="{{ route('connections.index') }}">stránku Připojení kalendářů</a>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard s menu Kalendáře</p>
-                <p class="text-sm">Navigace zobrazující možnost Kalendáře</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/caldav-1.jpg') }}" 
+                         alt="Dashboard s menu Kalendáře" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přejděte na stránku Připojení kalendářů</p>
             </div>
         </div>
     </div>
@@ -217,12 +219,14 @@
             <h3 class="!mt-0">Klikněte na "Připojit CalDAV"</h3>
             <p>Najděte a klikněte na tlačítko <strong>CalDAV (Generic)</strong>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Možnosti poskytovatelů kalendářů s tlačítkem CalDAV</p>
-                <p class="text-sm">Zobrazuje možnost připojení CalDAV</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/caldav-2.jpg') }}" 
+                         alt="Možnosti poskytovatelů kalendářů s tlačítkem CalDAV" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na tlačítko "Apple / CalDAV"</p>
             </div>
         </div>
     </div>
@@ -268,12 +272,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Připojovací formulář CalDAV</p>
-                <p class="text-sm">Formulář s poli pro URL serveru, uživatelské jméno a heslo</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/caldav-3.jpg') }}" 
+                         alt="Připojovací formulář CalDAV" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte údaje vašeho CalDAV serveru</p>
             </div>
         </div>
     </div>
@@ -309,12 +315,14 @@
                 <li>Jakékoliv vlastní kalendáře, které jste vytvořili</li>
             </ul>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Výběr kalendáře s CalDAV kalendáři</p>
-                <p class="text-sm">Zobrazuje dostupné kalendáře se zaškrtávacími políčky</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/caldav-4.jpg') }}" 
+                         alt="Výběr kalendáře s CalDAV kalendáři" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte kalendáře, které chcete synchronizovat</p>
             </div>
         </div>
     </div>
@@ -336,12 +344,14 @@
                 <p class="text-green-800 text-sm mb-0"><strong>Poznámka:</strong> CalDAV nepodporuje webhooky v reálném čase, takže kontrolujeme změny každých 15 minut.</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Úspěšně připojený CalDAV kalendář</p>
-                <p class="text-sm">Zobrazuje kalendář se stavem "Aktivní" v seznamu připojení</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/caldav-5.jpg') }}" 
+                         alt="Úspěšně připojený CalDAV kalendář" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Váš CalDAV kalendář je úspěšně připojen a aktivní</p>
             </div>
         </div>
     </div>

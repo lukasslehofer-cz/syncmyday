@@ -18,8 +18,6 @@ class EmailCalendarConnection extends Model
         'name',
         'target_email',
         'target_email_verified_at',
-        'description',
-        'sender_whitelist',
         'emails_received',
         'events_processed',
         'last_email_at',
@@ -28,7 +26,6 @@ class EmailCalendarConnection extends Model
     ];
 
     protected $casts = [
-        'sender_whitelist' => 'array',
         'last_email_at' => 'datetime',
         'target_email_verified_at' => 'datetime',
         'emails_received' => 'integer',
@@ -91,38 +88,6 @@ class EmailCalendarConnection extends Model
         return self::whereRaw('LOWER(email_token) = ?', [$token])
             ->where('status', 'active')
             ->first();
-    }
-
-    /**
-     * Check if sender is whitelisted
-     */
-    public function isSenderAllowed(string $senderEmail): bool
-    {
-        // If no whitelist, allow all
-        if (empty($this->sender_whitelist)) {
-            return true;
-        }
-
-        $senderEmail = strtolower(trim($senderEmail));
-        
-        foreach ($this->sender_whitelist as $allowed) {
-            $allowed = strtolower(trim($allowed));
-            
-            // Exact match
-            if ($senderEmail === $allowed) {
-                return true;
-            }
-            
-            // Wildcard domain match (e.g., *@company.com)
-            if (str_starts_with($allowed, '*@')) {
-                $domain = substr($allowed, 2);
-                if (str_ends_with($senderEmail, '@' . $domain)) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
     }
 
     /**

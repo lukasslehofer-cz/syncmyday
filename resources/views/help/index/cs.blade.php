@@ -63,7 +63,7 @@
             </div>
             <div>
                 <p class="text-xl font-bold text-gray-900 mb-2">Google Calendar</p>
-                <p class="text-sm text-gray-600">Rychlé nastavení OAuth</p>
+                <p class="text-sm text-gray-600">Nejoblíbenější kalendářová služba</p>
             </div>
         </div>
         <div class="absolute top-4 right-4">
@@ -107,7 +107,7 @@
             </div>
             <div>
                 <p class="text-xl font-bold text-gray-900 mb-2">Apple iCloud</p>
-                <p class="text-sm text-gray-600">Heslo pro aplikaci</p>
+                <p class="text-sm text-gray-600">Kalendář společnosti Apple</p>
             </div>
         </div>
         <div class="absolute top-4 right-4">

@@ -70,48 +70,6 @@
                 <p class="mt-2 text-sm text-gray-500">{{ __('messages.calendar_name_hint') }}</p>
             </div>
 
-            <!-- Description -->
-            <div>
-                <label for="description" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span>{{ __('messages.description') }} ({{ __('messages.optional') }})</span>
-                </label>
-                <textarea 
-                    name="description" 
-                    id="description" 
-                    rows="3"
-                    placeholder="{{ __('messages.description_placeholder') }}"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-medium transition"
-                >{{ old('description', $emailCalendar->description) }}</textarea>
-                @error('description')
-                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Sender Whitelist -->
-            <div>
-                <label for="sender_whitelist" class="flex items-center space-x-2 text-sm font-bold text-gray-900 mb-2">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                    <span>{{ __('messages.allowed_senders') }} ({{ __('messages.optional') }})</span>
-                </label>
-                <textarea 
-                    name="sender_whitelist" 
-                    id="sender_whitelist" 
-                    rows="4"
-                    placeholder="user@company.com&#10;*@company.com&#10;&#10;Leave empty to allow all senders"
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm transition"
-                >{{ old('sender_whitelist', is_array($emailCalendar->sender_whitelist) ? implode("\n", $emailCalendar->sender_whitelist) : '') }}</textarea>
-                @error('sender_whitelist')
-                    <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
-                @enderror
-                <p class="mt-2 text-sm text-gray-500">
-                    {!! __('messages.allowed_senders_hint') !!}
-                </p>
-            </div>
         </div>
 
         <!-- Footer Actions -->

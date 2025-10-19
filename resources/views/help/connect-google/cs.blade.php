@@ -19,7 +19,7 @@
     </div>
     <div>
         <h1 class="!mb-0">Připojení Google Calendar</h1>
-        <p class="text-lg text-gray-600 !mb-0">Rychlé a bezpečné OAuth připojení</p>
+        <p class="text-lg text-gray-600 !mb-0">Rychlé a bezpečné připojení</p>
     </div>
 </div>
 
@@ -45,12 +45,14 @@
             <h3 class="!mt-0">Přejděte na Připojení kalendářů</h3>
             <p>Z vašeho SyncMyDay dashboardu klikněte na <strong>Kalendáře</strong> v hlavním menu, nebo přejděte přímo na <a href="{{ route('connections.index') }}">stránku Připojení kalendářů</a>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard se zvýrazněnou položkou menu "Kalendáře"</p>
-                <p class="text-sm">Zobrazuje hlavní navigaci s jasně viditelným odkazem Kalendáře</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-1.jpg') }}" 
+                         alt="Stránka Připojení kalendářů s možnostmi Google Calendar, Microsoft 365, Apple/CalDAV a Emailový kalendář" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Stránka "Připojení kalendářů" zobrazující všechny dostupné možnosti připojení</p>
             </div>
         </div>
     </div>
@@ -62,12 +64,14 @@
             <h3 class="!mt-0">Klikněte na "Připojit Google Calendar"</h3>
             <p>Na stránce Připojení kalendářů najděte tlačítko <strong>Google Calendar</strong> s logem Google a klikněte na něj.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Stránka Připojení kalendářů zobrazující tlačítko "Připojit Google Calendar"</p>
-                <p class="text-sm">Zobrazuje mřížku poskytovatelů kalendářů s prominentně zobrazeným Google Calendar</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-2.jpg') }}" 
+                         alt="Tlačítko Google Calendar na stránce Připojení kalendářů" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na modré tlačítko "Google Calendar" pro zahájení připojení</p>
             </div>
         </div>
     </div>
@@ -91,12 +95,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Přihlašovací stránka Google</p>
-                <p class="text-sm">Zobrazuje oficiální přihlašovací obrazovku Google vyžadující e-mail/heslo</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-3.jpg') }}" 
+                         alt="Přihlašovací obrazovka Google" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přihlaste se pomocí svého Google účtu</p>
             </div>
         </div>
     </div>
@@ -127,12 +133,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Obrazovka souhlasu Google OAuth</p>
-                <p class="text-sm">Zobrazuje dialog s požadavkem na oprávnění s tlačítkem "Povolit"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-4.jpg') }}" 
+                         alt="Obrazovka souhlasu s oprávněními Google OAuth" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Udělte SyncMyDay oprávnění k přístupu k vašemu kalendáři</p>
             </div>
         </div>
     </div>
@@ -154,12 +162,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dialog výběru kalendáře</p>
-                <p class="text-sm">Zobrazuje zaškrtávací políčka pro každý kalendář dostupný v Google účtu</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-5.jpg') }}" 
+                         alt="Dialog výběru kalendářů z Google účtu" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte kalendáře, které chcete synchronizovat</p>
             </div>
         </div>
     </div>
@@ -180,12 +190,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Seznam připojených kalendářů zobrazující Google Calendar se stavem "Aktivní"</p>
-                <p class="text-sm">Zobrazuje stránku připojení kalendářů s nově připojeným Google Calendar</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/google-6.jpg') }}" 
+                         alt="Seznam připojených kalendářů s Google Calendar se stavem Aktivní" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Váš Google Calendar je úspěšně připojen a aktivní</p>
             </div>
         </div>
     </div>

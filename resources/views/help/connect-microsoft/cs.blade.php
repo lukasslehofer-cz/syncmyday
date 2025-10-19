@@ -48,12 +48,14 @@
             <h3 class="!mt-0">Přejděte na Připojení kalendářů</h3>
             <p>Z vašeho SyncMyDay dashboardu přejděte na <strong>Kalendáře</strong> v hlavním menu, nebo jděte přímo na <a href="{{ route('connections.index') }}">stránku Připojení kalendářů</a>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard se zvýrazněným menu "Kalendáře"</p>
-                <p class="text-sm">Navigační lišta zobrazující možnost Kalendáře</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-1.jpg') }}" 
+                         alt="Stránka Připojení kalendářů s možnostmi poskytovatelů" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Navigační lišta zobrazující možnost Kalendáře</p>
             </div>
         </div>
     </div>
@@ -65,12 +67,14 @@
             <h3 class="!mt-0">Klikněte na "Připojit Microsoft 365"</h3>
             <p>Najděte a klikněte na tlačítko <strong>Microsoft 365</strong> s logem Microsoft.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Možnosti poskytovatelů kalendářů s tlačítkem Microsoft 365</p>
-                <p class="text-sm">Zobrazuje rozhraní pro připojení se zvýrazněnou možností Microsoft 365</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-2.jpg') }}" 
+                         alt="Tlačítko Microsoft 365 na stránce Připojení kalendářů" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na fialové tlačítko "Microsoft 365" pro zahájení připojení</p>
             </div>
         </div>
     </div>
@@ -98,12 +102,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Přihlašovací stránka Microsoft</p>
-                <p class="text-sm">Oficiální přihlašovací obrazovka Microsoft vyžadující e-mailovou adresu</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-3.jpg') }}" 
+                         alt="Přihlašovací obrazovka Microsoft" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte svou Microsoft e-mailovou adresu</p>
             </div>
         </div>
     </div>
@@ -158,12 +164,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Obrazovka souhlasu s oprávněními Microsoft</p>
-                <p class="text-sm">Zobrazuje seznam požadovaných oprávnění s tlačítkem "Přijmout"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-4.jpg') }}" 
+                         alt="Obrazovka souhlasu s oprávněními Microsoft" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Udělte SyncMyDay oprávnění k přístupu k vašemu kalendáři</p>
             </div>
         </div>
     </div>
@@ -188,12 +196,14 @@
                 <li>Kalendáře sdílené s vámi kolegy</li>
             </ul>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Rozhraní výběru kalendáře</p>
-                <p class="text-sm">Zaškrtávací políčka zobrazující dostupné kalendáře z Microsoft účtu</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-5.jpg') }}" 
+                         alt="Dialog výběru kalendářů z Microsoft účtu" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte kalendáře, které chcete synchronizovat</p>
             </div>
         </div>
     </div>
@@ -214,12 +224,14 @@
                 </ul>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Úspěšně připojený Microsoft 365 kalendář</p>
-                <p class="text-sm">Stránka připojení kalendářů zobrazující nový Microsoft kalendář se zeleným odznáčkem "Aktivní"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/microsoft-6.jpg') }}" 
+                         alt="Seznam připojených kalendářů s Microsoft 365 se stavem Aktivní" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Váš Microsoft 365 kalendář je úspěšně připojen a aktivní</p>
             </div>
         </div>
     </div>

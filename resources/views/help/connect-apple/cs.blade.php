@@ -80,12 +80,14 @@
             <p>Otevřete prohlížeč a přejděte na <a href="https://appleid.apple.com" target="_blank" class="font-semibold">appleid.apple.com</a></p>
             <p>Přihlaste se pomocí e-mailu a hesla vašeho Apple ID.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Přihlašovací stránka Apple ID na appleid.apple.com</p>
-                <p class="text-sm">Zobrazuje přihlašovací formulář Apple ID</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-1.jpg') }}" 
+                         alt="Přihlašovací stránka Apple ID" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přihlaste se pomocí vašeho Apple ID</p>
             </div>
         </div>
     </div>
@@ -97,12 +99,14 @@
             <h4 class="!mt-0">Autentizujte se dvoufaktorově</h4>
             <p>Apple pošle ověřovací kód na vaše důvěryhodná zařízení (iPhone, iPad, Mac). Zadejte 6místný kód, když budete vyzváni.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Zadání kódu dvoufaktorové autentizace</p>
-                <p class="text-sm">Zobrazuje vstup pro 6místný ověřovací kód</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-2.jpg') }}" 
+                         alt="Zadání kódu dvoufaktorové autentizace" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte 6místný ověřovací kód z vašeho zařízení</p>
             </div>
         </div>
     </div>
@@ -114,12 +118,14 @@
             <h4 class="!mt-0">Přejděte do sekce Zabezpečení</h4>
             <p>Po přihlášení najděte a klikněte na sekci <strong>"Přihlášení a zabezpečení"</strong>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Stránka účtu Apple ID se zvýrazněnou sekcí "Přihlášení a zabezpečení"</p>
-                <p class="text-sm">Zobrazuje hlavní dashboard Apple ID</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-3.jpg') }}" 
+                         alt="Stránka účtu Apple ID se sekcí Přihlášení a zabezpečení" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na sekci "Přihlášení a zabezpečení"</p>
             </div>
         </div>
     </div>
@@ -131,12 +137,14 @@
             <h4 class="!mt-0">Klikněte na "Hesla pro aplikace"</h4>
             <p>V sekci Zabezpečení posuňte dolů, dokud nenajdete <strong>"Hesla pro aplikace"</strong> a klikněte na ně.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Nastavení zabezpečení s možností "Hesla pro aplikace"</p>
-                <p class="text-sm">Zobrazuje položku menu Hesla pro aplikace</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-4.jpg') }}" 
+                         alt="Nastavení zabezpečení s možností Hesla pro aplikace" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Najděte a klikněte na "Hesla pro aplikace"</p>
             </div>
         </div>
     </div>
@@ -157,12 +165,14 @@
                 <p class="text-purple-900 text-sm mb-0"><strong>Tip:</strong> Název vám pomůže zapamatovat si, k čemu je toto heslo, zejména pokud ho budete později potřebovat odvolat.</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dialog pro zadání názvu hesla pro aplikaci</p>
-                <p class="text-sm">Zobrazuje vstupní pole s "SyncMyDay" zadaným</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-5.jpg') }}" 
+                         alt="Dialog pro zadání názvu hesla pro aplikaci" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte název jako "SyncMyDay"</p>
             </div>
         </div>
     </div>
@@ -186,12 +196,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Zobrazené vygenerované heslo pro aplikaci</p>
-                <p class="text-sm">Zobrazuje heslo ve skupinách 4 znaků s tlačítkem kopírovat</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-6.jpg') }}" 
+                         alt="Zobrazené vygenerované heslo pro aplikaci" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zkopírujte vygenerované heslo - zobrazí se pouze jednou!</p>
             </div>
         </div>
     </div>
@@ -207,12 +219,14 @@
             <h4 class="!mt-0">Přejděte na Připojení kalendářů</h4>
             <p>Vraťte se do SyncMyDay a přejděte na <strong>Kalendáře</strong> v menu, nebo jděte přímo na <a href="{{ route('connections.index') }}">stránku Připojení kalendářů</a>.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Dashboard SyncMyDay s menu Kalendáře</p>
-                <p class="text-sm">Navigace zobrazující možnost Kalendáře</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-7.jpg') }}" 
+                         alt="Dashboard SyncMyDay s menu Kalendáře" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Přejděte na stránku Připojení kalendářů</p>
             </div>
         </div>
     </div>
@@ -224,12 +238,14 @@
             <h4 class="!mt-0">Klikněte na "Připojit Apple iCloud"</h4>
             <p>Najděte a klikněte na tlačítko <strong>Apple iCloud</strong> s logem Apple.</p>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Poskytovatelé kalendářů s možností Apple iCloud</p>
-                <p class="text-sm">Zobrazuje tlačítko pro připojení Apple iCloud</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-8.jpg') }}" 
+                         alt="Poskytovatelé kalendářů s možností Apple iCloud" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Klikněte na tlačítko "Apple / CalDAV"</p>
             </div>
         </div>
     </div>
@@ -257,12 +273,14 @@
                 </div>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Připojovací formulář iCloud s poli pro e-mail a heslo</p>
-                <p class="text-sm">Zobrazuje formulář pro zadání přihlašovacích údajů</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-9.jpg') }}" 
+                         alt="Připojovací formulář iCloud s poli pro e-mail a heslo" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Zadejte svůj Apple ID email a heslo pro aplikaci</p>
             </div>
         </div>
     </div>
@@ -281,12 +299,14 @@
                 <li>Jakékoliv vlastní kalendáře, které jste vytvořili</li>
             </ul>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Výběr kalendáře s iCloud kalendáři</p>
-                <p class="text-sm">Zobrazuje zaškrtávací políčka pro každý dostupný iCloud kalendář</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-10.jpg') }}" 
+                         alt="Výběr kalendáře s iCloud kalendáři" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Vyberte kalendáře, které chcete synchronizovat</p>
             </div>
         </div>
     </div>
@@ -308,12 +328,14 @@
                 <p class="text-green-800 text-sm mb-0"><strong>Poznámka:</strong> iCloud používá protokol CalDAV, který nepodporuje webhooky v reálném čase. Kontrolujeme změny každých 15 minut, abychom byli aktuální.</p>
             </div>
             
-            <div class="img-placeholder">
-                <svg class="w-16 h-16 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <p class="font-semibold">Screenshot: Úspěšně připojený iCloud kalendář</p>
-                <p class="text-sm">Zobrazuje kalendář v seznamu připojení se stavem "Aktivní"</p>
+            <div class="my-6">
+                <div class="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <img src="{{ asset('images/help/cs/apple-11.jpg') }}" 
+                         alt="Úspěšně připojený iCloud kalendář" 
+                         class="w-full h-auto"
+                         loading="lazy">
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-3 italic">Váš iCloud kalendář je úspěšně připojen a aktivní</p>
             </div>
         </div>
     </div>

@@ -38,23 +38,11 @@ class EmailCalendarController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'target_email' => 'required|email|max:255',
-            'description' => 'nullable|string|max:1000',
-            'sender_whitelist' => 'nullable|string',
         ]);
 
         try {
             // Generate unique email address
             $emailData = EmailCalendarConnection::generateUniqueEmailAddress();
-
-            // Parse sender whitelist (one email per line)
-            $senderWhitelist = null;
-            if (!empty($validated['sender_whitelist'])) {
-                $emails = array_filter(
-                    array_map('trim', explode("\n", $validated['sender_whitelist'])),
-                    fn($email) => !empty($email)
-                );
-                $senderWhitelist = $emails;
-            }
 
             // Create connection (without verified target_email)
             $connection = EmailCalendarConnection::create([
@@ -63,8 +51,6 @@ class EmailCalendarController extends Controller
                 'email_token' => $emailData['email_token'],
                 'name' => $validated['name'],
                 'target_email' => $validated['target_email'],
-                'description' => $validated['description'] ?? null,
-                'sender_whitelist' => $senderWhitelist,
                 'status' => 'active',
             ]);
 
@@ -141,26 +127,12 @@ class EmailCalendarController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'sender_whitelist' => 'nullable|string',
         ]);
 
         try {
-            // Parse sender whitelist (one email per line)
-            $senderWhitelist = null;
-            if (!empty($validated['sender_whitelist'])) {
-                $emails = array_filter(
-                    array_map('trim', explode("\n", $validated['sender_whitelist'])),
-                    fn($email) => !empty($email)
-                );
-                $senderWhitelist = $emails;
-            }
-
             // Update connection
             $emailCalendar->update([
                 'name' => $validated['name'],
-                'description' => $validated['description'] ?? null,
-                'sender_whitelist' => $senderWhitelist,
             ]);
 
             Log::info('Email calendar connection updated', [

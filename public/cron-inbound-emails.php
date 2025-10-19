@@ -615,10 +615,36 @@ try {
     
     $output[] = "Processed: {$processed}, Failed: {$failed}";
     
+    // Clean up old emails (older than 3 days)
+    $cleanupCount = 0;
+    try {
+        $threeDaysAgo = (new DateTime())->modify('-3 days');
+        $allMessages = $folder->query()->all()->get();
+        
+        foreach ($allMessages as $message) {
+            try {
+                $messageDate = $message->getDate();
+                if ($messageDate && $messageDate < $threeDaysAgo) {
+                    $message->delete();
+                    $cleanupCount++;
+                }
+            } catch (\Exception $e) {
+                // Ignore individual delete errors
+            }
+        }
+        
+        if ($cleanupCount > 0) {
+            $output[] = "Cleaned up {$cleanupCount} old email(s) (older than 3 days)";
+        }
+    } catch (\Exception $e) {
+        $output[] = "Warning: Could not clean up old emails: " . $e->getMessage();
+    }
+    
     $response = [
         'status' => 'success',
         'processed' => $processed,
         'failed' => $failed,
+        'cleaned' => $cleanupCount,
         'output' => implode("\n", $output),
         'duration' => round(microtime(true) - $startTime, 2) . 's',
         'time' => date('Y-m-d H:i:s'),
