@@ -90,6 +90,83 @@ class FakturoidService
     }
 
     /**
+     * Create or find a subject (contact) in Fakturoid
+     * 
+     * @param \App\Models\User $user User to create subject for
+     * @return int|null Subject ID or null on failure
+     */
+    private function createOrFindSubject(\App\Models\User $user): ?int
+    {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            return null;
+        }
+
+        try {
+            // Try to find existing subject by email
+            $response = Http::withToken($accessToken)
+                ->withHeaders([
+                    'User-Agent' => $this->userAgent,
+                ])
+                ->get("{$this->apiUrl}/accounts/{$this->slug}/subjects/search.json", [
+                    'query' => $user->email,
+                ]);
+
+            if ($response->successful()) {
+                $subjects = $response->json();
+                
+                // If found, return first matching subject
+                if (!empty($subjects) && isset($subjects[0]['id'])) {
+                    Log::info('Found existing Fakturoid subject', [
+                        'subject_id' => $subjects[0]['id'],
+                        'email' => $user->email,
+                    ]);
+                    return $subjects[0]['id'];
+                }
+            }
+
+            // Subject not found, create new one
+            $subjectData = [
+                'name' => $user->name ?: $user->email, // Use email as fallback name
+                'email' => $user->email,
+            ];
+
+            $response = Http::withToken($accessToken)
+                ->withHeaders([
+                    'User-Agent' => $this->userAgent,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post("{$this->apiUrl}/accounts/{$this->slug}/subjects.json", $subjectData);
+
+            if ($response->successful()) {
+                $subject = $response->json();
+                
+                Log::info('Created new Fakturoid subject', [
+                    'subject_id' => $subject['id'] ?? null,
+                    'email' => $user->email,
+                ]);
+
+                return $subject['id'] ?? null;
+            }
+
+            Log::error('Failed to create Fakturoid subject', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Exception creating Fakturoid subject', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
      * Create an invoice in Fakturoid
      * 
      * @param array $invoiceData Invoice data
@@ -258,11 +335,20 @@ class FakturoidService
             $numberFormatId = (int) $numberFormatId;
         }
 
+        // First, create or find subject (contact) in Fakturoid
+        $subjectId = $this->createOrFindSubject($user);
+        
+        if (!$subjectId) {
+            Log::error('Cannot create invoice: Failed to create/find subject', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+            ]);
+            return null;
+        }
+
         // Build invoice data according to Fakturoid API v3
-        // Using client_name/client_email instead of subject_id (creates one-time customer)
         $invoiceData = [
-            'client_name' => $user->name, // Required: Customer name
-            'client_email' => $user->email, // Optional: Customer email
+            'subject_id' => $subjectId, // Required: ID of the contact/subject
             'number_format_id' => $numberFormatId, // Number series ID (numeric)
             'currency' => strtolower($currency), // Fakturoid uses lowercase currency codes
             'language' => $language,
