@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PricingHelper;
+use App\Models\FakturoidInvoice;
+use App\Services\FakturoidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
@@ -400,8 +402,18 @@ class BillingController extends Controller
         $amount = $invoice->amount_paid / 100;
         $currency = strtoupper($invoice->currency);
         
-        // Get subscription to determine next billing date
+        // Ignore zero-amount invoices (trial periods, prorations)
+        if ($amount <= 0) {
+            Log::info('Ignoring zero-amount invoice', [
+                'user_id' => $user->id,
+                'invoice_id' => $invoice->id,
+            ]);
+            return;
+        }
+        
+        // Get subscription to determine next billing date and interval
         $nextBillingDate = null;
+        $interval = 'yearly'; // default
         if ($user->stripe_subscription_id) {
             try {
                 $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
@@ -409,6 +421,12 @@ class BillingController extends Controller
                 if ($subscription->current_period_end && $subscription->current_period_end > 0) {
                     $nextBillingDate = \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)
                         ->format('d.m.Y');
+                }
+                // Get interval from subscription metadata or price
+                if (isset($subscription->metadata->interval)) {
+                    $interval = $subscription->metadata->interval;
+                } elseif (isset($subscription->items->data[0]->price->recurring->interval)) {
+                    $interval = $subscription->items->data[0]->price->recurring->interval === 'month' ? 'monthly' : 'yearly';
                 }
             } catch (\Exception $e) {
                 Log::warning('Could not retrieve subscription for payment success email', [
@@ -422,8 +440,12 @@ class BillingController extends Controller
             'user_id' => $user->id,
             'amount' => $amount,
             'currency' => $currency,
+            'interval' => $interval,
             'next_billing_date' => $nextBillingDate,
         ]);
+
+        // Create Fakturoid invoice
+        $this->createFakturoidInvoice($user, $amount, $currency, $interval, $invoice->id);
 
         // Send payment success email
         try {
@@ -438,6 +460,99 @@ class BillingController extends Controller
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
+        }
+    }
+
+    /**
+     * Create Fakturoid invoice for payment
+     */
+    private function createFakturoidInvoice(
+        \App\Models\User $user,
+        float $amount,
+        string $currency,
+        string $interval,
+        string $stripeInvoiceId
+    ): void {
+        try {
+            // Build description based on interval
+            $intervalLabel = $interval === 'monthly' ? 'Monthly' : 'Yearly';
+            $description = "SyncMyDay Pro - {$intervalLabel} Subscription";
+            
+            // Translate description to user's language
+            $descriptionKey = $interval === 'monthly' ? 'subscription_monthly' : 'subscription_yearly';
+            if (__("messages.{$descriptionKey}", [], $user->locale) !== "messages.{$descriptionKey}") {
+                $description = __("messages.{$descriptionKey}", [], $user->locale);
+            }
+
+            // Create pending invoice record first
+            $fakturoidInvoice = FakturoidInvoice::create([
+                'user_id' => $user->id,
+                'stripe_invoice_id' => $stripeInvoiceId,
+                'amount' => $amount,
+                'currency' => $currency,
+                'language' => $user->locale,
+                'description' => $description,
+                'status' => 'pending',
+            ]);
+
+            // Try to create invoice in Fakturoid
+            $fakturoidService = new FakturoidService();
+            $invoiceData = $fakturoidService->buildInvoiceData(
+                $user,
+                $amount,
+                $currency,
+                $description,
+                $stripeInvoiceId
+            );
+
+            $createdInvoice = $fakturoidService->createInvoice($invoiceData);
+
+            if ($createdInvoice) {
+                // Update with Fakturoid data
+                $fakturoidInvoice->update([
+                    'fakturoid_id' => $createdInvoice['id'],
+                    'fakturoid_number' => $createdInvoice['number'] ?? null,
+                    'issued_at' => isset($createdInvoice['issued_on']) 
+                        ? \Carbon\Carbon::parse($createdInvoice['issued_on']) 
+                        : now(),
+                    'status' => 'created',
+                    'error_message' => null,
+                ]);
+
+                Log::info('Fakturoid invoice created successfully', [
+                    'user_id' => $user->id,
+                    'fakturoid_id' => $createdInvoice['id'],
+                    'fakturoid_number' => $createdInvoice['number'] ?? null,
+                ]);
+            } else {
+                // Mark as failed
+                $fakturoidInvoice->update([
+                    'status' => 'failed',
+                    'error_message' => 'Failed to create invoice in Fakturoid API',
+                    'retry_count' => 1,
+                ]);
+
+                Log::error('Failed to create Fakturoid invoice', [
+                    'user_id' => $user->id,
+                    'local_invoice_id' => $fakturoidInvoice->id,
+                ]);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Exception while creating Fakturoid invoice', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // If invoice record was created, mark as failed
+            if (isset($fakturoidInvoice)) {
+                $fakturoidInvoice->update([
+                    'status' => 'failed',
+                    'error_message' => $e->getMessage(),
+                    'retry_count' => 1,
+                ]);
+            }
         }
     }
 
@@ -596,18 +711,25 @@ class BillingController extends Controller
                     $paymentMethod = \Stripe\PaymentMethod::retrieve($subscription->default_payment_method);
                 }
 
-                // Get recent invoices
+                // Get recent invoices from Stripe (fallback for old invoices before Fakturoid)
                 $invoices = \Stripe\Invoice::all([
                     'customer' => $user->stripe_customer_id,
                     'limit' => 10,
                 ]);
             }
 
+            // Get Fakturoid invoices (newest first)
+            $fakturoidInvoices = $user->fakturoidInvoices()
+                ->where('status', 'created')
+                ->orderBy('issued_at', 'desc')
+                ->get();
+
             return view('billing.manage', [
                 'user' => $user,
                 'subscription' => $subscription,
                 'paymentMethod' => $paymentMethod,
                 'invoices' => $invoices,
+                'fakturoidInvoices' => $fakturoidInvoices,
             ]);
 
         } catch (\Exception $e) {
@@ -618,6 +740,54 @@ class BillingController extends Controller
 
             return redirect()->route('billing')
                 ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Download Fakturoid invoice PDF
+     */
+    public function downloadInvoicePdf(FakturoidInvoice $invoice)
+    {
+        // Check authorization
+        if ($invoice->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Check if invoice was created successfully
+        if (!$invoice->isCreated()) {
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.invoice_not_available'));
+        }
+
+        try {
+            $fakturoidService = new FakturoidService();
+            $pdfResponse = $fakturoidService->downloadPdf($invoice->fakturoid_id);
+
+            if ($pdfResponse) {
+                // Set proper filename with invoice number
+                $filename = $invoice->fakturoid_number 
+                    ? "invoice-{$invoice->fakturoid_number}.pdf"
+                    : "invoice-{$invoice->id}.pdf";
+                
+                return $pdfResponse->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+            }
+
+            Log::error('Failed to download Fakturoid PDF', [
+                'invoice_id' => $invoice->id,
+                'fakturoid_id' => $invoice->fakturoid_id,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.invoice_download_failed'));
+
+        } catch (\Exception $e) {
+            Log::error('Exception downloading invoice PDF', [
+                'invoice_id' => $invoice->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.invoice_download_failed'));
         }
     }
 

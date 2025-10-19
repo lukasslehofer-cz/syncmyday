@@ -95,5 +95,14 @@ return [
 
     // Token encryption key (separate from app key for added security)
     'token_encryption_key' => env('TOKEN_ENCRYPTION_KEY'),
+
+    // Fakturoid API (Czech invoicing system)
+    'fakturoid' => [
+        'email' => env('FAKTUROID_EMAIL'),
+        'api_token' => env('FAKTUROID_API_TOKEN'), // Also called "Client Secret"
+        'slug' => env('FAKTUROID_SLUG'), // Account name (e.g. 'syncmyday')
+        'number_format' => env('FAKTUROID_NUMBER_FORMAT'), // Invoice number series ID (numeric)
+        'user_agent' => env('FAKTUROID_USER_AGENT', 'SyncMyDay (support@syncmyday.com)'),
+    ],
 ];
 

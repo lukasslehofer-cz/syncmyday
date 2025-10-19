@@ -66,6 +66,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(SyncLog::class);
     }
 
+    public function fakturoidInvoices()
+    {
+        return $this->hasMany(FakturoidInvoice::class);
+    }
+
     /**
      * Check if user has an active pro subscription
      * Includes grace period for failed payments (3 days after subscription_ends_at)

@@ -269,6 +269,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/cancel', [BillingController::class, 'cancelSubscription'])->name('cancel');
         Route::post('/reactivate', [BillingController::class, 'reactivateSubscription'])->name('reactivate');
         Route::get('/reactivate-with-payment', [BillingController::class, 'reactivateWithPayment'])->name('reactivate-with-payment');
+        Route::get('/invoice/{invoice}/pdf', [BillingController::class, 'downloadInvoicePdf'])->name('invoice-pdf');
     });
     Route::get('/billing', [BillingController::class, 'index'])->name('billing'); // Shorthand
 

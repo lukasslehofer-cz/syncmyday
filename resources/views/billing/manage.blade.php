@@ -199,7 +199,10 @@
         <div class="p-6 lg:p-8">
 
         @php
-            // Filter out invoices with 0 amount (trial invoices)
+            // Check if we have Fakturoid invoices (new system)
+            $hasFakturoidInvoices = isset($fakturoidInvoices) && $fakturoidInvoices->isNotEmpty();
+            
+            // Filter out Stripe invoices with 0 amount (trial invoices) - fallback for old invoices
             $paidInvoices = $invoices && $invoices->data 
                 ? collect($invoices->data)->filter(function($invoice) {
                     return $invoice->amount_paid > 0;
@@ -207,7 +210,52 @@
                 : collect([]);
         @endphp
 
-        @if($paidInvoices->isNotEmpty())
+        @if($hasFakturoidInvoices)
+        {{-- Show Fakturoid invoices (new system) --}}
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">{{ __('messages.invoice_number') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">{{ __('messages.date') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">{{ __('messages.amount') }}</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">{{ __('messages.status') }}</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-600 uppercase">{{ __('messages.download') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach($fakturoidInvoices as $invoice)
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-sm font-mono text-gray-900">
+                            {{ $invoice->fakturoid_number ?? '-' }}
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">
+                            {{ $invoice->issued_at ? $invoice->issued_at->format('j. M Y') : '-' }}
+                        </td>
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                            {{ number_format($invoice->amount, 2) }} {{ strtoupper($invoice->currency) }}
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ __('messages.paid') }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-right">
+                            <a href="{{ route('billing.invoice-pdf', $invoice->id) }}" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                {{ __('messages.download_pdf') }}
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        
+        @elseif($paidInvoices->isNotEmpty())
+        {{-- Show Stripe invoices (old system fallback) --}}
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
@@ -252,9 +300,10 @@
                 </tbody>
             </table>
         </div>
-            @else
-            <p class="text-gray-600">{{ __('messages.no_invoices_yet') }}</p>
-            @endif
+        
+        @else
+        <p class="text-gray-600">{{ __('messages.no_invoices_yet') }}</p>
+        @endif
         </div>
     </div>
 

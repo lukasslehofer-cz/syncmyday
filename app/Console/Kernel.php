@@ -30,6 +30,9 @@ class Kernel extends ConsoleKernel
 
         // Expire trials for users without active subscriptions
         $schedule->command('trial:expire')->dailyAt('00:00');
+
+        // Retry failed Fakturoid invoice creations
+        $schedule->command('fakturoid:retry-failed')->daily();
     }
 
     /**
