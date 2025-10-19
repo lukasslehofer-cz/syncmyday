@@ -21,42 +21,86 @@
         
         /* Help content styling */
         .help-content h1 {
-            font-size: 2.5rem;
+            font-size: 1.875rem;
             font-weight: 800;
             color: #1f2937;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h1 {
+                font-size: 2.25rem;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .help-content h1 {
+                font-size: 2.5rem;
+            }
         }
         
         .help-content h2 {
-            font-size: 1.875rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #374151;
-            margin-top: 2.5rem;
-            margin-bottom: 1.25rem;
-            padding-top: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-top: 0.75rem;
             border-top: 2px solid #e5e7eb;
         }
         
+        @media (min-width: 640px) {
+            .help-content h2 {
+                font-size: 1.875rem;
+                margin-top: 2.5rem;
+                margin-bottom: 1.25rem;
+                padding-top: 1rem;
+            }
+        }
+        
         .help-content h2:first-of-type {
-            margin-top: 1.5rem;
+            margin-top: 1.25rem;
             border-top: none;
             padding-top: 0;
         }
         
+        @media (min-width: 640px) {
+            .help-content h2:first-of-type {
+                margin-top: 1.5rem;
+            }
+        }
+        
         .help-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: #4b5563;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h3 {
+                font-size: 1.5rem;
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+            }
         }
         
         .help-content h4 {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
             color: #6b7280;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.25rem;
+            margin-bottom: 0.625rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h4 {
+                font-size: 1.25rem;
+                margin-top: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
         }
         
         .help-content p {
@@ -247,12 +291,12 @@
     </header>
     
     <!-- Main Content -->
-    <main class="min-h-screen py-8 sm:py-12">
+    <main class="min-h-screen py-6 sm:py-8 lg:py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="lg:grid lg:grid-cols-12 lg:gap-8">
                 <!-- Sidebar Navigation -->
                 <aside class="lg:col-span-3">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 sticky top-24">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Help Center</h3>
                         
                         <nav class="space-y-1">
@@ -334,25 +378,25 @@
                 </aside>
                 
                 <!-- Main Content Area -->
-                <div class="mt-8 lg:mt-0 lg:col-span-9">
-                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 sm:p-12 lg:p-16">
+                <div class="mt-6 sm:mt-8 lg:mt-0 lg:col-span-9">
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 sm:p-8 lg:p-12 xl:p-16">
                         <div class="help-content">
                             @yield('content')
                         </div>
                     </div>
                     
                     <!-- Feedback Section -->
-                    <div class="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-6">
-                        <div class="flex items-start space-x-4">
+                    <div class="mt-6 sm:mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-4 sm:p-6">
+                        <div class="flex items-start space-x-3 sm:space-x-4">
                             <div class="flex-shrink-0">
-                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Was this helpful?</h3>
-                                <p class="text-sm text-gray-600 mb-3">Let us know if you have feedback or need additional help.</p>
-                                <a href="mailto:support@syncmyday.com" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition">
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Was this helpful?</h3>
+                                <p class="text-xs sm:text-sm text-gray-600 mb-3">Let us know if you have feedback or need additional help.</p>
+                                <a href="mailto:support@syncmyday.com" class="inline-flex items-center px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-medium rounded-lg transition">
                                     Send Feedback
                                 </a>
                             </div>

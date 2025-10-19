@@ -233,8 +233,27 @@
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                                 },
                                 body: JSON.stringify({ timezone: userTimezone })
-                            }).finally(function() {
-                                // Redirect to OAuth regardless of result
+                            })
+                            .then(function(response) {
+                                return response.json();
+                            })
+                            .then(function(data) {
+                                if (data.timezone_key) {
+                                    // Store the timezone key in localStorage
+                                    localStorage.setItem('timezone_key', data.timezone_key);
+                                    console.log('Timezone key stored for OAuth flow');
+                                    
+                                    // Add timezone_key as query parameter to OAuth URL
+                                    const separator = href.includes('?') ? '&' : '?';
+                                    window.location.href = href + separator + 'timezone_key=' + encodeURIComponent(data.timezone_key);
+                                } else {
+                                    // Redirect without timezone key if not available
+                                    window.location.href = href;
+                                }
+                            })
+                            .catch(function(error) {
+                                console.warn('Failed to set timezone:', error);
+                                // Redirect anyway
                                 window.location.href = href;
                             });
                         });

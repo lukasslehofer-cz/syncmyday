@@ -35,10 +35,14 @@ class SocialAuthController extends Controller
     {
         $state = Str::random(40);
         
+        // Get timezone key from request (sent via JavaScript before redirect)
+        $timezoneKey = request()->query('timezone_key');
+        
         // Store state in cache instead of session (works with SameSite=lax cookies)
         Cache::put("oauth_state_{$state}", [
             'action' => 'login',
             'created_at' => now(),
+            'timezone_key' => $timezoneKey, // Store timezone key to retrieve later
         ], now()->addMinutes(10));
         
         // Create Google client with login-specific redirect URI
@@ -143,6 +147,20 @@ class SocialAuthController extends Controller
                         ->with('error', 'This email is already registered. Please use your original login method or contact support.');
                 }
 
+                // Get timezone from cache using the key stored in state
+                $timezone = 'UTC';
+                if (!empty($stateData['timezone_key'])) {
+                    $cachedTimezone = Cache::get("timezone_{$stateData['timezone_key']}");
+                    if ($cachedTimezone) {
+                        $timezone = $cachedTimezone;
+                        Cache::forget("timezone_{$stateData['timezone_key']}");
+                        
+                        Log::info('Retrieved timezone from cache for new Google user', [
+                            'timezone' => $timezone,
+                        ]);
+                    }
+                }
+
                 // Create new user
                 $user = User::create([
                     'name' => $googleEmail, // We'll use email as name for now
@@ -152,7 +170,7 @@ class SocialAuthController extends Controller
                     'oauth_provider_email' => $googleEmail,
                     'email_verified_at' => now(), // OAuth users are pre-verified
                     'locale' => app()->getLocale(),
-                    'timezone' => session('detected_timezone', 'UTC'), // Will be updated on first dashboard load
+                    'timezone' => $timezone,
                     'subscription_tier' => 'pro',
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
@@ -207,10 +225,14 @@ class SocialAuthController extends Controller
     {
         $state = Str::random(40);
         
+        // Get timezone key from request (sent via JavaScript before redirect)
+        $timezoneKey = request()->query('timezone_key');
+        
         // Store state in cache instead of session (works with SameSite=lax cookies)
         Cache::put("oauth_state_{$state}", [
             'action' => 'login',
             'created_at' => now(),
+            'timezone_key' => $timezoneKey, // Store timezone key to retrieve later
         ], now()->addMinutes(10));
         
         // Build auth URL with login-specific redirect URI
@@ -327,6 +349,20 @@ class SocialAuthController extends Controller
                         ->with('error', 'This email is already registered. Please use your original login method or contact support.');
                 }
 
+                // Get timezone from cache using the key stored in state
+                $timezone = 'UTC';
+                if (!empty($stateData['timezone_key'])) {
+                    $cachedTimezone = Cache::get("timezone_{$stateData['timezone_key']}");
+                    if ($cachedTimezone) {
+                        $timezone = $cachedTimezone;
+                        Cache::forget("timezone_{$stateData['timezone_key']}");
+                        
+                        Log::info('Retrieved timezone from cache for new Microsoft user', [
+                            'timezone' => $timezone,
+                        ]);
+                    }
+                }
+
                 // Create new user
                 $user = User::create([
                     'name' => $displayName,
@@ -336,7 +372,7 @@ class SocialAuthController extends Controller
                     'oauth_provider_email' => $microsoftEmail,
                     'email_verified_at' => now(), // OAuth users are pre-verified
                     'locale' => app()->getLocale(),
-                    'timezone' => session('detected_timezone', 'UTC'), // Will be updated on first dashboard load
+                    'timezone' => $timezone,
                     'subscription_tier' => 'pro',
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);

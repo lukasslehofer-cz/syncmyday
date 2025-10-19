@@ -14,42 +14,86 @@
         
         /* Help content styling */
         .help-content h1 {
-            font-size: 2.5rem;
+            font-size: 1.875rem;
             font-weight: 800;
             color: #1f2937;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h1 {
+                font-size: 2.25rem;
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .help-content h1 {
+                font-size: 2.5rem;
+            }
         }
         
         .help-content h2 {
-            font-size: 1.875rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #374151;
-            margin-top: 2.5rem;
-            margin-bottom: 1.25rem;
-            padding-top: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            padding-top: 0.75rem;
             border-top: 2px solid #e5e7eb;
         }
         
+        @media (min-width: 640px) {
+            .help-content h2 {
+                font-size: 1.875rem;
+                margin-top: 2.5rem;
+                margin-bottom: 1.25rem;
+                padding-top: 1rem;
+            }
+        }
+        
         .help-content h2:first-of-type {
-            margin-top: 1.5rem;
+            margin-top: 1.25rem;
             border-top: none;
             padding-top: 0;
         }
         
+        @media (min-width: 640px) {
+            .help-content h2:first-of-type {
+                margin-top: 1.5rem;
+            }
+        }
+        
         .help-content h3 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: #4b5563;
-            margin-top: 0.125rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h3 {
+                font-size: 1.5rem;
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+            }
         }
         
         .help-content h4 {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
             color: #6b7280;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
+            margin-top: 1.25rem;
+            margin-bottom: 0.625rem;
+        }
+        
+        @media (min-width: 640px) {
+            .help-content h4 {
+                font-size: 1.25rem;
+                margin-top: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
         }
         
         .help-content p {
