@@ -466,6 +466,55 @@ class BillingController extends Controller
         $amount = ($invoice->amount_due ?? 0) / 100;
         $currency = strtoupper($invoice->currency ?? 'USD');
         
+        // PROTECTION 1: Ignore $0 invoices (trial periods, prorations)
+        if ($amount <= 0) {
+            Log::info('Ignoring payment_failed for $0 invoice', [
+                'user_id' => $user->id,
+                'invoice_id' => $invoice->id,
+                'amount' => $amount,
+            ]);
+            return;
+        }
+        
+        // PROTECTION 2: Ignore first payment failures on brand new subscriptions
+        // These are often 3D Secure / SCA verifications that succeed moments later
+        if ($user->stripe_subscription_id) {
+            try {
+                $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+                $subscriptionAge = now()->timestamp - $subscription->created;
+                
+                // If subscription is less than 5 minutes old, it might be 3D Secure verification
+                if ($subscriptionAge < 300) { // 5 minutes
+                    Log::info('Ignoring payment_failed for new subscription (likely 3D Secure)', [
+                        'user_id' => $user->id,
+                        'invoice_id' => $invoice->id,
+                        'subscription_id' => $user->stripe_subscription_id,
+                        'subscription_age_seconds' => $subscriptionAge,
+                        'amount' => $amount,
+                    ]);
+                    return;
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed to check subscription age', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Continue with normal flow if we can't check
+            }
+        }
+        
+        // PROTECTION 3: Check if invoice is already paid
+        // (Stripe might send payment_failed before payment_succeeded due to webhook timing)
+        if (isset($invoice->status) && $invoice->status === 'paid') {
+            Log::info('Ignoring payment_failed for already paid invoice', [
+                'user_id' => $user->id,
+                'invoice_id' => $invoice->id,
+                'invoice_status' => $invoice->status,
+            ]);
+            return;
+        }
+        
+        // If we got here, it's a real payment failure
         // Set grace period: 3 days from now to fix payment issue
         $gracePeriodEndsAt = now()->addDays(3);
         $user->update([
