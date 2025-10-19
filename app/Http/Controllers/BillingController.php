@@ -101,12 +101,6 @@ class BillingController extends Controller
                     'user_id' => $user->id,
                     'interval' => $interval,
                 ],
-                // Explicitly configure payment settings and smart retries
-                'payment_method_collection' => 'always',
-                'payment_settings' => [
-                    'payment_method_types' => ['card'],
-                    'save_default_payment_method' => 'on_subscription',
-                ],
                 'subscription_data' => [
                     'description' => 'SyncMyDay Pro Subscription - ' . ucfirst($interval),
                     'metadata' => [
