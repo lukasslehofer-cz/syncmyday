@@ -211,9 +211,15 @@ class BillingController extends Controller
                 $subscription = \Stripe\Subscription::retrieve($session->subscription);
                 
                 // Use trial_end for trialing subscriptions, otherwise current_period_end
-                $endsAt = $subscription->status === 'trialing' && $subscription->trial_end
-                    ? \Carbon\Carbon::createFromTimestamp($subscription->trial_end)
-                    : \Carbon\Carbon::createFromTimestamp($subscription->current_period_end);
+                // Protect against null/0 timestamps that would create 1970-01-01 (invalid for MySQL)
+                $timestamp = $subscription->status === 'trialing' && $subscription->trial_end
+                    ? $subscription->trial_end
+                    : $subscription->current_period_end;
+                
+                // If timestamp is invalid (null or 0), default to 30 days from now
+                $endsAt = $timestamp && $timestamp > 0
+                    ? \Carbon\Carbon::createFromTimestamp($timestamp)
+                    : now()->addDays(30);
                 
                 $user->update([
                     'subscription_tier' => 'pro',
@@ -354,9 +360,15 @@ class BillingController extends Controller
         $isActive = in_array($subscription->status, ['active', 'trialing']);
         
         // Use trial_end for trialing subscriptions, otherwise current_period_end
-        $endsAt = $subscription->status === 'trialing' && $subscription->trial_end
-            ? \Carbon\Carbon::createFromTimestamp($subscription->trial_end)
-            : \Carbon\Carbon::createFromTimestamp($subscription->current_period_end);
+        // Protect against null/0 timestamps that would create 1970-01-01 (invalid for MySQL)
+        $timestamp = $subscription->status === 'trialing' && $subscription->trial_end
+            ? $subscription->trial_end
+            : $subscription->current_period_end;
+        
+        // If timestamp is invalid (null or 0), default to 30 days from now
+        $endsAt = $timestamp && $timestamp > 0
+            ? \Carbon\Carbon::createFromTimestamp($timestamp)
+            : now()->addDays(30);
         
         $user->update([
             // Always keep 'pro' tier - soft-lock is determined by hasActiveSubscription()
@@ -393,8 +405,11 @@ class BillingController extends Controller
         if ($user->stripe_subscription_id) {
             try {
                 $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
-                $nextBillingDate = \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)
-                    ->format('d.m.Y');
+                // Protect against null/0 timestamps
+                if ($subscription->current_period_end && $subscription->current_period_end > 0) {
+                    $nextBillingDate = \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)
+                        ->format('d.m.Y');
+                }
             } catch (\Exception $e) {
                 Log::warning('Could not retrieve subscription for payment success email', [
                     'user_id' => $user->id,
