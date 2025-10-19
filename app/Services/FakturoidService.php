@@ -259,9 +259,10 @@ class FakturoidService
         }
 
         // Build invoice data according to Fakturoid API v3
+        // Using client_name/client_email instead of subject_id (creates one-time customer)
         $invoiceData = [
-            'subject_name' => $user->name,
-            'subject_email' => $user->email,
+            'client_name' => $user->name, // Required: Customer name
+            'client_email' => $user->email, // Optional: Customer email
             'number_format_id' => $numberFormatId, // Number series ID (numeric)
             'currency' => strtolower($currency), // Fakturoid uses lowercase currency codes
             'language' => $language,
