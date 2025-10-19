@@ -350,19 +350,20 @@ class FakturoidService
         // Formula: price_without_vat = price_with_vat / 1.21
         $priceWithoutVat = round($amount / 1.21, 2);
 
-        // Use same date for issued, due and paid
+        // Use same date for issued and due
         $today = now()->format('Y-m-d');
 
         // Build invoice data according to Fakturoid API v3
+        // Supported languages: cs, sk, en, de, fr, it, es, ru, pl, nl, hu, uk, ro
+        // SyncMyDay languages (all supported): en, cs, sk, de, pl
         $invoiceData = [
             'subject_id' => $subjectId, // Required: ID of the contact/subject
             'number_format_id' => $numberFormatId, // Number series ID (numeric)
             'currency' => strtolower($currency), // Fakturoid uses lowercase currency codes
-            'language' => $language,
+            'language' => $language, // Invoice language (en, cs, sk, de, pl supported)
             'issued_on' => $today, // Date of issue
             'taxable_fulfillment_due' => $today, // Date of taxable fulfillment
             'due' => 0, // Due in 0 days (same day as issued_on, will calculate due_on)
-            'paid_on' => $today, // Mark as paid on the same day
             'lines' => [
                 [
                     'name' => $description,
