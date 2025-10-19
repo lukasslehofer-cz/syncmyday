@@ -6,6 +6,7 @@ use App\Mail\WelcomeMail;
 use App\Mail\TrialEndingInSevenDaysMail;
 use App\Mail\TrialEndingTomorrowMail;
 use App\Mail\PaymentSuccessMail;
+use App\Mail\RenewalReminderMail;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -18,14 +19,14 @@ class TestEmailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, contact, trial-expired, account-deleted, subscription-suspended)}';
+    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, renewal-reminder, contact, trial-expired, account-deleted, subscription-suspended)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Test email sending functionality - sends all 11 email types in selected language';
+    protected $description = 'Test email sending functionality - sends all 12 email types in selected language';
 
     /**
      * Execute the console command.
@@ -120,7 +121,7 @@ class TestEmailCommand extends Command
      */
     protected function sendAllEmails($email, $user)
     {
-        $this->info('📤 Sending ALL 11 email types to: ' . $email);
+        $this->info('📤 Sending ALL 12 email types to: ' . $email);
         $this->info('🌍 Language: ' . strtoupper(app()->getLocale()));
         $this->newLine();
         
@@ -134,8 +135,9 @@ class TestEmailCommand extends Command
             ['name' => '7️⃣   Trial Expired', 'type' => 'mailable', 'mail' => new \App\Mail\TrialExpiredMail($user)],
             ['name' => '8️⃣   Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
             ['name' => '9️⃣   Payment Failed', 'type' => 'payment-failed'],
-            ['name' => '🔟  Subscription Suspended', 'type' => 'mailable', 'mail' => new \App\Mail\SubscriptionSuspendedMail($user)],
-            ['name' => '1️⃣1️⃣ Account Deleted', 'type' => 'mailable', 'mail' => new \App\Mail\AccountDeletedMail($user)],
+            ['name' => '🔟  Renewal Reminder', 'type' => 'mailable', 'mail' => new RenewalReminderMail($user, 49.00, 'EUR', now()->addDays(3)->format('d.m.Y'))],
+            ['name' => '1️⃣1️⃣ Subscription Suspended', 'type' => 'mailable', 'mail' => new \App\Mail\SubscriptionSuspendedMail($user)],
+            ['name' => '1️⃣2️⃣ Account Deleted', 'type' => 'mailable', 'mail' => new \App\Mail\AccountDeletedMail($user)],
         ];
         
         foreach ($emails as $emailData) {
@@ -155,7 +157,7 @@ class TestEmailCommand extends Command
             $this->newLine();
         }
         
-        $this->info('🎉 All 11 emails sent successfully!');
+        $this->info('🎉 All 12 emails sent successfully!');
         $this->line('🔗 Check your inbox: ' . $email);
     }
 
@@ -185,6 +187,9 @@ class TestEmailCommand extends Command
             case 'payment-success':
                 Mail::to($email)->send(new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y')));
                 break;
+            case 'renewal-reminder':
+                Mail::to($email)->send(new RenewalReminderMail($user, 49.00, 'EUR', now()->addDays(3)->format('d.m.Y')));
+                break;
             case 'subscription-suspended':
                 Mail::to($email)->send(new \App\Mail\SubscriptionSuspendedMail($user));
                 break;
@@ -201,7 +206,7 @@ class TestEmailCommand extends Command
                 return;
             default:
                 $this->error('Unknown email type: ' . $type);
-                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, trial-expired, payment-success, payment-failed, subscription-suspended, account-deleted, contact');
+                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, trial-expired, payment-success, payment-failed, renewal-reminder, subscription-suspended, account-deleted, contact');
                 return;
         }
         
