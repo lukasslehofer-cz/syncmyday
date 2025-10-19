@@ -204,7 +204,7 @@
                         <p class="text-xs text-gray-500 mt-0.5 sm:mt-1">
                             <span class="font-medium">{{ $log->created_at->diffForHumans() }}</span>
                             @if($log->event_start)
-                            <span class="hidden sm:inline"> • </span><span class="block sm:inline">{{ $log->event_start->format('M j, H:i') }}</span>
+                            <span class="hidden sm:inline"> • </span><span class="block sm:inline">{{ $log->event_start->translatedFormat('M j, H:i') }}</span>
                             @endif
                         </p>
                         @if($log->syncRule)

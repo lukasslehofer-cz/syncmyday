@@ -21,6 +21,7 @@ class SetLocaleFromDomain
         // Start with domain default
         $locale = LocaleHelper::getDefaultLocale();
         App::setLocale($locale);
+        \Carbon\Carbon::setLocale($locale);
         
         // Override with user's preference if authenticated and available for this domain
         if ($request->user() && $request->user()->locale) {
@@ -29,6 +30,7 @@ class SetLocaleFromDomain
             // Only use user locale if it's available for current domain
             if (LocaleHelper::isLocaleAvailable($userLocale)) {
                 App::setLocale($userLocale);
+                \Carbon\Carbon::setLocale($userLocale);
             } else {
                 // User's locale not available for this domain, reset to domain default
                 // This happens when user switches domains

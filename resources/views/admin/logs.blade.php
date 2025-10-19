@@ -35,7 +35,7 @@
                 @foreach($logs as $log)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ $log->created_at->format('M d, H:i') }}
+                        {{ $log->created_at->translatedFormat('M d, H:i') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                         {{ $log->user->name }}
@@ -55,7 +55,7 @@
                         {{ $log->direction ? str_replace('_', ' ', $log->direction) : '-' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {{ $log->event_start ? $log->event_start->format('M d, H:i') : '-' }}
+                        {{ $log->event_start ? $log->event_start->translatedFormat('M d, H:i') : '-' }}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-500">
                         @if($log->error_message)

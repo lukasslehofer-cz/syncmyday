@@ -27,10 +27,10 @@
         // Format date
         $renewDate = '';
         if ($endTimestamp) {
-            $renewDate = \Carbon\Carbon::createFromTimestamp($endTimestamp)->format('j. F Y');
+            $renewDate = \Carbon\Carbon::createFromTimestamp($endTimestamp)->translatedFormat('j. F Y');
         } elseif ($user->subscription_ends_at) {
             // Fallback to DB date if Stripe date not available
-            $renewDate = $user->subscription_ends_at->format('j. F Y');
+            $renewDate = $user->subscription_ends_at->translatedFormat('j. F Y');
         }
     @endphp
     

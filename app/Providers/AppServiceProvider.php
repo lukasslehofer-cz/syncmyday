@@ -30,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Sync Carbon locale with application locale
+        $this->app->booted(function () {
+            \Carbon\Carbon::setLocale($this->app->getLocale());
+        });
+
         // Register model observers
         \App\Models\User::observe(\App\Observers\UserObserver::class);
         \App\Models\CalendarConnection::observe(\App\Observers\CalendarConnectionObserver::class);

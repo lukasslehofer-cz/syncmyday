@@ -96,7 +96,7 @@
                         @endif
                     </p>
                     <p class="text-lg font-bold text-gray-900">
-                        {{ \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y') }}
+                        {{ \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->translatedFormat('j. F Y') }}
                     </p>
                 </div>
                 <div>
@@ -121,7 +121,7 @@
                     </svg>
                     <div>
                         <p class="text-orange-900 font-medium">{{ __('messages.subscription_will_end') }}</p>
-                        <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->format('j. F Y')]) }}</p>
+                        <p class="text-orange-800 text-sm mt-1">{{ __('messages.subscription_end_date_notice', ['date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->translatedFormat('j. F Y')]) }}</p>
                         <form method="POST" action="{{ route('billing.reactivate') }}" class="mt-3">
                             @csrf
                             <button type="submit" class="text-sm bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition">
@@ -230,7 +230,7 @@
                             {{ $invoice->fakturoid_number ?? '-' }}
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ $invoice->issued_at ? $invoice->issued_at->format('j. M Y') : '-' }}
+                            {{ $invoice->issued_at ? $invoice->issued_at->translatedFormat('j. M Y') : '-' }}
                         </td>
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">
                             {{ number_format($invoice->amount, 2) }} {{ strtoupper($invoice->currency) }}
@@ -270,7 +270,7 @@
                     @foreach($paidInvoices as $invoice)
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-sm text-gray-900">
-                            {{ \Carbon\Carbon::createFromTimestamp($invoice->created)->format('j. M Y') }}
+                            {{ \Carbon\Carbon::createFromTimestamp($invoice->created)->translatedFormat('j. M Y') }}
                         </td>
                         <td class="px-4 py-3 text-sm font-medium text-gray-900">
                             {{ number_format($invoice->amount_paid / 100, 2) }} {{ strtoupper($invoice->currency) }}
