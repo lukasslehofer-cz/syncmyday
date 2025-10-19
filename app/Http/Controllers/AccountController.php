@@ -244,6 +244,15 @@ class AccountController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // Anonymize unique fields before soft delete to allow re-registration with same email
+        // This frees up the email, OAuth provider ID, and Stripe customer ID for future use
+        $user->update([
+            'email' => 'deleted_' . $user->id . '_' . time() . '@deleted.syncmyday.local',
+            'stripe_customer_id' => $user->stripe_customer_id ? 'deleted_' . $user->stripe_customer_id : null,
+            'oauth_provider_id' => null,
+            'oauth_provider_email' => null,
+        ]);
+
         // Soft delete user
         $user->delete();
 

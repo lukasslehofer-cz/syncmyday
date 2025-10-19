@@ -133,8 +133,10 @@ class SocialAuthController extends Controller
                         ->first();
 
             if (!$user) {
-                // Check if email already exists with different provider
-                $existingUser = User::where('email', $googleEmail)->first();
+                // Check if email already exists with different provider (ignore soft-deleted)
+                $existingUser = User::where('email', $googleEmail)
+                                    ->whereNull('deleted_at')
+                                    ->first();
                 
                 if ($existingUser) {
                     return redirect()->route('login')
@@ -315,8 +317,10 @@ class SocialAuthController extends Controller
                         ->first();
 
             if (!$user) {
-                // Check if email already exists with different provider
-                $existingUser = User::where('email', $microsoftEmail)->first();
+                // Check if email already exists with different provider (ignore soft-deleted)
+                $existingUser = User::where('email', $microsoftEmail)
+                                    ->whereNull('deleted_at')
+                                    ->first();
                 
                 if ($existingUser) {
                     return redirect()->route('login')
