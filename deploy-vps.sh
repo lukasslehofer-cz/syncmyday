@@ -81,6 +81,7 @@ fi
 
 # 4. COMPOSER INSTALL
 echo -e "${YELLOW}📦 Instaluji závislosti (Composer)...${NC}"
+export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction
 echo -e "${GREEN}✓ Závislosti nainstalovány${NC}"
 
