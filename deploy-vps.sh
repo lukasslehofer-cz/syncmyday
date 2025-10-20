@@ -16,7 +16,7 @@ NC='\033[0m'
 # Configuration - ADJUST THESE!
 PROJECT_PATH="/var/www/syncmyday"  # Adjust to your path
 PHP_VERSION="8.2"  # Adjust if needed
-DO_BACKUP="${1:-yes}"  # Default: yes, skip with: bash deploy-vps.sh no
+DO_BACKUP="${1:-no}"  # Default: no, enable with: bash deploy-vps.sh yes
 
 # Banner
 echo -e "${BLUE}"
@@ -44,7 +44,7 @@ php artisan down --retry=60 || true
 echo -e "${GREEN}✓ Maintenance mode aktivní${NC}"
 
 # 2. BACKUP (OPTIONAL)
-if [ "$DO_BACKUP" = "yes" ]; then
+if [ "$DO_BACKUP" = "yes" ] || [ "$DO_BACKUP" = "backup" ]; then
     echo -e "${YELLOW}📦 Vytvářím zálohu...${NC}"
     BACKUP_DIR="$PROJECT_PATH/backups"
     mkdir -p "$BACKUP_DIR"
@@ -140,7 +140,7 @@ php artisan up
 echo -e "${GREEN}✓ Aplikace je opět online!${NC}"
 
 # 13. CLEANUP OLD BACKUPS
-if [ "$DO_BACKUP" = "yes" ] && [ -d "$BACKUP_DIR" ]; then
+if { [ "$DO_BACKUP" = "yes" ] || [ "$DO_BACKUP" = "backup" ]; } && [ -d "$BACKUP_DIR" ]; then
     echo -e "${YELLOW}🧹 Čistím staré zálohy (>7 dní)...${NC}"
     find "$BACKUP_DIR" -name "syncmyday_*.tar.gz" -mtime +7 -delete 2>/dev/null || true
     BACKUP_COUNT=$(ls -1 "$BACKUP_DIR"/syncmyday_*.tar.gz 2>/dev/null | wc -l || echo 0)
