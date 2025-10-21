@@ -467,13 +467,18 @@ class MicrosoftCalendarService
                 // More pages - continue
                 $url = $data['@odata.nextLink'];
             } else {
-                // No more pages and no delta link (shouldn't happen with /events/delta)
+                // No more pages and no delta link
+                // This happens when delta link is EXPIRED or INVALID
+                // Return null to force full sync on next run
                 $url = null;
-                Log::channel('sync')->error('Microsoft delta query ended without delta link - API error', [
+                $finalDeltaLink = null; // CRITICAL: Force reset
+                
+                Log::channel('sync')->warning('Microsoft delta link expired/invalid - will reset and do full sync next time', [
                     'calendar_id' => $calendarId,
                     'pages_fetched' => $pageCount,
                     'total_events' => count($allEvents),
                     'last_response_keys' => array_keys($data),
+                    'action' => 'Resetting delta link to force fresh sync',
                 ]);
             }
             

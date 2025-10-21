@@ -47,12 +47,25 @@ class SyncEngine
      */
     public function syncConnection(CalendarConnection $connection): void
     {
+        // CRITICAL RATE LIMITING: Prevent sync spam
+        // Skip if synced less than 5 seconds ago (fallback if cache lock fails)
+        if ($connection->last_sync_at && $connection->last_sync_at->diffInSeconds(now()) < 5) {
+            Log::channel('sync')->info('Sync rate limit hit - skipping (synced less than 5 seconds ago)', [
+                'connection_id' => $connection->id,
+                'provider' => $connection->provider,
+                'last_sync_at' => $connection->last_sync_at->toDateTimeString(),
+                'seconds_ago' => $connection->last_sync_at->diffInSeconds(now()),
+            ]);
+            return;
+        }
+        
         // Eager load user for timezone access in Microsoft service
         $connection->load('user');
         
         Log::channel('sync')->info('Syncing connection', [
             'connection_id' => $connection->id,
             'provider' => $connection->provider,
+            'last_sync_at' => $connection->last_sync_at?->toDateTimeString(),
         ]);
 
         // Get all active sync rules for this connection as source
@@ -187,10 +200,16 @@ class SyncEngine
                 'calendar_id' => $rule->source_calendar_id,
             ]);
         } elseif ($subscription && !isset($changedData['sync_token'])) {
-            Log::channel('sync')->warning('No sync token received from provider', [
-                'subscription_id' => $subscription->id,
-                'provider' => $sourceConnection->provider,
-            ]);
+            // No sync token = delta link expired/invalid
+            // RESET to null to force full sync next time
+            if ($subscription->sync_token !== null) {
+                $subscription->update(['sync_token' => null]);
+                Log::channel('sync')->warning('Sync token expired/invalid - reset to null for fresh sync', [
+                    'subscription_id' => $subscription->id,
+                    'provider' => $sourceConnection->provider,
+                    'calendar_id' => $rule->source_calendar_id,
+                ]);
+            }
         } elseif (!$subscription) {
             Log::channel('sync')->warning('No webhook subscription found - cannot save sync token', [
                 'connection_id' => $sourceConnection->id,
