@@ -34,18 +34,21 @@ class WebhookController extends Controller
         // Verify connection exists
         $connection = CalendarConnection::find($connectionId);
         if (!$connection) {
-            Log::channel('webhook')->warning('Connection not found - orphaned webhook channel detected', [
+            // ORPHANED WEBHOOK: Connection was deleted but webhook wasn't stopped
+            // Clean up any orphaned webhook subscriptions in database
+            \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
+                ->delete();
+            
+            Log::channel('webhook')->warning('Connection not found - cleaned up orphaned webhook subscriptions', [
                 'connection_id' => $connectionId,
                 'channel_id' => $channelId,
                 'resource_id' => $resourceId,
                 'resource_state' => $resourceState,
-                'message' => 'This webhook channel was not properly stopped when connection was deleted. ' .
-                            'Google will continue sending notifications until channel expires or is manually stopped.',
+                'action' => 'Deleted orphaned webhook subscriptions from database',
+                'note' => 'Google will continue sending until channel expires',
             ]);
             
             // Return 200 instead of 404 to prevent Google from retrying
-            // Note: Google will eventually stop sending to channels that consistently return errors,
-            // but 200 is safer and prevents unnecessary retries
             return response('OK', 200);
         }
 
@@ -108,10 +111,19 @@ class WebhookController extends Controller
         // Verify connection exists
         $connection = CalendarConnection::find($connectionId);
         if (!$connection) {
-            Log::channel('webhook')->warning('Connection not found', [
+            // ORPHANED WEBHOOK: Connection was deleted but webhook wasn't stopped
+            // Clean up any orphaned webhook subscriptions in database
+            \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
+                ->delete();
+            
+            Log::channel('webhook')->warning('Connection not found - cleaned up orphaned webhook subscriptions', [
                 'connection_id' => $connectionId,
+                'action' => 'Deleted orphaned webhook subscriptions from database',
+                'note' => 'Microsoft will continue sending until subscription expires',
             ]);
-            return response('Not Found', 404);
+            
+            // Return 200 instead of 404 (Microsoft might retry on 404)
+            return response('OK', 200);
         }
 
         // Parse notification payload

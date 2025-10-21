@@ -25,16 +25,94 @@ class CalendarConnectionObserver
             'email' => $connection->provider_email,
         ]);
 
-        // Step 1: Delete all blockers created BY this connection (as SOURCE)
+        // Step 1: Stop all webhook subscriptions
+        $this->stopWebhookSubscriptions($connection);
+
+        // Step 2: Delete all blockers created BY this connection (as SOURCE)
         $this->deleteBlockersFromSource($connection);
 
-        // Step 2: Delete all blockers IN this connection (as TARGET)
+        // Step 3: Delete all blockers IN this connection (as TARGET)
         $this->deleteBlockersInTarget($connection);
 
-        // Step 3: Clean up sync rules where this is the only/last target
+        // Step 4: Clean up sync rules where this is the only/last target
         $this->cleanupOrphanedSyncRules($connection);
 
         // Mappings will be deleted automatically by cascade delete in DB
+    }
+    
+    /**
+     * Stop all webhook subscriptions for this connection
+     * CRITICAL: Prevents orphaned webhooks spamming logs after connection deletion
+     */
+    private function stopWebhookSubscriptions(CalendarConnection $connection)
+    {
+        $subscriptions = $connection->webhookSubscriptions()->get();
+        
+        if ($subscriptions->isEmpty()) {
+            Log::info('No webhook subscriptions to stop');
+            return;
+        }
+        
+        Log::info("Stopping {$subscriptions->count()} webhook subscription(s)");
+        
+        $service = match($connection->provider) {
+            'google' => app(GoogleCalendarService::class),
+            'microsoft' => app(MicrosoftCalendarService::class),
+            default => null,
+        };
+        
+        if (!$service) {
+            Log::warning('Cannot stop webhooks - provider not supported', [
+                'provider' => $connection->provider,
+            ]);
+            return;
+        }
+        
+        try {
+            $service->initializeWithConnection($connection);
+            
+            $stoppedCount = 0;
+            $errorCount = 0;
+            
+            foreach ($subscriptions as $subscription) {
+                try {
+                    if ($connection->provider === 'google') {
+                        $service->stopWebhook(
+                            $subscription->provider_subscription_id,
+                            $subscription->resource_id
+                        );
+                    } else {
+                        // Microsoft
+                        $service->stopWebhook($subscription->provider_subscription_id);
+                    }
+                    
+                    $stoppedCount++;
+                    
+                    Log::info('Webhook subscription stopped', [
+                        'subscription_id' => $subscription->id,
+                        'provider_subscription_id' => $subscription->provider_subscription_id,
+                    ]);
+                    
+                } catch (\Exception $e) {
+                    $errorCount++;
+                    Log::warning('Failed to stop webhook subscription', [
+                        'subscription_id' => $subscription->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+            
+            Log::info('Webhook subscriptions cleanup completed', [
+                'stopped' => $stoppedCount,
+                'errors' => $errorCount,
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to initialize service for webhook cleanup', [
+                'connection_id' => $connection->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
     
     /**
