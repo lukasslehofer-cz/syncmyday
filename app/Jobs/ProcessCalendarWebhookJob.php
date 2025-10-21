@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -40,33 +41,61 @@ class ProcessCalendarWebhookJob implements ShouldQueue
 
     /**
      * Execute the job.
+     * 
+     * Uses cache lock to prevent multiple syncs running simultaneously
+     * for the same connection. This prevents:
+     * - Race conditions when processing multiple webhooks
+     * - Duplicate sync operations
+     * - Resource exhaustion from overlapping syncs
      */
     public function handle(SyncEngine $syncEngine): void
     {
-        Log::channel('webhook')->info('Processing webhook', [
-            'connection_id' => $this->connectionId,
-            'calendar_id' => $this->calendarId,
-        ]);
-
-        $connection = CalendarConnection::find($this->connectionId);
-
-        if (!$connection) {
-            Log::channel('webhook')->warning('Connection not found', [
+        $lockKey = "sync-lock-connection-{$this->connectionId}";
+        $lockTtl = 120; // 2 minutes (longer than job timeout of 90s for safety)
+        
+        // Try to acquire lock (non-blocking)
+        $lock = Cache::lock($lockKey, $lockTtl);
+        
+        if (!$lock->get()) {
+            // Lock already held = sync is already running
+            Log::channel('webhook')->info('Sync already running for connection, skipping duplicate job', [
                 'connection_id' => $this->connectionId,
+                'calendar_id' => $this->calendarId,
             ]);
             return;
         }
 
-        if (!$connection->isHealthy()) {
-            Log::channel('webhook')->warning('Connection not healthy', [
-                'connection_id' => $this->connectionId,
-                'status' => $connection->status,
-            ]);
-            return;
-        }
-
+        // Lock acquired - proceed with sync
         try {
+            Log::channel('webhook')->info('Processing webhook (lock acquired)', [
+                'connection_id' => $this->connectionId,
+                'calendar_id' => $this->calendarId,
+            ]);
+
+            $connection = CalendarConnection::find($this->connectionId);
+
+            if (!$connection) {
+                Log::channel('webhook')->warning('Connection not found', [
+                    'connection_id' => $this->connectionId,
+                ]);
+                return;
+            }
+
+            if (!$connection->isHealthy()) {
+                Log::channel('webhook')->warning('Connection not healthy', [
+                    'connection_id' => $this->connectionId,
+                    'status' => $connection->status,
+                ]);
+                return;
+            }
+
+            // Execute sync
             $syncEngine->syncConnection($connection);
+            
+            Log::channel('webhook')->info('Webhook processing completed successfully', [
+                'connection_id' => $this->connectionId,
+            ]);
+            
         } catch (\Exception $e) {
             Log::channel('webhook')->error('Webhook processing failed', [
                 'connection_id' => $this->connectionId,
@@ -75,6 +104,13 @@ class ProcessCalendarWebhookJob implements ShouldQueue
             ]);
 
             throw $e; // Let queue handle retry
+        } finally {
+            // Always release lock, even if exception occurred
+            $lock->release();
+            
+            Log::channel('webhook')->debug('Sync lock released', [
+                'connection_id' => $this->connectionId,
+            ]);
         }
     }
 

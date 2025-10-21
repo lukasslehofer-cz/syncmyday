@@ -391,12 +391,23 @@ class MicrosoftCalendarService
 
     /**
      * Get events changed since last sync using delta query
+     * 
+     * IMPORTANT: Microsoft returns @odata.deltaLink ONLY on the last page.
+     * We must paginate through ALL pages to get the delta link.
      */
     public function getChangedEvents(string $calendarId, ?string $deltaLink = null): array
     {
+        $allEvents = [];
+        $pageCount = 0;
+        $finalDeltaLink = null;
+        
+        // Determine initial URL
         if ($deltaLink) {
             // Incremental sync: use delta link (gets only changes)
-            $request = $this->graph->createRequest('GET', $deltaLink);
+            $url = $deltaLink;
+            Log::channel('sync')->debug('Microsoft incremental sync with delta link', [
+                'calendar_id' => $calendarId,
+            ]);
         } else {
             // Full sync: use calendarView with time range filters
             $pastDays = config('sync.time_range.past_days', 7);
@@ -416,24 +427,72 @@ class MicrosoftCalendarService
             $url = "/me/calendars/{$calendarId}/calendarView"
                 . "?startDateTime={$startDateTime}"
                 . "&endDateTime={$endDateTime}";
-            
-            // Note: $top is not supported with calendarView + change tracking
-            // Use Prefer header instead
-            $request = $this->graph->createRequest('GET', $url)
-                ->addHeaders([
-                    'Prefer' => 'odata.track-changes, odata.maxpagesize=50'
-                ]);
         }
 
-        $response = $request->execute();
+        // Paginate through ALL pages to get delta link
+        do {
+            $pageCount++;
+            
+            // Build request (with or without headers depending on initial vs next page)
+            if (strpos($url, 'http') === 0) {
+                // Full URL from nextLink - use as-is
+                $request = $this->graph->createRequest('GET', $url);
+            } else {
+                // Relative URL - add Prefer header for initial request
+                $request = $this->graph->createRequest('GET', $url);
+                if (!$deltaLink) {
+                    $request->addHeaders([
+                        'Prefer' => 'odata.track-changes, odata.maxpagesize=50'
+                    ]);
+                }
+            }
+            
+            $response = $request->execute();
+            $data = $response->getBody();
+            
+            // Collect events from this page
+            $pageEvents = $data['value'] ?? [];
+            $allEvents = array_merge($allEvents, $pageEvents);
+            
+            Log::channel('sync')->debug('Microsoft pagination', [
+                'calendar_id' => $calendarId,
+                'page' => $pageCount,
+                'events_in_page' => count($pageEvents),
+                'total_events_so_far' => count($allEvents),
+                'has_next_link' => isset($data['@odata.nextLink']),
+                'has_delta_link' => isset($data['@odata.deltaLink']),
+            ]);
+            
+            // Check for next page or delta link
+            if (isset($data['@odata.deltaLink'])) {
+                // Last page - we got the delta link!
+                $finalDeltaLink = $data['@odata.deltaLink'];
+                $url = null; // Stop pagination
+            } elseif (isset($data['@odata.nextLink'])) {
+                // More pages - continue
+                $url = $data['@odata.nextLink'];
+            } else {
+                // No more pages and no delta link (shouldn't happen)
+                $url = null;
+                Log::channel('sync')->warning('Microsoft pagination ended without delta link', [
+                    'calendar_id' => $calendarId,
+                    'pages_fetched' => $pageCount,
+                    'total_events' => count($allEvents),
+                ]);
+            }
+            
+        } while ($url !== null);
         
-        // Convert GraphResponse to array
-        $data = $response->getBody();
+        Log::channel('sync')->info('Microsoft pagination completed', [
+            'calendar_id' => $calendarId,
+            'total_pages' => $pageCount,
+            'total_events' => count($allEvents),
+            'delta_link_received' => $finalDeltaLink !== null,
+        ]);
 
         return [
-            'events' => $data['value'] ?? [],
-            'delta_link' => $data['@odata.deltaLink'] ?? null,
-            'next_link' => $data['@odata.nextLink'] ?? null,
+            'events' => $allEvents,
+            'delta_link' => $finalDeltaLink,
         ];
     }
 }

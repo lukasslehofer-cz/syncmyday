@@ -229,29 +229,49 @@ class SyncEngine
             // Filter by time range even for incremental syncs
             $eventStart = $this->getEventStart($event, $sourceConnection->provider);
             
-            // Track events without start/end (usually metadata objects)
+            // EARLY RETURN: Skip Microsoft events without start/end datetime
+            // These are usually:
+            // - Deleted events with @removed flag (but missing actual event data)
+            // - Metadata objects from delta query
+            // - Malformed events that can't be processed
             if (!$eventStart && $sourceConnection->provider === 'microsoft') {
                 $stats['missing_start_end']++;
-                Log::channel('sync')->debug('Microsoft event missing start time', [
+                $stats['events_skipped']++;
+                
+                Log::channel('sync')->debug('Microsoft event missing start/end datetime, skipping', [
                     'event_id' => $this->getEventId($event),
                     'has_start_key' => isset($event['start']),
                     'has_end_key' => isset($event['end']),
+                    'is_removed' => isset($event['@removed']) || isset($event['@odata.removed']),
                     'event_keys' => array_keys($event),
                 ]);
+                
+                continue; // Skip this event entirely
             }
             
-            if ($eventStart) {
-                // Skip events outside our sync range
-                if ($eventStart < $timeMin || $eventStart > $timeMax) {
-                    $stats['events_skipped']++;
-                    Log::channel('sync')->debug('Event outside sync range, skipping', [
-                        'event_id' => $this->getEventId($event),
-                        'event_start' => $eventStart->format('Y-m-d H:i:s'),
-                    ]);
-                    continue;
-                }
+            // Skip events without start time (for any provider)
+            if (!$eventStart) {
+                $stats['events_skipped']++;
+                Log::channel('sync')->warning('Event missing start time, skipping', [
+                    'event_id' => $this->getEventId($event),
+                    'provider' => $sourceConnection->provider,
+                ]);
+                continue;
             }
             
+            // Skip events outside our sync range
+            if ($eventStart < $timeMin || $eventStart > $timeMax) {
+                $stats['events_skipped']++;
+                Log::channel('sync')->debug('Event outside sync range, skipping', [
+                    'event_id' => $this->getEventId($event),
+                    'event_start' => $eventStart->format('Y-m-d H:i:s'),
+                    'time_min' => $timeMin->format('Y-m-d H:i:s'),
+                    'time_max' => $timeMax->format('Y-m-d H:i:s'),
+                ]);
+                continue;
+            }
+            
+            // Process valid event
             $this->processEvent($event, $rule, $sourceService, $sourceConnection, $existingMappings);
             $stats['events_processed']++;
         }
