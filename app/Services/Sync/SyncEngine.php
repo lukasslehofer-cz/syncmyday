@@ -75,9 +75,12 @@ class SyncEngine
                     'error' => $e->getMessage(),
                 ]);
 
+                // Check if rule still exists (might have been deleted during async processing)
+                $ruleExists = SyncRule::where('id', $rule->id)->exists();
+                
                 SyncLog::logSync(
                     $rule->user_id,
-                    $rule->id,
+                    $ruleExists ? $rule->id : null,
                     'error',
                     null,
                     null,
@@ -86,6 +89,13 @@ class SyncEngine
                     null,
                     $e->getMessage()
                 );
+                
+                if (!$ruleExists) {
+                    Log::channel('sync')->warning('Rule was deleted during processing', [
+                        'rule_id' => $rule->id,
+                        'user_id' => $rule->user_id,
+                    ]);
+                }
             }
         }
 
@@ -397,9 +407,12 @@ class SyncEngine
                     'error' => $e->getMessage(),
                 ]);
 
+                // Check if rule still exists (might have been deleted during async processing)
+                $ruleExists = SyncRule::where('id', $rule->id)->exists();
+
                 SyncLog::logSync(
                     $rule->user_id,
-                    $rule->id,
+                    $ruleExists ? $rule->id : null,
                     'error',
                     'source_to_target',
                     $this->getEventId($event),
@@ -409,6 +422,13 @@ class SyncEngine
                     $e->getMessage(),
                     $transactionId
                 );
+                
+                if (!$ruleExists) {
+                    Log::channel('sync')->warning('Rule was deleted during processing', [
+                        'rule_id' => $rule->id,
+                        'user_id' => $rule->user_id,
+                    ]);
+                }
             }
         }
     }
@@ -679,7 +699,26 @@ class SyncEngine
                             'source_event_id' => $sourceEventId,
                             'transaction_id' => $transactionId,
                         ]);
-                        throw new \Exception("Mapping not found after race condition");
+                        
+                        // Check if rule still exists before logging
+                        $ruleExists = SyncRule::where('id', $rule->id)->exists();
+                        
+                        // Log error safely (rule might have been deleted)
+                        SyncLog::logSync(
+                            $rule->user_id,
+                            $ruleExists ? $rule->id : null,
+                            'error',
+                            'source_to_target',
+                            $sourceEventId,
+                            null,
+                            $start,
+                            $end,
+                            'Mapping not found after race condition',
+                            $transactionId
+                        );
+                        
+                        // Return instead of throwing exception (which can't be logged if rule is deleted)
+                        return;
                     }
                 } else {
                     throw $e; // Re-throw if it's a different error

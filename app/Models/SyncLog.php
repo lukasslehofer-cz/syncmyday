@@ -70,18 +70,47 @@ class SyncLog extends Model
             $eventEnd = null;
         }
         
-        return self::create([
-            'user_id' => $userId,
-            'sync_rule_id' => $syncRuleId,
-            'action' => $action,
-            'direction' => $direction,
-            'source_event_id' => $sourceEventId,
-            'target_event_id' => $targetEventId,
-            'event_start' => $eventStart,
-            'event_end' => $eventEnd,
-            'error_message' => $errorMessage,
-            'transaction_id' => $transactionId,
-        ]);
+        try {
+            return self::create([
+                'user_id' => $userId,
+                'sync_rule_id' => $syncRuleId,
+                'action' => $action,
+                'direction' => $direction,
+                'source_event_id' => $sourceEventId,
+                'target_event_id' => $targetEventId,
+                'event_start' => $eventStart,
+                'event_end' => $eventEnd,
+                'error_message' => $errorMessage,
+                'transaction_id' => $transactionId,
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Race condition: Sync rule was deleted during async processing
+            // Try again with sync_rule_id = null (foreign key constraint)
+            if ($e->getCode() === '23000' && $syncRuleId !== null) {
+                \Illuminate\Support\Facades\Log::warning('Sync rule deleted during logging, retrying with sync_rule_id = null', [
+                    'sync_rule_id' => $syncRuleId,
+                    'user_id' => $userId,
+                    'action' => $action,
+                    'error' => $e->getMessage(),
+                ]);
+                
+                return self::create([
+                    'user_id' => $userId,
+                    'sync_rule_id' => null, // Set to null to satisfy foreign key
+                    'action' => $action,
+                    'direction' => $direction,
+                    'source_event_id' => $sourceEventId,
+                    'target_event_id' => $targetEventId,
+                    'event_start' => $eventStart,
+                    'event_end' => $eventEnd,
+                    'error_message' => $errorMessage ? "Sync rule deleted during processing. Original error: {$errorMessage}" : 'Sync rule deleted during processing',
+                    'transaction_id' => $transactionId,
+                ]);
+            }
+            
+            // Re-throw if it's a different error
+            throw $e;
+        }
     }
 
     /**
