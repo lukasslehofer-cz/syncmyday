@@ -39,15 +39,13 @@ class WebhookController extends Controller
             $cacheKey = "orphaned-webhook-logged-google-{$connectionId}";
             
             if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
-                // First time seeing this orphaned webhook - log it
+                // First time seeing this orphaned webhook - clean up and log
                 \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
                     ->delete();
                 
-                Log::channel('webhook')->warning('Orphaned webhook detected - Google will send until expiration', [
+                Log::channel('webhook')->info('Orphaned webhook - silently ignoring until expiration', [
                     'connection_id' => $connectionId,
-                    'channel_id' => $channelId,
-                    'resource_id' => $resourceId,
-                    'note' => 'Further webhooks for this connection will be silently ignored',
+                    'provider' => 'Google',
                 ]);
                 
                 // Cache for 7 days (webhooks typically expire within 7 days)
@@ -122,13 +120,13 @@ class WebhookController extends Controller
             $cacheKey = "orphaned-webhook-logged-microsoft-{$connectionId}";
             
             if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
-                // First time seeing this orphaned webhook - log it
+                // First time seeing this orphaned webhook - clean up and log
                 \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
                     ->delete();
                 
-                Log::channel('webhook')->warning('Orphaned webhook detected - Microsoft will send until expiration', [
+                Log::channel('webhook')->info('Orphaned webhook - silently ignoring until expiration', [
                     'connection_id' => $connectionId,
-                    'note' => 'Further webhooks for this connection will be silently ignored',
+                    'provider' => 'Microsoft',
                 ]);
                 
                 // Cache for 30 days (Microsoft subscriptions can last up to 30 days)
