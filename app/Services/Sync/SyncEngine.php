@@ -190,6 +190,19 @@ class SyncEngine
             'received_sync_token' => isset($changedData['sync_token']),
         ]);
 
+        // SPECIAL CASE: New rule needs initial full sync
+        // If rule has never completed initial sync AND delta returned 0 events,
+        // reset sync token to force full sync (delta link might be stale/wrong)
+        if ($subscription && !$rule->initial_sync_completed && $hadSyncToken && $stats['events_fetched'] == 0) {
+            $subscription->update(['sync_token' => null]);
+            Log::channel('sync')->warning('New rule with 0 events from delta - resetting for initial full sync', [
+                'rule_id' => $rule->id,
+                'subscription_id' => $subscription->id,
+                'calendar_id' => $rule->source_calendar_id,
+                'note' => 'Delta link may be stale from previous tests',
+            ]);
+        }
+        
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
             $subscription->update(['sync_token' => $changedData['sync_token']]);
