@@ -85,8 +85,11 @@ class WebhookController extends Controller
             'channel_id' => $channelId,
         ]);
 
-        // Dispatch job to process changes
-        ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id);
+        // Dispatch job with 3-second delay (debouncing)
+        // This allows multiple rapid webhooks to be batched together
+        // The rate limiting in the job will skip duplicates
+        ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id)
+            ->delay(now()->addSeconds(3));
 
         return response('OK', 200);
     }
@@ -137,8 +140,11 @@ class WebhookController extends Controller
                 continue;
             }
 
-            // Dispatch job to process changes
-            ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id);
+            // Dispatch job with 3-second delay (debouncing)
+            // This allows multiple rapid webhooks to be batched together
+            // The rate limiting in the job will skip duplicates
+            ProcessCalendarWebhookJob::dispatch($connection->id, $subscription->calendar_id)
+                ->delay(now()->addSeconds(3));
             $processedCount++;
         }
 

@@ -392,8 +392,12 @@ class MicrosoftCalendarService
     /**
      * Get events changed since last sync using delta query
      * 
-     * IMPORTANT: Microsoft returns @odata.deltaLink ONLY on the last page.
-     * We must paginate through ALL pages to get the delta link.
+     * CRITICAL: Microsoft Graph API endpoints:
+     * - /calendarView - supports time filtering BUT does NOT support delta tracking
+     * - /events/delta - supports delta tracking BUT does NOT support time filtering
+     * 
+     * Solution: Use /events/delta ALWAYS (returns all events, we filter by time in SyncEngine)
+     * This enables proper delta tracking and eliminates full syncs.
      */
     public function getChangedEvents(string $calendarId, ?string $deltaLink = null): array
     {
@@ -405,46 +409,32 @@ class MicrosoftCalendarService
         if ($deltaLink) {
             // Incremental sync: use delta link (gets only changes)
             $url = $deltaLink;
-            Log::channel('sync')->debug('Microsoft incremental sync with delta link', [
+            Log::channel('sync')->info('Microsoft incremental sync using delta link', [
                 'calendar_id' => $calendarId,
             ]);
         } else {
-            // Full sync: use calendarView with time range filters
-            $pastDays = config('sync.time_range.past_days', 7);
-            $futureMonths = config('sync.time_range.future_months', 6);
+            // Initial sync: use /events/delta endpoint (NOT calendarView)
+            // Note: This returns ALL events in calendar (no time filtering)
+            // Time filtering is applied in SyncEngine::syncRule()
+            $url = "/me/calendars/{$calendarId}/events/delta?\$top=50";
             
-            $startDateTime = now()->subDays($pastDays)->format('Y-m-d\TH:i:s');
-            $endDateTime = now()->addMonths($futureMonths)->format('Y-m-d\TH:i:s');
-            
-            Log::channel('sync')->debug('Microsoft full sync with time range', [
+            Log::channel('sync')->info('Microsoft initial sync using delta endpoint', [
                 'calendar_id' => $calendarId,
-                'start_date_time' => $startDateTime,
-                'end_date_time' => $endDateTime,
+                'note' => 'Fetching all events, time filtering applied in SyncEngine',
             ]);
-            
-            // Use calendarView for initial sync with time filters
-            // Then switch to delta for incremental updates
-            $url = "/me/calendars/{$calendarId}/calendarView"
-                . "?startDateTime={$startDateTime}"
-                . "&endDateTime={$endDateTime}";
         }
 
         // Paginate through ALL pages to get delta link
         do {
             $pageCount++;
             
-            // Build request (with or without headers depending on initial vs next page)
+            // Build request
             if (strpos($url, 'http') === 0) {
-                // Full URL from nextLink - use as-is
+                // Full URL from nextLink or deltaLink - use as-is
                 $request = $this->graph->createRequest('GET', $url);
             } else {
-                // Relative URL - add Prefer header for initial request
+                // Relative URL
                 $request = $this->graph->createRequest('GET', $url);
-                if (!$deltaLink) {
-                    $request->addHeaders([
-                        'Prefer' => 'odata.track-changes, odata.maxpagesize=50'
-                    ]);
-                }
             }
             
             $response = $request->execute();
@@ -454,7 +444,7 @@ class MicrosoftCalendarService
             $pageEvents = $data['value'] ?? [];
             $allEvents = array_merge($allEvents, $pageEvents);
             
-            Log::channel('sync')->debug('Microsoft pagination', [
+            Log::channel('sync')->debug('Microsoft delta pagination', [
                 'calendar_id' => $calendarId,
                 'page' => $pageCount,
                 'events_in_page' => count($pageEvents),
@@ -468,26 +458,33 @@ class MicrosoftCalendarService
                 // Last page - we got the delta link!
                 $finalDeltaLink = $data['@odata.deltaLink'];
                 $url = null; // Stop pagination
+                
+                Log::channel('sync')->info('Microsoft delta link received', [
+                    'calendar_id' => $calendarId,
+                    'pages_fetched' => $pageCount,
+                ]);
             } elseif (isset($data['@odata.nextLink'])) {
                 // More pages - continue
                 $url = $data['@odata.nextLink'];
             } else {
-                // No more pages and no delta link (shouldn't happen)
+                // No more pages and no delta link (shouldn't happen with /events/delta)
                 $url = null;
-                Log::channel('sync')->warning('Microsoft pagination ended without delta link', [
+                Log::channel('sync')->error('Microsoft delta query ended without delta link - API error', [
                     'calendar_id' => $calendarId,
                     'pages_fetched' => $pageCount,
                     'total_events' => count($allEvents),
+                    'last_response_keys' => array_keys($data),
                 ]);
             }
             
         } while ($url !== null);
         
-        Log::channel('sync')->info('Microsoft pagination completed', [
+        Log::channel('sync')->info('Microsoft delta sync completed', [
             'calendar_id' => $calendarId,
             'total_pages' => $pageCount,
             'total_events' => count($allEvents),
             'delta_link_received' => $finalDeltaLink !== null,
+            'sync_type' => $deltaLink ? 'incremental' : 'initial',
         ]);
 
         return [
