@@ -99,6 +99,8 @@ return [
     'creating_sync_rule' => 'Vytvárame synchronizačné pravidlo',
     'loading_initial_events' => 'Načítavame existujúce udalosti z vášho kalendára...',
     'sync_processing_time' => 'Môže to trvať 10-30 sekúnd, prosím čakajte',
+    'deleting_sync_rule' => 'Mažeme synchronizačné pravidlo',
+    'deleting_sync_rule_message' => 'Odstraňujeme pravidlo a súvisiace udalosti...',
     'sync_rule_updated' => 'Synchronizačné pravidlo bolo aktualizované.',
     'sync_rule_deleted' => 'Synchronizačné pravidlo bolo zmazané.',
     'sync_rule_limit_reached' => 'Dosiahli ste limit pre váš tarif. Prejdite na Pro pre neobmedzené pravidlá.',

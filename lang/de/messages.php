@@ -99,6 +99,8 @@ return [
     'creating_sync_rule' => 'Synchronisierungsregel wird erstellt',
     'loading_initial_events' => 'Lade bestehende Ereignisse aus Ihrem Kalender...',
     'sync_processing_time' => 'Dies kann 10-30 Sekunden dauern, bitte warten',
+    'deleting_sync_rule' => 'Synchronisierungsregel wird gelöscht',
+    'deleting_sync_rule_message' => 'Entferne Regel und zugehörige Ereignisse...',
     'sync_rule_updated' => 'Synchronisierungsregel aktualisiert.',
     'sync_rule_deleted' => 'Synchronisierungsregel gelöscht.',
     'sync_rule_limit_reached' => 'Sie haben das Limit für Ihr Abonnement erreicht. Upgrade auf Pro für unbegrenzte Regeln.',

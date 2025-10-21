@@ -148,6 +148,8 @@ return [
     'creating_sync_rule' => 'Vytváříme synchronizační pravidlo',
     'loading_initial_events' => 'Načítáme existující události z vašeho kalendáře...',
     'sync_processing_time' => 'Může to trvat 10-30 sekund, prosím čekejte',
+    'deleting_sync_rule' => 'Mažeme synchronizační pravidlo',
+    'deleting_sync_rule_message' => 'Odstraňujeme pravidlo a související události...',
     'unnamed_rule' => 'Nepojmenované pravidlo',
     'sync_rule_updated' => 'Synchronizační pravidlo bylo aktualizováno.',
     'sync_rule_deleted' => 'Synchronizační pravidlo bylo smazáno.',

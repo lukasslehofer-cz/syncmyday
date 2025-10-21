@@ -99,6 +99,8 @@ return [
     'creating_sync_rule' => 'Tworzenie reguły synchronizacji',
     'loading_initial_events' => 'Ładowanie istniejących wydarzeń z Twojego kalendarza...',
     'sync_processing_time' => 'To może potrwać 10-30 sekund, proszę czekać',
+    'deleting_sync_rule' => 'Usuwanie reguły synchronizacji',
+    'deleting_sync_rule_message' => 'Usuwanie reguły i powiązanych wydarzeń...',
     'sync_rule_updated' => 'Reguła synchronizacji została zaktualizowana.',
     'sync_rule_deleted' => 'Reguła synchronizacji została usunięta.',
     'sync_rule_limit_reached' => 'Osiągnąłeś limit dla swojego planu. Przejdź na Pro, aby otrzymać nieograniczone reguły.',

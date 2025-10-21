@@ -3,6 +3,31 @@
 @section('title', __('messages.edit_sync_rule'))
 
 @section('content')
+<style>
+/* Loading overlay */
+#loading-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>
+
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="mb-8">
@@ -287,7 +312,7 @@
                 </div>
             </div>
             
-            <form action="{{ route('sync-rules.destroy', $rule) }}" method="POST" onsubmit="return confirm('{{ __('messages.delete_sync_rule_confirm') }}')">
+            <form id="delete-sync-rule-form" action="{{ route('sync-rules.destroy', $rule) }}" method="POST">
                 @csrf
                 @method('DELETE')
                 <div class="flex justify-end">
@@ -337,6 +362,63 @@ document.querySelectorAll('.time-filter-radio').forEach(radio => {
         } else if (this.value === 'workdays') {
             workdaysOptions.classList.remove('hidden');
         }
+    });
+});
+
+// Show loading overlay on delete form submit
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteForm = document.getElementById('delete-sync-rule-form');
+    if (!deleteForm) return;
+    
+    deleteForm.addEventListener('submit', function(e) {
+        // Show confirmation dialog
+        if (!confirm('{{ __('messages.delete_sync_rule_confirm') }}')) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Create and show loading overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'loading-overlay';
+        overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;';
+        
+        overlay.innerHTML = `
+            <div style="text-align: center;">
+                <div style="position: relative; margin-bottom: 1.5rem;">
+                    <div style="width: 96px; height: 96px; margin: 0 auto;">
+                        <svg class="animate-spin" style="width: 96px; height: 96px; color: #dc2626; animation: spin 1s linear infinite;" fill="none" viewBox="0 0 24 24">
+                            <circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path style="opacity: 0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.95); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-width: 28rem; margin: 0 1rem; border: 2px solid #fee2e2; backdrop-filter: blur(10px);">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">
+                        {{ __('messages.deleting_sync_rule') }}
+                    </h3>
+                    <p style="color: #4b5563; margin-bottom: 1rem;">
+                        {{ __('messages.deleting_sync_rule_message') }}
+                    </p>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+                        <div class="animate-pulse">●</div>
+                        <div class="animate-pulse" style="animation-delay: 0.2s;">●</div>
+                        <div class="animate-pulse" style="animation-delay: 0.4s;">●</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Disable submit button to prevent double submission
+        const submitButton = this.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        // Note: Form will continue to submit normally, overlay will show until page redirect
     });
 });
 </script>
