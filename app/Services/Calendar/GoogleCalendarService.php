@@ -274,24 +274,56 @@ class GoogleCalendarService
             'event_id' => $eventId,
         ]);
         
-        $this->rateLimitedCall('deleteBlocker', function () use ($calendarId, $eventId) {
-            try {
+        try {
+            $this->rateLimitedCall('deleteBlocker', function () use ($calendarId, $eventId) {
                 $this->service->events->delete($calendarId, $eventId);
-                
-                Log::channel('sync')->debug('Google blocker deleted successfully', [
+            });
+            
+            Log::channel('sync')->debug('Google blocker deleted successfully', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+            ]);
+            
+        } catch (\Google\Service\Exception $e) {
+            $errorCode = $e->getCode();
+            $errorBody = json_decode($e->getMessage(), true);
+            $reason = $errorBody['error']['errors'][0]['reason'] ?? null;
+            
+            // 410 = already deleted (OK)
+            if ($errorCode === 410) {
+                Log::channel('sync')->debug('Google blocker already deleted', [
                     'calendar_id' => $calendarId,
                     'event_id' => $eventId,
                 ]);
-            } catch (\Exception $e) {
-                Log::channel('sync')->error('Failed to delete Google blocker', [
-                    'calendar_id' => $calendarId,
-                    'event_id' => $eventId,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-                throw $e;
+                return;
             }
-        });
+            
+            // 403 rateLimitExceeded = will retry later, don't fail
+            if ($errorCode === 403 && $reason === 'rateLimitExceeded') {
+                Log::channel('sync')->warning('Google rate limit hit during blocker cleanup - skipping', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                    'note' => 'Event will be cleaned up on next sync or manually',
+                ]);
+                return;
+            }
+            
+            // Other errors - log but don't throw (allow rule deletion to continue)
+            Log::channel('sync')->warning('Failed to delete Google blocker - continuing anyway', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'error_code' => $errorCode,
+                'error' => $e->getMessage(),
+            ]);
+            
+        } catch (\Exception $e) {
+            // Unexpected error - log but don't throw
+            Log::channel('sync')->warning('Unexpected error deleting Google blocker', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**

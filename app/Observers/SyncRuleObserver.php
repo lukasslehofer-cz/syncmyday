@@ -100,7 +100,7 @@ class SyncRuleObserver
                 
                 $service->initializeWithConnection($targetConnection);
                 
-                foreach ($connectionMappings as $mapping) {
+                foreach ($connectionMappings as $index => $mapping) {
                     try {
                         // Delete the blocker in the calendar
                         $service->deleteBlocker(
@@ -114,6 +114,12 @@ class SyncRuleObserver
                             'mapping_id' => $mapping->id,
                             'target_event_id' => $mapping->target_event_id,
                         ]);
+                        
+                        // Throttle: Sleep 200ms between deletes to respect API rate limits
+                        // This prevents hitting Google/Microsoft rate limits when deleting many blockers
+                        if ($index < $connectionMappings->count() - 1) {
+                            usleep(200000); // 200ms = 5 requests/second max
+                        }
                         
                     } catch (\Exception $e) {
                         $errorCount++;

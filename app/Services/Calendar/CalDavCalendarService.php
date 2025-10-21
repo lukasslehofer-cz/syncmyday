@@ -710,13 +710,32 @@ class CalDavCalendarService
         
         $eventUrl = rtrim($calendarId, '/') . '/' . $eventId . '.ics';
         
-        // DELETE from CalDAV server
-        $this->client->request('DELETE', $eventUrl);
-        
-        Log::channel('sync')->info('CalDAV blocker deleted', [
-            'calendar_id' => $calendarId,
-            'event_id' => $eventId,
-        ]);
+        try {
+            // DELETE from CalDAV server
+            $this->client->request('DELETE', $eventUrl);
+            
+            Log::channel('sync')->debug('CalDAV blocker deleted', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+            ]);
+            
+        } catch (\Exception $e) {
+            // Check for 404 = already deleted (OK)
+            if (strpos($e->getMessage(), '404') !== false) {
+                Log::channel('sync')->debug('CalDAV blocker already deleted', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                ]);
+                return;
+            }
+            
+            // Other errors - log but don't throw (allow rule deletion to continue)
+            Log::channel('sync')->warning('Failed to delete CalDAV blocker - continuing anyway', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
     
     /**

@@ -308,14 +308,44 @@ class MicrosoftCalendarService
                 'calendar_id' => $calendarId,
                 'event_id' => $eventId,
             ]);
+            
+        } catch (\Microsoft\Graph\Exception\GraphException $e) {
+            $errorCode = $e->getCode();
+            
+            // 404 = not found / already deleted (OK)
+            if ($errorCode === 404) {
+                Log::channel('sync')->debug('Microsoft blocker already deleted', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                ]);
+                return;
+            }
+            
+            // 429 = rate limit / throttling
+            if ($errorCode === 429) {
+                Log::channel('sync')->warning('Microsoft rate limit hit during blocker cleanup - skipping', [
+                    'calendar_id' => $calendarId,
+                    'event_id' => $eventId,
+                    'note' => 'Event will be cleaned up on next sync or manually',
+                ]);
+                return;
+            }
+            
+            // Other errors - log but don't throw (allow rule deletion to continue)
+            Log::channel('sync')->warning('Failed to delete Microsoft blocker - continuing anyway', [
+                'calendar_id' => $calendarId,
+                'event_id' => $eventId,
+                'error_code' => $errorCode,
+                'error' => $e->getMessage(),
+            ]);
+            
         } catch (\Exception $e) {
-            Log::channel('sync')->error('Failed to delete Microsoft blocker', [
+            // Unexpected error - log but don't throw
+            Log::channel('sync')->warning('Unexpected error deleting Microsoft blocker', [
                 'calendar_id' => $calendarId,
                 'event_id' => $eventId,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
-            throw $e;
         }
     }
 

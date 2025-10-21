@@ -1,0 +1,78 @@
+# ============================================
+# MXroute SMTP Configuration
+# ============================================
+# Pro multi-domain email setup s MXroute
+# Každý uživatel dostává emaily z domény, na které se registroval
+#
+# DŮLEŽITÉ: MXroute podporuje catch-all, takže můžeš použít
+# jeden SMTP účet a posílat z různých FROM adres!
+# ============================================
+
+MAIL_MAILER=smtp
+MAIL_HOST=bunny.mxroute.com
+MAIL_PORT=587
+MAIL_USERNAME=noreply@syncmyday.cz
+MAIL_PASSWORD=your_mxroute_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_NAME="SyncMyDay"
+
+# Poznámka: MAIL_FROM_ADDRESS se nastavuje dynamicky v aplikaci
+# podle registration_domain uživatele:
+# - Systémové emaily: info@{domain}
+# - Blocker emaily: events@{domain}
+
+# ============================================
+# Jak získat SMTP údaje z MXroute:
+# ============================================
+# 1. Login do MXroute DirectAdmin
+# 2. Email Accounts → klikni na email
+# 3. Zkopíruj:
+#    - Server: např. bunny.mxroute.com
+#    - Port: 587 (TLS) nebo 465 (SSL)
+#    - Username: celá emailová adresa
+#    - Password: heslo které jsi nastavil
+
+# ============================================
+# Multi-Domain Setup:
+# ============================================
+# V MXroute vytvoř tyto mailboxy (10x):
+#
+# syncmyday.cz:
+#   - info@syncmyday.cz
+#   - events@syncmyday.cz
+#
+# syncmyday.sk:
+#   - info@syncmyday.sk
+#   - events@syncmyday.sk
+#
+# syncmyday.pl:
+#   - info@syncmyday.pl
+#   - events@syncmyday.pl
+#
+# syncmyday.de:
+#   - info@syncmyday.de
+#   - events@syncmyday.de
+#
+# syncmyday.eu:
+#   - info@syncmyday.eu
+#   - events@syncmyday.eu
+#
+# Pak můžeš použít JAKÝKOLIV z těchto účtů jako MAIL_USERNAME
+# a Laravel automaticky použije správný FROM address podle
+# domény uživatele díky EmailHelper.
+
+# ============================================
+# DNS záznamy (pro každou doménu):
+# ============================================
+# MX record:
+# @ MX 10 bunny.mxroute.com. (nebo tvůj MXroute server)
+#
+# SPF record:
+# @ TXT "v=spf1 include:mxroute.com ~all"
+#
+# DKIM record (zkopíruj z MXroute DirectAdmin):
+# default._domainkey TXT "v=DKIM1; k=rsa; p=..."
+#
+# DMARC record:
+# _dmarc TXT "v=DMARC1; p=quarantine; rua=mailto:dmarc@syncmyday.cz"
+
