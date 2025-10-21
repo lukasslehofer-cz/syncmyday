@@ -161,14 +161,22 @@ class SyncEngine
             ->where('status', 'active')
             ->first();
 
-        $oldSyncToken = $subscription?->sync_token;
-        $hadSyncToken = !empty($oldSyncToken);
+        // SOLUTION A: NEVER use delta link for initial sync
+        // Only use sync_token for incremental syncs (after initial_sync_completed = true)
+        $syncTokenToUse = null;
+        if ($rule->initial_sync_completed && $subscription) {
+            $syncTokenToUse = $subscription->sync_token;
+        }
+        
+        $hadSyncToken = !empty($syncTokenToUse);
 
         Log::channel('sync')->debug('Sync token status before fetch', [
             'rule_id' => $rule->id,
             'has_subscription' => $subscription !== null,
+            'initial_sync_completed' => $rule->initial_sync_completed,
             'had_sync_token' => $hadSyncToken,
-            'sync_token_preview' => $oldSyncToken ? substr($oldSyncToken, 0, 50) . '...' : null,
+            'sync_token_preview' => $syncTokenToUse ? substr($syncTokenToUse, 0, 50) . '...' : null,
+            'note' => $rule->initial_sync_completed ? 'Using delta link for incremental sync' : 'Forcing full sync for initial sync',
         ]);
 
         // Fetch changed events
@@ -176,7 +184,7 @@ class SyncEngine
             $sourceService,
             $sourceConnection->provider,
             $rule->source_calendar_id,
-            $subscription?->sync_token
+            $syncTokenToUse
         );
         
         $stats['events_fetched'] = count($changedData['events'] ?? []);
@@ -189,19 +197,6 @@ class SyncEngine
             'had_sync_token' => $hadSyncToken,
             'received_sync_token' => isset($changedData['sync_token']),
         ]);
-
-        // SPECIAL CASE: New rule needs initial full sync
-        // If rule has never completed initial sync AND delta returned 0 events,
-        // reset sync token to force full sync (delta link might be stale/wrong)
-        if ($subscription && !$rule->initial_sync_completed && $hadSyncToken && $stats['events_fetched'] == 0) {
-            $subscription->update(['sync_token' => null]);
-            Log::channel('sync')->warning('New rule with 0 events from delta - resetting for initial full sync', [
-                'rule_id' => $rule->id,
-                'subscription_id' => $subscription->id,
-                'calendar_id' => $rule->source_calendar_id,
-                'note' => 'Delta link may be stale from previous tests',
-            ]);
-        }
         
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
