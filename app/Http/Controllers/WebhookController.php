@@ -35,20 +35,26 @@ class WebhookController extends Controller
         $connection = CalendarConnection::find($connectionId);
         if (!$connection) {
             // ORPHANED WEBHOOK: Connection was deleted but webhook wasn't stopped
-            // Clean up any orphaned webhook subscriptions in database
-            \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
-                ->delete();
+            // Log only ONCE per connection to avoid spam
+            $cacheKey = "orphaned-webhook-logged-google-{$connectionId}";
             
-            Log::channel('webhook')->warning('Connection not found - cleaned up orphaned webhook subscriptions', [
-                'connection_id' => $connectionId,
-                'channel_id' => $channelId,
-                'resource_id' => $resourceId,
-                'resource_state' => $resourceState,
-                'action' => 'Deleted orphaned webhook subscriptions from database',
-                'note' => 'Google will continue sending until channel expires',
-            ]);
+            if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+                // First time seeing this orphaned webhook - log it
+                \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
+                    ->delete();
+                
+                Log::channel('webhook')->warning('Orphaned webhook detected - Google will send until expiration', [
+                    'connection_id' => $connectionId,
+                    'channel_id' => $channelId,
+                    'resource_id' => $resourceId,
+                    'note' => 'Further webhooks for this connection will be silently ignored',
+                ]);
+                
+                // Cache for 7 days (webhooks typically expire within 7 days)
+                \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addDays(7));
+            }
             
-            // Return 200 instead of 404 to prevent Google from retrying
+            // Return 200 to prevent Google from retrying
             return response('OK', 200);
         }
 
@@ -112,15 +118,22 @@ class WebhookController extends Controller
         $connection = CalendarConnection::find($connectionId);
         if (!$connection) {
             // ORPHANED WEBHOOK: Connection was deleted but webhook wasn't stopped
-            // Clean up any orphaned webhook subscriptions in database
-            \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
-                ->delete();
+            // Log only ONCE per connection to avoid spam
+            $cacheKey = "orphaned-webhook-logged-microsoft-{$connectionId}";
             
-            Log::channel('webhook')->warning('Connection not found - cleaned up orphaned webhook subscriptions', [
-                'connection_id' => $connectionId,
-                'action' => 'Deleted orphaned webhook subscriptions from database',
-                'note' => 'Microsoft will continue sending until subscription expires',
-            ]);
+            if (!\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+                // First time seeing this orphaned webhook - log it
+                \App\Models\WebhookSubscription::where('calendar_connection_id', $connectionId)
+                    ->delete();
+                
+                Log::channel('webhook')->warning('Orphaned webhook detected - Microsoft will send until expiration', [
+                    'connection_id' => $connectionId,
+                    'note' => 'Further webhooks for this connection will be silently ignored',
+                ]);
+                
+                // Cache for 30 days (Microsoft subscriptions can last up to 30 days)
+                \Illuminate\Support\Facades\Cache::put($cacheKey, true, now()->addDays(30));
+            }
             
             // Return 200 instead of 404 (Microsoft might retry on 404)
             return response('OK', 200);
