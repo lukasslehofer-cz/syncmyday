@@ -296,11 +296,18 @@ class SyncEngine
         }
 
         // DELETED EVENTS DETECTION
-        // Both Google and Microsoft don't reliably return deleted events in their APIs:
-        // - Google: Deleted events not included in full sync (no syncToken)
-        // - Microsoft: Deleted events not included in Delta Query despite documentation
-        // Solution: Compare current events with existing mappings to detect deletions
-        if ($stats['events_processed'] > 0 || !empty($sourceEventIds)) {
+        // IMPORTANT: Only run this for FULL syncs (when we had NO sync token)
+        // For incremental syncs (delta query), providers return deleted events with @removed flag
+        // Running this on incremental syncs causes false positives:
+        // - Delta query returns only changed events (not all events)
+        // - Comparing these few events with all mappings incorrectly detects deletions
+        // - Example: Delta returns 9 events, we have 13 mappings → thinks 4 were deleted!
+        if (!$hadSyncToken && ($stats['events_processed'] > 0 || !empty($sourceEventIds))) {
+            Log::channel('sync')->debug('Running deleted events detection (full sync only)', [
+                'rule_id' => $rule->id,
+                'source_event_ids_count' => count($sourceEventIds),
+            ]);
+            
             $stats['events_deleted'] = $this->detectDeletedEventsByMappingComparison(
                 $rule,
                 $sourceEventIds,
@@ -308,6 +315,12 @@ class SyncEngine
                 $sourceService,
                 $existingMappings
             );
+        } else {
+            Log::channel('sync')->debug('Skipping deleted events detection (incremental sync)', [
+                'rule_id' => $rule->id,
+                'had_sync_token' => $hadSyncToken,
+                'note' => 'Delta query returns deleted events with @removed flag',
+            ]);
         }
 
         // Mark initial sync as completed if this rule has email targets
