@@ -115,6 +115,7 @@ return [
     'connect_calendars_to_start_syncing' => 'Connect your calendars to start synchronizing your schedule',
     'add_new_calendar' => 'Add New Calendar',
     'google_calendar' => 'Google Calendar',
+    'microsoft_calendar' => 'Microsoft Calendar',
     'microsoft_365' => 'Microsoft 365',
     'email_calendar' => 'Email Calendar',
     'connect_with_oauth' => 'Connect your :provider account with OAuth',

@@ -350,7 +350,7 @@ class OAuthController extends Controller
         }
 
         // Suggested name based on provider
-        $suggestedName = ucfirst($provider) . ' Calendar';
+        $suggestedName = __('messages.' . $provider . '_calendar');
 
         return view('connections.complete-oauth', [
             'provider' => $provider,
@@ -430,6 +430,11 @@ class OAuthController extends Controller
         ?string $name = null,
         ?string $selectedCalendarId = null
     ): CalendarConnection {
+        // Set default name if not provided
+        if ($name === null) {
+            $name = __('messages.' . $provider . '_calendar');
+        }
+        
         // Try to update or create connection with retry logic for race conditions
         $maxAttempts = 3;
         $attempt = 0;

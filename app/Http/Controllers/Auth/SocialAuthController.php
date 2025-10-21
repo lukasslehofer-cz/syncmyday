@@ -433,6 +433,7 @@ class SocialAuthController extends Controller
             
             $calendarList = $calendarService->calendarList->listCalendarList();
             $calendars = [];
+            $primaryCalendarId = null;
             foreach ($calendarList->getItems() as $calendar) {
                 $calendars[] = [
                     'id' => $calendar->getId(),
@@ -440,6 +441,16 @@ class SocialAuthController extends Controller
                     'primary' => $calendar->getPrimary() ?? false,
                     'access_role' => $calendar->getAccessRole(),
                 ];
+                
+                // Remember the primary calendar ID
+                if ($calendar->getPrimary()) {
+                    $primaryCalendarId = $calendar->getId();
+                }
+            }
+            
+            // If no primary found, use first calendar
+            if (!$primaryCalendarId && count($calendars) > 0) {
+                $primaryCalendarId = $calendars[0]['id'];
             }
 
             // Create or update calendar connection
@@ -450,8 +461,10 @@ class SocialAuthController extends Controller
                     'provider_account_id' => $accountId,
                 ],
                 [
+                    'name' => __('messages.google_calendar'),
                     'provider_email' => $email,
                     'available_calendars' => $calendars,
+                    'selected_calendar_id' => $primaryCalendarId,
                     'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
                     'status' => 'active',
                     'last_error' => null,
@@ -494,6 +507,7 @@ class SocialAuthController extends Controller
                 ->execute();
                 
             $calendars = [];
+            $primaryCalendarId = null;
             foreach ($calendarList as $calendar) {
                 $calendars[] = [
                     'id' => $calendar->getId(),
@@ -501,6 +515,16 @@ class SocialAuthController extends Controller
                     'primary' => $calendar->getIsDefaultCalendar() ?? false,
                     'access_role' => $calendar->getCanEdit() ? 'owner' : 'reader',
                 ];
+                
+                // Remember the primary calendar ID
+                if ($calendar->getIsDefaultCalendar()) {
+                    $primaryCalendarId = $calendar->getId();
+                }
+            }
+            
+            // If no primary found, use first calendar
+            if (!$primaryCalendarId && count($calendars) > 0) {
+                $primaryCalendarId = $calendars[0]['id'];
             }
 
             // Create or update calendar connection
@@ -511,8 +535,10 @@ class SocialAuthController extends Controller
                     'provider_account_id' => $accountId,
                 ],
                 [
+                    'name' => __('messages.microsoft_calendar'),
                     'provider_email' => $email,
                     'available_calendars' => $calendars,
+                    'selected_calendar_id' => $primaryCalendarId,
                     'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
                     'status' => 'active',
                     'last_error' => null,
