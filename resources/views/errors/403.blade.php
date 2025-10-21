@@ -16,16 +16,15 @@
 
 @section('message')
 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-    Přístup zamítnut
+    {{ __('messages.error_403_title') }}
 </h2>
 
 <p class="text-lg text-gray-600 mb-4 max-w-lg mx-auto">
-    Nemáte oprávnění k přístupu na tuto stránku. 
-    Je to jako pokus otevřít cizí kalendář! 🔐
+    {{ __('messages.error_403_message') }} 🔐
 </p>
 
 <p class="text-base text-gray-500 mb-8 max-w-md mx-auto">
-    Pokud si myslíte, že byste měli mít přístup, kontaktujte nás nebo se přihlaste jiným účtem.
+    {{ __('messages.error_403_hint') }}
 </p>
 @endsection
 

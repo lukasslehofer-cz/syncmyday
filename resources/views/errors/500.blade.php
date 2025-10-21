@@ -16,17 +16,15 @@
 
 @section('message')
 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-    Jejda! Něco se pokazilo
+    {{ __('messages.error_500_title') }}
 </h2>
 
 <p class="text-lg text-gray-600 mb-4 max-w-lg mx-auto">
-    Naše servery momentálně řeší neočekávaný problém. 
-    Už na tom pracujeme! 🔧
+    {{ __('messages.error_500_message') }} 🔧
 </p>
 
 <p class="text-base text-gray-500 mb-8 max-w-md mx-auto">
-    Zkuste prosím stránku obnovit za chvíli. Pokud problém přetrvává, 
-    dejte nám vědět a my to co nejrychleji opravíme.
+    {{ __('messages.error_500_hint') }}
 </p>
 @endsection
 

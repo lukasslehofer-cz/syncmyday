@@ -17,16 +17,15 @@
 
 @section('message')
 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-    Momentálně probíhá údržba
+    {{ __('messages.error_503_title') }}
 </h2>
 
 <p class="text-lg text-gray-600 mb-4 max-w-lg mx-auto">
-    Pracujeme na vylepšeních, abychom vám mohli poskytovat ještě lepší služby. 
-    Brzy budeme zpět! ⚡
+    {{ __('messages.error_503_message') }} ⚡
 </p>
 
 <p class="text-base text-gray-500 mb-8 max-w-md mx-auto">
-    Zkuste to prosím za pár minut. Děkujeme za trpělivost!
+    {{ __('messages.error_503_hint') }}
 </p>
 @endsection
 

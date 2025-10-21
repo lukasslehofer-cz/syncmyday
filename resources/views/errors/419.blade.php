@@ -16,15 +16,15 @@
 
 @section('message')
 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-    Stránka vypršela
+    {{ __('messages.error_419_title') }}
 </h2>
 
 <p class="text-lg text-gray-600 mb-4 max-w-lg mx-auto">
-    Vaše relace vypršela. To se stává, když je stránka otevřená příliš dlouho. ⏱️
+    {{ __('messages.error_419_message') }} ⏱️
 </p>
 
 <p class="text-base text-gray-500 mb-8 max-w-md mx-auto">
-    Prosím, obnovte stránku a zkuste to znovu. Vaše data jsou v bezpečí!
+    {{ __('messages.error_419_hint') }}
 </p>
 @endsection
 
