@@ -416,7 +416,7 @@ class MicrosoftCalendarService
             // Initial sync: use /events/delta endpoint (NOT calendarView)
             // Note: This returns ALL events in calendar (no time filtering)
             // Time filtering is applied in SyncEngine::syncRule()
-            $url = "/me/calendars/{$calendarId}/events/delta?\$top=50";
+            $url = "/me/calendars/{$calendarId}/events/delta";
             
             Log::channel('sync')->info('Microsoft initial sync using delta endpoint', [
                 'calendar_id' => $calendarId,
@@ -433,8 +433,16 @@ class MicrosoftCalendarService
                 // Full URL from nextLink or deltaLink - use as-is
                 $request = $this->graph->createRequest('GET', $url);
             } else {
-                // Relative URL
+                // Relative URL - add Prefer header for initial delta request
                 $request = $this->graph->createRequest('GET', $url);
+                
+                // CRITICAL: Delta query requires Prefer header, NOT $top parameter
+                // Microsoft error: "$top parameter is not supported with change tracking"
+                if (!$deltaLink) {
+                    $request->addHeaders([
+                        'Prefer' => 'odata.maxpagesize=50'
+                    ]);
+                }
             }
             
             $response = $request->execute();
