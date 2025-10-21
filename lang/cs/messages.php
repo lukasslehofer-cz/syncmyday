@@ -113,6 +113,8 @@ return [
     'google_calendar' => 'Kalendář Google',
     'microsoft_calendar' => 'Kalendář Microsoft',
     'microsoft_365' => 'Microsoft 365',
+    'apple_calendar' => 'Kalendář Apple',
+    'caldav_calendar' => 'Kalendář CalDAV',
     'email_calendar' => 'Emailový kalendář',
     'connect_with_oauth' => 'Připojte svůj účet :provider pomocí OAuth',
     'forward_ics_invitations' => 'Přeposílejte .ics pozvánky prostřednictvím e-mailu',

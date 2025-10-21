@@ -57,7 +57,7 @@
                             type="text" 
                             name="name" 
                             id="name" 
-                            value="{{ old('name', 'Apple Calendar') }}" 
+                            value="{{ old('name', __('messages.' . $provider . '_calendar')) }}" 
                             required
                             placeholder="{{ __('messages.calendar_name_placeholder') }}" 
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-medium transition"

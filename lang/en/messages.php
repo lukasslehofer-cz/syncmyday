@@ -117,6 +117,8 @@ return [
     'google_calendar' => 'Google Calendar',
     'microsoft_calendar' => 'Microsoft Calendar',
     'microsoft_365' => 'Microsoft 365',
+    'apple_calendar' => 'Apple Calendar',
+    'caldav_calendar' => 'CalDAV Calendar',
     'email_calendar' => 'Email Calendar',
     'connect_with_oauth' => 'Connect your :provider account with OAuth',
     'forward_ics_invitations' => 'Forward .ics invitations via email',

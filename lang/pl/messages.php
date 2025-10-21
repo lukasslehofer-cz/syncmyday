@@ -64,6 +64,8 @@ return [
     'google_calendar' => 'Kalendarz Google',
     'microsoft_calendar' => 'Kalendarz Microsoft',
     'microsoft_365' => 'Microsoft 365',
+    'apple_calendar' => 'Kalendarz Apple',
+    'caldav_calendar' => 'Kalendarz CalDAV',
     'email_calendar' => 'Kalendarz e-mail',
     'connect_with_oauth' => 'Połącz swoje konto :provider za pomocą OAuth',
     'forward_ics_invitations' => 'Przekazuj zaproszenia .ics przez e-mail',

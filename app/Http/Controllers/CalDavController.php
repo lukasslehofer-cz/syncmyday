@@ -166,6 +166,7 @@ class CalDavController extends Controller
         // Get data from session
         $calendars = session('caldav_calendars', []);
         $email = session('caldav_email');
+        $provider = session('caldav_provider', 'caldav');
         
         if (!$email) {
             return redirect()->route('caldav.setup')
@@ -175,6 +176,7 @@ class CalDavController extends Controller
         return view('caldav.select-calendars', [
             'calendars' => $calendars,
             'email' => $email,
+            'provider' => $provider,
         ]);
     }
     
