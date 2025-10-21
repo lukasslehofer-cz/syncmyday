@@ -15,7 +15,7 @@ NC='\033[0m'
 
 # Configuration - ADJUST THESE!
 PROJECT_PATH="/var/www/syncmyday"  # Adjust to your path
-PHP_VERSION="8.2"  # Adjust if needed
+PHP_VERSION="8.3"  # Adjust if needed
 DO_BACKUP="${1:-no}"  # Default: no, enable with: bash deploy-vps.sh yes
 
 # Banner
