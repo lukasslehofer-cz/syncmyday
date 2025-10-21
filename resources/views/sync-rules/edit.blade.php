@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create and show loading overlay
         const overlay = document.createElement('div');
         overlay.id = 'loading-overlay';
-        overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;';
+        overlay.style.cssText = 'position: fixed; inset: 0; z-index: 9999; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;';
         
         overlay.innerHTML = `
             <div style="text-align: center;">
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 
-                <div style="background: rgba(255, 255, 255, 0.95); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-width: 28rem; margin: 0 1rem; border: 2px solid #fee2e2; backdrop-filter: blur(10px);">
+                <div style="background: rgba(255, 255, 255, 1); border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 2rem; max-width: 28rem; margin: 0 1rem; border: 2px solid #fee2e2; backdrop-filter: blur(10px);">
                     <h3 style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">
                         {{ __('messages.deleting_sync_rule') }}
                     </h3>
