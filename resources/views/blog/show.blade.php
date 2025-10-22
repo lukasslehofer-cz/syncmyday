@@ -101,7 +101,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             @foreach($relatedArticles as $related)
-            <a href="{{ route('blog.show', $related->slug) }}" class="group bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl overflow-hidden hover:shadow-lg transition">
+            <a href="{{ route('blog.show', $related->getSlug()) }}" class="group bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl overflow-hidden hover:shadow-lg transition">
                 @if($related->featured_image)
                 <div class="h-28 sm:h-32 overflow-hidden">
                     <img src="{{ $related->getFeaturedImageUrl() }}" alt="{{ $related->getTitle() }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
