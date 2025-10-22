@@ -25,7 +25,7 @@
     @if($articles->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             @foreach($articles as $article)
-            <a href="{{ route('blog.show', $article->slug) }}" class="group bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl overflow-hidden hover:shadow-lg transition">
+            <a href="{{ route('blog.show', $article->getSlug()) }}" class="group bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl overflow-hidden hover:shadow-lg transition">
                 @if($article->featured_image)
                 <div class="h-40 sm:h-48 overflow-hidden">
                     <img src="{{ $article->getFeaturedImageUrl() }}" alt="{{ $article->getTitle() }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">

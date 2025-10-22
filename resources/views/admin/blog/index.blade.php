@@ -46,7 +46,7 @@
                 <tr>
                     <td class="px-6 py-4">
                         <div class="text-sm font-medium text-gray-900">{{ $article->getTitle() }}</div>
-                        <div class="text-sm text-gray-500">{{ $article->slug }}</div>
+                        <div class="text-sm text-gray-500">{{ $article->getSlug() }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
@@ -68,7 +68,7 @@
                         {{ $article->published_at ? $article->published_at->format('d.m.Y H:i') : '-' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('blog.show', $article->slug) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                        <a href="{{ route('blog.show', $article->getSlug()) }}" target="_blank" class="text-indigo-600 hover:text-indigo-900 mr-3">
                             Zobrazit
                         </a>
                         <a href="{{ route('admin.blog.edit', $article->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
