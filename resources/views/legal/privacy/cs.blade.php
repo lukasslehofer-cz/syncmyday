@@ -3,7 +3,7 @@
 <p><strong>Datum aktualizace:</strong> {{ date('Y-m-d') }}</p>
 
 <h2>Rozsah a účel</h2>
-<p>Tento dokument vysvětluje, jak zpracováváme osobní údaje v souvislosti s poskytováním služby {{ config('app.name') }}. Postupujeme dle GDPR a českých právních předpisů.</p>
+<p>Tento dokument vysvětluje, jak zpracováváme osobní údaje v souvislosti s poskytováním služby {{ config('app.name') }}. Postupujeme dle nařízení EU 2016/679 (GDPR) a zákona č. 110/2019 Sb., o zpracování osobních údajů. Tyto zásady se řídí českým právem.</p>
 
 <h2>Kategorie zpracovávaných údajů</h2>
 <ul>
@@ -147,40 +147,141 @@
 <h3>Uchovávání a mazání dat z CalDAV</h3>
 <p>Svůj CalDAV kalendář můžete kdykoli odpojit nebo smazat účet {{ config('app.name') }}. Všechny CalDAV přihlašovací údaje, tokeny a synchronizovaná data jsou trvale smazána do 30 dnů. U Apple iCloud můžete také odvolat hesla specifická pro aplikace prostřednictvím vašeho <a href="https://appleid.apple.com/account/manage" target="_blank" rel="noopener">účtu Apple ID</a>.</p>
 
-<h2>Právní základy</h2>
+<h2>Právní základy zpracování</h2>
+<p>Vaše osobní údaje zpracováváme v souladu s GDPR (nařízení EU 2016/679) a zákonem č. 110/2019 Sb., o zpracování osobních údajů. Právními základy našeho zpracování údajů jsou:</p>
 <ul>
-    <li>Plnění smlouvy (čl. 6 odst. 1 písm. b) GDPR)</li>
-    <li>Právní povinnost (čl. 6 odst. 1 písm. c) GDPR)</li>
-    <li>Oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR) – bezpečnost, prevence podvodů, analytika</li>
-    <li>Souhlas, je‑li vyžadován (čl. 6 odst. 1 písm. a) GDPR)</li>
+    <li><strong>Plnění smlouvy (čl. 6 odst. 1 písm. b) GDPR, § 5 odst. 1 písm. b) zákona č. 110/2019 Sb.):</strong> Zpracování nezbytné pro poskytování služeb {{ config('app.name') }}, včetně synchronizace kalendářů, správy účtu a dodání služby</li>
+    <li><strong>Právní povinnost (čl. 6 odst. 1 písm. c) GDPR, § 5 odst. 1 písm. c) zákona č. 110/2019 Sb.):</strong> Zpracování vyžadované českým právem, včetně:
+        <ul>
+            <li>Povinností v oblasti účetnictví a daní (zákon č. 563/1991 Sb., o účetnictví)</li>
+            <li>Požadavků na uchovávání záznamů (zákon č. 235/2004 Sb., o dani z přidané hodnoty)</li>
+            <li>Povinností v oblasti boje proti praní peněz, je‑li to relevantní</li>
+        </ul>
+    </li>
+    <li><strong>Oprávněné zájmy (čl. 6 odst. 1 písm. f) GDPR, § 5 odst. 1 písm. f) zákona č. 110/2019 Sb.):</strong> Zpracování nezbytné pro naše oprávněné zájmy nebo zájmy třetích stran, včetně:
+        <ul>
+            <li>Zabezpečení a prevence podvodů</li>
+            <li>Zlepšování služby a technické diagnostiky</li>
+            <li>Ochrana našich právních nároků</li>
+            <li>Agregovaná analytika pro optimalizaci služby</li>
+        </ul>
+        Provedli jsme posouzení oprávněných zájmů potvrzující, že tyto zájmy nepřevažují nad vašimi právy a svobodami.
+    </li>
+    <li><strong>Souhlas (čl. 6 odst. 1 písm. a) GDPR, § 5 odst. 1 písm. a) zákona č. 110/2019 Sb.):</strong> Pokud je to vyžadováno, získáváme váš výslovný souhlas pro:
+        <ul>
+            <li>Určité cookies (podle zákona č. 127/2005 Sb., o elektronických komunikacích, § 89)</li>
+            <li>Marketingovou komunikaci (pokud se přihlásíte)</li>
+        </ul>
+        Souhlas můžete kdykoli odvolat, aniž by to ovlivnilo zákonnost zpracování před odvoláním.
+    </li>
+</ul>
+<p><strong>Rozhodné právo:</strong> Tyto zásady ochrany osobních údajů a veškeré zpracování údajů se řídí českým právem, konkrétně GDPR jako přímo použitelným nařízením EU a zákonem č. 110/2019 Sb., o zpracování osobních údajů. Naším dozorným orgánem je Úřad pro ochranu osobních údajů (ÚOOÚ).</p>
     
-</ul>
 
-<h2>Doba uchování</h2>
-<p>Údaje uchováváme po dobu nezbytnou pro uvedené účely, typicky po dobu existence účtu. Po smazání účtu údaje vymažeme nebo anonymizujeme, nevyžaduje‑li jejich uchování právní předpis (např. účetnictví).</p>
 
-<h2>Příjemci a zpracovatelé</h2>
-<p>Využíváme pečlivě vybrané zpracovatele pro infrastrukturu, platby, doručování e‑mailů a analytiku chyb. Příklady: hosting, Stripe (platby), transakční e‑mail, logování/monitoring. S relevantními partnery máme uzavřeny zpracovatelské smlouvy.</p>
-
-<h2>Předání do třetích zemí</h2>
-<p>Pokud dochází k předání mimo EU/EHP, uplatňujeme odpovídající záruky dle kapitoly V GDPR (rozhodnutí o přiměřenosti nebo standardní smluvní doložky).</p>
-
-<h2>Vaše práva</h2>
+<h2>Doby uchovávání údajů</h2>
+<p>Osobní údaje uchováváme pouze po dobu nezbytnou pro účely popsané v těchto zásadách:</p>
 <ul>
-    <li>Právo na přístup, opravu, výmaz a omezení zpracování</li>
-    <li>Právo na přenositelnost a námitku proti zpracování na základě oprávněných zájmů</li>
-    <li>Právo odvolat souhlas kdykoli (bez vlivu na zákonnost předchozího zpracování)</li>
-    <li>Právo podat stížnost u dozorového úřadu (v ČR: ÚOOÚ)</li>
-    <li>Právo nebýt předmětem automatizovaného individuálního rozhodování, pokud je relevantní</li>
-    <li>Právo být informován o porušení zabezpečení, pokud to vyžaduje zákon</li>
+    <li><strong>Údaje aktivního účtu:</strong> Po dobu existence vašeho aktivního účtu</li>
+    <li><strong>Připojení kalendářů:</strong> OAuth tokeny, stav synchronizace a data kalendáře jsou smazány do 30 dnů po odpojení kalendáře nebo smazání účtu</li>
+    <li><strong>Technické logy:</strong> Systémové záznamy pro zabezpečení a sledování chyb jsou uchovávány až 90 dnů. Tyto záznamy neobsahují obsah událostí kalendáře, pouze technická metadata</li>
+    <li><strong>Účetní doklady:</strong> Faktury a platební záznamy jsou uchovávány 10 let v souladu s požadavky českého účetního a daňového práva</li>
+    <li><strong>Komunikace s podporou:</strong> Uchovávána až 3 roky pro účely zajištění kvality a právní ochrany</li>
+    <li><strong>Anonymizovaná analytika:</strong> Agregované anonymizované statistiky užívání mohou být uchovávány na dobu neurčitou, protože nemohou identifikovat jednotlivce</li>
 </ul>
 
-<h2>Bezpečnost</h2>
-<p>Uplatňujeme přiměřená technická a organizační opatření, včetně šifrování při přenosu i v klidu, řízení přístupu, zásady nejmenších oprávnění a pravidelných aktualizací.</p>
+<h2>Poskytovatelé služeb třetích stran a zpracovatelé</h2>
+<p>Spolupracujeme s pečlivě vybranými poskytovateli služeb třetích stran, kteří zpracovávají údaje naším jménem na základě přísných zpracovatelských smluv (DPA). Vaše data neprodáváme třetím stranám. Naši zpracovatelé zahrnují:</p>
+<ul>
+    <li><strong>Poskytovatelé hostingu:</strong> Poskytovatelé infrastruktury, kteří hostují naši aplikaci a databáze v zabezpečených datových centrech. Mají přístup k zašifrovaným datům v klidu, ale nemohou dešifrovat obsah kalendáře bez našich šifrovacích klíčů</li>
+    <li><strong>Platební procesor (Stripe):</strong> Zpracovává platby a správu předplatného. Stripe zpracovává údaje o vaší platební kartě přímo; nikdy neukládáme plná čísla karet</li>
+    <li><strong>Poskytovatelé e‑mailových služeb:</strong> Doručování transakčních e‑mailů pro oznámení o účtu, obnovení hesla a komunikaci s podporou</li>
+    <li><strong>Monitoring a sledování chyb:</strong> Služby, které nám pomáhají monitorovat výkon aplikace a diagnostikovat technické problémy. Tyto dostávají pouze minimální technická metadata</li>
+    <li><strong>Poskytovatelé kalendářových služeb:</strong> Google, Microsoft, Apple a operátoři CalDAV serverů zpracovávají vaše kalendářová data, když tyto služby výslovně připojíte pro synchronizaci</li>
+</ul>
+<p>Všichni zpracovatelé třetích stran:</p>
+<ul>
+    <li>Jsou vázáni zpracovatelskými smlouvami zajišťujícími soulad s GDPR</li>
+    <li>Zpracovávají data pouze na naše pokyny a pro stanovené účely</li>
+    <li>Implementují přiměřená technická a organizační bezpečnostní opatření</li>
+    <li>Nepoužívají vaše data pro své vlastní účely</li>
+    <li>Musí nás informovat o jakémkoliv narušení zabezpečení údajů</li>
+</ul>
 
-<h2>Kontakt</h2>
-<p>Pro záležitosti ochrany osobních údajů: <a href="mailto:support@syncmyday.cz">support@syncmyday.cz</a></p>
+<h2>Mezinárodní předávání údajů</h2>
+<p>Někteří z našich poskytovatelů služeb mohou zpracovávat údaje mimo Evropský hospodářský prostor (EHP). Když jsou údaje předávány do třetích zemí, zajišťujeme adekvátní ochranu prostřednictvím:</p>
+<ul>
+    <li><strong>Rozhodnutí o přiměřenosti:</strong> Upřednostňujeme poskytovatele v zemích uznaných Evropskou komisí jako poskytující přiměřenou ochranu údajů (např. Spojené království, Švýcarsko, země pokryté nástupnickými rámci Privacy Shield)</li>
+    <li><strong>Standardní smluvní doložky (SCC):</strong> Pro předání do jiných zemí používáme standardní smluvní doložky schválené EU zajišťující stejnou úroveň ochrany jako v rámci EU</li>
+    <li><strong>Dodatečné záruky:</strong> Implementujeme technická opatření jako šifrování při přenosu i v klidu, kontroly přístupu a pravidelné bezpečnostní audity</li>
+</ul>
+<p>Naše hlavní zpracování dat probíhá v rámci EU. Konkrétní mezinárodní předávání zahrnuje:</p>
+<ul>
+    <li><strong>Hostingová infrastruktura:</strong> Primární servery umístěné v EU; záložní systémy mohou být v zemích s rozhodnutím o přiměřenosti</li>
+    <li><strong>Kalendářové služby:</strong> Když připojíte kalendáře Google, Microsoft nebo Apple, vaše kalendářová data jsou synchronizována se servery provozovanými těmito poskytovateli v jejich příslušných jurisdikcích podle jejich zásad ochrany osobních údajů</li>
+    <li><strong>Zpracování plateb:</strong> Stripe zpracovává platby globálně, ale udržuje soulad s GDPR prostřednictvím odpovídajících záruk</li>
+</ul>
 
-<h2>Změny</h2>
-<p>Tento dokument můžeme aktualizovat. O podstatných změnách vás vhodně informujeme v rámci služby. Pokračováním v užívání po účinnosti změn vyslovujete souhlas.</p>
+<h2>Vaše práva na ochranu osobních údajů</h2>
+<p>Podle GDPR máte následující práva týkající se vašich osobních údajů:</p>
+<ul>
+    <li><strong>Právo na přístup:</strong> Vyžádat si kopii všech osobních údajů, které o vás uchováváme</li>
+    <li><strong>Právo na opravu:</strong> Opravit nepřesné nebo neúplné osobní údaje</li>
+    <li><strong>Právo na výmaz („právo být zapomenut"):</strong> Požádat o smazání vašich osobních údajů</li>
+    <li><strong>Právo na omezení:</strong> Omezit způsob, jakým zpracováváme vaše údaje za určitých okolností</li>
+    <li><strong>Právo na přenositelnost údajů:</strong> Obdržet vaše údaje ve strukturovaném, strojově čitelném formátu a předat je jinému poskytovateli</li>
+    <li><strong>Právo na námitku:</strong> Vznést námitku proti zpracování založenému na oprávněných zájmech nebo pro účely přímého marketingu</li>
+    <li><strong>Právo odvolat souhlas:</strong> Kdykoli odvolat souhlas, pokud je zpracování založeno na souhlasu (nemá vliv na zákonnost předchozího zpracování)</li>
+    <li><strong>Právo podat stížnost:</strong> Podat stížnost u dozorového orgánu (v České republice: <a href="https://www.uoou.cz" target="_blank" rel="noopener">ÚOOÚ</a>)</li>
+    <li><strong>Právo na informace o automatizovaném rozhodování:</strong> Neprovádíme rozhodování založené výhradně na automatizovaném zpracování, které by vás významně ovlivňovalo</li>
+    <li><strong>Právo být informován o narušení zabezpečení:</strong> Budeme vás informovat, pokud narušení zabezpečení ovlivní vaše práva a svobody</li>
+</ul>
+
+<h2>Jak uplatnit svá práva</h2>
+<p>Svá práva můžete uplatnit následujícími způsoby:</p>
+
+<h3>Samoobslužné možnosti</h3>
+<ul>
+    <li><strong>Smazat účet:</strong> Přejděte do Nastavení účtu → Smazat účet. Tím trvale smažete všechna svá data do 30 dnů</li>
+    <li><strong>Odpojit kalendáře:</strong> Přejděte do Připojení kalendářů → Odpojit. OAuth tokeny a data synchronizace budou smazána do 30 dnů</li>
+    <li><strong>Exportovat data:</strong> Přejděte do Nastavení účtu → Exportovat data a stáhněte si pravidla synchronizace a konfiguraci</li>
+    <li><strong>Aktualizovat informace:</strong> Upravte svůj profil a nastavení účtu přímo v aplikaci</li>
+</ul>
+
+<h3>Kontaktujte nás pro pomoc</h3>
+<p>Pro další žádosti nebo dotazy týkající se ochrany osobních údajů nás kontaktujte na:</p>
+<ul>
+    <li><strong>E‑mail:</strong> <a href="mailto:support@syncmyday.eu">support@syncmyday.eu</a></li>
+    <li><strong>Předmět:</strong> "Žádost o ochranu osobních údajů - [Typ vaší žádosti]"</li>
+    <li><strong>Uveďte:</strong> Vaši registrovanou e‑mailovou adresu a popis vaší žádosti</li>
+</ul>
+<p>Na vaši žádost odpovíme do 30 dnů, jak vyžaduje GDPR. U složitých žádostí můžeme tuto lhůtu prodloužit o dalších 60 dnů a budeme vás o prodloužení informovat.</p>
+
+<h2>Bezpečnostní opatření</h2>
+<p>Implementujeme komplexní technická a organizační bezpečnostní opatření pro ochranu vašich osobních údajů:</p>
+<ul>
+    <li><strong>Šifrování:</strong> AES-256 šifrování pro data v klidu; TLS/SSL pro data při přenosu</li>
+    <li><strong>Kontroly přístupu:</strong> Omezení přístupu založená na rolích; princip nejmenších oprávnění</li>
+    <li><strong>Zabezpečení autentizace:</strong> Bezpečné hashování hesel; OAuth 2.0 pro připojení kalendářů</li>
+    <li><strong>Zabezpečení infrastruktury:</strong> Profesionálně spravovaná datová centra s fyzickým zabezpečením; pravidelné bezpečnostní aktualizace a záplaty</li>
+    <li><strong>Monitoring:</strong> 24/7 bezpečnostní monitoring a detekce narušení</li>
+    <li><strong>Zálohování a obnova:</strong> Pravidelné šifrované zálohy s bezpečným uchováním</li>
+    <li><strong>Reakce na incidenty:</strong> Zdokumentované postupy pro řešení bezpečnostních incidentů</li>
+</ul>
+
+<h2>Kontaktní informace</h2>
+<p><strong>Správce údajů:</strong> Lukas Slehofer, Kurzova 2222/16, 155 00 Praha 5, Česká republika, DIČ: CZ7912150191</p>
+<p><strong>Dotazy k ochraně osobních údajů:</strong> <a href="mailto:support@syncmyday.eu">support@syncmyday.eu</a></p>
+<p><strong>Obecná podpora:</strong> <a href="mailto:support@syncmyday.eu">support@syncmyday.eu</a></p>
+
+<h2>Změny těchto zásad ochrany osobních údajů</h2>
+<p>Tyto zásady ochrany osobních údajů můžeme čas od času aktualizovat, aby odrážely změny v našich postupech, technologiích, právních požadavcích nebo jiných faktorech.</p>
+<p><strong>Jak vás informujeme o změnách:</strong></p>
+<ul>
+    <li><strong>Podstatné změny:</strong> Budeme vás informovat e‑mailem a/nebo výrazným oznámením v aplikaci nejméně 30 dní před nabytím účinnosti změn</li>
+    <li><strong>Drobné změny:</strong> Aktualizujeme datum „Datum aktualizace" v horní části těchto zásad</li>
+    <li><strong>Vaše přijetí:</strong> Pokračování v používání {{ config('app.name') }} po datu účinnosti znamená přijetí aktualizovaných zásad</li>
+    <li><strong>Doporučené přezkoumání:</strong> Doporučujeme vám pravidelně kontrolovat tyto zásady</li>
+</ul>
+<p>Pokud nesouhlasíte se změnami těchto zásad, můžete si smazat účet před tím, než změny nabudou účinnosti.</p>
 

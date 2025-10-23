@@ -3,7 +3,7 @@
 <p><strong>Zuletzt aktualisiert:</strong> {{ date('Y-m-d') }}</p>
 
 <h2>Umfang und Zweck</h2>
-<p>Diese Datenschutzrichtlinie erläutert, wie wir personenbezogene Daten im Zusammenhang mit {{ config('app.name') }} verarbeiten. Wir befolgen die DSGVO und das anwendbare tschechische Recht.</p>
+<p>Diese Datenschutzrichtlinie erläutert, wie wir personenbezogene Daten im Zusammenhang mit {{ config('app.name') }} verarbeiten. Wir befolgen die DSGVO (Verordnung (EU) 2016/679) und das tschechische Gesetz Nr. 110/2019 Slg. über die Verarbeitung personenbezogener Daten. Diese Richtlinie unterliegt dem tschechischen Recht.</p>
 
 <h2>Kategorien verarbeiteter Daten</h2>
 <ul>
@@ -146,12 +146,35 @@
 <h3>Aufbewahrung und Löschung von CalDAV-Daten</h3>
 <p>Sie können Ihren CalDAV-Kalender jederzeit trennen oder Ihr {{ config('app.name') }}-Konto löschen. Alle CalDAV-Zugangsdaten, Token und synchronisierten Daten werden innerhalb von 30 Tagen dauerhaft gelöscht. Für Apple iCloud können Sie auch App-spezifische Passwörter über Ihr <a href="https://appleid.apple.com/account/manage" target="_blank" rel="noopener">Apple-ID-Konto</a> widerrufen.</p>
 
-<h2>Rechtsgrundlagen</h2>
+<h2>Rechtsgrundlagen der Datenverarbeitung</h2>
+<p>Wir verarbeiten Ihre personenbezogenen Daten gemäß DSGVO (Verordnung (EU) 2016/679) und dem tschechischen Gesetz Nr. 110/2019 Slg. über die Verarbeitung personenbezogener Daten. Die Rechtsgrundlagen für unsere Datenverarbeitung sind:</p>
 <ul>
-    <li>Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO)</li>
-    <li>Rechtliche Verpflichtung (Art. 6 Abs. 1 lit. c DSGVO)</li>
-    <li>Berechtigte Interessen (Art. 6 Abs. 1 lit. f DSGVO) – Sicherheit, Betrugsprävention, Service‑Analytik</li>
-    <li>Einwilligung, sofern erforderlich (Art. 6 Abs. 1 lit. a DSGVO)</li>
+    <li><strong>Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO, § 5 Abs. 1 lit. b des tschechischen Gesetzes Nr. 110/2019 Slg.):</strong> Verarbeitung zur Bereitstellung der {{ config('app.name') }}-Dienste, einschließlich Kalendersynchronisation, Kontoverwaltung und Servicebereitstellung</li>
+    <li><strong>Rechtliche Verpflichtung (Art. 6 Abs. 1 lit. c DSGVO, § 5 Abs. 1 lit. c des tschechischen Gesetzes Nr. 110/2019 Slg.):</strong> Verarbeitung gemäß tschechischem Recht, einschließlich:
+        <ul>
+            <li>Buchhaltungs- und Steuerpflichten (Gesetz Nr. 563/1991 Slg., Rechnungslegungsgesetz)</li>
+            <li>Aufbewahrungsanforderungen (Gesetz Nr. 235/2004 Slg., Mehrwertsteuergesetz)</li>
+            <li>Geldwäschepflichten, soweit anwendbar</li>
+        </ul>
+    </li>
+    <li><strong>Berechtigte Interessen (Art. 6 Abs. 1 lit. f DSGVO, § 5 Abs. 1 lit. f des tschechischen Gesetzes Nr. 110/2019 Slg.):</strong> Verarbeitung für unsere berechtigten Interessen oder die Dritter, einschließlich:
+        <ul>
+            <li>Sicherheit und Betrugsprävention</li>
+            <li>Serviceverbesserung und technische Diagnose</li>
+            <li>Schutz unserer Rechtsansprüche</li>
+            <li>Aggregierte Analytik zur Serviceoptimierung</li>
+        </ul>
+        Wir haben eine Interessenabwägung durchgeführt, die bestätigt, dass diese Interessen nicht durch Ihre Rechte und Freiheiten überwiegen.
+    </li>
+    <li><strong>Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 5 Abs. 1 lit. a des tschechischen Gesetzes Nr. 110/2019 Slg.):</strong> Soweit erforderlich, holen wir Ihre ausdrückliche Einwilligung ein für:
+        <ul>
+            <li>Bestimmte Cookies (gemäß tschechischem Gesetz Nr. 127/2005 Slg., Gesetz über elektronische Kommunikation, § 89)</li>
+            <li>Marketing-Kommunikation (bei Opt-in)</li>
+        </ul>
+        Sie können die Einwilligung jederzeit widerrufen, ohne dass die Rechtmäßigkeit der vorherigen Verarbeitung berührt wird.
+    </li>
+</ul>
+<p><strong>Anwendbares Recht:</strong> Diese Datenschutzrichtlinie und alle Datenverarbeitung unterliegen dem tschechischen Recht, insbesondere der DSGVO als direkt anwendbarer EU-Verordnung und dem tschechischen Gesetz Nr. 110/2019 Slg. über die Verarbeitung personenbezogener Daten. Unsere Aufsichtsbehörde ist das Amt für den Schutz personenbezogener Daten (Úřad pro ochranu osobních údajů, ÚOOÚ).</p>
 </ul>
 
 <h2>Aufbewahrung</h2>
