@@ -255,5 +255,53 @@ return [
     'renewal_reminder_manage_button' => 'Manage Subscription',
     'renewal_reminder_cancel_info' => 'If you wish to cancel, you must do so before :date to avoid being charged.',
     'renewal_reminder_thank_you' => 'Thank you for being a valued SyncMyDay Pro subscriber! We\'re committed to helping you keep your calendars perfectly synchronized.',
+
+    // Onboarding - Calendar Setup (Day 2)
+    'onboarding_calendar_setup_subject' => 'How to Connect Your First Calendar',
+    'onboarding_calendar_setup_greeting' => 'Hi :name!',
+    'onboarding_calendar_setup_intro' => 'Ready to start syncing? Let\'s connect your first calendar! It takes less than 2 minutes.',
+    'onboarding_calendar_setup_step1_title' => '1️⃣ Choose Your Calendar Provider',
+    'onboarding_calendar_setup_step1_text' => 'Click on "Connections" and select your calendar provider (Google Calendar, Microsoft Calendar, or Apple iCloud).',
+    'onboarding_calendar_setup_step2_title' => '2️⃣ Authorize the Connection',
+    'onboarding_calendar_setup_step2_text' => 'Sign in to your calendar account and grant SyncMyDay permission to access your calendars.',
+    'onboarding_calendar_setup_step3_title' => '3️⃣ Done! 🎉',
+    'onboarding_calendar_setup_step3_text' => 'Your calendar is now connected and ready to sync. You can connect as many calendars as you want!',
+    'onboarding_calendar_setup_button' => 'Connect Calendar',
+    'onboarding_calendar_setup_outro' => 'Need help? Check out our documentation or reply to this email with any questions.',
+
+    // Onboarding - Rules Guide (Day 7)
+    'onboarding_rules_guide_subject' => 'How Sync Rules Work',
+    'onboarding_rules_guide_greeting' => 'Hi :name!',
+    'onboarding_rules_guide_intro' => 'Now that you\'ve connected your calendars, let\'s create your first sync rule to start automatically synchronizing events!',
+    'onboarding_rules_guide_what_title' => '🔄 What Are Sync Rules?',
+    'onboarding_rules_guide_what_text' => 'Sync rules define which events to copy from one calendar to another. You can filter by keywords, event types, or calendar-specific settings.',
+    'onboarding_rules_guide_example_title' => '💡 Example Use Cases',
+    'onboarding_rules_guide_example_text' => 'Copy all work meetings to your personal calendar • Sync busy time without event details • Share family events across multiple calendars • And much more!',
+    'onboarding_rules_guide_howto_title' => '📝 How to Create a Rule',
+    'onboarding_rules_guide_howto_step1' => '1. Go to "Sync Rules" and click "Create New Rule"',
+    'onboarding_rules_guide_howto_step2' => '2. Select source calendar and target calendar(s)',
+    'onboarding_rules_guide_howto_step3' => '3. Set up filters (optional): keywords, busy-only, all-day events',
+    'onboarding_rules_guide_howto_step4' => '4. Save and activate - events will sync automatically!',
+    'onboarding_rules_guide_button' => 'Create Your First Rule',
+    'onboarding_rules_guide_outro' => 'Pro tip: Start with a simple rule and expand as you get comfortable!',
+
+    // Onboarding - Upgrade Guide (Day 14)
+    'onboarding_upgrade_guide_subject' => 'How to Continue with Pro',
+    'onboarding_upgrade_guide_greeting' => 'Hi :name!',
+    'onboarding_upgrade_guide_intro' => 'You\'re halfway through your trial! We hope you\'re enjoying seamless calendar synchronization. Let\'s talk about what happens next.',
+    'onboarding_upgrade_guide_trial_notice' => '⏰ You have 16 days left in your free trial',
+    'onboarding_upgrade_guide_benefits_title' => '✨ What You Get with Pro',
+    'onboarding_upgrade_guide_benefit1' => 'Unlimited calendar connections',
+    'onboarding_upgrade_guide_benefit2' => 'Unlimited sync rules',
+    'onboarding_upgrade_guide_benefit3' => 'Real-time synchronization',
+    'onboarding_upgrade_guide_benefit4' => 'Priority support',
+    'onboarding_upgrade_guide_pricing_title' => '💰 Simple, Transparent Pricing',
+    'onboarding_upgrade_guide_pricing_text' => 'Just €29/year (less than €2.50/month) with no hidden fees. Cancel anytime, no questions asked.',
+    'onboarding_upgrade_guide_button' => 'Activate Pro Now',
+    'onboarding_upgrade_guide_outro' => 'Questions about pricing or features? Just reply to this email - we\'re here to help!',
+
+    // Common
+    'closing' => 'Best regards,',
+    'team_name' => 'The SyncMyDay Team',
 ];
 

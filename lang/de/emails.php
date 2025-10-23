@@ -232,5 +232,53 @@ return [
     'password_reset_security_info' => 'Wenn Sie keine Passwort-Zurücksetzung angefordert haben, ignorieren Sie diese E-Mail oder kontaktieren Sie den Support, wenn Sie Bedenken bezüglich der Sicherheit Ihres Kontos haben.',
     'password_reset_signature' => 'Mit freundlichen Grüßen,',
     'password_reset_team_name' => 'Das SyncMyDay Team',
+
+    // Onboarding - Kalendereinrichtung (Tag 2)
+    'onboarding_calendar_setup_subject' => 'So verbinden Sie Ihren ersten Kalender',
+    'onboarding_calendar_setup_greeting' => 'Hallo :name!',
+    'onboarding_calendar_setup_intro' => 'Bereit zum Synchronisieren? Lassen Sie uns Ihren ersten Kalender verbinden! Es dauert weniger als 2 Minuten.',
+    'onboarding_calendar_setup_step1_title' => '1️⃣ Wählen Sie Ihren Kalenderanbieter',
+    'onboarding_calendar_setup_step1_text' => 'Klicken Sie auf "Verbindungen" und wählen Sie Ihren Kalenderanbieter (Google Calendar, Microsoft Calendar oder Apple iCloud).',
+    'onboarding_calendar_setup_step2_title' => '2️⃣ Autorisieren Sie die Verbindung',
+    'onboarding_calendar_setup_step2_text' => 'Melden Sie sich bei Ihrem Kalenderkonto an und gewähren Sie SyncMyDay Zugriff auf Ihre Kalender.',
+    'onboarding_calendar_setup_step3_title' => '3️⃣ Fertig! 🎉',
+    'onboarding_calendar_setup_step3_text' => 'Ihr Kalender ist jetzt verbunden und bereit zur Synchronisierung. Sie können so viele Kalender verbinden, wie Sie möchten!',
+    'onboarding_calendar_setup_button' => 'Kalender verbinden',
+    'onboarding_calendar_setup_outro' => 'Benötigen Sie Hilfe? Schauen Sie sich unsere Dokumentation an oder antworten Sie auf diese E-Mail mit Ihren Fragen.',
+
+    // Onboarding - Regel-Leitfaden (Tag 7)
+    'onboarding_rules_guide_subject' => 'So funktionieren Synchronisierungsregeln',
+    'onboarding_rules_guide_greeting' => 'Hallo :name!',
+    'onboarding_rules_guide_intro' => 'Jetzt, da Sie Ihre Kalender verbunden haben, erstellen wir Ihre erste Synchronisierungsregel, um Ereignisse automatisch zu synchronisieren!',
+    'onboarding_rules_guide_what_title' => '🔄 Was sind Synchronisierungsregeln?',
+    'onboarding_rules_guide_what_text' => 'Synchronisierungsregeln definieren, welche Ereignisse von einem Kalender in einen anderen kopiert werden sollen. Sie können nach Schlüsselwörtern, Ereignistypen oder kalenderspezifischen Einstellungen filtern.',
+    'onboarding_rules_guide_example_title' => '💡 Beispiele für Anwendungsfälle',
+    'onboarding_rules_guide_example_text' => 'Alle Arbeitstreffen in Ihren persönlichen Kalender kopieren • Beschäftigungszeit ohne Ereignisdetails synchronisieren • Familienereignisse über mehrere Kalender teilen • Und vieles mehr!',
+    'onboarding_rules_guide_howto_title' => '📝 So erstellen Sie eine Regel',
+    'onboarding_rules_guide_howto_step1' => '1. Gehen Sie zu "Synchronisierungsregeln" und klicken Sie auf "Neue Regel erstellen"',
+    'onboarding_rules_guide_howto_step2' => '2. Wählen Sie den Quellkalender und den/die Zielkalender',
+    'onboarding_rules_guide_howto_step3' => '3. Filter einrichten (optional): Schlüsselwörter, nur beschäftigt, ganztägige Ereignisse',
+    'onboarding_rules_guide_howto_step4' => '4. Speichern und aktivieren - Ereignisse werden automatisch synchronisiert!',
+    'onboarding_rules_guide_button' => 'Erste Regel erstellen',
+    'onboarding_rules_guide_outro' => 'Tipp: Beginnen Sie mit einer einfachen Regel und erweitern Sie sie nach Bedarf!',
+
+    // Onboarding - Upgrade-Leitfaden (Tag 14)
+    'onboarding_upgrade_guide_subject' => 'So geht es mit Pro weiter',
+    'onboarding_upgrade_guide_greeting' => 'Hallo :name!',
+    'onboarding_upgrade_guide_intro' => 'Sie sind auf halbem Weg durch Ihre Testphase! Wir hoffen, Sie genießen die nahtlose Kalendersynchronisation. Lassen Sie uns darüber sprechen, was als Nächstes passiert.',
+    'onboarding_upgrade_guide_trial_notice' => '⏰ Sie haben noch 16 Tage kostenlose Testphase',
+    'onboarding_upgrade_guide_benefits_title' => '✨ Was Sie mit Pro erhalten',
+    'onboarding_upgrade_guide_benefit1' => 'Unbegrenzte Kalenderverbindungen',
+    'onboarding_upgrade_guide_benefit2' => 'Unbegrenzte Synchronisierungsregeln',
+    'onboarding_upgrade_guide_benefit3' => 'Echtzeit-Synchronisation',
+    'onboarding_upgrade_guide_benefit4' => 'Prioritäts-Support',
+    'onboarding_upgrade_guide_pricing_title' => '💰 Einfache, transparente Preise',
+    'onboarding_upgrade_guide_pricing_text' => 'Nur €29/Jahr (weniger als €2,50/Monat) ohne versteckte Gebühren. Jederzeit kündbar, keine Fragen gestellt.',
+    'onboarding_upgrade_guide_button' => 'Pro jetzt aktivieren',
+    'onboarding_upgrade_guide_outro' => 'Fragen zu Preisen oder Funktionen? Antworten Sie einfach auf diese E-Mail - wir sind hier, um zu helfen!',
+
+    // Gemeinsam
+    'closing' => 'Mit freundlichen Grüßen,',
+    'team_name' => 'Das SyncMyDay Team',
 ];
 

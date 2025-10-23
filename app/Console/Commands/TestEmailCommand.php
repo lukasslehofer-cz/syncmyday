@@ -7,6 +7,9 @@ use App\Mail\TrialEndingInSevenDaysMail;
 use App\Mail\TrialEndingTomorrowMail;
 use App\Mail\PaymentSuccessMail;
 use App\Mail\RenewalReminderMail;
+use App\Mail\OnboardingCalendarSetupMail;
+use App\Mail\OnboardingRulesGuideMail;
+use App\Mail\OnboardingUpgradeGuideMail;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
@@ -19,14 +22,14 @@ class TestEmailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, renewal-reminder, contact, trial-expired, account-deleted, subscription-suspended)}';
+    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, renewal-reminder, contact, trial-expired, account-deleted, subscription-suspended, onboarding-calendar, onboarding-rules, onboarding-upgrade)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Test email sending functionality - sends all 12 email types in selected language';
+    protected $description = 'Test email sending functionality - sends all 15 email types in selected language';
 
     /**
      * Execute the console command.
@@ -121,7 +124,7 @@ class TestEmailCommand extends Command
      */
     protected function sendAllEmails($email, $user)
     {
-        $this->info('📤 Sending ALL 12 email types to: ' . $email);
+        $this->info('📤 Sending ALL 15 email types to: ' . $email);
         $this->info('🌍 Language: ' . strtoupper(app()->getLocale()));
         $this->newLine();
         
@@ -130,14 +133,17 @@ class TestEmailCommand extends Command
             ['name' => '2️⃣   Verify Email (User Registration)', 'type' => 'verify-email'],
             ['name' => '3️⃣   Verify Email Calendar', 'type' => 'verify-email-calendar'],
             ['name' => '4️⃣   Password Reset', 'type' => 'password-reset'],
-            ['name' => '5️⃣   Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
-            ['name' => '6️⃣   Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
-            ['name' => '7️⃣   Trial Expired', 'type' => 'mailable', 'mail' => new \App\Mail\TrialExpiredMail($user)],
-            ['name' => '8️⃣   Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
-            ['name' => '9️⃣   Payment Failed', 'type' => 'payment-failed'],
-            ['name' => '🔟  Renewal Reminder', 'type' => 'mailable', 'mail' => new RenewalReminderMail($user, 49.00, 'EUR', now()->addDays(3)->format('d.m.Y'))],
-            ['name' => '1️⃣1️⃣ Subscription Suspended', 'type' => 'mailable', 'mail' => new \App\Mail\SubscriptionSuspendedMail($user)],
-            ['name' => '1️⃣2️⃣ Account Deleted', 'type' => 'mailable', 'mail' => new \App\Mail\AccountDeletedMail($user)],
+            ['name' => '5️⃣   Onboarding - Calendar Setup (Day 2)', 'type' => 'mailable', 'mail' => new OnboardingCalendarSetupMail($user)],
+            ['name' => '6️⃣   Onboarding - Rules Guide (Day 7)', 'type' => 'mailable', 'mail' => new OnboardingRulesGuideMail($user)],
+            ['name' => '7️⃣   Onboarding - Upgrade Guide (Day 14)', 'type' => 'mailable', 'mail' => new OnboardingUpgradeGuideMail($user)],
+            ['name' => '8️⃣   Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
+            ['name' => '9️⃣   Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
+            ['name' => '🔟  Trial Expired', 'type' => 'mailable', 'mail' => new \App\Mail\TrialExpiredMail($user)],
+            ['name' => '1️⃣1️⃣ Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
+            ['name' => '1️⃣2️⃣ Payment Failed', 'type' => 'payment-failed'],
+            ['name' => '1️⃣3️⃣ Renewal Reminder', 'type' => 'mailable', 'mail' => new RenewalReminderMail($user, 49.00, 'EUR', now()->addDays(3)->format('d.m.Y'))],
+            ['name' => '1️⃣4️⃣ Subscription Suspended', 'type' => 'mailable', 'mail' => new \App\Mail\SubscriptionSuspendedMail($user)],
+            ['name' => '1️⃣5️⃣ Account Deleted', 'type' => 'mailable', 'mail' => new \App\Mail\AccountDeletedMail($user)],
         ];
         
         foreach ($emails as $emailData) {
@@ -157,7 +163,7 @@ class TestEmailCommand extends Command
             $this->newLine();
         }
         
-        $this->info('🎉 All 12 emails sent successfully!');
+        $this->info('🎉 All 15 emails sent successfully!');
         $this->line('🔗 Check your inbox: ' . $email);
     }
 
@@ -196,6 +202,15 @@ class TestEmailCommand extends Command
             case 'account-deleted':
                 Mail::to($email)->send(new \App\Mail\AccountDeletedMail($user));
                 break;
+            case 'onboarding-calendar':
+                Mail::to($email)->send(new OnboardingCalendarSetupMail($user));
+                break;
+            case 'onboarding-rules':
+                Mail::to($email)->send(new OnboardingRulesGuideMail($user));
+                break;
+            case 'onboarding-upgrade':
+                Mail::to($email)->send(new OnboardingUpgradeGuideMail($user));
+                break;
             case 'verify':
             case 'verify-email':
             case 'verify-calendar':
@@ -206,7 +221,7 @@ class TestEmailCommand extends Command
                 return;
             default:
                 $this->error('Unknown email type: ' . $type);
-                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, trial-expired, payment-success, payment-failed, renewal-reminder, subscription-suspended, account-deleted, contact');
+                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, onboarding-calendar, onboarding-rules, onboarding-upgrade, trial-7, trial-1, trial-expired, payment-success, payment-failed, renewal-reminder, subscription-suspended, account-deleted, contact');
                 return;
         }
         

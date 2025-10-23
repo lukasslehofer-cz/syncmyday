@@ -255,5 +255,53 @@ return [
     'renewal_reminder_manage_button' => 'Spravovat předplatné',
     'renewal_reminder_cancel_info' => 'Pokud si přejete zrušit, musíte tak učinit před :date, abyste se vyhnuli stržení platby.',
     'renewal_reminder_thank_you' => 'Děkujeme, že jste cenným SyncMyDay Pro předplatitelem! Jsme odhodláni vám pomáhat udržet vaše kalendáře dokonale synchronizované.',
+
+    // Onboarding - Nastavení kalendáře (Den 2)
+    'onboarding_calendar_setup_subject' => 'Jak připojit první kalendář',
+    'onboarding_calendar_setup_greeting' => 'Ahoj :name!',
+    'onboarding_calendar_setup_intro' => 'Jste připraveni začít synchronizovat? Pojďme připojit váš první kalendář! Zabere to méně než 2 minuty.',
+    'onboarding_calendar_setup_step1_title' => '1️⃣ Vyberte poskytovatele kalendáře',
+    'onboarding_calendar_setup_step1_text' => 'Klikněte na "Připojení" a vyberte svého poskytovatele kalendáře (Google Calendar, Microsoft Calendar nebo Apple iCloud).',
+    'onboarding_calendar_setup_step2_title' => '2️⃣ Autorizujte připojení',
+    'onboarding_calendar_setup_step2_text' => 'Přihlaste se ke svému účtu kalendáře a udělte SyncMyDay oprávnění k přístupu k vašim kalendářům.',
+    'onboarding_calendar_setup_step3_title' => '3️⃣ Hotovo! 🎉',
+    'onboarding_calendar_setup_step3_text' => 'Váš kalendář je nyní připojen a připraven k synchronizaci. Můžete připojit tolik kalendářů, kolik chcete!',
+    'onboarding_calendar_setup_button' => 'Připojit kalendář',
+    'onboarding_calendar_setup_outro' => 'Potřebujete pomoc? Podívejte se do naší dokumentace nebo odpovězte na tento email s jakýmikoli dotazy.',
+
+    // Onboarding - Průvodce pravidly (Den 7)
+    'onboarding_rules_guide_subject' => 'Jak fungují pravidla synchronizace',
+    'onboarding_rules_guide_greeting' => 'Ahoj :name!',
+    'onboarding_rules_guide_intro' => 'Nyní, když jste připojili své kalendáře, vytvořme vaše první synchronizační pravidlo a začněme automaticky synchronizovat události!',
+    'onboarding_rules_guide_what_title' => '🔄 Co jsou pravidla synchronizace?',
+    'onboarding_rules_guide_what_text' => 'Pravidla synchronizace definují, které události se mají kopírovat z jednoho kalendáře do druhého. Můžete filtrovat podle klíčových slov, typů událostí nebo nastavení specifických pro kalendář.',
+    'onboarding_rules_guide_example_title' => '💡 Příklady použití',
+    'onboarding_rules_guide_example_text' => 'Kopírovat všechny pracovní schůzky do osobního kalendáře • Synchronizovat pouze zaneprázdněný čas bez detailů události • Sdílet rodinné události mezi více kalendáři • A mnohem více!',
+    'onboarding_rules_guide_howto_title' => '📝 Jak vytvořit pravidlo',
+    'onboarding_rules_guide_howto_step1' => '1. Přejděte na "Pravidla synchronizace" a klikněte na "Vytvořit nové pravidlo"',
+    'onboarding_rules_guide_howto_step2' => '2. Vyberte zdrojový kalendář a cílový kalendář(e)',
+    'onboarding_rules_guide_howto_step3' => '3. Nastavte filtry (volitelné): klíčová slova, pouze zaneprázdněný, celodenní události',
+    'onboarding_rules_guide_howto_step4' => '4. Uložte a aktivujte - události se budou synchronizovat automaticky!',
+    'onboarding_rules_guide_button' => 'Vytvořit první pravidlo',
+    'onboarding_rules_guide_outro' => 'Tip: Začněte s jednoduchým pravidlem a rozšiřujte jej podle potřeby!',
+
+    // Onboarding - Průvodce upgradem (Den 14)
+    'onboarding_upgrade_guide_subject' => 'Jak pokračovat s Pro verzí',
+    'onboarding_upgrade_guide_greeting' => 'Ahoj :name!',
+    'onboarding_upgrade_guide_intro' => 'Jste v polovině zkušebního období! Doufáme, že si užíváte bezproblémovou synchronizaci kalendářů. Pojďme si říct, co bude dál.',
+    'onboarding_upgrade_guide_trial_notice' => '⏰ Zbývá vám 16 dní zkušebního období zdarma',
+    'onboarding_upgrade_guide_benefits_title' => '✨ Co získáte s Pro verzí',
+    'onboarding_upgrade_guide_benefit1' => 'Neomezené připojení kalendářů',
+    'onboarding_upgrade_guide_benefit2' => 'Neomezená pravidla synchronizace',
+    'onboarding_upgrade_guide_benefit3' => 'Synchronizace v reálném čase',
+    'onboarding_upgrade_guide_benefit4' => 'Prioritní podpora',
+    'onboarding_upgrade_guide_pricing_title' => '💰 Jednoduché, transparentní ceny',
+    'onboarding_upgrade_guide_pricing_text' => 'Jen 699 Kč/rok (méně než 58 Kč/měsíc) bez skrytých poplatků. Zrušte kdykoliv, bez dotazů.',
+    'onboarding_upgrade_guide_button' => 'Aktivovat Pro nyní',
+    'onboarding_upgrade_guide_outro' => 'Máte otázky ohledně cen nebo funkcí? Stačí odpovědět na tento email - jsme tu, abychom vám pomohli!',
+
+    // Společné
+    'closing' => 'S pozdravem,',
+    'team_name' => 'Tým SyncMyDay',
 ];
 

@@ -232,5 +232,53 @@ return [
     'password_reset_security_info' => 'Jeśli nie prosiłeś o zresetowanie hasła, zignoruj tę wiadomość lub skontaktuj się z pomocą techniczną, jeśli masz obawy dotyczące bezpieczeństwa swojego konta.',
     'password_reset_signature' => 'Pozdrowienia,',
     'password_reset_team_name' => 'Zespół SyncMyDay',
+
+    // Onboarding - Konfiguracja kalendarza (Dzień 2)
+    'onboarding_calendar_setup_subject' => 'Jak podłączyć pierwszy kalendarz',
+    'onboarding_calendar_setup_greeting' => 'Cześć :name!',
+    'onboarding_calendar_setup_intro' => 'Gotowy do synchronizacji? Podłączmy Twój pierwszy kalendarz! Zajmie to mniej niż 2 minuty.',
+    'onboarding_calendar_setup_step1_title' => '1️⃣ Wybierz dostawcę kalendarza',
+    'onboarding_calendar_setup_step1_text' => 'Kliknij "Połączenia" i wybierz dostawcę kalendarza (Google Calendar, Microsoft Calendar lub Apple iCloud).',
+    'onboarding_calendar_setup_step2_title' => '2️⃣ Autoryzuj połączenie',
+    'onboarding_calendar_setup_step2_text' => 'Zaloguj się na swoje konto kalendarza i przyznaj SyncMyDay uprawnienia do swoich kalendarzy.',
+    'onboarding_calendar_setup_step3_title' => '3️⃣ Gotowe! 🎉',
+    'onboarding_calendar_setup_step3_text' => 'Twój kalendarz jest teraz podłączony i gotowy do synchronizacji. Możesz podłączyć tyle kalendarzy, ile chcesz!',
+    'onboarding_calendar_setup_button' => 'Podłącz kalendarz',
+    'onboarding_calendar_setup_outro' => 'Potrzebujesz pomocy? Sprawdź naszą dokumentację lub odpowiedz na tego e-maila z pytaniami.',
+
+    // Onboarding - Przewodnik po regułach (Dzień 7)
+    'onboarding_rules_guide_subject' => 'Jak działają reguły synchronizacji',
+    'onboarding_rules_guide_greeting' => 'Cześć :name!',
+    'onboarding_rules_guide_intro' => 'Teraz, gdy podłączyłeś swoje kalendarze, utwórzmy Twoją pierwszą regułę synchronizacji, aby automatycznie synchronizować wydarzenia!',
+    'onboarding_rules_guide_what_title' => '🔄 Czym są reguły synchronizacji?',
+    'onboarding_rules_guide_what_text' => 'Reguły synchronizacji określają, które wydarzenia mają być kopiowane z jednego kalendarza do drugiego. Możesz filtrować według słów kluczowych, typów wydarzeń lub ustawień specyficznych dla kalendarza.',
+    'onboarding_rules_guide_example_title' => '💡 Przykładowe przypadki użycia',
+    'onboarding_rules_guide_example_text' => 'Kopiuj wszystkie spotkania służbowe do kalendarza osobistego • Synchronizuj czas zajęty bez szczegółów wydarzenia • Udostępniaj wydarzenia rodzinne między wieloma kalendarzami • I wiele więcej!',
+    'onboarding_rules_guide_howto_title' => '📝 Jak utworzyć regułę',
+    'onboarding_rules_guide_howto_step1' => '1. Przejdź do "Reguły synchronizacji" i kliknij "Utwórz nową regułę"',
+    'onboarding_rules_guide_howto_step2' => '2. Wybierz kalendarz źródłowy i kalendarz(e) docelowy(e)',
+    'onboarding_rules_guide_howto_step3' => '3. Ustaw filtry (opcjonalnie): słowa kluczowe, tylko zajęty, wydarzenia całodniowe',
+    'onboarding_rules_guide_howto_step4' => '4. Zapisz i aktywuj - wydarzenia będą synchronizowane automatycznie!',
+    'onboarding_rules_guide_button' => 'Utwórz pierwszą regułę',
+    'onboarding_rules_guide_outro' => 'Wskazówka: Zacznij od prostej reguły i rozbudowuj ją w miarę potrzeb!',
+
+    // Onboarding - Przewodnik po upgrade (Dzień 14)
+    'onboarding_upgrade_guide_subject' => 'Jak kontynuować z Pro',
+    'onboarding_upgrade_guide_greeting' => 'Cześć :name!',
+    'onboarding_upgrade_guide_intro' => 'Jesteś w połowie okresu próbnego! Mamy nadzieję, że cieszysz się bezproblemową synchronizacją kalendarzy. Porozmawiajmy o tym, co będzie dalej.',
+    'onboarding_upgrade_guide_trial_notice' => '⏰ Pozostało 16 dni darmowego okresu próbnego',
+    'onboarding_upgrade_guide_benefits_title' => '✨ Co otrzymujesz z Pro',
+    'onboarding_upgrade_guide_benefit1' => 'Nieograniczone połączenia kalendarzy',
+    'onboarding_upgrade_guide_benefit2' => 'Nieograniczone reguły synchronizacji',
+    'onboarding_upgrade_guide_benefit3' => 'Synchronizacja w czasie rzeczywistym',
+    'onboarding_upgrade_guide_benefit4' => 'Priorytetowe wsparcie',
+    'onboarding_upgrade_guide_pricing_title' => '💰 Proste, przejrzyste ceny',
+    'onboarding_upgrade_guide_pricing_text' => 'Tylko €29/rok (mniej niż €2,50/miesiąc) bez ukrytych opłat. Anuluj w każdej chwili, bez pytań.',
+    'onboarding_upgrade_guide_button' => 'Aktywuj Pro teraz',
+    'onboarding_upgrade_guide_outro' => 'Pytania o ceny lub funkcje? Po prostu odpowiedz na tego e-maila - jesteśmy tu, aby pomóc!',
+
+    // Wspólne
+    'closing' => 'Pozdrowienia,',
+    'team_name' => 'Zespół SyncMyDay',
 ];
 
