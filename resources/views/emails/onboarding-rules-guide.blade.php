@@ -1,92 +1,68 @@
 @extends('emails.layout')
 
+@section('title', __('emails.onboarding_rules_guide_subject'))
+
 @section('content')
-    <tr>
-        <td style="padding: 0;">
-            <table role="presentation" style="width: 100%; border-collapse: collapse; border: 0; border-spacing: 0;">
-                <tr>
-                    <td style="padding: 40px 30px; text-align: left;">
-                        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 24px; color: #4b5563;">
-                            {{ __('emails.onboarding_rules_guide_greeting', ['name' => $user->name]) }}
-                        </p>
-                        
-                        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 24px; color: #4b5563;">
-                            {{ __('emails.onboarding_rules_guide_intro') }}
-                        </p>
-
-                        <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-                            <tr>
-                                <td style="padding: 0;">
-                                    <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #1f2937; font-weight: 600;">
-                                        {{ __('emails.onboarding_rules_guide_what_title') }}
-                                    </h3>
-                                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_what_text') }}
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0;">
-                                    <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #1f2937; font-weight: 600;">
-                                        {{ __('emails.onboarding_rules_guide_example_title') }}
-                                    </h3>
-                                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_example_text') }}
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 0;">
-                                    <h3 style="margin: 0 0 15px 0; font-size: 18px; color: #1f2937; font-weight: 600;">
-                                        {{ __('emails.onboarding_rules_guide_howto_title') }}
-                                    </h3>
-                                    <p style="margin: 0 0 5px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_howto_step1') }}
-                                    </p>
-                                    <p style="margin: 0 0 5px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_howto_step2') }}
-                                    </p>
-                                    <p style="margin: 0 0 5px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_howto_step3') }}
-                                    </p>
-                                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 22px; color: #6b7280;">
-                                        {{ __('emails.onboarding_rules_guide_howto_step4') }}
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <!-- CTA Button -->
-                        <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0;">
-                            <tr>
-                                <td style="padding: 0; text-align: center;">
-                                    <!--[if mso]>
-                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ route('sync-rules.index') }}" style="height:50px;v-text-anchor:middle;width:250px;" arcsize="10%" stroke="f" fillcolor="#8b5cf6">
-                                        <w:anchorlock/>
-                                        <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">{{ __('emails.onboarding_rules_guide_button') }}</center>
-                                    </v:roundrect>
-                                    <![endif]-->
-                                    <!--[if !mso]><!-->
-                                    <a href="{{ route('sync-rules.index') }}" style="display: inline-block; width: 250px; padding: 15px 0; background-color: #8b5cf6; color: #ffffff; text-align: center; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; line-height: 20px;">
-                                        {{ __('emails.onboarding_rules_guide_button') }}
-                                    </a>
-                                    <!--<![endif]-->
-                                </td>
-                            </tr>
-                        </table>
-
-                        <p style="margin: 30px 0 20px 0; font-size: 16px; line-height: 24px; color: #4b5563;">
-                            {{ __('emails.onboarding_rules_guide_outro') }}
-                        </p>
-
-                        <p style="margin: 0; font-size: 16px; line-height: 24px; color: #4b5563;">
-                            {{ __('emails.closing') }}<br>
-                            {{ __('emails.team_name') }}
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+    <h2 style="margin: 0 0 20px 0; padding: 0; color: #1f2937; font-size: 24px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_greeting', ['name' => $user->name]) }}
+    </h2>
+    
+    <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_intro') }}
+    </p>
+    
+    <h3 style="margin: 30px 0 20px 0; padding: 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_what_title') }}
+    </h3>
+    
+    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_what_text') }}
+    </p>
+    
+    <h3 style="margin: 30px 0 20px 0; padding: 0; color: #1f2937; font-size: 20px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_example_title') }}
+    </h3>
+    
+    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.onboarding_rules_guide_example_text') }}
+    </p>
+    
+    <!-- Highlight Box -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td style="background-color: #eff6ff; border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 4px;">
+                <h3 style="margin: 0 0 16px 0; color: #1e40af; font-size: 18px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+                    {{ __('emails.onboarding_rules_guide_howto_title') }}
+                </h3>
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr><td style="padding: 6px 0; padding-left: 10px; color: #1e40af; font-size: 15px; line-height: 22px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{{ __('emails.onboarding_rules_guide_howto_step1') }}</td></tr>
+                    <tr><td style="padding: 6px 0; padding-left: 10px; color: #1e40af; font-size: 15px; line-height: 22px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{{ __('emails.onboarding_rules_guide_howto_step2') }}</td></tr>
+                    <tr><td style="padding: 6px 0; padding-left: 10px; color: #1e40af; font-size: 15px; line-height: 22px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{{ __('emails.onboarding_rules_guide_howto_step3') }}</td></tr>
+                    <tr><td style="padding: 6px 0; padding-left: 10px; color: #1e40af; font-size: 15px; line-height: 22px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">{{ __('emails.onboarding_rules_guide_howto_step4') }}</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- Button -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td align="center" style="padding: 30px 0;">
+                <a href="{{ route('sync-rules.index') }}" style="background-color: #667eea; border: 2px solid #667eea; border-radius: 8px; color: #ffffff; display: inline-block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 16px; font-weight: 600; line-height: 48px; text-align: center; text-decoration: none; width: 200px; -webkit-text-size-adjust: none; mso-hide: all;">
+                    {{ __('emails.onboarding_rules_guide_button') }}
+                </a>
+            </td>
+        </tr>
+    </table>
+    
+    <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        <em>{{ __('emails.onboarding_rules_guide_outro') }}</em>
+    </p>
+    
+    <p style="margin: 0 0 10px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.closing') }}
+    </p>
+    <p style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+        {{ __('emails.team_name') }}
+    </p>
 @endsection
-
