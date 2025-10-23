@@ -33,13 +33,32 @@
 <ul>
     <li><strong>https://www.googleapis.com/auth/calendar</strong> — Plný přístup k vašim kalendářům, umožňující nám číst, vytvářet a upravovat metadata kalendářů</li>
     <li><strong>https://www.googleapis.com/auth/calendar.events</strong> — Přístup k událostem v kalendáři, umožňující nám číst, vytvářet, upravovat a mazat události</li>
+    <li><strong>Offline přístup (access_type=offline)</strong> — Obnovovací tokeny pro udržování nepřetržité synchronizace bez opakovaného přihlašování</li>
 </ul>
 <p>Z vašeho Google Calendar přistupujeme k následujícím datům:</p>
 <ul>
     <li>Metadata kalendářů (názvy kalendářů, ID, časové pásma, barvy)</li>
     <li>Podrobnosti událostí (názvy, popisy, časy začátku/konce, místa, účastníci, pravidla opakování, připomínky, stav)</li>
     <li>Identifikátory událostí a časové značky změn pro sledování synchronizace</li>
+    <li>Obnovovací tokeny pro dlouhodobý přístup (získané prostřednictvím offline přístupu)</li>
 </ul>
+
+<h3>Offline přístup a obnovovací tokeny</h3>
+<p>Žádáme o offline přístup k vašemu Google Calendar, který nám umožňuje:</p>
+<ul>
+    <li><strong>Udržovat nepřetržitou synchronizaci:</strong> Automaticky synchronizovat vaše kalendáře na pozadí, i když aktivně nepoužíváte {{ config('app.name') }}</li>
+    <li><strong>Zpracovávat naplánované operace synchronizace:</strong> Spouštět synchronizaci v pravidelných intervalech bez nutnosti opakovaného přihlášení</li>
+    <li><strong>Zajišťovat spolehlivost:</strong> Udržovat nepřerušenou službu bez toho, aby vypršení přístupového tokenu přerušilo synchronizaci kalendáře</li>
+</ul>
+<p><strong>Obnovovací tokeny:</strong> Když připojíte svůj Google Calendar s offline přístupem, obdržíme obnovovací token, který nám umožňuje automaticky získávat nové přístupové tokeny. Tyto obnovovací tokeny:</p>
+<ul>
+    <li>Jsou uloženy šifrovaně samostatně s dodatečným šifrováním klíčů v naší zabezpečené databázi</li>
+    <li>Jsou používány výhradně pro udržování synchronizace kalendáře</li>
+    <li>Jsou okamžitě odvolány a smazány, když odpojíte kalendář nebo smažete účet</li>
+    <li>Můžete je kdykoli odvolat prostřednictvím <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">oprávnění Google účtu</a></li>
+    <li>Zůstávají platné, dokud neodvoláte přístup nebo nezměníte heslo k Google účtu</li>
+</ul>
+<p><strong>Offline přístup nepoužíváme k žádnému jinému účelu než k udržování synchronizace vašeho kalendáře.</strong> K vašim kalendářovým datům nikdy nepřistupujeme, když je synchronizace pozastavena nebo po odpojení kalendáře.</p>
 
 <h3>Jak používáme data z Google Calendar</h3>
 <p>Data z Google Calendar používáme výhradně k poskytování základní služby synchronizace kalendářů:</p>
@@ -90,13 +109,32 @@
 <ul>
     <li><strong>Calendars.Read</strong> — Přístup pro čtení k vašim kalendářům a událostem</li>
     <li><strong>Calendars.ReadWrite</strong> — Plný přístup k čtení, vytváření, úpravám a mazání událostí v kalendáři</li>
+    <li><strong>offline_access</strong> — Oprávnění k udržování přístupu a obnovovacích tokenů pro nepřetržitou synchronizaci na pozadí</li>
 </ul>
 <p>Z vašeho Microsoft kalendáře přistupujeme k následujícím datům:</p>
 <ul>
     <li>Metadata kalendářů (názvy kalendářů, ID, časová pásma, barvy)</li>
     <li>Podrobnosti událostí (názvy, popisy, časy začátku/konce, místa, účastníci, pravidla opakování, připomínky, stav, citlivost)</li>
     <li>Identifikátory událostí a časové značky změn pro sledování synchronizace</li>
+    <li>Obnovovací tokeny pro dlouhodobý přístup (získané prostřednictvím oprávnění offline_access)</li>
 </ul>
+
+<h3>Offline přístup a obnovovací tokeny</h3>
+<p>Žádáme o oprávnění <code>offline_access</code> pro váš Microsoft kalendář, které nám umožňuje:</p>
+<ul>
+    <li><strong>Nepřetržitou synchronizaci na pozadí:</strong> Automaticky synchronizovat vaše kalendáře na pozadí bez nutnosti opakovaného přihlašování</li>
+    <li><strong>Spolehlivé poskytování služby:</strong> Udržovat nepřerušený přístup k vašim kalendářovým datům pro účely synchronizace</li>
+    <li><strong>Naplánované operace:</strong> Automaticky zpracovávat pravidla synchronizace v pravidelných intervalech</li>
+</ul>
+<p><strong>Obnovovací tokeny:</strong> Oprávnění offline_access nám poskytuje obnovovací token pro dlouhodobý přístup. Tyto tokeny:</p>
+<ul>
+    <li>Jsou šifrovány a bezpečně uloženy v naší databázi s dodatečnými bezpečnostními opatřeními</li>
+    <li>Jsou používány výhradně pro operace synchronizace kalendáře</li>
+    <li>Jsou smazány do 30 dnů po odpojení nebo smazání účtu</li>
+    <li>Můžete je kdykoli odvolat prostřednictvím <a href="https://account.microsoft.com/privacy/app-access" target="_blank" rel="noopener">oprávnění aplikací v účtu Microsoft</a></li>
+    <li>Zůstávají platné, dokud neodvoláte přístup nebo nezměníte heslo k Microsoft účtu</li>
+</ul>
+<p><strong>Offline přístup je nezbytný pro automatickou synchronizaci kalendáře a není používán k žádnému jinému účelu.</strong> K vašemu kalendáři přistupujeme pouze tehdy, když je synchronizace aktivní.</p>
 
 <h3>Jak používáme data z Microsoft kalendáře</h3>
 <p>Data z Microsoft kalendáře používáme výhradně pro synchronizaci kalendářů:</p>

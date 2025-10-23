@@ -32,13 +32,32 @@
 <ul>
     <li><strong>https://www.googleapis.com/auth/calendar</strong> — Full access to your calendars, allowing us to read, create, and modify calendar metadata</li>
     <li><strong>https://www.googleapis.com/auth/calendar.events</strong> — Access to calendar events, allowing us to read, create, modify, and delete events</li>
+    <li><strong>Offline access (access_type=offline)</strong> — Refresh tokens for maintaining continuous synchronization without repeated logins</li>
 </ul>
 <p>We access the following data from your Google Calendar:</p>
 <ul>
     <li>Calendar metadata (calendar names, IDs, time zones, colors)</li>
     <li>Event details (titles, descriptions, start/end times, locations, attendees, recurrence rules, reminders, status)</li>
     <li>Event identifiers and modification timestamps for synchronization tracking</li>
+    <li>Refresh tokens for long-term access (obtained through offline access)</li>
 </ul>
+
+<h3>Offline Access and Refresh Tokens</h3>
+<p>We request offline access to your Google Calendar, which allows us to:</p>
+<ul>
+    <li><strong>Maintain continuous synchronization:</strong> Keep your calendars synchronized automatically in the background, even when you're not actively using {{ config('app.name') }}</li>
+    <li><strong>Process scheduled sync operations:</strong> Run synchronization at scheduled intervals without requiring you to log in repeatedly</li>
+    <li><strong>Ensure reliability:</strong> Maintain uninterrupted service without access token expiration interrupting your calendar synchronization</li>
+</ul>
+<p><strong>Refresh tokens:</strong> When you connect your Google Calendar with offline access, we receive a refresh token that allows us to obtain new access tokens automatically. These refresh tokens:</p>
+<ul>
+    <li>Are stored encrypted separately with additional key encryption in our secure database</li>
+    <li>Are used exclusively to maintain your calendar synchronization</li>
+    <li>Are immediately revoked and deleted when you disconnect your calendar or delete your account</li>
+    <li>Can be revoked by you at any time through your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account permissions</a></li>
+    <li>Remain valid until you revoke access or change your Google account password</li>
+</ul>
+<p><strong>We do not use offline access for any purpose other than maintaining your calendar synchronization.</strong> We never access your calendar data when synchronization is paused or after you disconnect the calendar.</p>
 
 <h3>How We Use Google Calendar Data</h3>
 <p>We use Google Calendar data exclusively to provide the core calendar synchronization service:</p>
@@ -89,13 +108,32 @@
 <ul>
     <li><strong>Calendars.Read</strong> — Read access to your calendars and events</li>
     <li><strong>Calendars.ReadWrite</strong> — Full access to read, create, modify, and delete calendar events</li>
+    <li><strong>offline_access</strong> — Permission to maintain access and refresh tokens for continuous background synchronization</li>
 </ul>
 <p>We access the following data from your Microsoft Calendar:</p>
 <ul>
     <li>Calendar metadata (calendar names, IDs, time zones, colors)</li>
     <li>Event details (titles, descriptions, start/end times, locations, attendees, recurrence rules, reminders, status, sensitivity)</li>
     <li>Event identifiers and modification timestamps for synchronization tracking</li>
+    <li>Refresh tokens for long-term access (obtained through offline_access permission)</li>
 </ul>
+
+<h3>Offline Access and Refresh Tokens</h3>
+<p>We request the <code>offline_access</code> permission for your Microsoft Calendar, which enables us to:</p>
+<ul>
+    <li><strong>Continuous background synchronization:</strong> Automatically sync your calendars in the background without requiring repeated logins</li>
+    <li><strong>Reliable service delivery:</strong> Maintain uninterrupted access to your calendar data for synchronization purposes</li>
+    <li><strong>Scheduled operations:</strong> Process sync rules at regular intervals automatically</li>
+</ul>
+<p><strong>Refresh tokens:</strong> The offline_access permission provides us with a refresh token for long-term access. These tokens:</p>
+<ul>
+    <li>Are encrypted and securely stored in our database with additional security measures</li>
+    <li>Are used solely for calendar synchronization operations</li>
+    <li>Are deleted within 30 days after disconnection or account deletion</li>
+    <li>Can be revoked anytime through <a href="https://account.microsoft.com/privacy/app-access" target="_blank" rel="noopener">Microsoft Account App permissions</a></li>
+    <li>Remain valid until you revoke access or change your Microsoft account password</li>
+</ul>
+<p><strong>Offline access is essential for automatic calendar synchronization and is not used for any other purpose.</strong> We only access your calendar when synchronization is active.</p>
 
 <h3>How We Use Microsoft Calendar Data</h3>
 <p>We use Microsoft Calendar data exclusively for calendar synchronization:</p>
