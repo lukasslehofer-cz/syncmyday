@@ -62,13 +62,13 @@
                             <tr>
                                 <td style="padding: 0; text-align: center;">
                                     <!--[if mso]>
-                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ route('billing.index') }}" style="height:50px;v-text-anchor:middle;width:250px;" arcsize="10%" stroke="f" fillcolor="#8b5cf6">
+                                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ url('/billing') }}" style="height:50px;v-text-anchor:middle;width:250px;" arcsize="10%" stroke="f" fillcolor="#8b5cf6">
                                         <w:anchorlock/>
                                         <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">{{ __('emails.onboarding_upgrade_guide_button') }}</center>
                                     </v:roundrect>
                                     <![endif]-->
                                     <!--[if !mso]><!-->
-                                    <a href="{{ route('billing.index') }}" style="display: inline-block; width: 250px; padding: 15px 0; background-color: #8b5cf6; color: #ffffff; text-align: center; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; line-height: 20px;">
+                                    <a href="{{ url('/billing') }}" style="display: inline-block; width: 250px; padding: 15px 0; background-color: #8b5cf6; color: #ffffff; text-align: center; text-decoration: none; font-size: 16px; font-weight: bold; border-radius: 5px; line-height: 20px;">
                                         {{ __('emails.onboarding_upgrade_guide_button') }}
                                     </a>
                                     <!--<![endif]-->
