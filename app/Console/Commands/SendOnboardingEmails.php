@@ -49,6 +49,7 @@ class SendOnboardingEmails extends Command
 
     /**
      * Send calendar setup email to users on day 2 of trial
+     * Only send to users with less than 2 calendar connections
      */
     private function sendCalendarSetupEmails()
     {
@@ -62,6 +63,14 @@ class SendOnboardingEmails extends Command
 
         $count = 0;
         foreach ($users as $user) {
+            // Check if user has less than 2 calendars
+            $calendarCount = $user->calendarConnections()->count() + 
+                           $user->emailCalendarConnections()->count();
+            
+            if ($calendarCount >= 2) {
+                continue; // Skip users who already have 2+ calendars
+            }
+            
             try {
                 Mail::to($user->email)->send(new OnboardingCalendarSetupMail($user));
                 $count++;
@@ -69,6 +78,7 @@ class SendOnboardingEmails extends Command
                 Log::info('Sent calendar setup onboarding email', [
                     'user_id' => $user->id,
                     'email' => $user->email,
+                    'calendar_count' => $calendarCount,
                 ]);
             } catch (\Exception $e) {
                 Log::error('Failed to send calendar setup onboarding email', [
@@ -117,19 +127,26 @@ class SendOnboardingEmails extends Command
 
     /**
      * Send upgrade guide email to users on day 14 of trial
+     * Only send to users without payment method
      */
     private function sendUpgradeGuideEmails()
     {
         $targetDate = now()->subDays(14)->startOfDay();
 
         $users = User::where('subscription_tier', 'pro')
-            ->whereNull('stripe_subscription_id') // Only trial users
+            ->whereNull('stripe_subscription_id') // Only trial users without active subscription
             ->whereDate('created_at', $targetDate)
             ->whereNotNull('email_verified_at')
             ->get();
 
         $count = 0;
         foreach ($users as $user) {
+            // Skip users who already have payment method set up
+            // (they would have stripe_subscription_id if they completed payment)
+            if ($user->stripe_subscription_id) {
+                continue;
+            }
+            
             try {
                 Mail::to($user->email)->send(new OnboardingUpgradeGuideMail($user));
                 $count++;
