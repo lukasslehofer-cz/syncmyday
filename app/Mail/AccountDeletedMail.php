@@ -25,6 +25,10 @@ class AccountDeletedMail extends Mailable
     ) {
         $this->locale($user->locale);
         $this->deletedAt = $deletedAt ?? now()->isoFormat('LL');
+        
+        // Set mailer to MXroute for system emails
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'info');
+        $this->mailer = $emailConfig['mailer'];
     }
 
     /**
@@ -32,7 +36,10 @@ class AccountDeletedMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($this->user, 'info');
+        
         return new Envelope(
+            from: new \Illuminate\Mail\Mailables\Address($emailConfig['address'], $emailConfig['name']),
             subject: __('emails.account_deleted_subject'),
         );
     }

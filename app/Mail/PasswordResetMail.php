@@ -24,6 +24,10 @@ class PasswordResetMail extends Mailable
         public string $token
     ) {
         $this->locale($user->locale);
+        
+        // Set mailer to MXroute for system emails
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'info');
+        $this->mailer = $emailConfig['mailer'];
     }
 
     /**
@@ -31,7 +35,10 @@ class PasswordResetMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($this->user, 'info');
+        
         return new Envelope(
+            from: new \Illuminate\Mail\Mailables\Address($emailConfig['address'], $emailConfig['name']),
             subject: __('emails.password_reset_subject'),
         );
     }

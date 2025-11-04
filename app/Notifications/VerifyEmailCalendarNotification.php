@@ -29,8 +29,16 @@ class VerifyEmailCalendarNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         $verificationUrl = $this->verificationUrl($notifiable);
+        
+        // Get user from email calendar connection
+        $user = $notifiable->user;
+        
+        // Get dynamic FROM address based on user's domain (info@)
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'info');
 
         return (new MailMessage)
+            ->mailer($emailConfig['mailer'])
+            ->from($emailConfig['address'], $emailConfig['name'])
             ->subject(__('emails.verify_email_calendar_subject'))
             ->view('emails.verify-email-calendar', [
                 'emailCalendar' => $notifiable,

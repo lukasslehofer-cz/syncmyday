@@ -25,6 +25,10 @@ class SubscriptionSuspendedMail extends Mailable
     ) {
         $this->locale($user->locale);
         $this->suspendedAt = $suspendedAt ?? now()->isoFormat('LL');
+        
+        // Set mailer to MXroute for system emails
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'info');
+        $this->mailer = $emailConfig['mailer'];
     }
 
     /**
@@ -32,7 +36,10 @@ class SubscriptionSuspendedMail extends Mailable
      */
     public function envelope(): Envelope
     {
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($this->user, 'info');
+        
         return new Envelope(
+            from: new \Illuminate\Mail\Mailables\Address($emailConfig['address'], $emailConfig['name']),
             subject: __('emails.subscription_suspended_subject'),
         );
     }

@@ -1,0 +1,82 @@
+# ============================================
+# MAIL CONFIGURATION - MXroute + Mailgun
+# ============================================
+# MXroute handles system emails (info@)
+# Mailgun handles calendar blockers (events@) + inbound
+
+# Default mail driver
+MAIL_MAILER=mxroute
+
+# ============================================
+# MXroute - System Emails (info@)
+# ============================================
+# Critical emails: welcome, trial, payments, password reset
+MXROUTE_HOST=bunny.mxroute.com
+MXROUTE_PORT=587
+MXROUTE_USERNAME=info@syncmyday.cz
+MXROUTE_PASSWORD="tvoje_mxroute_heslo_zde"
+MXROUTE_ENCRYPTION=tls
+
+# ============================================
+# Mailgun - Calendar Blockers (events@)
+# ============================================
+# High volume: calendar invitations, updates, cancellations
+MAILGUN_SMTP_HOST=smtp.mailgun.org
+MAILGUN_SMTP_PORT=587
+MAILGUN_SMTP_USERNAME=postmaster@syncmyday.cz
+MAILGUN_SMTP_PASSWORD="tvoje_mailgun_smtp_heslo_zde"
+MAILGUN_SMTP_ENCRYPTION=tls
+
+# ============================================
+# Mailgun API & Webhooks
+# ============================================
+# For inbound email processing (events@ responses)
+MAILGUN_DOMAIN=syncmyday.cz
+MAILGUN_SECRET="tvuj_mailgun_api_klic_zde"
+MAILGUN_ENDPOINT=api.mailgun.net
+MAILGUN_WEBHOOK_SIGNING_KEY="tvuj_webhook_signing_key_zde"
+
+# ============================================
+# Fallback Mail Config (Legacy)
+# ============================================
+# Keep for backward compatibility
+MAIL_HOST=bunny.mxroute.com
+MAIL_PORT=587
+MAIL_USERNAME=info@syncmyday.cz
+MAIL_PASSWORD="tvoje_mxroute_heslo_zde"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=info@syncmyday.cz
+MAIL_FROM_NAME="SyncMyDay"
+
+# ============================================
+# INSTRUKCE
+# ============================================
+# 1. Zkopíruj tyto řádky do svého .env souboru
+# 2. Nahraď všechny hodnoty (kromě hostů a portů)
+# 3. MXroute heslo: z DirectAdmin → Email Accounts
+# 4. Mailgun SMTP heslo: z Dashboard → Domain → SMTP credentials
+# 5. Mailgun API klíč: z Dashboard → Settings → API Keys
+# 6. Mailgun Webhook klíč: z Dashboard → Settings → Webhooks
+# 7. Po změně spusť: php artisan config:clear
+
+# ============================================
+# CO KDE ZÍSKAT
+# ============================================
+# MXroute SMTP credentials:
+#   → DirectAdmin → Email Accounts → klikni na email
+#
+# Mailgun SMTP credentials:
+#   → Dashboard → Sending Domains → klikni na doménu → SMTP credentials
+#
+# Mailgun API key:
+#   → Dashboard → Settings → API Keys → Create New Key
+#
+# Mailgun Webhook Signing Key:
+#   → Dashboard → Settings → Webhooks → Webhook Signing Key
+#
+# Mailgun Inbound Routes:
+#   → Dashboard → Receiving → Routes → Create Route
+#   → Expression: events@syncmyday.cz
+#   → Action: https://syncmyday.cz/api/webhook/mailgun-inbound
+
+

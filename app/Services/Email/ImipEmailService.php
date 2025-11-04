@@ -44,6 +44,9 @@ class ImipEmailService
             return false;
         }
 
+        // Get user for dynamic FROM address
+        $user = $connection->user;
+
         try {
             // Generate .ics content
             $icsContent = $this->generateIcsContent(
@@ -53,14 +56,15 @@ class ImipEmailService
                 $end,
                 $method,
                 $sequence,
-                $targetEmail
+                $targetEmail,
+                $user
             );
 
             // Create descriptive text body
             $textBody = $this->createTextBody($summary, $start, $end, $method);
 
             // Send email directly using Symfony Mailer (bypass Laravel Mailable)
-            $this->sendCalendarEmail($targetEmail, $summary, $textBody, $icsContent, $method);
+            $this->sendCalendarEmail($targetEmail, $summary, $textBody, $icsContent, $method, $user);
 
             Log::info('iMIP email sent', [
                 'connection_id' => $connection->id,
@@ -116,11 +120,15 @@ class ImipEmailService
         \DateTime $end,
         string $method,
         int $sequence,
-        string $targetEmail
+        string $targetEmail,
+        $user
     ): string {
         $now = new \DateTime();
-        $organizerEmail = config('mail.from.address');
-        $organizerName = config('mail.from.name', 'SyncMyDay');
+        
+        // Get dynamic FROM address based on user's domain (events@)
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'events');
+        $organizerEmail = $emailConfig['address'];
+        $organizerName = $emailConfig['name'];
 
         // Convert to UTC
         $startUtc = clone $start;
@@ -194,12 +202,17 @@ class ImipEmailService
         string $subject,
         string $textBody,
         string $icsContent,
-        string $method
+        string $method,
+        $user
     ): void {
-        Mail::send([], [], function ($message) use ($toEmail, $subject, $textBody, $icsContent, $method) {
+        // Get dynamic FROM address based on user's domain (events@)
+        $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'events');
+        
+        // Use Mailgun mailer for calendar blockers (high volume)
+        Mail::mailer($emailConfig['mailer'])->send([], [], function ($message) use ($toEmail, $subject, $textBody, $icsContent, $method, $emailConfig) {
             $message->to($toEmail)
                 ->subject($subject)
-                ->from(config('mail.from.address'), config('mail.from.name'));
+                ->from($emailConfig['address'], $emailConfig['name']);
             
             // Access underlying Symfony message to build multipart
             $message->getSymfonyMessage()->setBody(

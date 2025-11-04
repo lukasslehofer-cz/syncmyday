@@ -34,9 +34,36 @@ return [
     */
 
     'mailers' => [
+        // MXroute - for system emails (info@)
+        // Critical emails: welcome, trial, payments, password reset
+        'mxroute' => [
+            'transport' => 'smtp',
+            'host' => env('MXROUTE_HOST', 'bunny.mxroute.com'),
+            'port' => env('MXROUTE_PORT', 587),
+            'encryption' => env('MXROUTE_ENCRYPTION', 'tls'),
+            'username' => env('MXROUTE_USERNAME'),
+            'password' => env('MXROUTE_PASSWORD'),
+            'timeout' => null,
+            'verify_peer' => true,
+        ],
+
+        // Mailgun - for calendar blockers (events@)
+        // High volume: calendar invitations, updates, cancellations
+        'mailgun' => [
+            'transport' => 'smtp',
+            'host' => env('MAILGUN_SMTP_HOST', 'smtp.mailgun.org'),
+            'port' => env('MAILGUN_SMTP_PORT', 587),
+            'encryption' => env('MAILGUN_SMTP_ENCRYPTION', 'tls'),
+            'username' => env('MAILGUN_SMTP_USERNAME'),
+            'password' => env('MAILGUN_SMTP_PASSWORD'),
+            'timeout' => null,
+            'verify_peer' => true,
+        ],
+
+        // Fallback - legacy config (keep for backward compatibility)
         'smtp' => [
             'transport' => 'smtp',
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+            'host' => env('MAIL_HOST', 'bunny.mxroute.com'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
