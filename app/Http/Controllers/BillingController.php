@@ -156,6 +156,7 @@ class BillingController extends Controller
             // Using billing_cycle_anchor instead of trial_end to avoid Stripe's 2-day minimum restriction
             if ($user->isInTrial() && $user->subscription_ends_at) {
                 $sessionConfig['subscription_data']['billing_cycle_anchor'] = $user->subscription_ends_at->timestamp;
+                $sessionConfig['subscription_data']['proration_behavior'] = 'none'; // Prevent prorated charges
                 $sessionConfig['subscription_data']['metadata']['had_trial'] = 'true';
                 
                 Log::info('Checkout session with deferred billing', [
