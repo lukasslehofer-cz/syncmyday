@@ -23,9 +23,9 @@
         </div>
 
         <!-- Connected Calendars -->
-        @if($connections->count() > 0)
+        @if($connections->count() > 0 || $emailConnections->count() > 0)
         <div class="mb-6">
-            <h3 class="text-sm font-medium text-gray-700 mb-3">Connected Calendars ({{ $connections->count() }})</h3>
+            <h3 class="text-sm font-medium text-gray-700 mb-3">Connected Calendars ({{ $connections->count() + $emailConnections->count() }})</h3>
             <div class="space-y-2">
                 @foreach($connections as $connection)
                 <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -36,6 +36,20 @@
                         <div>
                             <p class="font-medium text-gray-900">{{ ucfirst($connection->provider) }}</p>
                             <p class="text-sm text-gray-500">{{ $connection->provider_email }}</p>
+                        </div>
+                    </div>
+                    <span class="text-green-600 text-sm font-medium">✓ Connected</span>
+                </div>
+                @endforeach
+                @foreach($emailConnections as $emailConnection)
+                <div class="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-10 w-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <span class="text-xl">📧</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Email Calendar</p>
+                            <p class="text-sm text-gray-500">{{ $emailConnection->name ?? $emailConnection->email_address }}</p>
                         </div>
                     </div>
                     <span class="text-green-600 text-sm font-medium">✓ Connected</span>
@@ -86,7 +100,7 @@
                 Skip for now
             </a>
             
-            @if($connections->count() >= 2)
+            @if(($connections->count() + $emailConnections->count()) >= 2)
             <a href="{{ route('onboarding.create-rule') }}" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
                 Continue →
             </a>

@@ -20,9 +20,11 @@ class OnboardingController extends Controller
      */
     public function connectCalendars()
     {
-        $connections = auth()->user()->calendarConnections;
+        $user = auth()->user();
+        $connections = $user->calendarConnections;
+        $emailConnections = $user->emailCalendarConnections;
         
-        return view('onboarding.connect-calendars', compact('connections'));
+        return view('onboarding.connect-calendars', compact('connections', 'emailConnections'));
     }
 
     /**
@@ -30,16 +32,23 @@ class OnboardingController extends Controller
      */
     public function createRule()
     {
-        $connections = auth()->user()
-            ->calendarConnections()
+        $user = auth()->user();
+        
+        // Get both API connections and email connections
+        $apiConnections = $user->calendarConnections()
             ->where('status', 'active')
             ->get();
+        $emailConnections = $user->emailCalendarConnections()->get();
+        
+        $totalConnections = $apiConnections->count() + $emailConnections->count();
 
-        if ($connections->count() < 2) {
+        if ($totalConnections < 2) {
             return redirect()->route('onboarding.connect-calendars')
                 ->with('warning', __('messages.need_two_calendars'));
         }
 
+        // Pass API connections for rule creation
+        $connections = $apiConnections;
         return view('onboarding.create-rule', compact('connections'));
     }
 

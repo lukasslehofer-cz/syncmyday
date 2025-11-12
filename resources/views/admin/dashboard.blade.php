@@ -26,7 +26,7 @@
         <div class="bg-white rounded-lg shadow p-6">
             <p class="text-sm text-gray-500 mb-1">Connections</p>
             <p class="text-3xl font-bold text-gray-900">{{ $stats['active_connections'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">{{ $stats['google_connections'] }} Google, {{ $stats['microsoft_connections'] }} MS</p>
+            <p class="text-xs text-gray-500 mt-1">{{ $stats['google_connections'] }} Google, {{ $stats['microsoft_connections'] }} MS, {{ $stats['email_connections'] }} Email</p>
         </div>
         
         <div class="bg-white rounded-lg shadow p-6">

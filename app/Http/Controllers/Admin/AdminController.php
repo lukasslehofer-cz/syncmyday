@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\CalendarConnection;
+use App\Models\EmailCalendarConnection;
 use App\Models\SyncRule;
 use App\Models\SyncLog;
 use App\Models\WebhookSubscription;
@@ -19,12 +20,13 @@ class AdminController extends Controller
     {
         $stats = [
             'total_users' => User::count(),
-            'active_users' => User::has('calendarConnections')->count(),
+            'active_users' => User::has('calendarConnections')->orHas('emailCalendarConnections')->count(),
             'pro_users' => User::where('subscription_tier', 'pro')->count(),
-            'total_connections' => CalendarConnection::count(),
-            'active_connections' => CalendarConnection::where('status', 'active')->count(),
+            'total_connections' => CalendarConnection::count() + EmailCalendarConnection::count(),
+            'active_connections' => CalendarConnection::where('status', 'active')->count() + EmailCalendarConnection::where('status', 'active')->count(),
             'google_connections' => CalendarConnection::where('provider', 'google')->count(),
             'microsoft_connections' => CalendarConnection::where('provider', 'microsoft')->count(),
+            'email_connections' => EmailCalendarConnection::count(),
             'total_rules' => SyncRule::count(),
             'active_rules' => SyncRule::where('is_active', true)->count(),
             'total_webhooks' => WebhookSubscription::count(),
