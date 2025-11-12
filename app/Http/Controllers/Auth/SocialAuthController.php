@@ -405,92 +405,114 @@ class SocialAuthController extends Controller
             // Find or create user
             Log::info('Microsoft OAuth - Searching for existing user', [
                 'microsoft_id' => $microsoftId,
+                'email' => $microsoftEmail,
             ]);
             
+            // First, try to find by oauth_provider + oauth_provider_id
             $user = User::where('oauth_provider', 'microsoft')
                         ->where('oauth_provider_id', $microsoftId)
                         ->first();
 
             if (!$user) {
-                Log::info('Microsoft OAuth - User not found, checking for existing email', [
+                Log::info('Microsoft OAuth - User not found by provider ID, checking for existing email', [
                     'email' => $microsoftEmail,
                 ]);
                 
-                // Check if email already exists with different provider (ignore soft-deleted)
+                // Check if email already exists (ignore soft-deleted)
                 $existingUser = User::where('email', $microsoftEmail)
                                     ->whereNull('deleted_at')
                                     ->first();
                 
                 if ($existingUser) {
-                    Log::warning('Microsoft OAuth - Email already exists with different provider', [
-                        'email' => $microsoftEmail,
-                        'existing_provider' => $existingUser->oauth_provider,
-                    ]);
-                    return redirect()->route('login')
-                        ->with('error', 'This email is already registered. Please use your original login method or contact support.');
-                }
-
-                // Get timezone from cache using the key stored in state
-                $timezone = 'UTC';
-                if (!empty($stateData['timezone_key'])) {
-                    $cachedTimezone = Cache::get("timezone_{$stateData['timezone_key']}");
-                    if ($cachedTimezone) {
-                        $timezone = $cachedTimezone;
-                        Cache::forget("timezone_{$stateData['timezone_key']}");
-                        
-                        Log::info('Retrieved timezone from cache for new Microsoft user', [
-                            'timezone' => $timezone,
+                    // If user exists with same provider but different provider_id, update it
+                    if ($existingUser->oauth_provider === 'microsoft') {
+                        Log::info('Microsoft OAuth - Found user with same email and provider, updating oauth_provider_id', [
+                            'user_id' => $existingUser->id,
+                            'old_provider_id' => $existingUser->oauth_provider_id,
+                            'new_provider_id' => $microsoftId,
                         ]);
+                        
+                        $existingUser->update([
+                            'oauth_provider_id' => $microsoftId,
+                            'oauth_provider_email' => $microsoftEmail,
+                        ]);
+                        
+                        $user = $existingUser;
+                    } else {
+                        // Different provider - show error
+                        Log::warning('Microsoft OAuth - Email already exists with different provider', [
+                            'email' => $microsoftEmail,
+                            'existing_provider' => $existingUser->oauth_provider,
+                        ]);
+                        return redirect()->route('login')
+                            ->with('error', 'This email is already registered. Please use your original login method or contact support.');
                     }
                 }
-
-                // Create new user
-                Log::info('Microsoft OAuth - Creating new user', [
-                    'email' => $microsoftEmail,
-                    'display_name' => $displayName,
-                    'timezone' => $timezone,
-                ]);
                 
-                try {
-                    $user = User::create([
-                        'name' => $displayName,
+                // If user still doesn't exist, create new one
+                if (!$user) {
+                    // Get timezone from cache using the key stored in state
+                    $timezone = 'UTC';
+                    if (!empty($stateData['timezone_key'])) {
+                        $cachedTimezone = Cache::get("timezone_{$stateData['timezone_key']}");
+                        if ($cachedTimezone) {
+                            $timezone = $cachedTimezone;
+                            Cache::forget("timezone_{$stateData['timezone_key']}");
+                            
+                            Log::info('Retrieved timezone from cache for new Microsoft user', [
+                                'timezone' => $timezone,
+                            ]);
+                        }
+                    }
+
+                    // Create new user
+                    Log::info('Microsoft OAuth - Creating new user', [
                         'email' => $microsoftEmail,
-                        'oauth_provider' => 'microsoft',
-                        'oauth_provider_id' => $microsoftId,
-                        'oauth_provider_email' => $microsoftEmail,
-                        'email_verified_at' => now(), // OAuth users are pre-verified
-                        'locale' => app()->getLocale(),
+                        'display_name' => $displayName,
                         'timezone' => $timezone,
-                        'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
-                        'subscription_tier' => 'pro',
-                        'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                     ]);
                     
-                    Log::info('Microsoft OAuth - User created successfully', [
-                        'user_id' => $user->id,
-                    ]);
-                } catch (\Illuminate\Database\QueryException $e) {
-                    Log::error('Microsoft OAuth - Database error creating user', [
-                        'error' => $e->getMessage(),
-                        'code' => $e->getCode(),
-                    ]);
-                    throw $e;
-                }
+                    try {
+                        $user = User::create([
+                            'name' => $displayName,
+                            'email' => $microsoftEmail,
+                            'oauth_provider' => 'microsoft',
+                            'oauth_provider_id' => $microsoftId,
+                            'oauth_provider_email' => $microsoftEmail,
+                            'email_verified_at' => now(), // OAuth users are pre-verified
+                            'locale' => app()->getLocale(),
+                            'timezone' => $timezone,
+                            'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
+                            'subscription_tier' => 'pro',
+                            'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
+                        ]);
+                        
+                        Log::info('Microsoft OAuth - User created successfully', [
+                            'user_id' => $user->id,
+                        ]);
+                    } catch (\Illuminate\Database\QueryException $e) {
+                        Log::error('Microsoft OAuth - Database error creating user', [
+                            'error' => $e->getMessage(),
+                            'code' => $e->getCode(),
+                        ]);
+                        throw $e;
+                    }
 
-                // Send welcome email (OAuth users don't trigger Verified event)
-                try {
-                    Mail::to($user->email)->send(new WelcomeMail($user));
-                } catch (\Exception $e) {
-                    Log::error('Failed to send welcome email for OAuth user', [
+                    // Send welcome email (OAuth users don't trigger Verified event)
+                    try {
+                        Mail::to($user->email)->send(new WelcomeMail($user));
+                    } catch (\Exception $e) {
+                        Log::error('Failed to send welcome email for OAuth user', [
+                            'user_id' => $user->id,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+
+                    Log::info('New user created via Microsoft OAuth', [
                         'user_id' => $user->id,
-                        'error' => $e->getMessage(),
+                        'email' => $user->email,
                     ]);
                 }
-
-                Log::info('New user created via Microsoft OAuth', [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                ]);
             }
 
             // Login the user
