@@ -347,6 +347,8 @@ class SocialAuthController extends Controller
                 'has_access_token' => isset($tokens['access_token']),
                 'has_refresh_token' => isset($tokens['refresh_token']),
                 'expires_in' => $tokens['expires_in'] ?? null,
+                'scope' => $tokens['scope'] ?? null,
+                'token_type' => $tokens['token_type'] ?? null,
             ]);
             
             // Get user info from Microsoft
@@ -658,23 +660,28 @@ class SocialAuthController extends Controller
                 'has_graph_instance' => $graphInstance !== null,
             ]);
             
-            // Use provided Graph instance or create new one
+            // Ensure we have a valid access token
+            if (empty($tokens['access_token'])) {
+                throw new \Exception('Access token is empty');
+            }
+            
+            $accessToken = is_array($tokens['access_token']) ? $tokens['access_token']['access_token'] ?? $tokens['access_token'] : $tokens['access_token'];
+            
+            // Use provided Graph instance or create new one, but always set token explicitly
             if ($graphInstance === null) {
-                if (empty($tokens['access_token'])) {
-                    throw new \Exception('Access token is empty');
-                }
-                
                 $graphInstance = new \Microsoft\Graph\Graph();
-                $accessToken = is_array($tokens['access_token']) ? $tokens['access_token']['access_token'] ?? $tokens['access_token'] : $tokens['access_token'];
-                $graphInstance->setAccessToken($accessToken);
-                
-                Log::info('Microsoft OAuth - Created new Graph instance with token', [
-                    'token_length' => strlen($accessToken),
-                    'token_preview' => substr($accessToken, 0, 20) . '...',
-                ]);
+                Log::info('Microsoft OAuth - Created new Graph instance');
             } else {
                 Log::info('Microsoft OAuth - Using provided Graph instance');
             }
+            
+            // Always set token explicitly before making request (in case it was reset)
+            $graphInstance->setAccessToken($accessToken);
+            
+            Log::info('Microsoft OAuth - Token set on Graph instance', [
+                'token_length' => strlen($accessToken),
+                'token_preview' => substr($accessToken, 0, 20) . '...',
+            ]);
             
             Log::info('Microsoft OAuth - Calling /me/calendars');
             

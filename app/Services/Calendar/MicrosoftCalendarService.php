@@ -19,8 +19,8 @@ use Microsoft\Graph\Model;
  */
 class MicrosoftCalendarService
 {
-    private string $clientId;
-    private string $clientSecret;
+    private ?string $clientId;
+    private ?string $clientSecret;
     private string $redirectUri;
     private string $tenant;
     private ?Graph $graph = null;
@@ -35,7 +35,12 @@ class MicrosoftCalendarService
         $configRedirect = config('services.microsoft.redirect');
         $this->redirectUri = $this->replaceWithCurrentDomain($configRedirect);
         
-        $this->tenant = config('services.microsoft.tenant');
+        $this->tenant = config('services.microsoft.tenant', 'common');
+        
+        // Validate required config
+        if (empty($this->clientId) || empty($this->clientSecret)) {
+            Log::warning('Microsoft Calendar Service: Missing client_id or client_secret in config');
+        }
     }
     
     /**
