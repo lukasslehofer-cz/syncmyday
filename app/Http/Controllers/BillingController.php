@@ -1199,58 +1199,63 @@ class BillingController extends Controller
             }
 
             // Check if there's already a schedule
-            $existingSchedule = null;
             if ($subscription->schedule) {
                 try {
                     $existingSchedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
+                    // Release existing schedule first
+                    \Stripe\SubscriptionSchedule::release($existingSchedule->id);
+                    
+                    Log::info('Released existing subscription schedule', [
+                        'user_id' => $user->id,
+                        'schedule_id' => $existingSchedule->id,
+                    ]);
+                    
+                    // Refresh subscription after releasing schedule
+                    $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
                 } catch (\Exception $e) {
-                    Log::warning('Could not retrieve existing schedule', [
+                    Log::warning('Could not retrieve/release existing schedule', [
                         'schedule_id' => $subscription->schedule,
                         'error' => $e->getMessage(),
                     ]);
                 }
             }
 
-            // If there's already a schedule, release it first
-            if ($existingSchedule) {
-                \Stripe\SubscriptionSchedule::update(
-                    $existingSchedule->id,
-                    ['end_behavior' => 'release']
-                );
-                
-                Log::info('Released existing subscription schedule', [
-                    'user_id' => $user->id,
-                    'schedule_id' => $existingSchedule->id,
-                ]);
-            }
-
             // Create subscription schedule to change interval at end of period
+            // Strategy: Create schedule from existing subscription, then update it to add second phase
             $schedule = \Stripe\SubscriptionSchedule::create([
                 'from_subscription' => $user->stripe_subscription_id,
-                'end_behavior' => 'release', // Release subscription after schedule completes
-                'phases' => [
-                    [
-                        // Phase 1: Current interval until end of current period
-                        'items' => [
-                            [
-                                'price' => $currentPrice->id,
-                                'quantity' => 1,
-                            ],
-                        ],
-                        'end_date' => $subscription->current_period_end,
-                    ],
-                    [
-                        // Phase 2: New interval starting at end of current period
-                        'items' => [
-                            [
-                                'price' => $newPriceId,
-                                'quantity' => 1,
-                            ],
-                        ],
-                        // No end_date means it continues indefinitely
-                    ],
-                ],
             ]);
+            
+            // Now update the schedule to add the second phase with new interval
+            $schedule = \Stripe\SubscriptionSchedule::update(
+                $schedule->id,
+                [
+                    'end_behavior' => 'release',
+                    'phases' => [
+                        [
+                            // Phase 1: Current interval until end of current period (preserve existing)
+                            'items' => [
+                                [
+                                    'price' => $currentPrice->id,
+                                    'quantity' => 1,
+                                ],
+                            ],
+                            'start_date' => $subscription->current_period_start,
+                            'end_date' => $subscription->current_period_end,
+                        ],
+                        [
+                            // Phase 2: New interval starting at end of current period
+                            'items' => [
+                                [
+                                    'price' => $newPriceId,
+                                    'quantity' => 1,
+                                ],
+                            ],
+                            // No end_date means it continues indefinitely
+                        ],
+                    ],
+                ]
+            );
 
             Log::info('Subscription interval change scheduled', [
                 'user_id' => $user->id,
