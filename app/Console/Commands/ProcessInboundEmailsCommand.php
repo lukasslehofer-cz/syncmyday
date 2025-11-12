@@ -152,23 +152,54 @@ class ProcessInboundEmailsCommand extends Command
         foreach ($message->getCc() as $cc) {
             $toAddresses[] = strtolower($cc->mail);
         }
-
-        $emailDomain = config('app.email_domain');
         
-        // Find matching email calendar token
+        // IMPORTANT: When using catch-all forwarding, the original recipient
+        // is in the Envelope-to or X-Original-To header, not in To:/Cc:
+        $envelopeTo = $message->getHeader('envelope-to');
+        if ($envelopeTo) {
+            // Parse envelope-to (can be: "owwrs4m5@syncmyday.sk" or "<owwrs4m5@syncmyday.sk>")
+            $envelopeToValue = is_array($envelopeTo) ? $envelopeTo[0] : $envelopeTo;
+            $envelopeToValue = trim(str_replace(['<', '>'], '', $envelopeToValue));
+            if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
+                $toAddresses[] = strtolower($envelopeToValue);
+            }
+        }
+        
+        // Also check X-Original-To (some mail servers use this)
+        $xOriginalTo = $message->getHeader('x-original-to');
+        if ($xOriginalTo) {
+            $xOriginalToValue = is_array($xOriginalTo) ? $xOriginalTo[0] : $xOriginalTo;
+            $xOriginalToValue = trim(str_replace(['<', '>'], '', $xOriginalToValue));
+            if (filter_var($xOriginalToValue, FILTER_VALIDATE_EMAIL)) {
+                $toAddresses[] = strtolower($xOriginalToValue);
+            }
+        }
+
+        // Find matching email calendar connection by checking all recipient addresses
+        // Support for multiple domains (syncmyday.cz, .sk, .pl, .de, .eu)
+        $validDomains = ['syncmyday.cz', 'syncmyday.sk', 'syncmyday.pl', 'syncmyday.de', 'syncmyday.eu'];
+        
         $token = null;
+        $matchedAddress = null;
+        
         foreach ($toAddresses as $address) {
-            if (str_ends_with($address, '@' . $emailDomain)) {
-                $token = explode('@', $address)[0];
-                break;
+            foreach ($validDomains as $domain) {
+                if (str_ends_with($address, '@' . $domain)) {
+                    $token = explode('@', $address)[0];
+                    $matchedAddress = $address;
+                    break 2; // Break both loops
+                }
             }
         }
 
         if (!$token) {
             $this->warn("No valid recipient found in email: {$message->getSubject()}");
+            $this->warn("  Checked addresses: " . implode(', ', $toAddresses));
             $message->setFlag('Seen');
             return;
         }
+        
+        $this->info("Found recipient: {$matchedAddress} (token: {$token})");
 
         // Find email calendar connection
         $connection = EmailCalendarConnection::findByToken($token);
