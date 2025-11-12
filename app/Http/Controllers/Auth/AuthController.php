@@ -50,6 +50,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'locale' => app()->getLocale(),
             'timezone' => $request->timezone ?? 'UTC',
+            'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
             'subscription_tier' => 'pro',
             'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
         ]);

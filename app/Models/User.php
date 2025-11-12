@@ -21,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'oauth_provider_email',
         'locale',
         'timezone',
+        'registration_domain',
         'subscription_tier',
         'stripe_customer_id',
         'stripe_subscription_id',

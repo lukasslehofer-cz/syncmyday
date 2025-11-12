@@ -171,6 +171,7 @@ class SocialAuthController extends Controller
                     'email_verified_at' => now(), // OAuth users are pre-verified
                     'locale' => app()->getLocale(),
                     'timezone' => $timezone,
+                    'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
                     'subscription_tier' => 'pro',
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
@@ -373,6 +374,7 @@ class SocialAuthController extends Controller
                     'email_verified_at' => now(), // OAuth users are pre-verified
                     'locale' => app()->getLocale(),
                     'timezone' => $timezone,
+                    'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
                     'subscription_tier' => 'pro',
                     'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);

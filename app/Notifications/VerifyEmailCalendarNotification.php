@@ -29,7 +29,7 @@ class VerifyEmailCalendarNotification extends Notification
     public function toMail($notifiable): MailMessage
     {
         $verificationUrl = $this->verificationUrl($notifiable);
-        
+
         // Get user from email calendar connection
         $user = $notifiable->user;
         

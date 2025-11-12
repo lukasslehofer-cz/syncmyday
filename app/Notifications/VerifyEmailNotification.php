@@ -22,7 +22,7 @@ class VerifyEmailNotification extends BaseVerifyEmail
     public function toMail($notifiable)
     {
         $verificationUrl = $this->verificationUrl($notifiable);
-        
+
         // Get dynamic FROM address based on user's domain (info@)
         $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($notifiable, 'info');
 
