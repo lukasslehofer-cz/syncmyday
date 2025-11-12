@@ -267,13 +267,21 @@ class ProcessInboundEmailsCommand extends Command
             return;
         }
 
-        // Get raw email
-        $rawEmail = $message->getRawBody();
+        // Get raw email (headers + body) - EmailParserService needs full raw email
+        $header = $message->getHeader();
+        $rawHeaders = $header && isset($header->raw) ? $header->raw : '';
+        $rawBody = $message->getRawBody();
+        
+        // Combine headers + body to create full raw email
+        $rawEmail = $rawHeaders . "\r\n\r\n" . $rawBody;
 
         if ($this->option('dry-run')) {
             $this->info("Would process email for: {$connection->name} ({$connection->email_address})");
             $this->info("  Subject: {$message->getSubject()}");
-            $this->info("  From: {$message->getFrom()[0]->mail}");
+            $this->info("  From: " . ($message->getFrom()[0]->mail ?? 'unknown'));
+            $this->info("  Raw email length: " . strlen($rawEmail) . " bytes");
+            $this->info("  Headers length: " . strlen($rawHeaders) . " bytes");
+            $this->info("  Body length: " . strlen($rawBody) . " bytes");
             return;
         }
 
