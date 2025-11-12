@@ -667,36 +667,63 @@ class SocialAuthController extends Controller
             
             $accessToken = is_array($tokens['access_token']) ? $tokens['access_token']['access_token'] ?? $tokens['access_token'] : $tokens['access_token'];
             
-            // Use provided Graph instance or create new one, but always set token explicitly
-            if ($graphInstance === null) {
-                $graphInstance = new \Microsoft\Graph\Graph();
-                Log::info('Microsoft OAuth - Created new Graph instance');
-            } else {
-                Log::info('Microsoft OAuth - Using provided Graph instance');
-            }
-            
-            // Always set token explicitly before making request (in case it was reset)
-            $graphInstance->setAccessToken($accessToken);
-            
-            Log::info('Microsoft OAuth - Token set on Graph instance', [
+            Log::info('Microsoft OAuth - Preparing to call /me/calendars', [
                 'token_length' => strlen($accessToken),
                 'token_preview' => substr($accessToken, 0, 20) . '...',
             ]);
             
-            Log::info('Microsoft OAuth - Calling /me/calendars');
+            // Always create a fresh Graph instance for calendar call to avoid any state issues
+            $calendarGraph = new \Microsoft\Graph\Graph();
+            $calendarGraph->setAccessToken($accessToken);
+            
+            Log::info('Microsoft OAuth - Calling /me/calendars with fresh Graph instance');
             
             try {
-                $calendarList = $graphInstance->createRequest('GET', '/me/calendars')
+                // Try using Graph API first
+                $calendarList = $calendarGraph->createRequest('GET', '/me/calendars')
                     ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
                     ->execute();
             } catch (\Microsoft\Graph\Exception\GraphException $e) {
-                Log::error('Microsoft OAuth - Graph API /me/calendars failed', [
+                Log::warning('Microsoft OAuth - Graph API /me/calendars failed, trying direct HTTP call', [
                     'error' => $e->getMessage(),
                     'code' => $e->getCode(),
                     'user_id' => $user->id,
-                    'response_body' => method_exists($e, 'getResponse') ? $e->getResponse() : null,
                 ]);
-                throw $e;
+                
+                // Fallback: Try direct HTTP call to see if it's a Graph SDK issue
+                try {
+                    $httpResponse = \Illuminate\Support\Facades\Http::withHeaders([
+                        'Authorization' => 'Bearer ' . $accessToken,
+                        'Accept' => 'application/json',
+                    ])->get('https://graph.microsoft.com/v1.0/me/calendars');
+                    
+                    if ($httpResponse->successful()) {
+                        Log::info('Microsoft OAuth - Direct HTTP call succeeded', [
+                            'status' => $httpResponse->status(),
+                            'calendar_count' => count($httpResponse->json('value', [])),
+                        ]);
+                        
+                        // Convert HTTP response to Calendar objects
+                        $calendarData = $httpResponse->json('value', []);
+                        $calendarList = [];
+                        foreach ($calendarData as $calData) {
+                            $calendar = new \Microsoft\Graph\Model\Calendar();
+                            $calendar->setProperties($calData);
+                            $calendarList[] = $calendar;
+                        }
+                    } else {
+                        Log::error('Microsoft OAuth - Direct HTTP call also failed', [
+                            'status' => $httpResponse->status(),
+                            'body' => $httpResponse->body(),
+                        ]);
+                        throw $e; // Re-throw original exception
+                    }
+                } catch (\Exception $httpException) {
+                    Log::error('Microsoft OAuth - Direct HTTP call exception', [
+                        'error' => $httpException->getMessage(),
+                    ]);
+                    throw $e; // Re-throw original GraphException
+                }
             }
             
             Log::info('Microsoft OAuth - /me/calendars succeeded', [
