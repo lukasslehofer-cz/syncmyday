@@ -942,7 +942,7 @@ class BillingController extends Controller
                 'customer' => $user->stripe_customer_id,
                 'payment_method_types' => ['card'],
                 'mode' => 'setup',
-                'success_url' => route('billing.manage') . '?payment_method_updated=1',
+                'success_url' => route('billing.payment-method-updated'),
                 'cancel_url' => route('billing.manage'),
             ]);
 
@@ -957,6 +957,15 @@ class BillingController extends Controller
             return redirect()->back()
                 ->with('error', __('messages.billing_error'));
         }
+    }
+
+    /**
+     * Handle successful payment method update redirect from Stripe
+     */
+    public function paymentMethodUpdated()
+    {
+        return redirect()->route('billing.manage')
+            ->with('success', __('messages.payment_method_updated'));
     }
 
     /**

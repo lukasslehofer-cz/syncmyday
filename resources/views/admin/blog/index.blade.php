@@ -14,12 +14,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-    <div class="mb-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-        {{ session('success') }}
-    </div>
-    @endif
-
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">

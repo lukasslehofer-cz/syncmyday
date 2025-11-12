@@ -265,6 +265,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/checkout', [BillingController::class, 'createCheckoutSession'])->name('checkout');
         Route::get('/success', [BillingController::class, 'success'])->name('success');
         Route::get('/manage', [BillingController::class, 'manage'])->name('manage');
+        Route::get('/payment-method-updated', [BillingController::class, 'paymentMethodUpdated'])->name('payment-method-updated');
         Route::post('/update-payment-method', [BillingController::class, 'updatePaymentMethod'])->name('update-payment-method');
         Route::post('/change-interval', [BillingController::class, 'changeSubscriptionInterval'])->name('change-interval');
         Route::post('/cancel-scheduled-change', [BillingController::class, 'cancelScheduledIntervalChange'])->name('cancel-scheduled-change');

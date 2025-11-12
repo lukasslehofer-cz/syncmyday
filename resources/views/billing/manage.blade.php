@@ -2,40 +2,6 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-    {{-- Success/Error Messages --}}
-    @if(session('success'))
-    <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-        <div class="flex items-center">
-            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            <p class="text-green-800 font-medium">{{ session('success') }}</p>
-        </div>
-    </div>
-    @endif
-
-    @if(session('error'))
-    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-        <div class="flex items-center">
-            <svg class="w-6 h-6 text-red-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-            <p class="text-red-800 font-medium">{{ session('error') }}</p>
-        </div>
-    </div>
-    @endif
-
-    @if(request('payment_method_updated'))
-    <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-        <div class="flex items-center">
-            <svg class="w-6 h-6 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            <p class="text-green-800 font-medium">{{ __('messages.payment_method_updated') }}</p>
-        </div>
-    </div>
-    @endif
-
     {{-- Header --}}
     <div class="mb-8">
         <div class="flex items-center space-x-3 mb-4">
