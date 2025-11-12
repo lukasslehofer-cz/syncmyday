@@ -144,58 +144,66 @@ class ProcessInboundEmailsCommand extends Command
         $toAddresses = [];
         
         // Get To recipients
-        foreach ($message->getTo() as $to) {
-            $toAddresses[] = strtolower($to->mail);
+        try {
+            $toRecipients = $message->getTo();
+            if ($toRecipients && $toRecipients->count() > 0) {
+                foreach ($toRecipients as $to) {
+                    if (isset($to->mail)) {
+                        $toAddresses[] = strtolower($to->mail);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Continue
         }
         
         // Get CC recipients
-        foreach ($message->getCc() as $cc) {
-            $toAddresses[] = strtolower($cc->mail);
+        try {
+            $ccRecipients = $message->getCc();
+            if ($ccRecipients && $ccRecipients->count() > 0) {
+                foreach ($ccRecipients as $cc) {
+                    if (isset($cc->mail)) {
+                        $toAddresses[] = strtolower($cc->mail);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Continue
         }
         
         // IMPORTANT: When using catch-all forwarding, the original recipient
-        // is in the Envelope-to header. Try multiple methods to read it.
+        // is in the Envelope-to header. Parse raw email directly.
         
-        // Method 1: Try getHeader() with toString()
         try {
-            $envelopeTo = $message->getHeader('envelope-to');
-            if ($envelopeTo) {
-                $envelopeToValue = $envelopeTo->toString();
-                $envelopeToValue = trim(str_replace(['<', '>', 'Envelope-to:', 'Envelope-To:'], '', $envelopeToValue));
-                if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
-                    $toAddresses[] = strtolower($envelopeToValue);
+            // Get raw email content
+            $rawEmail = $message->getRawBody();
+            
+            if (!$rawEmail) {
+                // Try alternative method
+                $rawEmail = $message->getHTMLBody(false) . "\n" . $message->getTextBody();
+            }
+            
+            // Extract ALL email addresses from headers using multiple patterns
+            $headerPatterns = [
+                '/^Envelope-to:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
+                '/^X-Original-To:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
+                '/^Delivered-To:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
+                '/^To:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
+                '/^Cc:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
+            ];
+            
+            foreach ($headerPatterns as $pattern) {
+                if (preg_match_all($pattern, $rawEmail, $matches)) {
+                    foreach ($matches[1] as $email) {
+                        $email = strtolower(trim($email));
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $toAddresses)) {
+                            $toAddresses[] = $email;
+                        }
+                    }
                 }
             }
         } catch (\Exception $e) {
-            // Method 1 failed, try Method 2
-        }
-        
-        // Method 2: Parse raw headers
-        try {
-            $rawHeaders = $message->getRawBody();
-            // Extract Envelope-to from raw headers
-            if (preg_match('/^Envelope-to:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
-                $envelopeToValue = trim($matches[1]);
-                if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
-                    $toAddresses[] = strtolower($envelopeToValue);
-                }
-            }
-            // Also try X-Original-To
-            if (preg_match('/^X-Original-To:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
-                $xOriginalToValue = trim($matches[1]);
-                if (filter_var($xOriginalToValue, FILTER_VALIDATE_EMAIL)) {
-                    $toAddresses[] = strtolower($xOriginalToValue);
-                }
-            }
-            // Also try Delivered-To
-            if (preg_match('/^Delivered-To:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
-                $deliveredToValue = trim($matches[1]);
-                if (filter_var($deliveredToValue, FILTER_VALIDATE_EMAIL)) {
-                    $toAddresses[] = strtolower($deliveredToValue);
-                }
-            }
-        } catch (\Exception $e) {
-            // Method 2 failed too
+            // If raw parsing fails, continue with what we have
         }
 
         // Find matching email calendar connection by checking all recipient addresses
@@ -219,24 +227,36 @@ class ProcessInboundEmailsCommand extends Command
             $this->warn("No valid recipient found in email: {$message->getSubject()}");
             $this->warn("  Checked addresses: " . (empty($toAddresses) ? '(none found)' : implode(', ', $toAddresses)));
             
-            // DEBUG: Show all available headers for troubleshooting
-            if ($this->option('verbose') || true) { // Always show for now
-                $this->warn("  DEBUG - Available headers:");
-                try {
-                    $rawBody = $message->getRawBody();
-                    $headerLines = [];
-                    foreach (explode("\n", $rawBody) as $line) {
-                        if (empty(trim($line))) break; // Stop at first empty line (end of headers)
-                        if (preg_match('/^(To|Cc|Envelope-to|X-Original-To|Delivered-To):/i', $line)) {
-                            $headerLines[] = trim($line);
+            // DEBUG: Show raw email excerpt
+            $this->warn("  DEBUG - Extracting headers from raw email...");
+            try {
+                $rawEmail = $message->getRawBody();
+                if ($rawEmail) {
+                    $this->warn("  Raw email length: " . strlen($rawEmail) . " bytes");
+                    
+                    // Extract first 50 lines (headers section)
+                    $lines = explode("\n", $rawEmail);
+                    $headerCount = 0;
+                    foreach ($lines as $i => $line) {
+                        if ($i > 50) break; // Limit output
+                        $line = trim($line);
+                        if (empty($line) && $headerCount > 5) break; // End of headers
+                        if (preg_match('/^(Return-Path|Delivered-To|Envelope-to|X-Original-To|To|Cc|From|Subject):/i', $line)) {
+                            $this->warn("    " . $line);
+                            $headerCount++;
                         }
                     }
-                    foreach ($headerLines as $headerLine) {
-                        $this->warn("    " . $headerLine);
+                    
+                    if ($headerCount === 0) {
+                        $this->warn("    No relevant headers found in first 50 lines");
+                        $this->warn("    First 500 chars: " . substr($rawEmail, 0, 500));
                     }
-                } catch (\Exception $e) {
-                    $this->warn("    Could not read headers: " . $e->getMessage());
+                } else {
+                    $this->warn("    getRawBody() returned empty!");
                 }
+            } catch (\Exception $e) {
+                $this->warn("    Error: " . $e->getMessage());
+                $this->warn("    Trace: " . $e->getTraceAsString());
             }
             
             $message->setFlag('Seen');
