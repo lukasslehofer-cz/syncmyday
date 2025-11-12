@@ -352,7 +352,14 @@ class SocialAuthController extends Controller
             // Get user info from Microsoft
             Log::info('Microsoft OAuth - Calling Graph API /me');
             $graph = new \Microsoft\Graph\Graph();
-            $graph->setAccessToken($tokens['access_token']);
+            
+            $accessToken = is_array($tokens['access_token']) ? $tokens['access_token']['access_token'] ?? $tokens['access_token'] : $tokens['access_token'];
+            $graph->setAccessToken($accessToken);
+            
+            Log::info('Microsoft OAuth - Graph instance created', [
+                'token_length' => strlen($accessToken),
+                'token_preview' => substr($accessToken, 0, 20) . '...',
+            ]);
             
             try {
                 $msUser = $graph->createRequest('GET', '/me')
@@ -525,7 +532,8 @@ class SocialAuthController extends Controller
             Log::info('Microsoft OAuth - User logged in, connecting calendar');
 
             // Now connect the calendar automatically
-            $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail);
+            // Pass the Graph instance that already has the token set
+            $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail, $graph);
             
             Log::info('Microsoft OAuth - Calendar connection completed');
 
@@ -640,16 +648,53 @@ class SocialAuthController extends Controller
     /**
      * Connect Microsoft calendar for the user
      */
-    private function connectMicrosoftCalendar(User $user, array $tokens, string $accountId, string $email): void
+    private function connectMicrosoftCalendar(User $user, array $tokens, string $accountId, string $email, ?\Microsoft\Graph\Graph $graphInstance = null): void
     {
         try {
-            // Get available calendars
-            $graph = new \Microsoft\Graph\Graph();
-            $graph->setAccessToken($tokens['access_token']);
+            Log::info('Microsoft OAuth - Connecting calendar', [
+                'user_id' => $user->id,
+                'has_access_token' => isset($tokens['access_token']),
+                'token_expires_in' => $tokens['expires_in'] ?? null,
+                'has_graph_instance' => $graphInstance !== null,
+            ]);
             
-            $calendarList = $graph->createRequest('GET', '/me/calendars')
-                ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
-                ->execute();
+            // Use provided Graph instance or create new one
+            if ($graphInstance === null) {
+                if (empty($tokens['access_token'])) {
+                    throw new \Exception('Access token is empty');
+                }
+                
+                $graphInstance = new \Microsoft\Graph\Graph();
+                $accessToken = is_array($tokens['access_token']) ? $tokens['access_token']['access_token'] ?? $tokens['access_token'] : $tokens['access_token'];
+                $graphInstance->setAccessToken($accessToken);
+                
+                Log::info('Microsoft OAuth - Created new Graph instance with token', [
+                    'token_length' => strlen($accessToken),
+                    'token_preview' => substr($accessToken, 0, 20) . '...',
+                ]);
+            } else {
+                Log::info('Microsoft OAuth - Using provided Graph instance');
+            }
+            
+            Log::info('Microsoft OAuth - Calling /me/calendars');
+            
+            try {
+                $calendarList = $graphInstance->createRequest('GET', '/me/calendars')
+                    ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+                    ->execute();
+            } catch (\Microsoft\Graph\Exception\GraphException $e) {
+                Log::error('Microsoft OAuth - Graph API /me/calendars failed', [
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'user_id' => $user->id,
+                    'response_body' => method_exists($e, 'getResponse') ? $e->getResponse() : null,
+                ]);
+                throw $e;
+            }
+            
+            Log::info('Microsoft OAuth - /me/calendars succeeded', [
+                'calendar_count' => count($calendarList),
+            ]);
                 
             $calendars = [];
             $primaryCalendarId = null;
