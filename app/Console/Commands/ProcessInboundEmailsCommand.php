@@ -154,34 +154,48 @@ class ProcessInboundEmailsCommand extends Command
         }
         
         // IMPORTANT: When using catch-all forwarding, the original recipient
-        // is in the Envelope-to or X-Original-To header, not in To:/Cc:
+        // is in the Envelope-to header. Try multiple methods to read it.
+        
+        // Method 1: Try getHeader() with toString()
         try {
             $envelopeTo = $message->getHeader('envelope-to');
             if ($envelopeTo) {
-                // Get value from Header object
                 $envelopeToValue = $envelopeTo->toString();
-                // Parse envelope-to (can be: "owwrs4m5@syncmyday.sk" or "<owwrs4m5@syncmyday.sk>")
                 $envelopeToValue = trim(str_replace(['<', '>', 'Envelope-to:', 'Envelope-To:'], '', $envelopeToValue));
                 if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
                     $toAddresses[] = strtolower($envelopeToValue);
                 }
             }
         } catch (\Exception $e) {
-            // Header not found or error parsing - continue
+            // Method 1 failed, try Method 2
         }
         
-        // Also check X-Original-To (some mail servers use this)
+        // Method 2: Parse raw headers
         try {
-            $xOriginalTo = $message->getHeader('x-original-to');
-            if ($xOriginalTo) {
-                $xOriginalToValue = $xOriginalTo->toString();
-                $xOriginalToValue = trim(str_replace(['<', '>', 'X-Original-To:', 'x-original-to:'], '', $xOriginalToValue));
+            $rawHeaders = $message->getRawBody();
+            // Extract Envelope-to from raw headers
+            if (preg_match('/^Envelope-to:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
+                $envelopeToValue = trim($matches[1]);
+                if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
+                    $toAddresses[] = strtolower($envelopeToValue);
+                }
+            }
+            // Also try X-Original-To
+            if (preg_match('/^X-Original-To:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
+                $xOriginalToValue = trim($matches[1]);
                 if (filter_var($xOriginalToValue, FILTER_VALIDATE_EMAIL)) {
                     $toAddresses[] = strtolower($xOriginalToValue);
                 }
             }
+            // Also try Delivered-To
+            if (preg_match('/^Delivered-To:\s*<?([^>\s]+)>?\s*$/im', $rawHeaders, $matches)) {
+                $deliveredToValue = trim($matches[1]);
+                if (filter_var($deliveredToValue, FILTER_VALIDATE_EMAIL)) {
+                    $toAddresses[] = strtolower($deliveredToValue);
+                }
+            }
         } catch (\Exception $e) {
-            // Header not found or error parsing - continue
+            // Method 2 failed too
         }
 
         // Find matching email calendar connection by checking all recipient addresses
@@ -203,7 +217,28 @@ class ProcessInboundEmailsCommand extends Command
 
         if (!$token) {
             $this->warn("No valid recipient found in email: {$message->getSubject()}");
-            $this->warn("  Checked addresses: " . implode(', ', $toAddresses));
+            $this->warn("  Checked addresses: " . (empty($toAddresses) ? '(none found)' : implode(', ', $toAddresses)));
+            
+            // DEBUG: Show all available headers for troubleshooting
+            if ($this->option('verbose') || true) { // Always show for now
+                $this->warn("  DEBUG - Available headers:");
+                try {
+                    $rawBody = $message->getRawBody();
+                    $headerLines = [];
+                    foreach (explode("\n", $rawBody) as $line) {
+                        if (empty(trim($line))) break; // Stop at first empty line (end of headers)
+                        if (preg_match('/^(To|Cc|Envelope-to|X-Original-To|Delivered-To):/i', $line)) {
+                            $headerLines[] = trim($line);
+                        }
+                    }
+                    foreach ($headerLines as $headerLine) {
+                        $this->warn("    " . $headerLine);
+                    }
+                } catch (\Exception $e) {
+                    $this->warn("    Could not read headers: " . $e->getMessage());
+                }
+            }
+            
             $message->setFlag('Seen');
             return;
         }
