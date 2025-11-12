@@ -155,24 +155,33 @@ class ProcessInboundEmailsCommand extends Command
         
         // IMPORTANT: When using catch-all forwarding, the original recipient
         // is in the Envelope-to or X-Original-To header, not in To:/Cc:
-        $envelopeTo = $message->getHeader('envelope-to');
-        if ($envelopeTo) {
-            // Parse envelope-to (can be: "owwrs4m5@syncmyday.sk" or "<owwrs4m5@syncmyday.sk>")
-            $envelopeToValue = is_array($envelopeTo) ? $envelopeTo[0] : $envelopeTo;
-            $envelopeToValue = trim(str_replace(['<', '>'], '', $envelopeToValue));
-            if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
-                $toAddresses[] = strtolower($envelopeToValue);
+        try {
+            $envelopeTo = $message->getHeader('envelope-to');
+            if ($envelopeTo) {
+                // Get value from Header object
+                $envelopeToValue = $envelopeTo->toString();
+                // Parse envelope-to (can be: "owwrs4m5@syncmyday.sk" or "<owwrs4m5@syncmyday.sk>")
+                $envelopeToValue = trim(str_replace(['<', '>', 'Envelope-to:', 'Envelope-To:'], '', $envelopeToValue));
+                if (filter_var($envelopeToValue, FILTER_VALIDATE_EMAIL)) {
+                    $toAddresses[] = strtolower($envelopeToValue);
+                }
             }
+        } catch (\Exception $e) {
+            // Header not found or error parsing - continue
         }
         
         // Also check X-Original-To (some mail servers use this)
-        $xOriginalTo = $message->getHeader('x-original-to');
-        if ($xOriginalTo) {
-            $xOriginalToValue = is_array($xOriginalTo) ? $xOriginalTo[0] : $xOriginalTo;
-            $xOriginalToValue = trim(str_replace(['<', '>'], '', $xOriginalToValue));
-            if (filter_var($xOriginalToValue, FILTER_VALIDATE_EMAIL)) {
-                $toAddresses[] = strtolower($xOriginalToValue);
+        try {
+            $xOriginalTo = $message->getHeader('x-original-to');
+            if ($xOriginalTo) {
+                $xOriginalToValue = $xOriginalTo->toString();
+                $xOriginalToValue = trim(str_replace(['<', '>', 'X-Original-To:', 'x-original-to:'], '', $xOriginalToValue));
+                if (filter_var($xOriginalToValue, FILTER_VALIDATE_EMAIL)) {
+                    $toAddresses[] = strtolower($xOriginalToValue);
+                }
             }
+        } catch (\Exception $e) {
+            // Header not found or error parsing - continue
         }
 
         // Find matching email calendar connection by checking all recipient addresses
