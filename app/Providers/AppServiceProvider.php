@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 
@@ -36,11 +34,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\SyncRule::observe(\App\Observers\SyncRuleObserver::class);
         \App\Models\EmailCalendarConnection::observe(\App\Observers\EmailCalendarConnectionObserver::class);
 
-        // Register event listeners
-        Event::listen(
-            Verified::class,
-            \App\Listeners\SendWelcomeEmail::class
-        );
+        // Note: SendWelcomeEmail listener removed - welcome email now sent immediately upon registration
     }
 }
 

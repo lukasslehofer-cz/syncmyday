@@ -4,7 +4,6 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\SocialAuthController;
-use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ConnectionsController;
@@ -165,18 +164,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-
-// Email Verification
-Route::middleware('auth')->group(function () {
-    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
-    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
-    Route::get('/email/verified', [EmailVerificationController::class, 'success'])->name('verification.success');
-    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
-        ->middleware('throttle:6,1')
-        ->name('verification.resend');
-});
 
 // Email Calendar Verification (public route - user clicks link from their email)
 Route::get('/email-calendars/verify/{id}/{hash}', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'verify'])

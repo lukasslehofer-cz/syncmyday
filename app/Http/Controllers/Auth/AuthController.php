@@ -48,6 +48,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'email_verified_at' => now(), // Auto-verify all users
             'locale' => app()->getLocale(),
             'timezone' => $request->timezone ?? 'UTC',
             'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
@@ -57,8 +58,15 @@ class AuthController extends Controller
 
         Auth::login($user);
         
-        // Send email verification notification
-        $user->sendEmailVerificationNotification();
+        // Send welcome email immediately (no verification required)
+        try {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
+        } catch (\Exception $e) {
+            Log::error('Failed to send welcome email', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         Log::info('New user registered with trial', [
             'user_id' => $user->id,
