@@ -769,6 +769,9 @@ class BillingController extends Controller
             $subscription = null;
             $paymentMethod = null;
             $invoices = [];
+            $schedule = null;
+            $scheduledInterval = null;
+            $scheduleChangeDate = null;
 
             if ($user->stripe_subscription_id) {
                 $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
@@ -783,6 +786,32 @@ class BillingController extends Controller
                     'customer' => $user->stripe_customer_id,
                     'limit' => 10,
                 ]);
+
+                // Check if there's a scheduled interval change
+                if ($subscription->schedule) {
+                    try {
+                        $schedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
+                        
+                        // If schedule has multiple phases, there's a pending change
+                        if (count($schedule->phases) > 1) {
+                            $currentPhase = $schedule->phases[0];
+                            $nextPhase = $schedule->phases[1];
+                            
+                            // Get the new interval from next phase
+                            $nextPriceId = $nextPhase->items[0]->price ?? null;
+                            if ($nextPriceId) {
+                                $nextPrice = \Stripe\Price::retrieve($nextPriceId);
+                                $scheduledInterval = $nextPrice->recurring->interval ?? null;
+                                $scheduleChangeDate = $currentPhase->end_date;
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning('Could not retrieve subscription schedule', [
+                            'schedule_id' => $subscription->schedule,
+                            'error' => $e->getMessage(),
+                        ]);
+                    }
+                }
             }
 
             // Get Fakturoid invoices (newest first)
@@ -797,6 +826,9 @@ class BillingController extends Controller
                 'paymentMethod' => $paymentMethod,
                 'invoices' => $invoices,
                 'fakturoidInvoices' => $fakturoidInvoices,
+                'schedule' => $schedule,
+                'scheduledInterval' => $scheduledInterval,
+                'scheduleChangeDate' => $scheduleChangeDate,
             ]);
 
         } catch (\Exception $e) {
@@ -1102,7 +1134,7 @@ class BillingController extends Controller
     }
 
     /**
-     * Change subscription interval (monthly ↔ yearly)
+     * Change subscription interval (monthly ↔ yearly) at end of period
      */
     public function changeSubscriptionInterval(Request $request)
     {
@@ -1166,27 +1198,67 @@ class BillingController extends Controller
                     ->with('error', __('messages.pricing_configuration_error'));
             }
 
-            // Update subscription with new price
-            // Changing interval resets billing cycle and generates immediate invoice with proration
-            $updatedSubscription = \Stripe\Subscription::update(
-                $user->stripe_subscription_id,
-                [
-                    'items' => [
-                        [
-                            'id' => $subscription->items->data[0]->id,
-                            'price' => $newPriceId,
-                        ],
-                    ],
-                    'proration_behavior' => 'always_invoice', // Create prorations and invoice immediately
-                    'billing_cycle_anchor' => 'now', // Reset billing cycle to now
-                ]
-            );
+            // Check if there's already a schedule
+            $existingSchedule = null;
+            if ($subscription->schedule) {
+                try {
+                    $existingSchedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
+                } catch (\Exception $e) {
+                    Log::warning('Could not retrieve existing schedule', [
+                        'schedule_id' => $subscription->schedule,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
 
-            Log::info('Subscription interval changed', [
+            // If there's already a schedule, release it first
+            if ($existingSchedule) {
+                \Stripe\SubscriptionSchedule::update(
+                    $existingSchedule->id,
+                    ['end_behavior' => 'release']
+                );
+                
+                Log::info('Released existing subscription schedule', [
+                    'user_id' => $user->id,
+                    'schedule_id' => $existingSchedule->id,
+                ]);
+            }
+
+            // Create subscription schedule to change interval at end of period
+            $schedule = \Stripe\SubscriptionSchedule::create([
+                'from_subscription' => $user->stripe_subscription_id,
+                'end_behavior' => 'release', // Release subscription after schedule completes
+                'phases' => [
+                    [
+                        // Phase 1: Current interval until end of current period
+                        'items' => [
+                            [
+                                'price' => $currentPrice->id,
+                                'quantity' => 1,
+                            ],
+                        ],
+                        'end_date' => $subscription->current_period_end,
+                    ],
+                    [
+                        // Phase 2: New interval starting at end of current period
+                        'items' => [
+                            [
+                                'price' => $newPriceId,
+                                'quantity' => 1,
+                            ],
+                        ],
+                        // No end_date means it continues indefinitely
+                    ],
+                ],
+            ]);
+
+            Log::info('Subscription interval change scheduled', [
                 'user_id' => $user->id,
                 'subscription_id' => $user->stripe_subscription_id,
+                'schedule_id' => $schedule->id,
                 'old_interval' => $currentInterval,
                 'new_interval' => $newInterval,
+                'change_date' => \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->toDateTimeString(),
                 'new_price_id' => $newPriceId,
             ]);
 
@@ -1194,12 +1266,17 @@ class BillingController extends Controller
             $intervalLabel = $newInterval === 'monthly' 
                 ? __('messages.monthly_plan') 
                 : __('messages.yearly_plan');
+            
+            $changeDate = \Carbon\Carbon::createFromTimestamp($subscription->current_period_end)->translatedFormat('j. F Y');
 
             return redirect()->route('billing.manage')
-                ->with('success', __('messages.interval_changed_success', ['interval' => $intervalLabel]));
+                ->with('success', __('messages.interval_change_scheduled', [
+                    'interval' => $intervalLabel,
+                    'date' => $changeDate,
+                ]));
 
         } catch (\Stripe\Exception\StripeException $e) {
-            Log::error('Stripe error changing subscription interval', [
+            Log::error('Stripe error scheduling subscription interval change', [
                 'error' => $e->getMessage(),
                 'user_id' => $user->id,
                 'interval' => $newInterval,
@@ -1208,10 +1285,60 @@ class BillingController extends Controller
             return redirect()->route('billing.manage')
                 ->with('error', __('messages.interval_change_error'));
         } catch (\Exception $e) {
-            Log::error('Failed to change subscription interval', [
+            Log::error('Failed to schedule subscription interval change', [
                 'error' => $e->getMessage(),
                 'user_id' => $user->id,
                 'interval' => $newInterval,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.billing_error'));
+        }
+    }
+
+    /**
+     * Cancel scheduled interval change
+     */
+    public function cancelScheduledIntervalChange()
+    {
+        $user = auth()->user();
+
+        if (!$user->stripe_subscription_id) {
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.no_subscription'));
+        }
+
+        try {
+            $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+
+            if (!$subscription->schedule) {
+                return redirect()->route('billing.manage')
+                    ->with('error', __('messages.no_scheduled_change'));
+            }
+
+            // Release the schedule (removes it and keeps subscription as-is)
+            $schedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
+            \Stripe\SubscriptionSchedule::update(
+                $schedule->id,
+                ['end_behavior' => 'release']
+            );
+
+            // Cancel/release the schedule immediately
+            \Stripe\SubscriptionSchedule::release($schedule->id);
+
+            Log::info('Cancelled scheduled interval change', [
+                'user_id' => $user->id,
+                'subscription_id' => $user->stripe_subscription_id,
+                'schedule_id' => $schedule->id,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('success', __('messages.scheduled_change_cancelled'));
+
+        } catch (\Exception $e) {
+            Log::error('Failed to cancel scheduled interval change', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
             ]);
 
             return redirect()->route('billing.manage')

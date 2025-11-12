@@ -136,8 +136,41 @@
     </div>
     @endif
 
+    {{-- Scheduled Interval Change Notice --}}
+    @if($subscription && $scheduledInterval && $scheduleChangeDate)
+    @php
+        $scheduledIntervalLabel = $scheduledInterval === 'month' ? __('messages.monthly_plan') : __('messages.yearly_plan');
+        $changeDate = \Carbon\Carbon::createFromTimestamp($scheduleChangeDate)->translatedFormat('j. F Y');
+    @endphp
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-300 overflow-hidden mb-6">
+        <div class="p-6 lg:p-8">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">📅 {{ __('messages.scheduled_interval_change') }}</h3>
+                    <p class="text-gray-700 mb-4">
+                        {{ __('messages.scheduled_interval_change_description', ['interval' => $scheduledIntervalLabel, 'date' => $changeDate]) }}
+                    </p>
+                    <form method="POST" action="{{ route('billing.cancel-scheduled-change') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-sm px-4 py-2 bg-white border-2 border-blue-600 text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition">
+                            {{ __('messages.cancel_scheduled_change') }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- Change Subscription Interval --}}
-    @if($subscription && !$subscription->cancel_at_period_end && in_array($subscription->status, ['active', 'trialing']))
+    @if($subscription && !$subscription->cancel_at_period_end && in_array($subscription->status, ['active', 'trialing']) && !$scheduledInterval)
     @php
         $currentPrice = $subscription->items->data[0]->price;
         $currentInterval = $currentPrice->recurring->interval ?? 'year';
@@ -201,7 +234,7 @@
                     </div>
                     
                     <div class="flex-shrink-0">
-                        <form method="POST" action="{{ route('billing.change-interval') }}" onsubmit="return confirm('{{ __('messages.interval_change_confirmation', ['interval' => $alternativeIntervalLabel]) }}')">
+                        <form method="POST" action="{{ route('billing.change-interval') }}">
                             @csrf
                             <input type="hidden" name="interval" value="{{ $alternativeInterval }}">
                             <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition shadow-lg">
@@ -217,7 +250,7 @@
                     <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p class="text-sm text-blue-800">{{ __('messages.interval_change_notice') }}</p>
+                    <p class="text-sm text-blue-800">{{ __('messages.interval_change_notice_end_of_period') }}</p>
                 </div>
             </div>
         </div>
