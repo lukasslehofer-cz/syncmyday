@@ -37,10 +37,6 @@ class EmailCalendarSyncService
     {
         $transactionId = Str::uuid()->toString();
         
-        Log::info('Processing incoming email', [
-            'email_token' => $emailToken,
-            'transaction_id' => $transactionId,
-        ]);
 
         // Find the email calendar connection
         $connection = EmailCalendarConnection::findByToken($emailToken);
@@ -147,40 +143,18 @@ class EmailCalendarSyncService
      */
     private function processIcsAttachment(EmailCalendarConnection $connection, string $icsContent, string $transactionId): int
     {
-        Log::info('Processing .ics attachment', [
-            'connection_id' => $connection->id,
-            'ics_length' => strlen($icsContent),
-            'ics_preview' => substr($icsContent, 0, 200),
-        ]);
-        
         // Parse .ics file
         try {
             $events = $this->icsParser->parseIcsFile($icsContent);
-            
-            Log::info('Parsed .ics file', [
-                'connection_id' => $connection->id,
-                'events_count' => count($events),
-                'events' => array_map(function($e) {
-                    return [
-                        'uid' => $e['uid'] ?? 'no-uid',
-                        'start' => isset($e['start']) ? $e['start']->format('Y-m-d H:i:s') : 'no-start',
-                        'end' => isset($e['end']) ? $e['end']->format('Y-m-d H:i:s') : 'no-end',
-                    ];
-                }, $events),
-            ]);
         } catch (\Exception $e) {
             Log::error('Failed to parse .ics file', [
                 'connection_id' => $connection->id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
             return 0;
         }
         
         if (empty($events)) {
-            Log::warning('No events found in .ics file', [
-                'connection_id' => $connection->id,
-            ]);
             return 0;
         }
 
@@ -192,16 +166,7 @@ class EmailCalendarSyncService
             ->with(['targets.targetConnection', 'targets.targetEmailConnection'])
             ->get();
         
-        Log::info('Found sync rules for email calendar', [
-            'connection_id' => $connection->id,
-            'sync_rules_count' => $syncRules->count(),
-            'rule_ids' => $syncRules->pluck('id')->toArray(),
-        ]);
-        
         if ($syncRules->isEmpty()) {
-            Log::warning('No active sync rules found for this email calendar', [
-                'connection_id' => $connection->id,
-            ]);
             return 0;
         }
         
@@ -242,11 +207,6 @@ class EmailCalendarSyncService
         foreach ($syncRules as $rule) {
             // Apply filters (including time filter)
             if (!$rule->shouldSyncEvent($this->normalizeEventData($eventData))) {
-                Log::info('Email event skipped due to filters', [
-                    'connection_id' => $connection->id,
-                    'event_uid' => $eventData['uid'],
-                    'rule_id' => $rule->id,
-                ]);
                 continue;
             }
             

@@ -33,12 +33,6 @@ class EmailParserService
         // Extract .ics attachments
         $result['ics_attachments'] = $this->extractIcsAttachments($rawEmail);
 
-        Log::info('Parsed email', [
-            'from' => $result['from'],
-            'subject' => $result['subject'],
-            'ics_count' => count($result['ics_attachments']),
-        ]);
-
         return $result;
     }
 

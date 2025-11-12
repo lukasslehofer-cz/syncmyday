@@ -29,49 +29,25 @@ class IcsParserService
             $events = [];
 
             if (!isset($vcalendar->VEVENT)) {
-                Log::warning('No VEVENT found in .ics file', [
-                    'has_vcalendar' => isset($vcalendar),
-                    'components' => $vcalendar ? array_keys((array) $vcalendar->children()) : [],
-                ]);
                 return [];
             }
-
-            $eventCount = is_array($vcalendar->VEVENT) ? count($vcalendar->VEVENT) : 1;
-            Log::info("Found {$eventCount} VEVENT(s) in .ics file");
 
             foreach ($vcalendar->VEVENT as $vevent) {
                 $eventData = $this->extractEventData($vevent);
                 
                 if ($eventData) {
                     $events[] = $eventData;
-                    Log::info('Successfully extracted event', [
-                        'uid' => $eventData['uid'],
-                        'start' => $eventData['start']->format('Y-m-d H:i:s'),
-                        'summary' => $eventData['summary'],
-                    ]);
-                } else {
-                    Log::warning('Failed to extract event data', [
-                        'uid' => isset($vevent->UID) ? (string) $vevent->UID : 'no UID',
-                    ]);
                 }
             }
-
-            Log::info('Parsed .ics file', [
-                'events_found' => $eventCount,
-                'events_extracted' => count($events),
-            ]);
 
             return $events;
 
         } catch (\Exception $e) {
             Log::error('Failed to parse .ics file', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'content_length' => strlen($icsContent),
-                'content_preview' => substr($icsContent, 0, 200),
             ]);
             
-            throw new \Exception('Invalid .ics file format: ' . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -83,21 +59,10 @@ class IcsParserService
         try {
             // Required fields
             if (!isset($vevent->UID) || !isset($vevent->DTSTART)) {
-                Log::warning('Event missing required fields', [
-                    'has_uid' => isset($vevent->UID),
-                    'has_dtstart' => isset($vevent->DTSTART),
-                    'properties' => array_keys((array) $vevent->children()),
-                ]);
                 return null;
             }
 
             $uid = (string) $vevent->UID;
-            
-            Log::info('Parsing event datetime', [
-                'uid' => $uid,
-                'dtstart_raw' => (string) $vevent->DTSTART,
-            ]);
-            
             $start = $this->parseDateTime($vevent->DTSTART);
             
             // If DTEND is not set, use DURATION or default to start time
@@ -129,7 +94,6 @@ class IcsParserService
         } catch (\Exception $e) {
             Log::error('Exception while extracting event data', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
                 'uid' => isset($vevent->UID) ? (string) $vevent->UID : 'unknown',
             ]);
             
