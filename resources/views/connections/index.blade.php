@@ -262,7 +262,7 @@
                         </svg>
                         <div>
                             <p class="text-sm font-semibold text-red-800">{{ __('messages.connection_error') }}</p>
-                            <p class="text-sm text-red-700 mt-1">{{ $connection->last_error }}</p>
+                            <p class="text-sm text-red-700 mt-1">{{ __('messages.calendar_' . $connection->last_error, ['provider' => ucfirst($connection->provider)]) }}</p>
                         </div>
                     </div>
                 </div>
@@ -348,7 +348,7 @@
                         </svg>
                         <div>
                             <p class="text-sm font-semibold text-red-800">{{ __('messages.connection_error') }}</p>
-                            <p class="text-sm text-red-700 mt-1">{{ $emailCalendar->last_error }}</p>
+                            <p class="text-sm text-red-700 mt-1">{{ __('messages.calendar_' . $emailCalendar->last_error, ['provider' => __('messages.email_calendar_type')]) }}</p>
                         </div>
                     </div>
                 </div>

@@ -246,7 +246,7 @@
         <div class="p-6 lg:p-8">
             <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
                 <p class="text-sm font-bold text-red-900 mb-2">{{ __('messages.last_error') }}:</p>
-                <p class="text-sm text-red-700">{{ $connection->last_error }}</p>
+                <p class="text-sm text-red-700">{{ __('messages.calendar_' . $connection->last_error, ['provider' => ucfirst($connection->provider)]) }}</p>
             </div>
         </div>
     </div>
