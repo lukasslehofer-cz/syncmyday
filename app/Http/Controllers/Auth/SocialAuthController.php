@@ -242,6 +242,12 @@ class SocialAuthController extends Controller
         $clientId = config('services.microsoft.client_id');
         $redirectUri = $this->getCurrentDomainUrl('/auth/microsoft/callback');
         
+        Log::info('Microsoft OAuth - Redirect initiated', [
+            'redirect_uri' => $redirectUri,
+            'tenant' => $tenant,
+            'has_client_id' => !empty($clientId),
+        ]);
+        
         $authUrl = sprintf(
             'https://login.microsoftonline.com/%s/oauth2/v2.0/authorize?client_id=%s&response_type=code&redirect_uri=%s&response_mode=query&scope=%s&state=%s&prompt=select_account',
             $tenant,
@@ -304,6 +310,11 @@ class SocialAuthController extends Controller
 
         try {
             // Exchange code for tokens using login-specific redirect URI
+            Log::info('Microsoft OAuth - Starting token exchange', [
+                'redirect_uri' => $this->getCurrentDomainUrl('/auth/microsoft/callback'),
+                'has_code' => !empty($request->code),
+            ]);
+            
             $response = \Illuminate\Support\Facades\Http::asForm()->post(
                 'https://login.microsoftonline.com/' . config('services.microsoft.tenant', 'common') . '/oauth2/v2.0/token',
                 [
@@ -316,36 +327,105 @@ class SocialAuthController extends Controller
                 ]
             );
 
+            Log::info('Microsoft OAuth - Token exchange response', [
+                'status' => $response->status(),
+                'successful' => $response->successful(),
+                'has_body' => !empty($response->body()),
+            ]);
+
             if (!$response->successful()) {
+                Log::error('Microsoft OAuth - Token exchange failed', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
                 throw new \Exception('OAuth error: ' . $response->body());
             }
 
             $tokens = $response->json();
             
+            Log::info('Microsoft OAuth - Tokens received', [
+                'has_access_token' => isset($tokens['access_token']),
+                'has_refresh_token' => isset($tokens['refresh_token']),
+                'expires_in' => $tokens['expires_in'] ?? null,
+            ]);
+            
             // Get user info from Microsoft
+            Log::info('Microsoft OAuth - Calling Graph API /me');
             $graph = new \Microsoft\Graph\Graph();
             $graph->setAccessToken($tokens['access_token']);
             
-            $msUser = $graph->createRequest('GET', '/me')
-                ->setReturnType(\Microsoft\Graph\Model\User::class)
-                ->execute();
+            try {
+                $msUser = $graph->createRequest('GET', '/me')
+                    ->setReturnType(\Microsoft\Graph\Model\User::class)
+                    ->execute();
+                    
+                Log::info('Microsoft OAuth - Graph API /me succeeded', [
+                    'user_id' => $msUser->getId(),
+                    'email' => $msUser->getUserPrincipalName() ?? $msUser->getMail(),
+                ]);
+            } catch (\Microsoft\Graph\Exception\GraphException $e) {
+                Log::error('Microsoft OAuth - Graph API /me failed', [
+                    'error' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                ]);
+                throw $e;
+            } catch (\Exception $e) {
+                Log::error('Microsoft OAuth - Unexpected error calling Graph API', [
+                    'error' => $e->getMessage(),
+                    'class' => get_class($e),
+                ]);
+                throw $e;
+            }
                 
             $microsoftId = $msUser->getId();
             $microsoftEmail = $msUser->getUserPrincipalName() ?? $msUser->getMail();
             $displayName = $msUser->getDisplayName() ?? $microsoftEmail;
             
+            if (empty($microsoftId)) {
+                Log::error('Microsoft OAuth - Empty Microsoft ID received', [
+                    'user_object' => $msUser,
+                ]);
+                throw new \Exception('Microsoft ID is empty');
+            }
+            
+            if (empty($microsoftEmail)) {
+                Log::error('Microsoft OAuth - Empty email received', [
+                    'user_principal_name' => $msUser->getUserPrincipalName(),
+                    'mail' => $msUser->getMail(),
+                ]);
+                throw new \Exception('Microsoft email is empty');
+            }
+            
+            Log::info('Microsoft OAuth - User info extracted', [
+                'microsoft_id' => $microsoftId,
+                'email' => $microsoftEmail,
+                'display_name' => $displayName,
+            ]);
+            
             // Find or create user
+            Log::info('Microsoft OAuth - Searching for existing user', [
+                'microsoft_id' => $microsoftId,
+            ]);
+            
             $user = User::where('oauth_provider', 'microsoft')
                         ->where('oauth_provider_id', $microsoftId)
                         ->first();
 
             if (!$user) {
+                Log::info('Microsoft OAuth - User not found, checking for existing email', [
+                    'email' => $microsoftEmail,
+                ]);
+                
                 // Check if email already exists with different provider (ignore soft-deleted)
                 $existingUser = User::where('email', $microsoftEmail)
                                     ->whereNull('deleted_at')
                                     ->first();
                 
                 if ($existingUser) {
+                    Log::warning('Microsoft OAuth - Email already exists with different provider', [
+                        'email' => $microsoftEmail,
+                        'existing_provider' => $existingUser->oauth_provider,
+                    ]);
                     return redirect()->route('login')
                         ->with('error', 'This email is already registered. Please use your original login method or contact support.');
                 }
@@ -365,19 +445,37 @@ class SocialAuthController extends Controller
                 }
 
                 // Create new user
-                $user = User::create([
-                    'name' => $displayName,
+                Log::info('Microsoft OAuth - Creating new user', [
                     'email' => $microsoftEmail,
-                    'oauth_provider' => 'microsoft',
-                    'oauth_provider_id' => $microsoftId,
-                    'oauth_provider_email' => $microsoftEmail,
-                    'email_verified_at' => now(), // OAuth users are pre-verified
-                    'locale' => app()->getLocale(),
+                    'display_name' => $displayName,
                     'timezone' => $timezone,
-                    'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
-                    'subscription_tier' => 'pro',
-                    'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
                 ]);
+                
+                try {
+                    $user = User::create([
+                        'name' => $displayName,
+                        'email' => $microsoftEmail,
+                        'oauth_provider' => 'microsoft',
+                        'oauth_provider_id' => $microsoftId,
+                        'oauth_provider_email' => $microsoftEmail,
+                        'email_verified_at' => now(), // OAuth users are pre-verified
+                        'locale' => app()->getLocale(),
+                        'timezone' => $timezone,
+                        'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
+                        'subscription_tier' => 'pro',
+                        'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
+                    ]);
+                    
+                    Log::info('Microsoft OAuth - User created successfully', [
+                        'user_id' => $user->id,
+                    ]);
+                } catch (\Illuminate\Database\QueryException $e) {
+                    Log::error('Microsoft OAuth - Database error creating user', [
+                        'error' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                    ]);
+                    throw $e;
+                }
 
                 // Send welcome email (OAuth users don't trigger Verified event)
                 try {
@@ -396,10 +494,18 @@ class SocialAuthController extends Controller
             }
 
             // Login the user
+            Log::info('Microsoft OAuth - Logging in user', [
+                'user_id' => $user->id,
+            ]);
+            
             Auth::login($user, true);
+            
+            Log::info('Microsoft OAuth - User logged in, connecting calendar');
 
             // Now connect the calendar automatically
             $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail);
+            
+            Log::info('Microsoft OAuth - Calendar connection completed');
 
             // Redirect to onboarding for new users, dashboard for existing users
             if ($user->wasRecentlyCreated) {
@@ -411,9 +517,24 @@ class SocialAuthController extends Controller
             return redirect()->route('dashboard')
                 ->with('success', 'Welcome back! You have been logged in successfully.');
 
+        } catch (\Microsoft\Graph\Exception\GraphException $e) {
+            Log::error('Microsoft OAuth login failed - GraphException', [
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('login')
+                ->with('error', 'Failed to login with Microsoft. Please try again or use email/password.');
         } catch (\Exception $e) {
             Log::error('Microsoft OAuth login failed', [
                 'error' => $e->getMessage(),
+                'class' => get_class($e),
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
