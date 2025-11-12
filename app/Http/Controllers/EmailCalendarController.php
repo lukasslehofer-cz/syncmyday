@@ -41,12 +41,15 @@ class EmailCalendarController extends Controller
         ]);
 
         try {
-            // Generate unique email address
-            $emailData = EmailCalendarConnection::generateUniqueEmailAddress();
+            // Get user first (needed for domain-specific email address generation)
+            $user = auth()->user();
+            
+            // Generate unique email address based on user's registration domain
+            $emailData = EmailCalendarConnection::generateUniqueEmailAddress($user);
 
             // Create connection (without verified target_email)
             $connection = EmailCalendarConnection::create([
-                'user_id' => auth()->id(),
+                'user_id' => $user->id,
                 'email_address' => $emailData['email_address'],
                 'email_token' => $emailData['email_token'],
                 'name' => $validated['name'],
@@ -55,7 +58,6 @@ class EmailCalendarController extends Controller
             ]);
 
             // Check if target email is the same as user's verified email
-            $user = auth()->user();
             $targetEmailMatchesUser = strtolower(trim($validated['target_email'])) === strtolower(trim($user->email));
             $userEmailVerified = $user->hasVerifiedEmail();
             

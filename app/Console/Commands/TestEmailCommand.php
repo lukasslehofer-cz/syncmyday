@@ -264,8 +264,8 @@ class TestEmailCommand extends Command
                     ->first();
                 
                 if (!$emailCalendar) {
-                    // Generate unique email address and token
-                    $emailData = \App\Models\EmailCalendarConnection::generateUniqueEmailAddress();
+                    // Generate unique email address and token (based on user's domain)
+                    $emailData = \App\Models\EmailCalendarConnection::generateUniqueEmailAddress($user);
                     
                     $emailCalendar = \App\Models\EmailCalendarConnection::create([
                         'user_id' => $user->id,

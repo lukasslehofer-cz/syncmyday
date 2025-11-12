@@ -57,14 +57,18 @@ class EmailCalendarConnection extends Model
 
     /**
      * Generate unique email address for this connection
+     * Uses user's registration_domain to ensure email address matches their domain
      */
-    public static function generateUniqueEmailAddress(): array
+    public static function generateUniqueEmailAddress(User $user): array
     {
         $maxAttempts = 10;
         
+        // Get domain from user's registration_domain or derive from locale
+        $domain = $user->registration_domain ?? \App\Helpers\EmailHelper::getDomainFromLocale($user->locale ?? 'en');
+        
         for ($i = 0; $i < $maxAttempts; $i++) {
             $token = strtolower(Str::random(8)); // Short, easy to type, always lowercase
-            $emailAddress = $token . '@' . config('app.email_domain', 'syncmyday.com');
+            $emailAddress = $token . '@' . $domain;
             
             if (!self::where('email_address', $emailAddress)->exists()) {
                 return [
