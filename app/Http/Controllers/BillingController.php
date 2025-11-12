@@ -1211,8 +1211,8 @@ class BillingController extends Controller
             if ($subscription->schedule) {
                 try {
                     $existingSchedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
-                    // Release existing schedule first
-                    \Stripe\SubscriptionSchedule::release($existingSchedule->id);
+                    // Release existing schedule first (instance method, not static)
+                    $existingSchedule->release();
                     
                     Log::info('Released existing subscription schedule', [
                         'user_id' => $user->id,
@@ -1332,13 +1332,9 @@ class BillingController extends Controller
 
             // Release the schedule (removes it and keeps subscription as-is)
             $schedule = \Stripe\SubscriptionSchedule::retrieve($subscription->schedule);
-            \Stripe\SubscriptionSchedule::update(
-                $schedule->id,
-                ['end_behavior' => 'release']
-            );
-
-            // Cancel/release the schedule immediately
-            \Stripe\SubscriptionSchedule::release($schedule->id);
+            
+            // Release the schedule immediately (instance method, not static)
+            $schedule->release();
 
             Log::info('Cancelled scheduled interval change', [
                 'user_id' => $user->id,
