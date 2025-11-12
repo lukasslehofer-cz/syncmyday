@@ -172,19 +172,14 @@ class ProcessInboundEmailsCommand extends Command
         }
         
         // IMPORTANT: When using catch-all forwarding, the original recipient
-        // is in the Envelope-to header. We need to parse HEADERS, not body.
+        // is in the Envelope-to header. Use getHeader()->raw to get raw headers.
         
         try {
-            // Get the RAW MESSAGE (includes headers)
-            $client = $message->getClient();
-            $folder = $message->getFolder();
-            
-            // Fetch RAW message including headers
-            $uid = $message->getUid();
-            $rawMessage = imap_fetchheader($client->getConnection(), $uid, FT_UID);
-            
-            if ($rawMessage) {
-                // Extract ALL email addresses from headers using patterns
+            $header = $message->getHeader();
+            if ($header && isset($header->raw)) {
+                $rawHeaders = $header->raw;
+                
+                // Extract email addresses from special headers
                 $headerPatterns = [
                     '/^Envelope-to:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
                     '/^X-Original-To:\s*<?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})>?/im',
@@ -192,7 +187,7 @@ class ProcessInboundEmailsCommand extends Command
                 ];
                 
                 foreach ($headerPatterns as $pattern) {
-                    if (preg_match_all($pattern, $rawMessage, $matches)) {
+                    if (preg_match_all($pattern, $rawHeaders, $matches)) {
                         foreach ($matches[1] as $email) {
                             $email = strtolower(trim($email));
                             if (filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($email, $toAddresses)) {
@@ -228,13 +223,11 @@ class ProcessInboundEmailsCommand extends Command
             $this->warn("  Checked addresses: " . (empty($toAddresses) ? '(none found)' : implode(', ', $toAddresses)));
             
             // DEBUG: Show actual email headers
-            $this->warn("  DEBUG - Extracting HEADERS (not body)...");
+            $this->warn("  DEBUG - Using getHeader()->raw...");
             try {
-                $client = $message->getClient();
-                $uid = $message->getUid();
-                $rawHeaders = imap_fetchheader($client->getConnection(), $uid, FT_UID);
-                
-                if ($rawHeaders) {
+                $header = $message->getHeader();
+                if ($header && isset($header->raw)) {
+                    $rawHeaders = $header->raw;
                     $this->warn("  Raw headers length: " . strlen($rawHeaders) . " bytes");
                     
                     // Show relevant headers
@@ -250,10 +243,10 @@ class ProcessInboundEmailsCommand extends Command
                     
                     if ($headerCount === 0) {
                         $this->warn("    No relevant headers found!");
-                        $this->warn("    All headers: " . substr($rawHeaders, 0, 1000));
+                        $this->warn("    First 500 chars: " . substr($rawHeaders, 0, 500));
                     }
                 } else {
-                    $this->warn("    imap_fetchheader() returned empty!");
+                    $this->warn("    getHeader() returned null or no raw property!");
                 }
             } catch (\Exception $e) {
                 $this->warn("    Error: " . $e->getMessage());
