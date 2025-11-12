@@ -17,11 +17,12 @@ use Webklex\PHPIMAP\ClientManager;
  * 3. Extracts recipient token (e.g., abc12345@syncmyday.com -> abc12345)
  * 4. Processes .ics attachments
  * 5. Creates/updates blockers in target calendars
+ * 6. Moves processed emails to "Processed" folder
  * 
- * Should be run via cron every minute:
- * * * * * * php artisan app:process-inbound-emails
+ * Processed emails are kept for 7 days then deleted by CleanOldInboundEmailsCommand.
  * 
- * Or via HTTP: https://syncmyday.cz/cron-inbound-emails.php?token=YOUR_SECRET
+ * Runs automatically via Laravel scheduler (every 5 minutes).
+ * Configured in app/Console/Kernel.php
  */
 class ProcessInboundEmailsCommand extends Command
 {
@@ -199,11 +200,12 @@ class ProcessInboundEmailsCommand extends Command
         // Mark as read
         $message->setFlag('Seen');
         
-        // Optionally move to processed folder
+        // Move to processed folder for 7-day archival
         $processedFolder = config('inbound_email.imap.processed_folder');
         if ($processedFolder) {
             try {
                 $message->move($processedFolder);
+                $this->info("  ✓ Email moved to '{$processedFolder}'");
             } catch (\Exception $e) {
                 $this->warn("Could not move email to '{$processedFolder}': " . $e->getMessage());
             }

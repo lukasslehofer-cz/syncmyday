@@ -26,8 +26,11 @@ return [
         // Mailbox to monitor
         'mailbox' => env('INBOUND_EMAIL_MAILBOX', 'INBOX'),
         
-        // After processing, move to this folder (null = delete)
+        // After processing, move emails to this folder
         'processed_folder' => env('INBOUND_EMAIL_PROCESSED_FOLDER', 'Processed'),
+        
+        // Days to keep processed emails before deletion
+        'retention_days' => env('INBOUND_EMAIL_RETENTION_DAYS', 7),
     ],
 
     // Webhook configuration (alternative to IMAP)
