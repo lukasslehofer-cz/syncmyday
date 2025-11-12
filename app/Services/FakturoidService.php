@@ -307,6 +307,49 @@ class FakturoidService
     }
 
     /**
+     * Download invoice PDF content as binary data (for local storage)
+     * 
+     * @param int $invoiceId Fakturoid invoice ID
+     * @return string|null PDF binary content or null on failure
+     */
+    public function downloadPdfContent(int $invoiceId): ?string
+    {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            Log::error('Cannot download PDF content: No access token');
+            return null;
+        }
+
+        try {
+            $response = Http::withToken($accessToken)
+                ->withHeaders([
+                    'User-Agent' => $this->userAgent,
+                ])
+                ->get("{$this->apiUrl}/accounts/{$this->slug}/invoices/{$invoiceId}/download.pdf");
+
+            if ($response->successful()) {
+                return $response->body();
+            }
+
+            Log::error('Failed to download Fakturoid PDF content', [
+                'invoice_id' => $invoiceId,
+                'status' => $response->status(),
+            ]);
+
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Exception downloading Fakturoid PDF content', [
+                'invoice_id' => $invoiceId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
      * Build invoice data for Fakturoid API
      * 
      * @param \App\Models\User $user User who made the payment

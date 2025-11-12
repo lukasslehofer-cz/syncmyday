@@ -6,6 +6,7 @@ use App\Models\FakturoidInvoice;
 use App\Services\FakturoidService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class RetryFailedFakturoidInvoices extends Command
 {
@@ -78,6 +79,9 @@ class RetryFailedFakturoidInvoices extends Command
                         'error_message' => null,
                     ]);
 
+                    // Download and store PDF locally
+                    $this->downloadAndStoreInvoicePdf($invoice, $fakturoidService);
+
                     $this->info("  ✓ Success! Created invoice: {$createdInvoice['number']}");
                     $successCount++;
 
@@ -131,5 +135,63 @@ class RetryFailedFakturoidInvoices extends Command
         $this->info("Retry complete: {$successCount} succeeded, {$failCount} failed.");
 
         return $successCount > 0 ? 0 : 1;
+    }
+
+    /**
+     * Download PDF from Fakturoid and store it locally
+     * 
+     * @param FakturoidInvoice $invoice Invoice model
+     * @param FakturoidService $fakturoidService Fakturoid service instance
+     * @return bool True if successful, false otherwise
+     */
+    private function downloadAndStoreInvoicePdf(FakturoidInvoice $invoice, FakturoidService $fakturoidService): bool
+    {
+        if (!$invoice->fakturoid_id) {
+            return false;
+        }
+
+        try {
+            // Download PDF content from Fakturoid API
+            $pdfContent = $fakturoidService->downloadPdfContent($invoice->fakturoid_id);
+
+            if (!$pdfContent) {
+                Log::warning('Failed to download PDF content from Fakturoid during retry', [
+                    'invoice_id' => $invoice->id,
+                    'fakturoid_id' => $invoice->fakturoid_id,
+                ]);
+                return false;
+            }
+
+            // Generate filename
+            $filename = $invoice->fakturoid_number 
+                ? "invoice-{$invoice->fakturoid_number}.pdf"
+                : "invoice-{$invoice->id}.pdf";
+
+            // Store PDF in storage/app/invoices/ directory
+            $storagePath = "invoices/{$filename}";
+            Storage::put($storagePath, $pdfContent);
+
+            // Update invoice with PDF path
+            $invoice->update([
+                'pdf_url' => $storagePath,
+            ]);
+
+            Log::info('Invoice PDF downloaded and stored locally during retry', [
+                'invoice_id' => $invoice->id,
+                'fakturoid_id' => $invoice->fakturoid_id,
+                'storage_path' => $storagePath,
+            ]);
+
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error('Exception downloading and storing invoice PDF during retry', [
+                'invoice_id' => $invoice->id,
+                'fakturoid_id' => $invoice->fakturoid_id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
     }
 }

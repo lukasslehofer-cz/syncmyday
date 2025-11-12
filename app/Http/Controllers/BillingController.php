@@ -7,6 +7,7 @@ use App\Models\FakturoidInvoice;
 use App\Services\FakturoidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
 use Stripe\Webhook;
@@ -521,6 +522,9 @@ class BillingController extends Controller
                     'error_message' => null,
                 ]);
 
+                // Download and store PDF locally
+                $this->downloadAndStoreInvoicePdf($fakturoidInvoice, $fakturoidService);
+
                 Log::info('Fakturoid invoice created successfully', [
                     'user_id' => $user->id,
                     'fakturoid_id' => $createdInvoice['id'],
@@ -555,6 +559,67 @@ class BillingController extends Controller
                     'retry_count' => 1,
                 ]);
             }
+        }
+    }
+
+    /**
+     * Download PDF from Fakturoid and store it locally
+     * 
+     * @param FakturoidInvoice $invoice Invoice model
+     * @param FakturoidService $fakturoidService Fakturoid service instance
+     * @return bool True if successful, false otherwise
+     */
+    private function downloadAndStoreInvoicePdf(FakturoidInvoice $invoice, FakturoidService $fakturoidService): bool
+    {
+        if (!$invoice->fakturoid_id) {
+            Log::warning('Cannot download PDF: Missing fakturoid_id', [
+                'invoice_id' => $invoice->id,
+            ]);
+            return false;
+        }
+
+        try {
+            // Download PDF content from Fakturoid API
+            $pdfContent = $fakturoidService->downloadPdfContent($invoice->fakturoid_id);
+
+            if (!$pdfContent) {
+                Log::warning('Failed to download PDF content from Fakturoid', [
+                    'invoice_id' => $invoice->id,
+                    'fakturoid_id' => $invoice->fakturoid_id,
+                ]);
+                return false;
+            }
+
+            // Generate filename
+            $filename = $invoice->fakturoid_number 
+                ? "invoice-{$invoice->fakturoid_number}.pdf"
+                : "invoice-{$invoice->id}.pdf";
+
+            // Store PDF in storage/app/invoices/ directory
+            $storagePath = "invoices/{$filename}";
+            Storage::put($storagePath, $pdfContent);
+
+            // Update invoice with PDF path
+            $invoice->update([
+                'pdf_url' => $storagePath,
+            ]);
+
+            Log::info('Invoice PDF downloaded and stored locally', [
+                'invoice_id' => $invoice->id,
+                'fakturoid_id' => $invoice->fakturoid_id,
+                'storage_path' => $storagePath,
+            ]);
+
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error('Exception downloading and storing invoice PDF', [
+                'invoice_id' => $invoice->id,
+                'fakturoid_id' => $invoice->fakturoid_id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
         }
     }
 
@@ -762,21 +827,55 @@ class BillingController extends Controller
         }
 
         try {
-            $fakturoidService = new FakturoidService();
-            $pdfResponse = $fakturoidService->downloadPdf($invoice->fakturoid_id);
+            // Generate filename
+            $filename = $invoice->fakturoid_number 
+                ? "invoice-{$invoice->fakturoid_number}.pdf"
+                : "invoice-{$invoice->id}.pdf";
 
-            if ($pdfResponse) {
-                // Set proper filename with invoice number
-                $filename = $invoice->fakturoid_number 
-                    ? "invoice-{$invoice->fakturoid_number}.pdf"
-                    : "invoice-{$invoice->id}.pdf";
+            // Step 1: Try to load PDF from local storage (fast path)
+            if ($invoice->pdf_url && Storage::exists($invoice->pdf_url)) {
+                $pdfContent = Storage::get($invoice->pdf_url);
                 
-                return $pdfResponse->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+                Log::info('Invoice PDF served from local storage', [
+                    'invoice_id' => $invoice->id,
+                    'storage_path' => $invoice->pdf_url,
+                ]);
+
+                return response($pdfContent, 200)
+                    ->header('Content-Type', 'application/pdf')
+                    ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
             }
 
-            Log::error('Failed to download Fakturoid PDF', [
+            // Step 2: Fallback - download from Fakturoid API
+            $fakturoidService = new FakturoidService();
+            $pdfContent = $fakturoidService->downloadPdfContent($invoice->fakturoid_id);
+
+            if ($pdfContent) {
+                // Store PDF locally for future requests
+                $storagePath = "invoices/{$filename}";
+                Storage::put($storagePath, $pdfContent);
+
+                // Update invoice with PDF path
+                $invoice->update([
+                    'pdf_url' => $storagePath,
+                ]);
+
+                Log::info('Invoice PDF downloaded from Fakturoid API and cached locally', [
+                    'invoice_id' => $invoice->id,
+                    'fakturoid_id' => $invoice->fakturoid_id,
+                    'storage_path' => $storagePath,
+                ]);
+
+                return response($pdfContent, 200)
+                    ->header('Content-Type', 'application/pdf')
+                    ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+            }
+
+            // Step 3: All methods failed
+            Log::error('Failed to download Fakturoid PDF (both local and API failed)', [
                 'invoice_id' => $invoice->id,
                 'fakturoid_id' => $invoice->fakturoid_id,
+                'pdf_url' => $invoice->pdf_url,
             ]);
 
             return redirect()->route('billing.manage')
@@ -786,6 +885,7 @@ class BillingController extends Controller
             Log::error('Exception downloading invoice PDF', [
                 'invoice_id' => $invoice->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return redirect()->route('billing.manage')
