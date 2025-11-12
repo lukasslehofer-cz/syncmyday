@@ -136,6 +136,94 @@
     </div>
     @endif
 
+    {{-- Change Subscription Interval --}}
+    @if($subscription && !$subscription->cancel_at_period_end && in_array($subscription->status, ['active', 'trialing']))
+    @php
+        $currentPrice = $subscription->items->data[0]->price;
+        $currentInterval = $currentPrice->recurring->interval ?? 'year';
+        $currency = $user->stripe_currency ?? \App\Helpers\PricingHelper::getCurrencyCode($user->locale);
+        
+        // Determine alternative interval
+        $alternativeInterval = $currentInterval === 'month' ? 'yearly' : 'monthly';
+        $alternativeIntervalLabel = $alternativeInterval === 'monthly' ? __('messages.monthly_plan') : __('messages.yearly_plan');
+        
+        // Get pricing info for both intervals
+        $currentCurrencyInfo = \App\Helpers\PricingHelper::getCurrencyInfo($currency, $currentInterval === 'month' ? 'monthly' : 'yearly');
+        $alternativeCurrencyInfo = \App\Helpers\PricingHelper::getCurrencyInfo($currency, $alternativeInterval);
+        
+        // Calculate savings if switching to yearly
+        $monthlyTotal = $currentCurrencyInfo['amount'] * 12;
+        $yearlySavings = $alternativeInterval === 'yearly' && $monthlyTotal > 0 
+            ? round((($monthlyTotal - $alternativeCurrencyInfo['amount']) / $monthlyTotal) * 100, 0) 
+            : 0;
+    @endphp
+    
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
+        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('messages.change_subscription_interval') }}</h2>
+            </div>
+        </div>
+        
+        <div class="p-6 lg:p-8">
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 font-medium mb-2">{{ __('messages.current_interval') }}</p>
+                <p class="text-lg font-bold text-gray-900">
+                    {{ $currentInterval === 'month' ? __('messages.monthly_plan') : __('messages.yearly_plan') }}
+                    ({{ number_format($currentPrice->unit_amount / 100, 2) }} {{ strtoupper($currentPrice->currency) }} / {{ $currentInterval === 'month' ? __('messages.per_month') : __('messages.per_year') }})
+                </p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border-2 border-indigo-200">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">{{ $alternativeIntervalLabel }}</h3>
+                        <div class="flex items-baseline space-x-2 mb-2">
+                            <span class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                                {{ $alternativeCurrencyInfo['symbol'] }}{{ number_format($alternativeCurrencyInfo['amount'], 0, '.', ',') }}
+                            </span>
+                            <span class="text-gray-600">
+                                / {{ $alternativeInterval === 'monthly' ? __('messages.per_month') : __('messages.per_year') }}
+                            </span>
+                        </div>
+                        @if($yearlySavings > 0)
+                        <div class="inline-flex items-center px-3 py-1 bg-green-100 border border-green-300 rounded-full mt-2">
+                            <span class="text-xs font-bold text-green-700">💰 {{ __('messages.yearly_savings_badge', ['percent' => $yearlySavings]) }}</span>
+                        </div>
+                        @elseif($alternativeInterval === 'monthly')
+                        <p class="text-sm text-gray-600 mt-2">{{ __('messages.monthly_flexibility') }}</p>
+                        @endif
+                    </div>
+                    
+                    <div class="flex-shrink-0">
+                        <form method="POST" action="{{ route('billing.change-interval') }}" onsubmit="return confirm('{{ __('messages.interval_change_confirmation', ['interval' => $alternativeIntervalLabel]) }}')">
+                            @csrf
+                            <input type="hidden" name="interval" value="{{ $alternativeInterval }}">
+                            <button type="submit" class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition shadow-lg">
+                                {{ $alternativeInterval === 'monthly' ? __('messages.switch_to_monthly') : __('messages.switch_to_yearly') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-blue-800">{{ __('messages.interval_change_notice') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- Payment Method --}}
     <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
         <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 px-6 py-5">

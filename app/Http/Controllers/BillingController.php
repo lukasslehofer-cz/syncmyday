@@ -1100,5 +1100,123 @@ class BillingController extends Controller
                 ->with('error', __('messages.billing_error'));
         }
     }
+
+    /**
+     * Change subscription interval (monthly ↔ yearly)
+     */
+    public function changeSubscriptionInterval(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!$user->stripe_subscription_id) {
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.no_subscription'));
+        }
+
+        $newInterval = $request->input('interval');
+
+        // Validate interval
+        if (!in_array($newInterval, ['monthly', 'yearly'])) {
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.invalid_interval'));
+        }
+
+        try {
+            // Get current subscription
+            $subscription = \Stripe\Subscription::retrieve($user->stripe_subscription_id);
+
+            // Check if subscription is active
+            if (!in_array($subscription->status, ['active', 'trialing'])) {
+                return redirect()->route('billing.manage')
+                    ->with('error', __('messages.subscription_not_active'));
+            }
+
+            // Get current interval from subscription
+            $currentPrice = $subscription->items->data[0]->price;
+            $currentInterval = $currentPrice->recurring->interval ?? null;
+
+            if (!$currentInterval) {
+                Log::error('Could not determine current subscription interval', [
+                    'user_id' => $user->id,
+                    'subscription_id' => $user->stripe_subscription_id,
+                ]);
+                return redirect()->route('billing.manage')
+                    ->with('error', __('messages.billing_error'));
+            }
+
+            // Check if interval is actually changing
+            if ($currentInterval === $newInterval) {
+                return redirect()->route('billing.manage')
+                    ->with('error', __('messages.interval_already_set', ['interval' => $newInterval]));
+            }
+
+            // Get currency (locked at customer creation)
+            $currency = $user->stripe_currency ?? PricingHelper::getCurrencyCode($user->locale);
+
+            // Get new Price ID
+            $newPriceId = PricingHelper::getPriceIdByCurrency($currency, $newInterval);
+
+            if (!$newPriceId) {
+                Log::error('Price ID not found for interval change', [
+                    'user_id' => $user->id,
+                    'currency' => $currency,
+                    'interval' => $newInterval,
+                ]);
+                return redirect()->route('billing.manage')
+                    ->with('error', __('messages.pricing_configuration_error'));
+            }
+
+            // Update subscription with new price
+            // Changing interval resets billing cycle and generates immediate invoice with proration
+            $updatedSubscription = \Stripe\Subscription::update(
+                $user->stripe_subscription_id,
+                [
+                    'items' => [
+                        [
+                            'id' => $subscription->items->data[0]->id,
+                            'price' => $newPriceId,
+                        ],
+                    ],
+                    'proration_behavior' => 'always_invoice', // Create prorations and invoice immediately
+                    'billing_cycle_anchor' => 'now', // Reset billing cycle to now
+                ]
+            );
+
+            Log::info('Subscription interval changed', [
+                'user_id' => $user->id,
+                'subscription_id' => $user->stripe_subscription_id,
+                'old_interval' => $currentInterval,
+                'new_interval' => $newInterval,
+                'new_price_id' => $newPriceId,
+            ]);
+
+            // Get localized interval label for success message
+            $intervalLabel = $newInterval === 'monthly' 
+                ? __('messages.monthly_plan') 
+                : __('messages.yearly_plan');
+
+            return redirect()->route('billing.manage')
+                ->with('success', __('messages.interval_changed_success', ['interval' => $intervalLabel]));
+
+        } catch (\Stripe\Exception\StripeException $e) {
+            Log::error('Stripe error changing subscription interval', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+                'interval' => $newInterval,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.interval_change_error'));
+        } catch (\Exception $e) {
+            Log::error('Failed to change subscription interval', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+                'interval' => $newInterval,
+            ]);
+
+            return redirect()->route('billing.manage')
+                ->with('error', __('messages.billing_error'));
+        }
+    }
 }
 
