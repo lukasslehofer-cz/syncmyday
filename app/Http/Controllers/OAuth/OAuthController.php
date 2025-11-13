@@ -339,10 +339,31 @@ class OAuthController extends Controller
             
             // Get available calendars
             Log::info('Microsoft OAuth - Calling /me/calendars...');
-            $calendarList = $graph->createRequest('GET', '/me/calendars')
-                ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
-                ->execute();
-            Log::info('Microsoft OAuth - /me/calendars succeeded');
+            
+            // Try direct HTTP request to get detailed error
+            try {
+                $response = \Illuminate\Support\Facades\Http::withToken($tokens['access_token'])
+                    ->get('https://graph.microsoft.com/v1.0/me/calendars');
+                
+                Log::info('Microsoft OAuth - /me/calendars HTTP response', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                ]);
+                
+                if ($response->successful()) {
+                    $calendarList = $graph->createRequest('GET', '/me/calendars')
+                        ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+                        ->execute();
+                    Log::info('Microsoft OAuth - /me/calendars succeeded');
+                } else {
+                    throw new \Exception('Calendar API returned: ' . $response->status() . ' - ' . $response->body());
+                }
+            } catch (\Exception $e) {
+                Log::error('Microsoft OAuth - /me/calendars detailed error', [
+                    'error' => $e->getMessage(),
+                ]);
+                throw $e;
+            }
             $calendars = [];
             foreach ($calendarList as $calendar) {
                 $calendars[] = [
