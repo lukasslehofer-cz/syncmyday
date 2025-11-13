@@ -15,10 +15,22 @@ namespace App\Services\Encryption;
  */
 class TokenEncryptionService
 {
-    private string $key;
+    private ?string $key = null;
 
     public function __construct()
     {
+        // Key is loaded lazily on first use to avoid issues during migrations
+    }
+
+    /**
+     * Get the encryption key (lazy loaded)
+     */
+    private function getKey(): string
+    {
+        if ($this->key !== null) {
+            return $this->key;
+        }
+
         $encodedKey = config('services.token_encryption_key');
         
         if (!$encodedKey) {
@@ -42,6 +54,7 @@ class TokenEncryptionService
         }
 
         $this->key = $key;
+        return $this->key;
     }
 
     /**
@@ -56,7 +69,7 @@ class TokenEncryptionService
         $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
         
         // Encrypt the plaintext
-        $ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->key);
+        $ciphertext = sodium_crypto_secretbox($plaintext, $nonce, $this->getKey());
         
         // Prepend nonce to ciphertext (we need it for decryption)
         $encrypted = $nonce . $ciphertext;
@@ -88,7 +101,7 @@ class TokenEncryptionService
         $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
         
         // Decrypt
-        $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $this->key);
+        $plaintext = sodium_crypto_secretbox_open($ciphertext, $nonce, $this->getKey());
         
         if ($plaintext === false) {
             throw new \RuntimeException('Decryption failed - token may be corrupted');
