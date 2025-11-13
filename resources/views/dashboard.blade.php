@@ -4,6 +4,39 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Calendar Pending Approval Warning -->
+    @if(session('calendar_connection_pending'))
+    <div class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg shadow-sm">
+        <div class="p-4">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="ml-3 flex-1">
+                    <h3 class="text-sm font-medium text-yellow-800">
+                        {{ __('messages.calendar_connection_requires_approval') }}
+                    </h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <p>{{ __('messages.work_account_requires_admin') }}</p>
+                    </div>
+                    <div class="mt-4 flex gap-3">
+                        <a href="{{ route('connections.index') }}#pending-approval" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-yellow-800 bg-yellow-100 hover:bg-yellow-200 rounded-lg transition">
+                            {{ __('messages.admin_consent_learn_more') }}
+                        </a>
+                        <a href="{{ route('connections.index') }}" 
+                           class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition">
+                            {{ __('messages.connect_different_calendar') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Header -->
     <div class="mb-6 sm:mb-8">
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">{{ __('messages.dashboard') }}</h1>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminConsentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\SocialAuthController;
@@ -228,11 +229,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ConnectionsController::class, 'index'])->name('index');
         Route::get('/complete-oauth', [OAuthController::class, 'showCompleteForm'])->name('complete-oauth');
         Route::post('/complete-oauth', [OAuthController::class, 'completeSetup'])->name('complete-oauth.submit');
+        Route::get('/admin-instructions/{connection}', [AdminConsentController::class, 'showInstructions'])->name('admin-instructions');
         Route::get('/{connection}', [ConnectionsController::class, 'show'])->name('show');
         Route::get('/{connection}/edit', [ConnectionsController::class, 'edit'])->name('edit');
         Route::put('/{connection}', [ConnectionsController::class, 'update'])->name('update');
         Route::delete('/{connection}', [ConnectionsController::class, 'destroy'])->name('destroy');
         Route::post('/{connection}/refresh', [ConnectionsController::class, 'refresh'])->name('refresh');
+    });
+    
+    // Admin Consent (for Microsoft work/school accounts)
+    Route::prefix('admin-consent')->name('admin-consent.')->middleware('auth')->group(function () {
+        Route::get('/microsoft', [AdminConsentController::class, 'initiate'])->name('microsoft');
+        Route::get('/microsoft/callback', [AdminConsentController::class, 'callback'])->name('microsoft.callback');
     });
 
     // Sync rules

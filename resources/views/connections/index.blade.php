@@ -9,6 +9,51 @@
         <p class="text-base sm:text-lg text-gray-600">{{ __('messages.calendar_connections_description') }}</p>
     </div>
     
+    <!-- Pending Admin Approval Section -->
+    @if($pendingConnections->isNotEmpty())
+    <div id="pending-approval" class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mb-8 shadow-sm">
+        <div class="flex items-start mb-4">
+            <div class="flex-shrink-0">
+                <svg class="h-6 w-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-lg font-bold text-yellow-900">
+                    {{ __('messages.pending_admin_approval') }}
+                </h3>
+                <p class="mt-1 text-sm text-yellow-700">
+                    {{ __('messages.admin_consent_explanation') }}
+                </p>
+            </div>
+        </div>
+        
+        @foreach($pendingConnections as $connection)
+        <div class="bg-white rounded-lg p-4 mb-3 shadow-sm">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zm12.6 0H12.6V0H24v11.4z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-medium text-gray-900">{{ $connection->provider_email }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.waiting_for_it_admin') }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <a href="{{ route('connections.admin-instructions', $connection->id) }}" 
+                       class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition">
+                        {{ __('messages.admin_consent_instructions') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @endif
+    
     <!-- Add New Connection -->
     <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 border border-gray-100">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{{ __('messages.add_new_calendar') }}</h2>

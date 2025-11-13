@@ -398,5 +398,26 @@ return [
     'subscription_not_active' => 'Ihr Abonnement ist nicht aktiv.',
     'interval_already_set' => 'Ihr Abonnement ist bereits auf das Intervall :interval eingestellt.',
     'pricing_configuration_error' => 'Fehler bei der Preisgestaltung. Bitte kontaktieren Sie den Support.',
+
+    // Admin Consent & Pending Approval
+    'calendar_pending_approval' => 'Kalender wartet auf Genehmigung',
+    'calendar_connection_requires_approval' => 'Kalenderverbindung erfordert Genehmigung',
+    'work_account_requires_admin' => 'Ihr Arbeitskalender benötigt die Genehmigung des IT-Administrators',
+    'admin_consent_instructions' => 'Anweisungen für IT-Administrator',
+    'connect_different_calendar' => 'Anderen Kalender verbinden',
+    'admin_consent_url' => 'Admin Consent URL',
+    'pending_admin_approval' => 'Wartet auf Admin-Genehmigung',
+    'waiting_for_it_admin' => 'Wartet auf IT-Administrator-Genehmigung',
+    'admin_consent_learn_more' => 'Mehr erfahren',
+    'admin_consent_why_needed' => 'Warum ist die Admin-Genehmigung erforderlich?',
+    'admin_consent_explanation' => 'Arbeits-/Schul-Microsoft-Konten erfordern eine organisationsweite Admin-Genehmigung, bevor SyncMyDay auf Ihren Kalender zugreifen kann. Dies ist eine Sicherheitsfunktion von Microsoft.',
+    'admin_consent_steps_title' => 'Schritte für Ihren IT-Administrator',
+    'admin_consent_step_1' => 'Senden Sie die Admin Consent URL an Ihren IT-Administrator',
+    'admin_consent_step_2' => 'Er muss auf die URL klicken und sich mit seinem Admin-Konto anmelden',
+    'admin_consent_step_3' => 'Er überprüft und genehmigt die Berechtigungen (Calendars.ReadWrite, User.Read)',
+    'admin_consent_step_4' => 'Nach der Genehmigung kehren Sie hierher zurück und versuchen Sie erneut, Ihren Kalender zu verbinden',
+    'admin_consent_copy_url' => 'Admin Consent URL kopieren',
+    'admin_consent_contact_admin' => 'IT-Administrator kontaktieren',
+    'admin_consent_alternative' => 'Alternative: Verwenden Sie ein persönliches Microsoft-Konto (outlook.com, hotmail.com), das keine Admin-Genehmigung erfordert',
 ];
 

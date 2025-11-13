@@ -16,8 +16,26 @@ class ConnectionsController extends Controller
      */
     public function index()
     {
+        // Get active connections (excluding those pending admin approval)
         $connections = auth()->user()
             ->calendarConnections()
+            ->where(function($query) {
+                $query->where('status', '!=', 'error')
+                      ->orWhere(function($q) {
+                          $q->where('status', 'error')
+                            ->where('last_error', 'not like', '%Admin consent required%');
+                      });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get pending connections (those waiting for admin approval)
+        $pendingConnections = auth()->user()
+            ->calendarConnections()
+            ->where(function($query) {
+                $query->where('status', 'error')
+                      ->where('last_error', 'like', '%Admin consent required%');
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -25,7 +43,7 @@ class ConnectionsController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('connections.index', compact('connections', 'emailCalendars'));
+        return view('connections.index', compact('connections', 'emailCalendars', 'pendingConnections'));
     }
 
     /**

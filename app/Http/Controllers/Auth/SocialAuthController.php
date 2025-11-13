@@ -29,6 +29,58 @@ class SocialAuthController extends Controller
     }
     
     /**
+     * Detect Microsoft account type (personal vs work/school)
+     */
+    private function detectMicrosoftAccountType(string $email, array $tokens): string
+    {
+        // Parse JWT token to check tenant type
+        if (isset($tokens['access_token'])) {
+            $accessToken = $tokens['access_token'];
+            $tokenParts = explode('.', $accessToken);
+            
+            if (count($tokenParts) === 3) {
+                try {
+                    $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
+                    
+                    // Check tenant ID - personal accounts use specific tenant ID
+                    if (isset($payload['tid'])) {
+                        $tenantId = $payload['tid'];
+                        // Personal Microsoft accounts have specific tenant IDs
+                        if (in_array($tenantId, [
+                            '9188040d-6c67-4c5b-b112-36a304b66dad', // Common personal account tenant
+                            'consumers', // Sometimes represented as 'consumers'
+                        ])) {
+                            return 'personal';
+                        }
+                    }
+                    
+                    // Check issuer
+                    if (isset($payload['iss'])) {
+                        if (str_contains($payload['iss'], 'consumers')) {
+                            return 'personal';
+                        }
+                    }
+                } catch (\Exception $e) {
+                    Log::debug('Failed to parse JWT token for account type detection', [
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+        
+        // Fallback: Check email domain for known personal account patterns
+        $personalDomains = ['outlook.com', 'hotmail.com', 'live.com', 'msn.com'];
+        $emailDomain = strtolower(substr(strrchr($email, '@'), 1));
+        
+        if (in_array($emailDomain, $personalDomains)) {
+            return 'personal';
+        }
+        
+        // If we can't determine, assume work/school account
+        return 'work';
+    }
+    
+    /**
      * Redirect to Google OAuth for login/registration
      */
     public function redirectToGoogle()
@@ -531,23 +583,46 @@ class SocialAuthController extends Controller
             
             Auth::login($user, true);
             
-            Log::info('Microsoft OAuth - User logged in, connecting calendar');
+            Log::info('Microsoft OAuth - User logged in, attempting calendar connection');
 
-            // Now connect the calendar automatically
-            // Pass the Graph instance that already has the token set
-            $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail, $graph);
-            
-            Log::info('Microsoft OAuth - Calendar connection completed');
+            // Try to connect the calendar automatically, but don't fail login if it fails
+            $calendarConnected = false;
+            try {
+                // Pass the Graph instance that already has the token set
+                $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail, $graph);
+                $calendarConnected = true;
+                Log::info('Microsoft OAuth - Calendar connection completed successfully');
+            } catch (\Exception $e) {
+                // Log error but don't fail login
+                Log::warning('Microsoft OAuth - Calendar connection failed during login', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                    'error_code' => $e->getCode(),
+                ]);
+                
+                // Store info for later display
+                session()->flash('calendar_connection_pending', [
+                    'reason' => 'admin_consent_required',
+                    'provider' => 'microsoft',
+                    'email' => $microsoftEmail,
+                ]);
+            }
 
             // Redirect to onboarding for new users, dashboard for existing users
             if ($user->wasRecentlyCreated) {
+                $message = $calendarConnected 
+                    ? 'Welcome! Your Microsoft account and calendar have been connected successfully.'
+                    : 'Welcome! Your account has been created. Calendar connection requires additional approval.';
                 return redirect()->route('onboarding.start')
-                    ->with('success', 'Welcome! Your Microsoft account and calendar have been connected successfully.');
+                    ->with($calendarConnected ? 'success' : 'warning', $message);
             }
 
             // Existing user - go to dashboard
+            $message = $calendarConnected
+                ? 'Welcome back! You have been logged in successfully.'
+                : 'Welcome back! Calendar connection requires additional approval.';
             return redirect()->route('dashboard')
-                ->with('success', 'Welcome back! You have been logged in successfully.');
+                ->with($calendarConnected ? 'success' : 'warning', $message);
 
         } catch (\Microsoft\Graph\Exception\GraphException $e) {
             Log::error('Microsoft OAuth login failed - GraphException', [
@@ -653,8 +728,13 @@ class SocialAuthController extends Controller
     private function connectMicrosoftCalendar(User $user, array $tokens, string $accountId, string $email, ?\Microsoft\Graph\Graph $graphInstance = null): void
     {
         try {
+            // Detect account type for better error messages
+            $accountType = $this->detectMicrosoftAccountType($email, $tokens);
+            
             Log::info('Microsoft OAuth - Connecting calendar', [
                 'user_id' => $user->id,
+                'email' => $email,
+                'account_type' => $accountType,
                 'has_access_token' => isset($tokens['access_token']),
                 'token_expires_in' => $tokens['expires_in'] ?? null,
                 'has_graph_instance' => $graphInstance !== null,
@@ -670,6 +750,7 @@ class SocialAuthController extends Controller
             Log::info('Microsoft OAuth - Preparing to call /me/calendars', [
                 'token_length' => strlen($accessToken),
                 'token_preview' => substr($accessToken, 0, 20) . '...',
+                'account_type' => $accountType,
             ]);
             
             // Always create a fresh Graph instance for calendar call to avoid any state issues
@@ -684,13 +765,45 @@ class SocialAuthController extends Controller
                     ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
                     ->execute();
             } catch (\Microsoft\Graph\Exception\GraphException $e) {
-                Log::warning('Microsoft OAuth - Graph API /me/calendars failed, trying direct HTTP call', [
+                $errorCode = $e->getCode();
+                $isAdminConsentIssue = ($errorCode === 401 && $accountType === 'work');
+                
+                Log::warning('Microsoft OAuth - Graph API /me/calendars failed', [
                     'error' => $e->getMessage(),
-                    'code' => $e->getCode(),
+                    'code' => $errorCode,
                     'user_id' => $user->id,
+                    'account_type' => $accountType,
+                    'likely_admin_consent_issue' => $isAdminConsentIssue,
                 ]);
                 
-                // Fallback: Try direct HTTP call to see if it's a Graph SDK issue
+                // If it's likely an admin consent issue for work account, handle gracefully
+                if ($isAdminConsentIssue) {
+                    Log::info('Microsoft OAuth - Work account 401 detected, creating pending connection');
+                    
+                    // Create connection record with pending status
+                    CalendarConnection::updateOrCreate(
+                        [
+                            'user_id' => $user->id,
+                            'provider' => 'microsoft',
+                            'provider_account_id' => $accountId,
+                        ],
+                        [
+                            'name' => __('messages.microsoft_calendar'),
+                            'provider_email' => $email,
+                            'status' => 'error',
+                            'last_error' => 'Admin consent required for work account',
+                            'available_calendars' => null,
+                            'selected_calendar_id' => null,
+                        ]
+                    );
+                    
+                    // Throw to trigger the outer catch and set session flag
+                    throw new \Exception('Admin consent required for work account', 401);
+                }
+                
+                // For other errors, try direct HTTP call as fallback
+                Log::info('Microsoft OAuth - Trying direct HTTP call as fallback');
+                
                 try {
                     $httpResponse = \Illuminate\Support\Facades\Http::withHeaders([
                         'Authorization' => 'Bearer ' . $accessToken,
@@ -715,12 +828,14 @@ class SocialAuthController extends Controller
                         Log::error('Microsoft OAuth - Direct HTTP call also failed', [
                             'status' => $httpResponse->status(),
                             'body' => $httpResponse->body(),
+                            'account_type' => $accountType,
                         ]);
                         throw $e; // Re-throw original exception
                     }
                 } catch (\Exception $httpException) {
                     Log::error('Microsoft OAuth - Direct HTTP call exception', [
                         'error' => $httpException->getMessage(),
+                        'account_type' => $accountType,
                     ]);
                     throw $e; // Re-throw original GraphException
                 }
@@ -784,9 +899,14 @@ class SocialAuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to auto-connect Microsoft calendar for OAuth user', [
                 'error' => $e->getMessage(),
+                'error_code' => $e->getCode(),
                 'user_id' => $user->id,
+                'email' => $email,
+                'account_type' => $accountType ?? 'unknown',
+                'is_admin_consent_issue' => ($e->getCode() === 401 && ($accountType ?? 'unknown') === 'work'),
             ]);
-            // Don't throw - user is already logged in
+            // Re-throw to trigger session flag in handleMicrosoftCallback
+            throw $e;
         }
     }
 
