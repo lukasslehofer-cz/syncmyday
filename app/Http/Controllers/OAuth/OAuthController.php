@@ -379,12 +379,12 @@ class OAuthController extends Controller
             
             // If 401 on work account and we have account info, handle admin consent
             if ($is401 && isset($accountType) && $accountType === 'work' && isset($accountInfo)) {
-                Log::info('Microsoft OAuth - Work account 401 detected, creating pending connection for admin consent flow', [
+                Log::info('Microsoft OAuth - Work account 401 detected, redirecting to admin consent', [
                     'user_id' => auth()->id(),
                     'email' => $accountInfo['email'] ?? 'unknown',
                 ]);
                 
-                // Create a pending connection record
+                // Create a pending connection record to track state
                 $connection = CalendarConnection::updateOrCreate(
                     [
                         'user_id' => auth()->id(),
@@ -401,9 +401,27 @@ class OAuthController extends Controller
                     ]
                 );
                 
-                // Redirect to admin instructions
-                return redirect()->route('connections.admin-instructions', $connection->id)
-                    ->with('info', __('messages.work_account_requires_admin'));
+                // Build admin consent URL
+                $clientId = config('services.microsoft.client_id');
+                $currentUrl = rtrim(url('/'), '/');
+                $redirectUri = $currentUrl . '/admin-consent/microsoft/callback';
+                $scopes = implode(' ', config('services.microsoft.scopes'));
+                
+                $adminConsentUrl = sprintf(
+                    'https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=%s&redirect_uri=%s&scope=%s&state=%s',
+                    $clientId,
+                    urlencode($redirectUri),
+                    urlencode($scopes),
+                    $connection->id // Pass connection ID for callback
+                );
+                
+                Log::info('Microsoft OAuth - Redirecting to admin consent screen', [
+                    'connection_id' => $connection->id,
+                    'admin_consent_url' => $adminConsentUrl,
+                ]);
+                
+                // Redirect directly to admin consent screen
+                return redirect($adminConsentUrl);
             }
             
             Log::error('Microsoft OAuth failed', [

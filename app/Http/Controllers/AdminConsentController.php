@@ -48,11 +48,14 @@ class AdminConsentController extends Controller
      */
     public function callback(Request $request)
     {
+        $connectionId = $request->state; // We passed connection ID as state
+        
         Log::info('Microsoft Admin Consent - Callback received', [
             'has_admin_consent' => $request->has('admin_consent'),
             'has_tenant' => $request->has('tenant'),
             'has_error' => $request->has('error'),
-            'state' => $request->state,
+            'connection_id' => $connectionId,
+            'user_id' => auth()->id(),
         ]);
         
         // Check if admin consent was granted
@@ -63,7 +66,7 @@ class AdminConsentController extends Controller
             ]);
             
             return redirect()->route('connections.index')
-                ->with('error', 'Admin consent was not granted: ' . $request->error_description);
+                ->with('error', 'Admin consent was not granted: ' . ($request->error_description ?? $request->error));
         }
         
         if ($request->admin_consent === 'True' && $request->has('tenant')) {
@@ -71,15 +74,29 @@ class AdminConsentController extends Controller
             
             Log::info('Microsoft Admin Consent - Granted', [
                 'tenant_id' => $tenantId,
+                'connection_id' => $connectionId,
                 'user_id' => auth()->id(),
             ]);
             
-            // Note: We don't automatically update connections here because:
-            // 1. Admin consent is tenant-wide, not user-specific
-            // 2. Users need to try connecting again to get a new token with the approved scopes
+            // Update connection status if we have the connection ID
+            if ($connectionId) {
+                $connection = CalendarConnection::find($connectionId);
+                if ($connection && $connection->user_id === auth()->id()) {
+                    $connection->update([
+                        'status' => 'pending',
+                        'last_error' => null,
+                    ]);
+                    
+                    Log::info('Microsoft Admin Consent - Connection updated to pending', [
+                        'connection_id' => $connection->id,
+                    ]);
+                }
+            }
             
-            return redirect()->route('connections.index')
-                ->with('success', 'Admin consent granted! You can now connect your Microsoft calendar. Please try the connection again.');
+            // Redirect back to OAuth flow to get a new token with approved scopes
+            Log::info('Microsoft Admin Consent - Redirecting to OAuth flow for re-connection');
+            return redirect()->route('oauth.microsoft')
+                ->with('success', 'Admin consent granted! Redirecting to complete calendar connection...');
         }
         
         return redirect()->route('connections.index')

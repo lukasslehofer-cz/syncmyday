@@ -608,7 +608,7 @@ class SocialAuthController extends Controller
                 }
             }
 
-            // If admin consent is required, redirect to instructions immediately
+            // If admin consent is required, redirect to admin consent screen immediately
             if ($adminConsentRequired) {
                 // Find the pending connection that was created
                 $pendingConnection = \App\Models\CalendarConnection::where('user_id', $user->id)
@@ -619,13 +619,27 @@ class SocialAuthController extends Controller
                     ->first();
                 
                 if ($pendingConnection) {
-                    Log::info('Microsoft OAuth - Redirecting to admin instructions', [
+                    Log::info('Microsoft OAuth - Redirecting to admin consent screen', [
                         'user_id' => $user->id,
                         'connection_id' => $pendingConnection->id,
                     ]);
                     
-                    return redirect()->route('connections.admin-instructions', $pendingConnection->id)
-                        ->with('info', __('messages.work_account_requires_admin'));
+                    // Build admin consent URL
+                    $clientId = config('services.microsoft.client_id');
+                    $currentUrl = rtrim(url('/'), '/');
+                    $redirectUri = $currentUrl . '/admin-consent/microsoft/callback';
+                    $scopes = implode(' ', config('services.microsoft.scopes'));
+                    
+                    $adminConsentUrl = sprintf(
+                        'https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=%s&redirect_uri=%s&scope=%s&state=%s',
+                        $clientId,
+                        urlencode($redirectUri),
+                        urlencode($scopes),
+                        $pendingConnection->id // Pass connection ID for callback
+                    );
+                    
+                    // Redirect directly to admin consent screen
+                    return redirect($adminConsentUrl);
                 }
             }
 
