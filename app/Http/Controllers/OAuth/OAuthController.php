@@ -320,41 +320,10 @@ class OAuthController extends Controller
             
             // Get available calendars
             Log::info('Microsoft OAuth - Calling /me/calendars...');
-            try {
-                $calendarList = $graph->createRequest('GET', '/me/calendars')
-                    ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
-                    ->execute();
-                Log::info('Microsoft OAuth - /me/calendars succeeded');
-            } catch (\Microsoft\Graph\Exception\GraphException $e) {
-                // If it's a 401 error on a work account, it's likely an admin consent issue
-                if ($e->getCode() === 401 && $accountType === 'work') {
-                    Log::info('Microsoft OAuth - Work account 401 detected, creating pending connection for admin consent flow');
-                    
-                    // Create a pending connection record
-                    $connection = CalendarConnection::updateOrCreate(
-                        [
-                            'user_id' => auth()->id(),
-                            'provider' => 'microsoft',
-                            'provider_account_id' => $accountInfo['id'],
-                        ],
-                        [
-                            'name' => __('messages.microsoft_calendar'),
-                            'provider_email' => $accountInfo['email'],
-                            'status' => 'error',
-                            'last_error' => 'Admin consent required for work account',
-                            'available_calendars' => null,
-                            'selected_calendar_id' => null,
-                        ]
-                    );
-                    
-                    // Redirect to admin instructions
-                    return redirect()->route('connections.admin-instructions', $connection->id)
-                        ->with('info', __('messages.work_account_requires_admin'));
-                }
-                
-                // For other errors, re-throw
-                throw $e;
-            }
+            $calendarList = $graph->createRequest('GET', '/me/calendars')
+                ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+                ->execute();
+            Log::info('Microsoft OAuth - /me/calendars succeeded');
             $calendars = [];
             foreach ($calendarList as $calendar) {
                 $calendars[] = [
@@ -398,6 +367,45 @@ class OAuthController extends Controller
             return redirect()->route('connections.complete-oauth');
 
         } catch (\Exception $e) {
+            // Check if this is a 401 error (admin consent issue for work accounts)
+            $is401 = false;
+            if (method_exists($e, 'getCode')) {
+                $is401 = ($e->getCode() === 401);
+            } elseif (method_exists($e, 'getResponse') && $e->getResponse()) {
+                $is401 = ($e->getResponse()->getStatusCode() === 401);
+            } elseif (str_contains($e->getMessage(), '401 Unauthorized')) {
+                $is401 = true;
+            }
+            
+            // If 401 on work account and we have account info, handle admin consent
+            if ($is401 && isset($accountType) && $accountType === 'work' && isset($accountInfo)) {
+                Log::info('Microsoft OAuth - Work account 401 detected, creating pending connection for admin consent flow', [
+                    'user_id' => auth()->id(),
+                    'email' => $accountInfo['email'] ?? 'unknown',
+                ]);
+                
+                // Create a pending connection record
+                $connection = CalendarConnection::updateOrCreate(
+                    [
+                        'user_id' => auth()->id(),
+                        'provider' => 'microsoft',
+                        'provider_account_id' => $accountInfo['id'],
+                    ],
+                    [
+                        'name' => __('messages.microsoft_calendar'),
+                        'provider_email' => $accountInfo['email'],
+                        'status' => 'error',
+                        'last_error' => 'Admin consent required for work account',
+                        'available_calendars' => null,
+                        'selected_calendar_id' => null,
+                    ]
+                );
+                
+                // Redirect to admin instructions
+                return redirect()->route('connections.admin-instructions', $connection->id)
+                    ->with('info', __('messages.work_account_requires_admin'));
+            }
+            
             Log::error('Microsoft OAuth failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
