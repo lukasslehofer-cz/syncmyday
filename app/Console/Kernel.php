@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webhooks:renew')->everySixHours();
         $schedule->command('logs:clean')->daily();
         $schedule->command('connections:check')->hourly();
+        $schedule->command('sync:clean-orphaned-rules --force')->dailyAt('02:30'); // Clean orphaned sync rules at 2:30 AM
         
         // Inbound email processing
         $schedule->command('app:process-inbound-emails')->everyFiveMinutes();

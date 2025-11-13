@@ -34,7 +34,11 @@ class CalendarConnectionObserver
         // Step 3: Delete all blockers IN this connection (as TARGET)
         $this->deleteBlockersInTarget($connection);
 
-        // Step 4: Clean up sync rules where this is the only/last target
+        // Step 4: Explicitly delete sync rules where this is the SOURCE
+        // (Don't rely only on DB cascade - be explicit)
+        $this->deleteSourceSyncRules($connection);
+
+        // Step 5: Clean up sync rules where this is the only/last target
         $this->cleanupOrphanedSyncRules($connection);
 
         // Mappings will be deleted automatically by cascade delete in DB
@@ -295,12 +299,59 @@ class CalendarConnectionObserver
     }
 
     /**
+     * Explicitly delete sync rules where this connection is the SOURCE
+     * 
+     * IMPORTANT: We don't rely only on DB cascade here because:
+     * 1. Foreign key constraints might not be properly set up in all environments
+     * 2. Being explicit prevents orphaned rules
+     * 3. This triggers SyncRuleObserver which cleans up blockers properly
+     */
+    private function deleteSourceSyncRules(CalendarConnection $connection)
+    {
+        $sourceRules = \App\Models\SyncRule::where('source_connection_id', $connection->id)->get();
+        
+        if ($sourceRules->isEmpty()) {
+            Log::info('No sync rules with this connection as source');
+            return;
+        }
+        
+        Log::info("Found {$sourceRules->count()} sync rule(s) with this connection as source - deleting explicitly", [
+            'connection_id' => $connection->id,
+            'rule_ids' => $sourceRules->pluck('id')->toArray(),
+        ]);
+        
+        foreach ($sourceRules as $rule) {
+            try {
+                Log::info('Deleting sync rule - source connection removed', [
+                    'rule_id' => $rule->id,
+                    'source_connection_id' => $connection->id,
+                    'user_id' => $rule->user_id,
+                ]);
+                
+                // This will trigger SyncRuleObserver::deleting which cleans up blockers
+                $rule->delete();
+                
+            } catch (\Exception $e) {
+                Log::error('Failed to delete source sync rule', [
+                    'rule_id' => $rule->id,
+                    'connection_id' => $connection->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+        
+        Log::info('Source sync rules cleanup completed', [
+            'connection_id' => $connection->id,
+            'deleted_count' => $sourceRules->count(),
+        ]);
+    }
+
+    /**
      * Clean up sync rules that would become orphaned after deleting this connection
      */
     private function cleanupOrphanedSyncRules(CalendarConnection $connection)
     {
-        // Rules where this connection is a SOURCE will be auto-deleted by cascade
-        // But we need to check rules where this is a TARGET
+        // Rules where this connection is a TARGET
         
         $targetRules = \App\Models\SyncRuleTarget::where('target_connection_id', $connection->id)
             ->with('syncRule')

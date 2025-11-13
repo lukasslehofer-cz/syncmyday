@@ -63,6 +63,24 @@ class SyncCalendarsCommand extends Command
         
         foreach ($rules as $rule) {
             try {
+                // CRITICAL: Check if source connection still exists
+                if (!$rule->sourceConnection) {
+                    $this->error("  ❌ Rule #{$rule->id}: Source connection is missing (orphaned rule)");
+                    
+                    Log::error('Orphaned sync rule detected - source connection missing', [
+                        'rule_id' => $rule->id,
+                        'source_connection_id' => $rule->source_connection_id,
+                        'user_id' => $rule->user_id,
+                    ]);
+                    
+                    // Auto-delete orphaned rule
+                    $rule->delete();
+                    $this->warn("    🗑️  Orphaned rule deleted automatically");
+                    
+                    $errorCount++;
+                    continue;
+                }
+                
                 $this->info("  → Syncing rule #{$rule->id}: {$rule->sourceConnection->provider_email}");
                 
                 // Check if user has active subscription (skip expired trials)
