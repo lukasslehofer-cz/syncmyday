@@ -28,11 +28,13 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Register model observers
-        \App\Models\User::observe(\App\Observers\UserObserver::class);
-        \App\Models\CalendarConnection::observe(\App\Observers\CalendarConnectionObserver::class);
-        \App\Models\SyncRule::observe(\App\Observers\SyncRuleObserver::class);
-        \App\Models\EmailCalendarConnection::observe(\App\Observers\EmailCalendarConnectionObserver::class);
+        // Register model observers only when not running in console (migrations, etc.)
+        if (!$this->app->runningInConsole()) {
+            \App\Models\User::observe(\App\Observers\UserObserver::class);
+            \App\Models\CalendarConnection::observe(\App\Observers\CalendarConnectionObserver::class);
+            \App\Models\SyncRule::observe(\App\Observers\SyncRuleObserver::class);
+            \App\Models\EmailCalendarConnection::observe(\App\Observers\EmailCalendarConnectionObserver::class);
+        }
 
         // Note: SendWelcomeEmail listener removed - welcome email now sent immediately upon registration
     }
