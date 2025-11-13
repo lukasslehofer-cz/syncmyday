@@ -318,6 +318,25 @@ class OAuthController extends Controller
                 'account_type' => $accountType,
             ]);
             
+            // Debug: Parse JWT token to see claims
+            if (isset($tokens['access_token'])) {
+                $tokenParts = explode('.', $tokens['access_token']);
+                if (count($tokenParts) === 3) {
+                    try {
+                        $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
+                        Log::info('Microsoft OAuth - Token claims', [
+                            'aud' => $payload['aud'] ?? 'not set',
+                            'scp' => $payload['scp'] ?? 'not set',
+                            'roles' => $payload['roles'] ?? 'not set',
+                            'tid' => $payload['tid'] ?? 'not set',
+                            'iss' => $payload['iss'] ?? 'not set',
+                        ]);
+                    } catch (\Exception $e) {
+                        Log::warning('Failed to parse token claims', ['error' => $e->getMessage()]);
+                    }
+                }
+            }
+            
             // Get available calendars
             Log::info('Microsoft OAuth - Calling /me/calendars...');
             $calendarList = $graph->createRequest('GET', '/me/calendars')
