@@ -63,6 +63,8 @@ return [
     'add_new_calendar' => 'Neuen Kalender hinzufügen',
     'google_calendar' => 'Google Kalender',
     'microsoft_calendar' => 'Microsoft Kalender',
+    'microsoft_no_mailbox_work' => 'Dieses Arbeitskonto verfügt nicht über ein aktives Exchange Online-Postfach. Wenden Sie sich bitte an Ihren IT-Administrator, um eine Exchange Online-Lizenz zu aktivieren, oder verwenden Sie ein anderes Microsoft-Konto.',
+    'microsoft_no_mailbox_personal' => 'Dieses Microsoft-Konto verfügt nicht über einen aktiven Kalender. Stellen Sie bitte sicher, dass Ihr Konto Zugriff auf den Outlook-Kalender hat, oder verwenden Sie ein anderes Microsoft-Konto.',
     'microsoft_365' => 'Microsoft 365',
     'apple_calendar' => 'Apple Kalender',
     'caldav_calendar' => 'CalDAV Kalender',

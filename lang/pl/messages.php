@@ -63,6 +63,8 @@ return [
     'add_new_calendar' => 'Dodaj nowy kalendarz',
     'google_calendar' => 'Kalendarz Google',
     'microsoft_calendar' => 'Kalendarz Microsoft',
+    'microsoft_no_mailbox_work' => 'To konto służbowe nie ma aktywnej skrzynki pocztowej Exchange Online. Skontaktuj się z administratorem IT, aby aktywować licencję Exchange Online, lub użyj innego konta Microsoft.',
+    'microsoft_no_mailbox_personal' => 'To konto Microsoft nie ma aktywnego kalendarza. Upewnij się, że Twoje konto ma dostęp do Kalendarza Outlook, lub użyj innego konta Microsoft.',
     'microsoft_365' => 'Microsoft 365',
     'apple_calendar' => 'Kalendarz Apple',
     'caldav_calendar' => 'Kalendarz CalDAV',

@@ -116,6 +116,8 @@ return [
     'add_new_calendar' => 'Add New Calendar',
     'google_calendar' => 'Google Calendar',
     'microsoft_calendar' => 'Microsoft Calendar',
+    'microsoft_no_mailbox_work' => 'This work account does not have an active Exchange Online mailbox. Please contact your IT administrator to activate an Exchange Online license, or use a different Microsoft account.',
+    'microsoft_no_mailbox_personal' => 'This Microsoft account does not have an active calendar. Please ensure your account has access to Outlook Calendar, or use a different Microsoft account.',
     'microsoft_365' => 'Microsoft 365',
     'apple_calendar' => 'Apple Calendar',
     'caldav_calendar' => 'CalDAV Calendar',

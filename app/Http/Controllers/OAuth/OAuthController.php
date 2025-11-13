@@ -348,29 +348,24 @@ class OAuthController extends Controller
                 Log::info('Microsoft OAuth - /me/calendars HTTP response', [
                     'status' => $response->status(),
                     'body' => $response->body(),
-                    'headers' => $response->headers(),
                 ]);
                 
-                // Try alternative endpoint - just /me/calendar (singular)
-                if (!$response->successful()) {
-                    Log::info('Microsoft OAuth - Trying /me/calendar (singular)...');
-                    $altResponse = \Illuminate\Support\Facades\Http::withToken($tokens['access_token'])
-                        ->get('https://graph.microsoft.com/v1.0/me/calendar');
-                    
-                    Log::info('Microsoft OAuth - /me/calendar response', [
-                        'status' => $altResponse->status(),
-                        'body' => $altResponse->body(),
+                // Check if this is a "no mailbox" error (401 with empty body)
+                if ($response->status() === 401 && empty(trim($response->body()))) {
+                    Log::warning('Microsoft OAuth - No mailbox detected (401 with empty body)', [
+                        'user_id' => auth()->id(),
+                        'email' => $accountInfo['email'],
+                        'account_type' => $accountType,
                     ]);
                     
-                    // Try /me/events to see if calendar access works at all
-                    Log::info('Microsoft OAuth - Trying /me/events...');
-                    $eventsResponse = \Illuminate\Support\Facades\Http::withToken($tokens['access_token'])
-                        ->get('https://graph.microsoft.com/v1.0/me/events?$top=1');
-                    
-                    Log::info('Microsoft OAuth - /me/events response', [
-                        'status' => $eventsResponse->status(),
-                        'body' => substr($eventsResponse->body(), 0, 500),
-                    ]);
+                    // Check if it's a work account without Exchange license
+                    if ($accountType === 'work') {
+                        return redirect()->route('connections.index')
+                            ->with('error', __('messages.microsoft_no_mailbox_work'));
+                    } else {
+                        return redirect()->route('connections.index')
+                            ->with('error', __('messages.microsoft_no_mailbox_personal'));
+                    }
                 }
                 
                 if ($response->successful()) {

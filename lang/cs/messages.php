@@ -112,6 +112,8 @@ return [
     'add_new_calendar' => 'Přidat nový kalendář',
     'google_calendar' => 'Kalendář Google',
     'microsoft_calendar' => 'Kalendář Microsoft',
+    'microsoft_no_mailbox_work' => 'Tento pracovní účet nemá aktivní Exchange Online mailbox. Kontaktujte prosím IT administrátora pro aktivaci Exchange Online licence, nebo použijte jiný Microsoft účet.',
+    'microsoft_no_mailbox_personal' => 'Tento Microsoft účet nemá aktivní kalendář. Ujistěte se prosím, že váš účet má přístup k Outlook kalendáři, nebo použijte jiný Microsoft účet.',
     'microsoft_365' => 'Microsoft 365',
     'apple_calendar' => 'Kalendář Apple',
     'caldav_calendar' => 'Kalendář CalDAV',
