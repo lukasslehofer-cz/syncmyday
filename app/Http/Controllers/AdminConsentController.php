@@ -78,25 +78,21 @@ class AdminConsentController extends Controller
                 'user_id' => auth()->id(),
             ]);
             
-            // Update connection status if we have the connection ID
+            // Delete the old connection (it has invalid token without approved scopes)
             if ($connectionId) {
                 $connection = CalendarConnection::find($connectionId);
                 if ($connection && $connection->user_id === auth()->id()) {
-                    $connection->update([
-                        'status' => 'active',
-                        'last_error' => null,
-                    ]);
-                    
-                    Log::info('Microsoft Admin Consent - Connection updated to active', [
+                    Log::info('Microsoft Admin Consent - Deleting old connection with unapproved token', [
                         'connection_id' => $connection->id,
                     ]);
+                    $connection->delete();
                 }
             }
             
-            // Redirect back to OAuth flow to get a new token with approved scopes
-            Log::info('Microsoft Admin Consent - Redirecting to OAuth flow for re-connection');
+            // Redirect back to OAuth flow to get a NEW token with approved scopes
+            Log::info('Microsoft Admin Consent - Redirecting to OAuth flow for fresh connection');
             return redirect()->route('oauth.microsoft')
-                ->with('success', 'Admin consent granted! Redirecting to complete calendar connection...');
+                ->with('success', 'Admin consent granted! Now connecting your calendar with approved permissions...');
         }
         
         return redirect()->route('connections.index')
