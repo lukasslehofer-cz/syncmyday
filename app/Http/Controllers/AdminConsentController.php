@@ -83,11 +83,11 @@ class AdminConsentController extends Controller
                 $connection = CalendarConnection::find($connectionId);
                 if ($connection && $connection->user_id === auth()->id()) {
                     $connection->update([
-                        'status' => 'pending',
+                        'status' => 'active',
                         'last_error' => null,
                     ]);
                     
-                    Log::info('Microsoft Admin Consent - Connection updated to pending', [
+                    Log::info('Microsoft Admin Consent - Connection updated to active', [
                         'connection_id' => $connection->id,
                     ]);
                 }
