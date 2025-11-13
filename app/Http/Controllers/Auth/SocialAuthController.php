@@ -587,6 +587,7 @@ class SocialAuthController extends Controller
 
             // Try to connect the calendar automatically, but don't fail login if it fails
             $calendarConnected = false;
+            $adminConsentRequired = false;
             try {
                 // Pass the Graph instance that already has the token set
                 $this->connectMicrosoftCalendar($user, $tokens, $microsoftId, $microsoftEmail, $graph);
@@ -600,12 +601,32 @@ class SocialAuthController extends Controller
                     'error_code' => $e->getCode(),
                 ]);
                 
-                // Store info for later display
-                session()->flash('calendar_connection_pending', [
-                    'reason' => 'admin_consent_required',
-                    'provider' => 'microsoft',
-                    'email' => $microsoftEmail,
-                ]);
+                // Check if it's an admin consent issue (401 error)
+                if ($e->getCode() === 401) {
+                    $adminConsentRequired = true;
+                    Log::info('Microsoft OAuth - Admin consent detected, will redirect to instructions');
+                }
+            }
+
+            // If admin consent is required, redirect to instructions immediately
+            if ($adminConsentRequired) {
+                // Find the pending connection that was created
+                $pendingConnection = \App\Models\CalendarConnection::where('user_id', $user->id)
+                    ->where('provider', 'microsoft')
+                    ->where('provider_account_id', $microsoftId)
+                    ->where('status', 'error')
+                    ->where('last_error', 'like', '%Admin consent required%')
+                    ->first();
+                
+                if ($pendingConnection) {
+                    Log::info('Microsoft OAuth - Redirecting to admin instructions', [
+                        'user_id' => $user->id,
+                        'connection_id' => $pendingConnection->id,
+                    ]);
+                    
+                    return redirect()->route('connections.admin-instructions', $pendingConnection->id)
+                        ->with('info', __('messages.work_account_requires_admin'));
+                }
             }
 
             // Redirect to onboarding for new users, dashboard for existing users

@@ -14,6 +14,58 @@ use Illuminate\Support\Str;
 class OAuthController extends Controller
 {
     /**
+     * Detect Microsoft account type (personal vs work/school)
+     */
+    private function detectMicrosoftAccountType(string $email, array $tokens): string
+    {
+        // Parse JWT token to check tenant type
+        if (isset($tokens['access_token'])) {
+            $accessToken = $tokens['access_token'];
+            $tokenParts = explode('.', $accessToken);
+            
+            if (count($tokenParts) === 3) {
+                try {
+                    $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
+                    
+                    // Check tenant ID - personal accounts use specific tenant ID
+                    if (isset($payload['tid'])) {
+                        $tenantId = $payload['tid'];
+                        // Personal Microsoft accounts have specific tenant IDs
+                        if (in_array($tenantId, [
+                            '9188040d-6c67-4c5b-b112-36a304b66dad', // Common personal account tenant
+                            'consumers', // Sometimes represented as 'consumers'
+                        ])) {
+                            return 'personal';
+                        }
+                    }
+                    
+                    // Check issuer
+                    if (isset($payload['iss'])) {
+                        if (str_contains($payload['iss'], 'consumers')) {
+                            return 'personal';
+                        }
+                    }
+                } catch (\Exception $e) {
+                    Log::debug('Failed to parse JWT token for account type detection', [
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+        
+        // Fallback: Check email domain for known personal account patterns
+        $personalDomains = ['outlook.com', 'hotmail.com', 'live.com', 'msn.com'];
+        $emailDomain = strtolower(substr(strrchr($email, '@'), 1));
+        
+        if (in_array($emailDomain, $personalDomains)) {
+            return 'personal';
+        }
+        
+        // If we can't determine, assume work/school account
+        return 'work';
+    }
+    
+    /**
      * Redirect to Google OAuth
      */
     public function redirectToGoogle(GoogleCalendarService $service)
@@ -256,17 +308,53 @@ class OAuthController extends Controller
                 'id' => $user->getId(),
                 'email' => $user->getUserPrincipalName(),
             ];
+            
+            // Detect account type
+            $accountType = $this->detectMicrosoftAccountType($accountInfo['email'], $tokens);
+            
             Log::info('Microsoft OAuth - /me succeeded', [
                 'user_id' => $accountInfo['id'],
                 'email' => $accountInfo['email'],
+                'account_type' => $accountType,
             ]);
             
             // Get available calendars
             Log::info('Microsoft OAuth - Calling /me/calendars...');
-            $calendarList = $graph->createRequest('GET', '/me/calendars')
-                ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
-                ->execute();
-            Log::info('Microsoft OAuth - /me/calendars succeeded');
+            try {
+                $calendarList = $graph->createRequest('GET', '/me/calendars')
+                    ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
+                    ->execute();
+                Log::info('Microsoft OAuth - /me/calendars succeeded');
+            } catch (\Microsoft\Graph\Exception\GraphException $e) {
+                // If it's a 401 error on a work account, it's likely an admin consent issue
+                if ($e->getCode() === 401 && $accountType === 'work') {
+                    Log::info('Microsoft OAuth - Work account 401 detected, creating pending connection for admin consent flow');
+                    
+                    // Create a pending connection record
+                    $connection = CalendarConnection::updateOrCreate(
+                        [
+                            'user_id' => auth()->id(),
+                            'provider' => 'microsoft',
+                            'provider_account_id' => $accountInfo['id'],
+                        ],
+                        [
+                            'name' => __('messages.microsoft_calendar'),
+                            'provider_email' => $accountInfo['email'],
+                            'status' => 'error',
+                            'last_error' => 'Admin consent required for work account',
+                            'available_calendars' => null,
+                            'selected_calendar_id' => null,
+                        ]
+                    );
+                    
+                    // Redirect to admin instructions
+                    return redirect()->route('connections.admin-instructions', $connection->id)
+                        ->with('info', __('messages.work_account_requires_admin'));
+                }
+                
+                // For other errors, re-throw
+                throw $e;
+            }
             $calendars = [];
             foreach ($calendarList as $calendar) {
                 $calendars[] = [
