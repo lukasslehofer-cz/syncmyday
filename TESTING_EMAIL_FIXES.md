@@ -3,16 +3,21 @@
 ## Před testováním
 
 ### 1. Spusť migraci
+
 ```bash
 php artisan migrate
 ```
+
 nebo v produkci:
+
 ```bash
 php artisan migrate --force
 ```
 
 ### 2. Ověř scheduler
+
 Ujisti se, že cron běží:
+
 ```bash
 php artisan schedule:list
 ```
@@ -22,11 +27,13 @@ php artisan schedule:list
 ### ✅ Scénář 1: Registrace přes Email/Password
 
 **Kroky:**
+
 1. Jdi na `/register`
 2. Vyplň formulář s email/heslem
 3. Odešli registraci
 
 **Očekávaný výsledek:**
+
 - ✓ User je vytvořen s `email_verified_at = NULL`
 - ✓ Email verification byl odeslán (zkontroluj logy)
 - ✓ Welcome email byl odeslán
@@ -34,6 +41,7 @@ php artisan schedule:list
 - ✓ User může znovu poslat verification email
 
 **Ověření v DB:**
+
 ```sql
 SELECT email, email_verified_at, created_at FROM users WHERE email = 'test@example.com';
 ```
@@ -43,16 +51,19 @@ SELECT email, email_verified_at, created_at FROM users WHERE email = 'test@examp
 ### ✅ Scénář 2: Registrace přes OAuth (Google/Microsoft)
 
 **Kroky:**
+
 1. Jdi na `/login`
 2. Klikni na "Continue with Google"
 3. Autorizuj aplikaci
 
 **Očekávaný výsledek:**
+
 - ✓ User je vytvořen s `email_verified_at = NOW()`
 - ✓ Žádný verification email není odeslán
 - ✓ User je přesměrován přímo na dashboard/onboarding
 
 **Ověření v DB:**
+
 ```sql
 SELECT email, email_verified_at, oauth_provider FROM users WHERE email = 'oauth@example.com';
 ```
@@ -62,15 +73,18 @@ SELECT email, email_verified_at, oauth_provider FROM users WHERE email = 'oauth@
 ### ✅ Scénář 3: Email Verification Link
 
 **Kroky:**
+
 1. Po registraci (scénář 1), otevři verification email
 2. Klikni na verification link
 
 **Očekávaný výsledek:**
+
 - ✓ Email je ověřen (`email_verified_at` je nastaven)
 - ✓ User je přesměrován na onboarding
 - ✓ Success message je zobrazen
 
 **Ověření v DB:**
+
 ```sql
 SELECT email, email_verified_at FROM users WHERE email = 'test@example.com';
 ```
@@ -80,30 +94,35 @@ SELECT email, email_verified_at FROM users WHERE email = 'test@example.com';
 ### ✅ Scénář 4: Trial končí dnes - První email
 
 **Příprava:**
+
 ```sql
 -- Vytvoř testovacího usera s trialem končícím dnes
-UPDATE users 
-SET subscription_ends_at = NOW(), 
+UPDATE users
+SET subscription_ends_at = NOW(),
     stripe_subscription_id = NULL,
     trial_expired_email_sent_at = NULL
 WHERE email = 'test@example.com';
 ```
 
 **Kroky:**
+
 1. Spusť command: `php artisan trial:expire`
 
 **Očekávaný výsledek:**
+
 - ✓ Trial expired email byl odeslán (zkontroluj logy)
 - ✓ `trial_expired_email_sent_at` je nastaven
 - ✓ `trial_expired_reminder_sent_at` je NULL
 
 **Ověření v DB:**
+
 ```sql
-SELECT email, trial_expired_email_sent_at, trial_expired_reminder_sent_at 
+SELECT email, trial_expired_email_sent_at, trial_expired_reminder_sent_at
 FROM users WHERE email = 'test@example.com';
 ```
 
 **Důležité:**
+
 - ✓ Pokud spustíš command znovu DRUHÝ DEN, email se NEPOŠLE (již byl poslán)
 
 ---
@@ -111,9 +130,10 @@ FROM users WHERE email = 'test@example.com';
 ### ✅ Scénář 5: Trial skončil před 5 dny - Reminder email
 
 **Příprava:**
+
 ```sql
 -- Nastavit initial email jako odeslaný před 5 dny
-UPDATE users 
+UPDATE users
 SET subscription_ends_at = NOW() - INTERVAL 5 DAY,
     trial_expired_email_sent_at = NOW() - INTERVAL 5 DAY,
     trial_expired_reminder_sent_at = NULL,
@@ -122,19 +142,23 @@ WHERE email = 'test@example.com';
 ```
 
 **Kroky:**
+
 1. Spusť command: `php artisan trial:expire`
 
 **Očekávaný výsledek:**
+
 - ✓ Reminder email byl odeslán (zkontroluj logy)
 - ✓ `trial_expired_reminder_sent_at` je nastaven
 
 **Ověření v DB:**
+
 ```sql
-SELECT email, trial_expired_email_sent_at, trial_expired_reminder_sent_at 
+SELECT email, trial_expired_email_sent_at, trial_expired_reminder_sent_at
 FROM users WHERE email = 'test@example.com';
 ```
 
 **Důležité:**
+
 - ✓ Pokud spustíš command znovu, reminder se NEPOŠLE (již byl poslán)
 
 ---
@@ -142,9 +166,10 @@ FROM users WHERE email = 'test@example.com';
 ### ✅ Scénář 6: Trial skončil před 10 dny - Žádný email
 
 **Příprava:**
+
 ```sql
 -- Nastavit oba emaily jako odeslané
-UPDATE users 
+UPDATE users
 SET subscription_ends_at = NOW() - INTERVAL 10 DAY,
     trial_expired_email_sent_at = NOW() - INTERVAL 10 DAY,
     trial_expired_reminder_sent_at = NOW() - INTERVAL 5 DAY,
@@ -153,9 +178,11 @@ WHERE email = 'test@example.com';
 ```
 
 **Kroky:**
+
 1. Spusť command: `php artisan trial:expire`
 
 **Očekávaný výsledek:**
+
 - ✓ ŽÁDNÝ email není odeslán
 - ✓ V logu je: "Found 0 users needing initial trial expired email"
 - ✓ V logu je: "Found 0 users needing 5-day reminder email"
@@ -165,25 +192,29 @@ WHERE email = 'test@example.com';
 ### ✅ Scénář 7: Grace Period končí - Subscription Suspended
 
 **Příprava:**
+
 ```sql
 -- Nastavit grace period končící dnes
-UPDATE users 
+UPDATE users
 SET grace_period_ends_at = NOW(),
     subscription_tier = 'pro'
 WHERE email = 'test@example.com';
 ```
 
 **Kroky:**
+
 1. Spusť command: `php artisan grace-period:check`
 
 **Očekávaný výsledek:**
+
 - ✓ Subscription suspended email byl odeslán
 - ✓ `grace_period_ends_at` je nastaven na NULL
 - ✓ User má stále `subscription_tier = 'pro'` (soft-lock)
 
 **Ověření:**
+
 ```sql
-SELECT email, grace_period_ends_at, subscription_tier 
+SELECT email, grace_period_ends_at, subscription_tier
 FROM users WHERE email = 'test@example.com';
 ```
 
@@ -192,14 +223,17 @@ FROM users WHERE email = 'test@example.com';
 ### ✅ Scénář 8: Email Calendar s ověřeným emailem
 
 **Příprava:**
+
 - User má ověřený email (`email_verified_at` is NOT NULL)
 
 **Kroky:**
+
 1. Jdi na email calendars
 2. Přidej nový email calendar s STEJNÝM emailem jako má user registrovaný
 3. Odešli formulář
 
 **Očekávaný výsledek:**
+
 - ✓ Email calendar je vytvořen
 - ✓ `target_email_verified_at` je OKAMŽITĚ nastaven (auto-verify)
 - ✓ ŽÁDNÝ verification email není odeslán
@@ -216,6 +250,7 @@ php artisan schedule:list
 ```
 
 **Očekávaný výstup by měl obsahovat:**
+
 - `trial:send-ending-notifications` - Daily at 09:00
 - `trial:expire` - Daily at 00:00
 - `grace-period:check` - Daily at 01:00
@@ -236,6 +271,7 @@ php artisan test:email your-email@example.com --all
 ```
 
 **Dostupné typy:**
+
 - `welcome`
 - `trial-7` (3 days before end)
 - `trial-1` (1 day before end)
@@ -254,12 +290,14 @@ php artisan test:email your-email@example.com --all
 ## Checklist - Kompletní Ověření
 
 ### Trial Expired Email Fix
+
 - [ ] Initial email se pošle jen jednou
 - [ ] Reminder se pošle po 5 dnech
 - [ ] Po reminderu se už žádný email nepošle
 - [ ] Tracking sloupce jsou správně nastaveny v DB
 
 ### Email Verification
+
 - [ ] Email/password registrace posílá verification email
 - [ ] OAuth registrace NEposílá verification email
 - [ ] Verification link funguje
@@ -267,6 +305,7 @@ php artisan test:email your-email@example.com --all
 - [ ] Email calendar auto-verify funguje pro ověřený user email
 
 ### Scheduler
+
 - [ ] `grace-period:check` je v scheduleru
 - [ ] Všechny commands běží ve správný čas
 - [ ] Cron běží (produkce)
@@ -276,29 +315,33 @@ php artisan test:email your-email@example.com --all
 ## Řešení Problémů
 
 ### Email se neposílá
+
 1. Zkontroluj `.env` mail nastavení
 2. Zkontroluj logy: `tail -f storage/logs/laravel.log`
 3. Zkontroluj mail queue (pokud používáš queues)
 
 ### Migrace nelze spustit (production)
+
 ```bash
 php artisan migrate --force
 ```
 
 ### Command nenajde uživatele
+
 Zkontroluj query v DB manuálně:
+
 ```sql
 -- Pro initial email
-SELECT * FROM users 
+SELECT * FROM users
 WHERE subscription_tier = 'pro'
   AND subscription_ends_at <= NOW()
   AND stripe_subscription_id IS NULL
   AND trial_expired_email_sent_at IS NULL;
 
 -- Pro reminder
-SELECT * FROM users 
-WHERE trial_expired_email_sent_at BETWEEN 
-  DATE_SUB(NOW(), INTERVAL 5 DAY + INTERVAL 12 HOUR) AND 
+SELECT * FROM users
+WHERE trial_expired_email_sent_at BETWEEN
+  DATE_SUB(NOW(), INTERVAL 5 DAY + INTERVAL 12 HOUR) AND
   DATE_SUB(NOW(), INTERVAL 5 DAY - INTERVAL 12 HOUR)
   AND trial_expired_reminder_sent_at IS NULL
   AND stripe_subscription_id IS NULL;
@@ -309,4 +352,3 @@ WHERE trial_expired_email_sent_at BETWEEN
 ## Výsledek
 
 Po úspěšném otestování všech scénářů můžeš označit implementaci jako **COMPLETE** ✅
-

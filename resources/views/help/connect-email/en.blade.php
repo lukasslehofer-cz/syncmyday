@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">What's an Email Calendar?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">What's an Email Calendar?</h3>
             <p class="text-blue-800 mb-2">An <strong>Email Calendar</strong> is a unique way to sync calendars by forwarding calendar invitations (.ics files) via email. This is perfect for calendars that don't have API access or when you want to keep certain calendars completely separate.</p>
             <p class="text-blue-800 mb-0"><strong>How it works:</strong> When events are created in your source calendar, SyncMyDay sends email invitations to a special address. Those invitations automatically show up as blocker events.</p>
         </div>

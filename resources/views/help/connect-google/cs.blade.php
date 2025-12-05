@@ -29,7 +29,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-green-900 mb-2">Proč Google Calendar?</h3>
+            <h3 class="text-lg font-semibold text-green-900 mb-2 !mt-0">Proč Google Calendar?</h3>
             <p class="text-green-800 mb-0"><strong>Google Calendar je nejjednodušší kalendář na připojení!</strong> Používá bezpečnou OAuth autentizaci, takže s námi nikdy nesdílíte své heslo. Nastavení trvá méně než 2 minuty a synchronizace je okamžitá díky webhookům v reálném čase.</p>
         </div>
     </div>

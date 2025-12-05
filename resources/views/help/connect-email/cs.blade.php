@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">Co je e-mailový kalendář?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">Co je e-mailový kalendář?</h3>
             <p class="text-blue-800 mb-2"><strong>E-mailový kalendář</strong> je unikátní způsob synchronizace kalendářů prostřednictvím přeposílání pozvánek do kalendáře (soubory .ics) e-mailem. To je ideální pro kalendáře, které nemají API přístup, nebo když chcete určité kalendáře udržet zcela oddělené.</p>
             <p class="text-blue-800 mb-0"><strong>Jak to funguje:</strong> Když jsou v kalendáři zdroje vytvořeny události, SyncMyDay odešle e-mailové pozvánky na speciální adresu. Tyto pozvánky se automaticky zobrazí jako blokovací události.</p>
         </div>

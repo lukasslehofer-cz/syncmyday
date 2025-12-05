@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">Co je CalDAV?</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">Co je CalDAV?</h3>
             <p class="text-blue-800 mb-2"><strong>CalDAV</strong> je otevřený standardní protokol pro přístup ke kalendářovým datům přes internet. Mnoho kalendářových služeb podporuje CalDAV, což z něj činí flexibilní možnost pro připojení kalendářů.</p>
             <p class="text-blue-800 mb-0"><strong>Oblíbení poskytovatelé CalDAV zahrnují:</strong> Fastmail, Nextcloud, SOGo, Radicale, Baikal, Synology Calendar a mnoho dalších.</p>
         </div>

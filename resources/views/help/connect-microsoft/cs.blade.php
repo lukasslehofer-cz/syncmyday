@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">Co je zahrnuto</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">Co je zahrnuto</h3>
             <p class="text-blue-800 mb-2">Tento průvodce pokrývá všechny Microsoft kalendářové služby:</p>
             <ul class="text-blue-800 space-y-1 mb-0">
                 <li><strong>Outlook.com</strong> - Osobní Microsoft účty (@outlook.com, @hotmail.com, @live.com)</li>

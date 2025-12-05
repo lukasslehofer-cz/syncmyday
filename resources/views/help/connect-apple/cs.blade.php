@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">Důležité: Vyžadováno heslo pro aplikaci</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">Důležité: Vyžadováno heslo pro aplikaci</h3>
             <p class="text-blue-800 mb-2">Apple vyžaduje <strong>Heslo pro aplikaci</strong> pro aplikace třetích stran, pokud máte povoleno dvoufaktorové ověření (které je vyžadováno pro všechny Apple účty).</p>
             <p class="text-blue-800 mb-0"><strong>Nebojte se!</strong> Tento průvodce vás provede jeho generováním. Zabere to asi 5 minut.</p>
         </div>

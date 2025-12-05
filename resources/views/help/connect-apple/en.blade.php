@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div>
-            <h3 class="text-lg font-semibold text-blue-900 mb-2">Important: App-Specific Password Required</h3>
+            <h3 class="text-lg font-semibold text-blue-900 mb-2 !mt-0">Important: App-Specific Password Required</h3>
             <p class="text-blue-800 mb-2">Apple requires an <strong>App-Specific Password</strong> for third-party apps when you have Two-Factor Authentication enabled (which is required for all Apple accounts).</p>
             <p class="text-blue-800 mb-0"><strong>Don't worry!</strong> This guide will walk you through generating one. It takes about 5 minutes.</p>
         </div>
