@@ -808,7 +808,7 @@ return [
     'start_free_trial' => 'Vyzkoušejte zdarma',
     'choose_plan_after_trial' => 'Po trialu si vyber plán:',
     'save_with_yearly' => 'Ušetříte :percent% s ročním plánem',
-    'start_free_trial_now' => 'Začít 14 dnízdarma',
+    'start_free_trial_now' => 'Začít 14 dní zdarma',
     'no_commitment' => 'Bez platební karty',
     
     // Onboarding Progress Bar
