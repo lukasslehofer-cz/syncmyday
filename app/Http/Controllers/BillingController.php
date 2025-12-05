@@ -522,7 +522,25 @@ class BillingController extends Controller
                     'error_message' => null,
                 ]);
 
-                // Download and store PDF locally
+                // Mark invoice as paid in Fakturoid
+                $payment = $fakturoidService->createPayment($createdInvoice['id']);
+                
+                if ($payment) {
+                    $fakturoidInvoice->update(['status' => 'paid']);
+                    
+                    Log::info('Fakturoid invoice marked as paid', [
+                        'user_id' => $user->id,
+                        'fakturoid_id' => $createdInvoice['id'],
+                        'payment_id' => $payment['id'] ?? null,
+                    ]);
+                } else {
+                    Log::warning('Failed to mark Fakturoid invoice as paid', [
+                        'user_id' => $user->id,
+                        'fakturoid_id' => $createdInvoice['id'],
+                    ]);
+                }
+
+                // Download and store PDF locally (after payment so PDF shows paid status)
                 $this->downloadAndStoreInvoicePdf($fakturoidInvoice, $fakturoidService);
 
                 Log::info('Fakturoid invoice created successfully', [

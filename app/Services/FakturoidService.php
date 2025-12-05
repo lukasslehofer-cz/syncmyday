@@ -219,6 +219,80 @@ class FakturoidService
     }
 
     /**
+     * Create a payment on an invoice (marks invoice as paid)
+     * 
+     * @param int $invoiceId Fakturoid invoice ID
+     * @param string|null $paidOn Payment date (Y-m-d format), defaults to today
+     * @param float|null $amount Payment amount, defaults to remaining amount
+     * @return array|null Created payment data or null on failure
+     */
+    public function createPayment(int $invoiceId, ?string $paidOn = null, ?float $amount = null): ?array
+    {
+        $accessToken = $this->getAccessToken();
+        
+        if (!$accessToken) {
+            Log::error('Cannot create payment: No access token');
+            return null;
+        }
+
+        try {
+            $paymentData = [
+                'paid_on' => $paidOn ?? now()->format('Y-m-d'),
+            ];
+
+            // Only include amount if explicitly provided
+            if ($amount !== null) {
+                $paymentData['amount'] = $amount;
+            }
+
+            $response = Http::withToken($accessToken)
+                ->withHeaders([
+                    'User-Agent' => $this->userAgent,
+                    'Content-Type' => 'application/json',
+                ])
+                ->post("{$this->apiUrl}/accounts/{$this->slug}/invoices/{$invoiceId}/payments.json", $paymentData);
+
+            if ($response->successful()) {
+                $payment = $response->json();
+                
+                Log::info('Fakturoid payment created', [
+                    'invoice_id' => $invoiceId,
+                    'payment_id' => $payment['id'] ?? null,
+                    'amount' => $payment['amount'] ?? null,
+                ]);
+
+                return $payment;
+            }
+
+            // Handle specific error cases
+            if ($response->status() === 403) {
+                Log::warning('Fakturoid invoice already paid', [
+                    'invoice_id' => $invoiceId,
+                    'response' => $response->body(),
+                ]);
+                return null;
+            }
+
+            Log::error('Failed to create Fakturoid payment', [
+                'invoice_id' => $invoiceId,
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return null;
+
+        } catch (\Exception $e) {
+            Log::error('Exception creating Fakturoid payment', [
+                'invoice_id' => $invoiceId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
      * Get invoice details
      * 
      * @param int $invoiceId Fakturoid invoice ID

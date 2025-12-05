@@ -233,8 +233,15 @@
         </div>
         
         @if($user->isInTrial())
+        @php
+            $unit = match(true) {
+                $trialDaysRemaining == 1 => __('messages.trial_day'),
+                $trialDaysRemaining >= 2 && $trialDaysRemaining <= 4 => __('messages.trial_days_2_4'),
+                default => __('messages.trial_days_5_plus'),
+            };
+        @endphp
         <p class="text-center text-xs sm:text-sm text-gray-600 mt-6 sm:mt-8 px-4">
-            {{ __('messages.trial_days_remaining', ['days' => $trialDaysRemaining]) }}<br>
+            {{ __('messages.trial_days_remaining', ['days' => $trialDaysRemaining, 'unit' => $unit]) }}<br>
             {{ __('messages.no_charge_during_trial') }}
         </p>
         @endif
