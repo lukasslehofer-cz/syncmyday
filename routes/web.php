@@ -166,6 +166,23 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+// Email Verification (for user account registration)
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+    
+    Route::get('/email/verify/{id}/{hash}', function (\Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect()->route('onboarding.start')->with('success', 'Email verified successfully!');
+    })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+    
+    Route::post('/email/verification-notification', function (\Illuminate\Http\Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', 'Verification link sent!');
+    })->middleware('throttle:6,1')->name('verification.send');
+});
+
 // Email Calendar Verification (public route - user clicks link from their email)
 Route::get('/email-calendars/verify/{id}/{hash}', [\App\Http\Controllers\EmailCalendarVerificationController::class, 'verify'])
     ->middleware(['signed', 'throttle:6,1'])

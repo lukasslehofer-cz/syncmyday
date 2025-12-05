@@ -24,16 +24,16 @@
             </p>
 
             <!-- Status Message -->
-            @if (session('status') == 'verification-link-sent')
+            @if (session('success'))
                 <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                     <p class="text-sm text-green-700 text-center">
-                        {{ __('emails.verification_link_sent') }}
+                        {{ session('success') }}
                     </p>
                 </div>
             @endif
 
             <!-- Resend Form -->
-            <form method="POST" action="{{ route('verification.resend') }}">
+            <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition duration-200 shadow-md">
                     {{ __('emails.resend_verification_email') }}

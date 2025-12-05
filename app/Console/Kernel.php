@@ -27,6 +27,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('trial:send-ending-notifications')->dailyAt('09:00');
         $schedule->command('trial:expire')->dailyAt('00:00');
         
+        // Grace period management (for failed payments)
+        $schedule->command('grace-period:check')->dailyAt('01:00');
+        
         // Onboarding emails
         $schedule->command('onboarding:send-emails')->dailyAt('10:00');
         

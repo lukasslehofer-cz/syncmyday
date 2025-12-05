@@ -28,6 +28,8 @@ class User extends Authenticatable
         'subscription_ends_at',
         'grace_period_ends_at',
         'onboarding_completed_at',
+        'trial_expired_email_sent_at',
+        'trial_expired_reminder_sent_at',
     ];
 
     protected $hidden = [
@@ -40,6 +42,8 @@ class User extends Authenticatable
         'subscription_ends_at' => 'datetime',
         'grace_period_ends_at' => 'datetime',
         'onboarding_completed_at' => 'datetime',
+        'trial_expired_email_sent_at' => 'datetime',
+        'trial_expired_reminder_sent_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
 
