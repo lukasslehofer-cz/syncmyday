@@ -396,6 +396,9 @@
         </div>
     </section>
     
+    <!-- Cookie Consent Banner -->
+    @include('partials.cookie-consent')
+    
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -435,6 +438,7 @@
                     <ul class="space-y-2">
                         <li><a href="{{ route('privacy') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.privacy_policy') }}</a></li>
                         <li><a href="{{ route('terms') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.terms_of_service') }}</a></li>
+                        <li><a href="#" onclick="openCookieSettings(); return false;" class="text-sm text-gray-400 hover:text-white">{{ __('messages.cookie_settings_footer') }}</a></li>
                     </ul>
                 </div>
             </div>
