@@ -12,13 +12,13 @@
             </div>
             <div>
                 <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    Connection Successful!
+                    {{ __('messages.connection_successful') }}
                 </h1>
                 <p class="text-lg text-gray-600 mt-1">{{ $email }}</p>
             </div>
         </div>
         <p class="text-lg text-gray-600">
-            Select the calendars you want to sync
+            {{ __('messages.select_calendars_to_sync') }}
         </p>
     </div>
 
@@ -32,13 +32,13 @@
                 <svg class="w-16 h-16 text-yellow-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">No Calendars Found</h3>
-                <p class="text-gray-600 mb-6">We couldn't find any calendars in your CalDAV account that support events.</p>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.no_calendars_found') }}</h3>
+                <p class="text-gray-600 mb-6">{{ __('messages.no_calendars_found_description') }}</p>
                 <a href="{{ route('caldav.setup') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    Try Different Account
+                    {{ __('messages.try_different_account') }}
                 </a>
             </div>
         @else
@@ -77,7 +77,7 @@
                                 </svg>
                                 <span>{{ __('messages.select_calendar_to_use') }} <span class="text-red-500">*</span></span>
                             </label>
-                            <span class="text-sm text-gray-500">{{ count($calendars) }} calendar(s) found</span>
+                            <span class="text-sm text-gray-500">{{ __('messages.calendars_found_count', ['count' => count($calendars)]) }}</span>
                         </div>
 
                         <div class="space-y-3">
@@ -135,13 +135,13 @@
                         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
-                        Back
+                        {{ __('messages.back') }}
                     </a>
                     <button 
                         type="submit"
                         class="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition duration-150 shadow-lg hover:shadow-xl"
                     >
-                        Complete Setup
+                        {{ __('messages.complete_setup') }}
                     </button>
                 </div>
             </div>
@@ -153,7 +153,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <div class="text-sm text-gray-700">
-                        <strong class="text-gray-900">Note:</strong> After setup, you can create sync rules to define how events are synchronized between your calendars. CalDAV calendars are checked for changes every 5 minutes.
+                        <strong class="text-gray-900">{{ __('messages.info') }}:</strong> {{ __('messages.caldav_setup_note') }}
                     </div>
                 </div>
             </div>

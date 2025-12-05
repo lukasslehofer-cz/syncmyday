@@ -965,6 +965,16 @@ return [
     'admin_consent_contact_admin' => 'Contact Your IT Admin',
     'admin_consent_alternative' => 'Alternative: Use a personal Microsoft account (outlook.com, hotmail.com) which doesn\'t require admin approval',
 
+    // CalDAV Select Calendars Page
+    'connection_successful' => 'Connection Successful!',
+    'select_calendars_to_sync' => 'Select the calendars you want to sync',
+    'no_calendars_found' => 'No Calendars Found',
+    'no_calendars_found_description' => 'We couldn\'t find any calendars in your CalDAV account that support events.',
+    'try_different_account' => 'Try Different Account',
+    'calendars_found_count' => ':count calendar(s) found',
+    'caldav_setup_note' => 'After setup, you can create sync rules to define how events are synchronized between your calendars. CalDAV calendars are checked for changes every 5 minutes.',
+    'complete_setup' => 'Complete Setup',
+
     // Cookie Consent
     'cookie_consent_title' => 'Cookie Settings',
     'cookie_consent_text' => 'We use cookies to ensure basic website functionality, analyze traffic, and personalize content. You can choose which cookie categories to allow.',

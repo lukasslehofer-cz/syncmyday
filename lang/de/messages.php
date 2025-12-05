@@ -430,6 +430,16 @@ return [
     'admin_consent_contact_admin' => 'IT-Administrator kontaktieren',
     'admin_consent_alternative' => 'Alternative: Verwenden Sie ein persönliches Microsoft-Konto (outlook.com, hotmail.com), das keine Admin-Genehmigung erfordert',
 
+    // CalDAV Select Calendars Page
+    'connection_successful' => 'Verbindung erfolgreich!',
+    'select_calendars_to_sync' => 'Wählen Sie die Kalender aus, die Sie synchronisieren möchten',
+    'no_calendars_found' => 'Keine Kalender gefunden',
+    'no_calendars_found_description' => 'Wir konnten in Ihrem CalDAV-Konto keine Kalender finden, die Ereignisse unterstützen.',
+    'try_different_account' => 'Anderes Konto versuchen',
+    'calendars_found_count' => ':count Kalender gefunden',
+    'caldav_setup_note' => 'Nach der Einrichtung können Sie Synchronisierungsregeln erstellen, um festzulegen, wie Ereignisse zwischen Ihren Kalendern synchronisiert werden. CalDAV-Kalender werden alle 5 Minuten auf Änderungen überprüft.',
+    'complete_setup' => 'Einrichtung abschließen',
+
     // Cookie Consent
     'cookie_consent_title' => 'Cookie-Einstellungen',
     'cookie_consent_text' => 'Wir verwenden Cookies, um grundlegende Website-Funktionen bereitzustellen, den Datenverkehr zu analysieren und Inhalte zu personalisieren. Sie können wählen, welche Cookie-Kategorien Sie zulassen möchten.',

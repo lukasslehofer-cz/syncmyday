@@ -970,6 +970,16 @@ return [
     'admin_consent_contact_admin' => 'Kontaktovat IT administrátora',
     'admin_consent_alternative' => 'Alternativa: Použijte osobní Microsoft účet (outlook.com, hotmail.com), který nevyžaduje souhlas administrátora',
 
+    // CalDAV Select Calendars Page
+    'connection_successful' => 'Připojení úspěšné!',
+    'select_calendars_to_sync' => 'Vyberte kalendáře, které chcete synchronizovat',
+    'no_calendars_found' => 'Nenalezeny žádné kalendáře',
+    'no_calendars_found_description' => 'Ve vašem CalDAV účtu jsme nenalezli žádné kalendáře, které podporují události.',
+    'try_different_account' => 'Zkusit jiný účet',
+    'calendars_found_count' => 'Nalezeno kalendářů: :count',
+    'caldav_setup_note' => 'Po nastavení můžete vytvořit synchronizační pravidla, která definují, jak jsou události synchronizovány mezi vašimi kalendáři. CalDAV kalendáře jsou kontrolovány na změny každých 5 minut.',
+    'complete_setup' => 'Dokončit nastavení',
+
     // Cookie Consent
     'cookie_consent_title' => 'Nastavení cookies',
     'cookie_consent_text' => 'Používáme cookies pro zajištění základní funkčnosti webu, analýzu návštěvnosti a personalizaci obsahu. Můžete si vybrat, které kategorie cookies povolíte.',

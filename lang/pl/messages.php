@@ -767,6 +767,16 @@ return [
     'admin_consent_contact_admin' => 'Skontaktuj się z administratorem IT',
     'admin_consent_alternative' => 'Alternatywa: Użyj osobistego konta Microsoft (outlook.com, hotmail.com), które nie wymaga zgody administratora',
 
+    // CalDAV Select Calendars Page
+    'connection_successful' => 'Połączenie udane!',
+    'select_calendars_to_sync' => 'Wybierz kalendarze, które chcesz synchronizować',
+    'no_calendars_found' => 'Nie znaleziono kalendarzy',
+    'no_calendars_found_description' => 'Nie mogliśmy znaleźć żadnych kalendarzy na Twoim koncie CalDAV, które obsługują wydarzenia.',
+    'try_different_account' => 'Spróbuj inne konto',
+    'calendars_found_count' => 'Znaleziono kalendarzy: :count',
+    'caldav_setup_note' => 'Po skonfigurowaniu możesz utworzyć reguły synchronizacji, które definiują sposób synchronizacji wydarzeń między kalendarzami. Kalendarze CalDAV są sprawdzane pod kątem zmian co 5 minut.',
+    'complete_setup' => 'Zakończ konfigurację',
+
     // Cookie Consent
     'cookie_consent_title' => 'Ustawienia plików cookie',
     'cookie_consent_text' => 'Używamy plików cookie, aby zapewnić podstawową funkcjonalność strony, analizować ruch i personalizować treści. Możesz wybrać, które kategorie plików cookie chcesz zezwolić.',
