@@ -100,6 +100,14 @@ return [
     'oauth_failed' => 'Failed to connect calendar. Please try again.',
     'oauth_cancelled' => 'Calendar connection was cancelled. No changes were made.',
     'calendar_connected' => 'Calendar successfully connected!',
+    'email_already_registered' => 'This email is already registered. Please use your original login method or contact support.',
+    'oauth_google_login_success' => 'Welcome! Your Google account and calendar have been connected successfully.',
+    'oauth_microsoft_login_success' => 'Welcome! Your Microsoft account and calendar have been connected successfully.',
+    'oauth_login_welcome_back' => 'Welcome back! You have been logged in successfully.',
+    'oauth_google_login_failed' => 'Failed to login with Google. Please try again or use email/password.',
+    'oauth_microsoft_login_failed' => 'Failed to login with Microsoft. Please try again or use email/password.',
+    'oauth_account_created_approval_needed' => 'Welcome! Your account has been created. Calendar connection requires additional approval.',
+    'oauth_login_welcome_back_approval_needed' => 'Welcome back! Calendar connection requires additional approval.',
     
     // Connections
     'connection_deleted' => 'Calendar connection removed.',

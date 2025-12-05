@@ -101,6 +101,14 @@ return [
     'oauth_failed' => 'Připojení kalendáře se nezdařilo. Zkuste to prosím znovu.',
     'oauth_cancelled' => 'Připojení kalendáře bylo zrušeno. Nebyly provedeny žádné změny.',
     'calendar_connected' => 'Kalendář byl úspěšně připojen!',
+    'email_already_registered' => 'Tento e-mail je již zaregistrován. Použijte prosím původní metodu přihlášení nebo kontaktujte podporu.',
+    'oauth_google_login_success' => 'Vítejte! Váš účet Google a kalendář byly úspěšně připojeny.',
+    'oauth_microsoft_login_success' => 'Vítejte! Váš účet Microsoft a kalendář byly úspěšně připojeny.',
+    'oauth_login_welcome_back' => 'Vítejte zpět! Byli jste úspěšně přihlášeni.',
+    'oauth_google_login_failed' => 'Přihlášení přes Google selhalo. Zkuste to prosím znovu nebo použijte e-mail a heslo.',
+    'oauth_microsoft_login_failed' => 'Přihlášení přes Microsoft selhalo. Zkuste to prosím znovu nebo použijte e-mail a heslo.',
+    'oauth_account_created_approval_needed' => 'Vítejte! Váš účet byl vytvořen. Připojení kalendáře vyžaduje dodatečné schválení.',
+    'oauth_login_welcome_back_approval_needed' => 'Vítejte zpět! Připojení kalendáře vyžaduje dodatečné schválení.',
     
     // Connections
     'connection_deleted' => 'Připojení kalendáře bylo odstraněno.',

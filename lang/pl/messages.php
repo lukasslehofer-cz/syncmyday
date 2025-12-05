@@ -52,6 +52,14 @@ return [
     'oauth_failed' => 'Nie udało się połączyć kalendarza. Spróbuj ponownie.',
     'oauth_cancelled' => 'Połączenie kalendarza zostało anulowane. Nie wprowadzono żadnych zmian.',
     'calendar_connected' => 'Kalendarz został pomyślnie połączony!',
+    'email_already_registered' => 'Ten e-mail jest już zarejestrowany. Użyj oryginalnej metody logowania lub skontaktuj się z pomocą techniczną.',
+    'oauth_google_login_success' => 'Witamy! Twoje konto Google i kalendarz zostały pomyślnie połączone.',
+    'oauth_microsoft_login_success' => 'Witamy! Twoje konto Microsoft i kalendarz zostały pomyślnie połączone.',
+    'oauth_login_welcome_back' => 'Witamy z powrotem! Zostałeś pomyślnie zalogowany.',
+    'oauth_google_login_failed' => 'Logowanie przez Google nie powiodło się. Spróbuj ponownie lub użyj e-maila i hasła.',
+    'oauth_microsoft_login_failed' => 'Logowanie przez Microsoft nie powiodło się. Spróbuj ponownie lub użyj e-maila i hasła.',
+    'oauth_account_created_approval_needed' => 'Witamy! Twoje konto zostało utworzone. Połączenie kalendarza wymaga dodatkowego zatwierdzenia.',
+    'oauth_login_welcome_back_approval_needed' => 'Witamy z powrotem! Połączenie kalendarza wymaga dodatkowego zatwierdzenia.',
     
     // Connections
     'connection_deleted' => 'Połączenie kalendarza zostało usunięte.',

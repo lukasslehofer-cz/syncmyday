@@ -52,6 +52,14 @@ return [
     'oauth_failed' => 'Kalenderverbindung fehlgeschlagen. Bitte versuchen Sie es erneut.',
     'oauth_cancelled' => 'Kalenderverbindung wurde abgebrochen. Es wurden keine Änderungen vorgenommen.',
     'calendar_connected' => 'Kalender erfolgreich verbunden!',
+    'email_already_registered' => 'Diese E-Mail ist bereits registriert. Bitte verwenden Sie Ihre ursprüngliche Anmeldemethode oder kontaktieren Sie den Support.',
+    'oauth_google_login_success' => 'Willkommen! Ihr Google-Konto und Kalender wurden erfolgreich verbunden.',
+    'oauth_microsoft_login_success' => 'Willkommen! Ihr Microsoft-Konto und Kalender wurden erfolgreich verbunden.',
+    'oauth_login_welcome_back' => 'Willkommen zurück! Sie wurden erfolgreich angemeldet.',
+    'oauth_google_login_failed' => 'Anmeldung mit Google fehlgeschlagen. Bitte versuchen Sie es erneut oder verwenden Sie E-Mail/Passwort.',
+    'oauth_microsoft_login_failed' => 'Anmeldung mit Microsoft fehlgeschlagen. Bitte versuchen Sie es erneut oder verwenden Sie E-Mail/Passwort.',
+    'oauth_account_created_approval_needed' => 'Willkommen! Ihr Konto wurde erstellt. Die Kalenderverbindung erfordert eine zusätzliche Genehmigung.',
+    'oauth_login_welcome_back_approval_needed' => 'Willkommen zurück! Die Kalenderverbindung erfordert eine zusätzliche Genehmigung.',
     
     // Connections
     'connection_deleted' => 'Kalenderverbindung entfernt.',

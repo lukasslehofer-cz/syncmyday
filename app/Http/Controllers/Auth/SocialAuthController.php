@@ -196,7 +196,7 @@ class SocialAuthController extends Controller
                 
                 if ($existingUser) {
                     return redirect()->route('login')
-                        ->with('error', 'This email is already registered. Please use your original login method or contact support.');
+                        ->with('error', __('messages.email_already_registered'));
                 }
 
                 // Get timezone from cache using the key stored in state
@@ -253,12 +253,12 @@ class SocialAuthController extends Controller
             // Redirect to onboarding for new users, dashboard for existing users
             if ($user->wasRecentlyCreated) {
                 return redirect()->route('onboarding.start')
-                    ->with('success', 'Welcome! Your Google account and calendar have been connected successfully.');
+                    ->with('success', __('messages.oauth_google_login_success'));
             }
 
             // Existing user - go to dashboard
             return redirect()->route('dashboard')
-                ->with('success', 'Welcome back! You have been logged in successfully.');
+                ->with('success', __('messages.oauth_login_welcome_back'));
 
         } catch (\Exception $e) {
             Log::error('Google OAuth login failed', [
@@ -267,7 +267,7 @@ class SocialAuthController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Failed to login with Google. Please try again or use email/password.');
+                ->with('error', __('messages.oauth_google_login_failed'));
         }
     }
 
@@ -506,7 +506,7 @@ class SocialAuthController extends Controller
                             'existing_provider' => $existingUser->oauth_provider,
                         ]);
                         return redirect()->route('login')
-                            ->with('error', 'This email is already registered. Please use your original login method or contact support.');
+                            ->with('error', __('messages.email_already_registered'));
                     }
                 }
                 
@@ -646,16 +646,16 @@ class SocialAuthController extends Controller
             // Redirect to onboarding for new users, dashboard for existing users
             if ($user->wasRecentlyCreated) {
                 $message = $calendarConnected 
-                    ? 'Welcome! Your Microsoft account and calendar have been connected successfully.'
-                    : 'Welcome! Your account has been created. Calendar connection requires additional approval.';
+                    ? __('messages.oauth_microsoft_login_success')
+                    : __('messages.oauth_account_created_approval_needed');
                 return redirect()->route('onboarding.start')
                     ->with($calendarConnected ? 'success' : 'warning', $message);
             }
 
             // Existing user - go to dashboard
             $message = $calendarConnected
-                ? 'Welcome back! You have been logged in successfully.'
-                : 'Welcome back! Calendar connection requires additional approval.';
+                ? __('messages.oauth_login_welcome_back')
+                : __('messages.oauth_login_welcome_back_approval_needed');
             return redirect()->route('dashboard')
                 ->with($calendarConnected ? 'success' : 'warning', $message);
 
@@ -669,7 +669,7 @@ class SocialAuthController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Failed to login with Microsoft. Please try again or use email/password.');
+                ->with('error', __('messages.oauth_microsoft_login_failed'));
         } catch (\Exception $e) {
             Log::error('Microsoft OAuth login failed', [
                 'error' => $e->getMessage(),
@@ -681,7 +681,7 @@ class SocialAuthController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->with('error', 'Failed to login with Microsoft. Please try again or use email/password.');
+                ->with('error', __('messages.oauth_microsoft_login_failed'));
         }
     }
 
