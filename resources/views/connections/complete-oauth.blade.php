@@ -68,7 +68,7 @@
                         </svg>
                         <span>{{ __('messages.select_calendar_to_use') }} <span class="text-red-500">*</span></span>
                     </label>
-                    <span class="text-sm text-gray-500">{{ count($calendars) }} calendar(s) found</span>
+                    <span class="text-sm text-gray-500">{{ __('messages.calendars_found_count', ['count' => count($calendars)]) }}</span>
                 </div>
 
                 <div class="space-y-3">

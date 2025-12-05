@@ -965,6 +965,57 @@ return [
     'admin_consent_contact_admin' => 'Contact Your IT Admin',
     'admin_consent_alternative' => 'Alternative: Use a personal Microsoft account (outlook.com, hotmail.com) which doesn\'t require admin approval',
 
+    // Email Calendar Setup Instructions
+    'setup_outlook_exchange' => '📌 Microsoft Outlook / Exchange',
+    'email_forwarding_rule' => 'Email Forwarding Rule:',
+    'outlook_step_1' => 'Open Outlook → <strong>File → Manage Rules & Alerts</strong>',
+    'outlook_step_2' => 'Click <strong>New Rule</strong>',
+    'outlook_step_3' => 'Choose "Apply rule on messages I receive"',
+    'outlook_step_4_title' => 'Add conditions:',
+    'outlook_step_4_condition_1' => 'with specific words in the subject: <code class="bg-gray-100 px-1">meeting, invitation</code>',
+    'outlook_step_4_condition_2' => 'with an attachment',
+    'outlook_step_5' => 'Action: <strong>Forward it to</strong>',
+    'outlook_step_6' => 'Click <strong>Finish</strong>',
+    'setup_gmail' => '📌 Gmail',
+    'gmail_forwarding_filter' => 'Gmail Forwarding Filter:',
+    'gmail_step_1' => 'Open Gmail → <strong>Settings (⚙️) → See all settings</strong>',
+    'gmail_step_2' => 'Go to <strong>Filters and Blocked Addresses</strong>',
+    'gmail_step_3' => 'Click <strong>Create a new filter</strong>',
+    'gmail_step_4' => 'In "Has the words" enter: <code class="bg-gray-100 px-1">filename:ics</code>',
+    'gmail_step_5' => 'Click <strong>Create filter</strong>',
+    'gmail_step_6' => 'Check <strong>Forward it to</strong> and select/add',
+    'gmail_step_7' => 'Click <strong>Create filter</strong>',
+    'gmail_note' => 'Note: You may need to verify the forwarding address first.',
+
+    // Admin Consent Page
+    'url_copied_to_clipboard' => '✓ URL copied to clipboard!',
+    'admin_redirect_description' => 'They will be redirected to Microsoft\'s sign-in page to authenticate as administrator.',
+    'requested_permissions' => 'Requested permissions:',
+    'permission_calendars' => 'Read and write to calendars',
+    'permission_user' => 'Read user profile',
+    'permission_offline' => 'Maintain access to data',
+    'approval_organization_wide' => 'The approval applies to your entire organization, so you only need to do this once.',
+    'personal_accounts_no_consent' => 'Personal Microsoft accounts (outlook.com, hotmail.com, live.com) don\'t require admin consent and work immediately.',
+    'use_template_description' => 'You can use this template to contact your IT administrator:',
+    'admin_email_template' => 'Hello,
+
+I\'m using SyncMyDay (https://syncmyday.cz) to synchronize my work calendars. The application requires admin consent to access Microsoft calendars.
+
+Could you please approve this application for our organization? Here\'s the admin consent URL:
+
+:url
+
+The requested permissions are:
+• Calendars.ReadWrite - To sync calendar events
+• User.Read - To identify users
+• offline_access - To maintain sync when offline
+
+SyncMyDay is a verified Microsoft partner application focused on calendar synchronization.
+
+Thank you!',
+    'copy_email_template' => 'Copy Email Template',
+    'template_copied_to_clipboard' => '✓ Template copied to clipboard!',
+
     // CalDAV Select Calendars Page
     'connection_successful' => 'Connection Successful!',
     'select_calendars_to_sync' => 'Select the calendars you want to sync',

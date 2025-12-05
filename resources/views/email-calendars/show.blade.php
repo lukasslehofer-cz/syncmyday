@@ -118,22 +118,22 @@
             <!-- Outlook/Exchange -->
             <details class="border border-gray-200 rounded-lg">
                 <summary class="px-4 py-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-900">
-                    📌 Microsoft Outlook / Exchange
+                    {{ __('messages.setup_outlook_exchange') }}
                 </summary>
                 <div class="px-4 py-3 border-t border-gray-200 text-sm text-gray-700 space-y-2">
-                    <p class="font-medium">Email Forwarding Rule:</p>
+                    <p class="font-medium">{{ __('messages.email_forwarding_rule') }}</p>
                     <ol class="list-decimal list-inside space-y-1 ml-2">
-                        <li>Open Outlook → <strong>File → Manage Rules & Alerts</strong></li>
-                        <li>Click <strong>New Rule</strong></li>
-                        <li>Choose "Apply rule on messages I receive"</li>
-                        <li>Add conditions:
+                        <li>{!! __('messages.outlook_step_1') !!}</li>
+                        <li>{!! __('messages.outlook_step_2') !!}</li>
+                        <li>{{ __('messages.outlook_step_3') }}</li>
+                        <li>{{ __('messages.outlook_step_4_title') }}
                             <ul class="list-disc list-inside ml-4 mt-1">
-                                <li>with specific words in the subject: <code class="bg-gray-100 px-1">meeting, invitation</code></li>
-                                <li>with an attachment</li>
+                                <li>{!! __('messages.outlook_step_4_condition_1') !!}</li>
+                                <li>{{ __('messages.outlook_step_4_condition_2') }}</li>
                             </ul>
                         </li>
-                        <li>Action: <strong>Forward it to</strong> <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
-                        <li>Click <strong>Finish</strong></li>
+                        <li>{!! __('messages.outlook_step_5') !!} <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
+                        <li>{!! __('messages.outlook_step_6') !!}</li>
                     </ol>
                 </div>
             </details>
@@ -141,20 +141,20 @@
             <!-- Gmail -->
             <details class="border border-gray-200 rounded-lg">
                 <summary class="px-4 py-3 cursor-pointer hover:bg-gray-50 font-medium text-gray-900">
-                    📌 Gmail
+                    {{ __('messages.setup_gmail') }}
                 </summary>
                 <div class="px-4 py-3 border-t border-gray-200 text-sm text-gray-700 space-y-2">
-                    <p class="font-medium">Gmail Forwarding Filter:</p>
+                    <p class="font-medium">{{ __('messages.gmail_forwarding_filter') }}</p>
                     <ol class="list-decimal list-inside space-y-1 ml-2">
-                        <li>Open Gmail → <strong>Settings (⚙️) → See all settings</strong></li>
-                        <li>Go to <strong>Filters and Blocked Addresses</strong></li>
-                        <li>Click <strong>Create a new filter</strong></li>
-                        <li>In "Has the words" enter: <code class="bg-gray-100 px-1">filename:ics</code></li>
-                        <li>Click <strong>Create filter</strong></li>
-                        <li>Check <strong>Forward it to</strong> and select/add <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
-                        <li>Click <strong>Create filter</strong></li>
+                        <li>{!! __('messages.gmail_step_1') !!}</li>
+                        <li>{!! __('messages.gmail_step_2') !!}</li>
+                        <li>{!! __('messages.gmail_step_3') !!}</li>
+                        <li>{!! __('messages.gmail_step_4') !!}</li>
+                        <li>{!! __('messages.gmail_step_5') !!}</li>
+                        <li>{!! __('messages.gmail_step_6') !!} <code class="bg-gray-100 px-1">{{ $emailCalendar->email_address }}</code></li>
+                        <li>{!! __('messages.gmail_step_7') !!}</li>
                     </ol>
-                    <p class="text-xs text-gray-600 mt-2">Note: You may need to verify the forwarding address first.</p>
+                    <p class="text-xs text-gray-600 mt-2">{{ __('messages.gmail_note') }}</p>
                 </div>
             </details>
         </div>

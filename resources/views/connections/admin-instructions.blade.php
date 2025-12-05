@@ -67,7 +67,7 @@
                                 {{ __('messages.admin_consent_copy_url') }}
                             </button>
                         </div>
-                        <p id="copySuccess" class="text-sm text-green-600 mt-2 hidden">✓ URL copied to clipboard!</p>
+                        <p id="copySuccess" class="text-sm text-green-600 mt-2 hidden">{{ __('messages.url_copied_to_clipboard') }}</p>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                 </div>
                 <div class="flex-1">
                     <h3 class="font-semibold text-gray-900 mb-2">{{ __('messages.admin_consent_step_2') }}</h3>
-                    <p class="text-gray-600">They will be redirected to Microsoft's sign-in page to authenticate as administrator.</p>
+                    <p class="text-gray-600">{{ __('messages.admin_redirect_description') }}</p>
                 </div>
             </div>
 
@@ -91,25 +91,25 @@
                 <div class="flex-1">
                     <h3 class="font-semibold text-gray-900 mb-2">{{ __('messages.admin_consent_step_3') }}</h3>
                     <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                        <p class="text-sm font-medium text-gray-700 mb-2">Requested permissions:</p>
+                        <p class="text-sm font-medium text-gray-700 mb-2">{{ __('messages.requested_permissions') }}</p>
                         <ul class="text-sm text-gray-600 space-y-1">
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span><strong>Calendars.ReadWrite</strong> - Read and write to calendars</span>
+                                <span><strong>Calendars.ReadWrite</strong> - {{ __('messages.permission_calendars') }}</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span><strong>User.Read</strong> - Read user profile</span>
+                                <span><strong>User.Read</strong> - {{ __('messages.permission_user') }}</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                <span><strong>offline_access</strong> - Maintain access to data</span>
+                                <span><strong>offline_access</strong> - {{ __('messages.permission_offline') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -123,7 +123,7 @@
                 </div>
                 <div class="flex-1">
                     <h3 class="font-semibold text-gray-900 mb-2">{{ __('messages.admin_consent_step_4') }}</h3>
-                    <p class="text-gray-600">The approval applies to your entire organization, so you only need to do this once.</p>
+                    <p class="text-gray-600">{{ __('messages.approval_organization_wide') }}</p>
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@
     <div class="bg-gray-50 rounded-xl border border-gray-200 p-6 mb-8">
         <h3 class="font-bold text-gray-900 mb-2">{{ __('messages.admin_consent_alternative') }}</h3>
         <p class="text-gray-600 mb-4">
-            Personal Microsoft accounts (outlook.com, hotmail.com, live.com) don't require admin consent and work immediately.
+            {{ __('messages.personal_accounts_no_consent') }}
         </p>
         <a href="{{ route('connections.index') }}" 
            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
@@ -147,32 +147,17 @@
     <!-- Contact Admin Template -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-8">
         <h2 class="text-xl font-bold text-gray-900 mb-4">{{ __('messages.admin_consent_contact_admin') }}</h2>
-        <p class="text-gray-600 mb-4">You can use this template to contact your IT administrator:</p>
+        <p class="text-gray-600 mb-4">{{ __('messages.use_template_description') }}</p>
         
         <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-            <p class="text-sm text-gray-800 whitespace-pre-line">Hello,
-
-I'm using SyncMyDay (https://syncmyday.cz) to synchronize my work calendars. The application requires admin consent to access Microsoft calendars.
-
-Could you please approve this application for our organization? Here's the admin consent URL:
-
-{{ $adminConsentUrl }}
-
-The requested permissions are:
-• Calendars.ReadWrite - To sync calendar events
-• User.Read - To identify users
-• offline_access - To maintain sync when offline
-
-SyncMyDay is a verified Microsoft partner application focused on calendar synchronization.
-
-Thank you!</p>
+            <p class="text-sm text-gray-800 whitespace-pre-line">{{ __('messages.admin_email_template', ['url' => $adminConsentUrl]) }}</p>
         </div>
         
         <button onclick="copyEmailTemplate()" 
                 class="mt-4 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition">
-            Copy Email Template
+            {{ __('messages.copy_email_template') }}
         </button>
-        <p id="copyEmailSuccess" class="text-sm text-green-600 mt-2 hidden">✓ Template copied to clipboard!</p>
+        <p id="copyEmailSuccess" class="text-sm text-green-600 mt-2 hidden">{{ __('messages.template_copied_to_clipboard') }}</p>
     </div>
 </div>
 

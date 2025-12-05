@@ -430,6 +430,57 @@ return [
     'admin_consent_contact_admin' => 'IT-Administrator kontaktieren',
     'admin_consent_alternative' => 'Alternative: Verwenden Sie ein persönliches Microsoft-Konto (outlook.com, hotmail.com), das keine Admin-Genehmigung erfordert',
 
+    // Email Calendar Setup Instructions
+    'setup_outlook_exchange' => '📌 Microsoft Outlook / Exchange',
+    'email_forwarding_rule' => 'E-Mail-Weiterleitungsregel:',
+    'outlook_step_1' => 'Öffnen Sie Outlook → <strong>Datei → Regeln und Benachrichtigungen verwalten</strong>',
+    'outlook_step_2' => 'Klicken Sie auf <strong>Neue Regel</strong>',
+    'outlook_step_3' => 'Wählen Sie "Regel auf empfangene Nachrichten anwenden"',
+    'outlook_step_4_title' => 'Bedingungen hinzufügen:',
+    'outlook_step_4_condition_1' => 'mit bestimmten Wörtern im Betreff: <code class="bg-gray-100 px-1">Meeting, Einladung, meeting, invitation</code>',
+    'outlook_step_4_condition_2' => 'mit einem Anhang',
+    'outlook_step_5' => 'Aktion: <strong>Weiterleiten an</strong>',
+    'outlook_step_6' => 'Klicken Sie auf <strong>Fertig stellen</strong>',
+    'setup_gmail' => '📌 Gmail',
+    'gmail_forwarding_filter' => 'Gmail-Weiterleitungsfilter:',
+    'gmail_step_1' => 'Öffnen Sie Gmail → <strong>Einstellungen (⚙️) → Alle Einstellungen anzeigen</strong>',
+    'gmail_step_2' => 'Gehen Sie zu <strong>Filter und blockierte Adressen</strong>',
+    'gmail_step_3' => 'Klicken Sie auf <strong>Neuen Filter erstellen</strong>',
+    'gmail_step_4' => 'Im Feld "Enthält die Wörter" eingeben: <code class="bg-gray-100 px-1">filename:ics</code>',
+    'gmail_step_5' => 'Klicken Sie auf <strong>Filter erstellen</strong>',
+    'gmail_step_6' => 'Aktivieren Sie <strong>Weiterleiten an</strong> und wählen/fügen Sie hinzu',
+    'gmail_step_7' => 'Klicken Sie auf <strong>Filter erstellen</strong>',
+    'gmail_note' => 'Hinweis: Möglicherweise müssen Sie die Weiterleitungsadresse zuerst bestätigen.',
+
+    // Admin Consent Page
+    'url_copied_to_clipboard' => '✓ URL in die Zwischenablage kopiert!',
+    'admin_redirect_description' => 'Sie werden zur Microsoft-Anmeldeseite weitergeleitet, um sich als Administrator zu authentifizieren.',
+    'requested_permissions' => 'Angeforderte Berechtigungen:',
+    'permission_calendars' => 'Lesen und Schreiben in Kalender',
+    'permission_user' => 'Benutzerprofil lesen',
+    'permission_offline' => 'Zugriff auf Daten aufrechterhalten',
+    'approval_organization_wide' => 'Die Genehmigung gilt für Ihre gesamte Organisation, Sie müssen dies also nur einmal tun.',
+    'personal_accounts_no_consent' => 'Persönliche Microsoft-Konten (outlook.com, hotmail.com, live.com) erfordern keine Admin-Zustimmung und funktionieren sofort.',
+    'use_template_description' => 'Sie können diese Vorlage verwenden, um Ihren IT-Administrator zu kontaktieren:',
+    'admin_email_template' => 'Hallo,
+
+ich verwende SyncMyDay (https://syncmyday.cz) zur Synchronisierung meiner Arbeitskalender. Die Anwendung benötigt eine Admin-Zustimmung für den Zugriff auf Microsoft-Kalender.
+
+Könnten Sie bitte diese Anwendung für unsere Organisation genehmigen? Hier ist die Admin-Consent-URL:
+
+:url
+
+Die angeforderten Berechtigungen sind:
+• Calendars.ReadWrite - Zum Synchronisieren von Kalenderereignissen
+• User.Read - Zur Benutzeridentifikation
+• offline_access - Zur Aufrechterhaltung der Synchronisierung im Offline-Modus
+
+SyncMyDay ist eine verifizierte Microsoft-Partneranwendung für Kalendersynchronisierung.
+
+Vielen Dank!',
+    'copy_email_template' => 'E-Mail-Vorlage kopieren',
+    'template_copied_to_clipboard' => '✓ Vorlage in die Zwischenablage kopiert!',
+
     // CalDAV Select Calendars Page
     'connection_successful' => 'Verbindung erfolgreich!',
     'select_calendars_to_sync' => 'Wählen Sie die Kalender aus, die Sie synchronisieren möchten',

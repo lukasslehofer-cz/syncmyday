@@ -767,6 +767,57 @@ return [
     'admin_consent_contact_admin' => 'Skontaktuj się z administratorem IT',
     'admin_consent_alternative' => 'Alternatywa: Użyj osobistego konta Microsoft (outlook.com, hotmail.com), które nie wymaga zgody administratora',
 
+    // Email Calendar Setup Instructions
+    'setup_outlook_exchange' => '📌 Microsoft Outlook / Exchange',
+    'email_forwarding_rule' => 'Reguła przekazywania e-maili:',
+    'outlook_step_1' => 'Otwórz Outlook → <strong>Plik → Zarządzaj regułami i alertami</strong>',
+    'outlook_step_2' => 'Kliknij <strong>Nowa reguła</strong>',
+    'outlook_step_3' => 'Wybierz "Zastosuj regułę do otrzymywanych wiadomości"',
+    'outlook_step_4_title' => 'Dodaj warunki:',
+    'outlook_step_4_condition_1' => 'z określonymi słowami w temacie: <code class="bg-gray-100 px-1">spotkanie, zaproszenie, meeting, invitation</code>',
+    'outlook_step_4_condition_2' => 'z załącznikiem',
+    'outlook_step_5' => 'Akcja: <strong>Przekaż do</strong>',
+    'outlook_step_6' => 'Kliknij <strong>Zakończ</strong>',
+    'setup_gmail' => '📌 Gmail',
+    'gmail_forwarding_filter' => 'Filtr przekazywania w Gmailu:',
+    'gmail_step_1' => 'Otwórz Gmail → <strong>Ustawienia (⚙️) → Zobacz wszystkie ustawienia</strong>',
+    'gmail_step_2' => 'Przejdź do <strong>Filtry i zablokowane adresy</strong>',
+    'gmail_step_3' => 'Kliknij <strong>Utwórz nowy filtr</strong>',
+    'gmail_step_4' => 'W polu "Zawiera słowa" wpisz: <code class="bg-gray-100 px-1">filename:ics</code>',
+    'gmail_step_5' => 'Kliknij <strong>Utwórz filtr</strong>',
+    'gmail_step_6' => 'Zaznacz <strong>Przekaż do</strong> i wybierz/dodaj',
+    'gmail_step_7' => 'Kliknij <strong>Utwórz filtr</strong>',
+    'gmail_note' => 'Uwaga: Może być konieczne wcześniejsze zweryfikowanie adresu do przekazywania.',
+
+    // Admin Consent Page
+    'url_copied_to_clipboard' => '✓ URL skopiowany do schowka!',
+    'admin_redirect_description' => 'Zostaną przekierowani na stronę logowania Microsoft, aby uwierzytelnić się jako administrator.',
+    'requested_permissions' => 'Wymagane uprawnienia:',
+    'permission_calendars' => 'Odczyt i zapis do kalendarzy',
+    'permission_user' => 'Odczyt profilu użytkownika',
+    'permission_offline' => 'Utrzymanie dostępu do danych',
+    'approval_organization_wide' => 'Zatwierdzenie dotyczy całej organizacji, więc wystarczy to zrobić tylko raz.',
+    'personal_accounts_no_consent' => 'Osobiste konta Microsoft (outlook.com, hotmail.com, live.com) nie wymagają zgody administratora i działają od razu.',
+    'use_template_description' => 'Możesz użyć tego szablonu, aby skontaktować się z administratorem IT:',
+    'admin_email_template' => 'Dzień dobry,
+
+używam SyncMyDay (https://syncmyday.cz) do synchronizacji kalendarzy służbowych. Aplikacja wymaga zgody administratora na dostęp do kalendarzy Microsoft.
+
+Czy mógłby/mogłaby Pan/Pani zatwierdzić tę aplikację dla naszej organizacji? Oto URL do admin consent:
+
+:url
+
+Wymagane uprawnienia to:
+• Calendars.ReadWrite - Do synchronizacji wydarzeń kalendarza
+• User.Read - Do identyfikacji użytkowników
+• offline_access - Do utrzymania synchronizacji w trybie offline
+
+SyncMyDay jest zweryfikowaną aplikacją partnerską Microsoft skupioną na synchronizacji kalendarzy.
+
+Dziękuję!',
+    'copy_email_template' => 'Skopiuj szablon e-maila',
+    'template_copied_to_clipboard' => '✓ Szablon skopiowany do schowka!',
+
     // CalDAV Select Calendars Page
     'connection_successful' => 'Połączenie udane!',
     'select_calendars_to_sync' => 'Wybierz kalendarze, które chcesz synchronizować',

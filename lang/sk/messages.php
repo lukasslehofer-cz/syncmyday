@@ -767,6 +767,57 @@ return [
     'admin_consent_contact_admin' => 'Kontaktovať IT administrátora',
     'admin_consent_alternative' => 'Alternatíva: Použite osobný Microsoft účet (outlook.com, hotmail.com), ktorý nevyžaduje súhlas administrátora',
 
+    // Email Calendar Setup Instructions
+    'setup_outlook_exchange' => '📌 Microsoft Outlook / Exchange',
+    'email_forwarding_rule' => 'Pravidlo preposielania e-mailov:',
+    'outlook_step_1' => 'Otvorte Outlook → <strong>Súbor → Spravovať pravidlá a upozornenia</strong>',
+    'outlook_step_2' => 'Kliknite na <strong>Nové pravidlo</strong>',
+    'outlook_step_3' => 'Vyberte "Použiť pravidlo na správy, ktoré prijmem"',
+    'outlook_step_4_title' => 'Pridajte podmienky:',
+    'outlook_step_4_condition_1' => 's konkrétnymi slovami v predmete: <code class="bg-gray-100 px-1">schôdzka, pozvánka, meeting, invitation</code>',
+    'outlook_step_4_condition_2' => 's prílohou',
+    'outlook_step_5' => 'Akcia: <strong>Preposlať na</strong>',
+    'outlook_step_6' => 'Kliknite na <strong>Dokončiť</strong>',
+    'setup_gmail' => '📌 Gmail',
+    'gmail_forwarding_filter' => 'Filter preposielania v Gmaile:',
+    'gmail_step_1' => 'Otvorte Gmail → <strong>Nastavenia (⚙️) → Zobraziť všetky nastavenia</strong>',
+    'gmail_step_2' => 'Prejdite na <strong>Filtre a blokované adresy</strong>',
+    'gmail_step_3' => 'Kliknite na <strong>Vytvoriť nový filter</strong>',
+    'gmail_step_4' => 'Do poľa "Obsahuje slová" zadajte: <code class="bg-gray-100 px-1">filename:ics</code>',
+    'gmail_step_5' => 'Kliknite na <strong>Vytvoriť filter</strong>',
+    'gmail_step_6' => 'Zaškrtnite <strong>Preposlať na</strong> a vyberte/pridajte',
+    'gmail_step_7' => 'Kliknite na <strong>Vytvoriť filter</strong>',
+    'gmail_note' => 'Poznámka: Možno budete musieť najprv overiť adresu pre preposielanie.',
+
+    // Admin Consent Page
+    'url_copied_to_clipboard' => '✓ URL skopírovaná do schránky!',
+    'admin_redirect_description' => 'Budú presmerovaní na prihlasovaciu stránku Microsoftu na overenie ako administrátor.',
+    'requested_permissions' => 'Požadované oprávnenia:',
+    'permission_calendars' => 'Čítanie a zápis do kalendárov',
+    'permission_user' => 'Čítanie používateľského profilu',
+    'permission_offline' => 'Udržanie prístupu k dátam',
+    'approval_organization_wide' => 'Schválenie platí pre celú vašu organizáciu, takže to stačí urobiť iba raz.',
+    'personal_accounts_no_consent' => 'Osobné účty Microsoft (outlook.com, hotmail.com, live.com) nevyžadujú súhlas administrátora a fungujú okamžite.',
+    'use_template_description' => 'Môžete použiť túto šablónu na kontaktovanie IT administrátora:',
+    'admin_email_template' => 'Dobrý deň,
+
+používam SyncMyDay (https://syncmyday.cz) na synchronizáciu pracovných kalendárov. Aplikácia vyžaduje súhlas administrátora pre prístup ku kalendárom Microsoft.
+
+Mohli by ste prosím schváliť túto aplikáciu pre našu organizáciu? Tu je URL pre admin consent:
+
+:url
+
+Požadované oprávnenia sú:
+• Calendars.ReadWrite - Pre synchronizáciu kalendárových udalostí
+• User.Read - Pre identifikáciu používateľov
+• offline_access - Pre udržanie synchronizácie v offline režime
+
+SyncMyDay je overená partnerská aplikácia Microsoftu zameraná na synchronizáciu kalendárov.
+
+Ďakujem!',
+    'copy_email_template' => 'Skopírovať šablónu e-mailu',
+    'template_copied_to_clipboard' => '✓ Šablóna skopírovaná do schránky!',
+
     // CalDAV Select Calendars Page
     'connection_successful' => 'Pripojenie úspešné!',
     'select_calendars_to_sync' => 'Vyberte kalendáre, ktoré chcete synchronizovať',
