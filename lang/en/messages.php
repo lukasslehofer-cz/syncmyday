@@ -964,4 +964,21 @@ return [
     'admin_consent_copy_url' => 'Copy Admin Consent URL',
     'admin_consent_contact_admin' => 'Contact Your IT Admin',
     'admin_consent_alternative' => 'Alternative: Use a personal Microsoft account (outlook.com, hotmail.com) which doesn\'t require admin approval',
+
+    // Cookie Consent
+    'cookie_consent_title' => 'Cookie Settings',
+    'cookie_consent_text' => 'We use cookies to ensure basic website functionality, analyze traffic, and personalize content. You can choose which cookie categories to allow.',
+    'cookie_accept_all' => 'Accept All',
+    'cookie_reject_all' => 'Reject All',
+    'cookie_settings' => 'Settings',
+    'cookie_save_settings' => 'Save Settings',
+    'cookie_privacy_link' => 'Learn more in our Privacy Policy',
+    'cookie_necessary' => 'Necessary Cookies',
+    'cookie_necessary_desc' => 'These cookies are essential for the website to function properly. They cannot be disabled.',
+    'cookie_analytics' => 'Analytics Cookies',
+    'cookie_analytics_desc' => 'Help us understand how visitors use the website so we can improve it.',
+    'cookie_marketing' => 'Marketing Cookies',
+    'cookie_marketing_desc' => 'Used to display relevant ads and measure their effectiveness.',
+    'cookie_always_active' => 'Always Active',
+    'cookie_settings_footer' => 'Cookie Settings',
 ];

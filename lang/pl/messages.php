@@ -766,4 +766,21 @@ return [
     'admin_consent_copy_url' => 'Skopiuj URL zgody administratora',
     'admin_consent_contact_admin' => 'Skontaktuj się z administratorem IT',
     'admin_consent_alternative' => 'Alternatywa: Użyj osobistego konta Microsoft (outlook.com, hotmail.com), które nie wymaga zgody administratora',
+
+    // Cookie Consent
+    'cookie_consent_title' => 'Ustawienia plików cookie',
+    'cookie_consent_text' => 'Używamy plików cookie, aby zapewnić podstawową funkcjonalność strony, analizować ruch i personalizować treści. Możesz wybrać, które kategorie plików cookie chcesz zezwolić.',
+    'cookie_accept_all' => 'Zaakceptuj wszystkie',
+    'cookie_reject_all' => 'Odrzuć wszystkie',
+    'cookie_settings' => 'Ustawienia',
+    'cookie_save_settings' => 'Zapisz ustawienia',
+    'cookie_privacy_link' => 'Więcej w Polityce Prywatności',
+    'cookie_necessary' => 'Niezbędne pliki cookie',
+    'cookie_necessary_desc' => 'Te pliki cookie są niezbędne do prawidłowego działania strony. Nie można ich wyłączyć.',
+    'cookie_analytics' => 'Analityczne pliki cookie',
+    'cookie_analytics_desc' => 'Pomagają nam zrozumieć, jak odwiedzający korzystają ze strony, abyśmy mogli ją ulepszać.',
+    'cookie_marketing' => 'Marketingowe pliki cookie',
+    'cookie_marketing_desc' => 'Używane do wyświetlania odpowiednich reklam i mierzenia ich skuteczności.',
+    'cookie_always_active' => 'Zawsze aktywne',
+    'cookie_settings_footer' => 'Ustawienia plików cookie',
 ];

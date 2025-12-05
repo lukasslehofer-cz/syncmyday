@@ -350,6 +350,9 @@
         @yield('content')
     </main>
     
+    <!-- Cookie Consent Banner -->
+    @include('partials.cookie-consent')
+    
     <!-- Footer -->
     <footer class="bg-white/80 backdrop-blur-sm border-t border-gray-100 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -395,6 +398,7 @@
                         <ul class="space-y-2">
                             <li><a href="{{ route('privacy') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.privacy_policy') }}</a></li>
                             <li><a href="{{ route('terms') }}" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.terms_of_service') }}</a></li>
+                            <li><a href="#" onclick="openCookieSettings(); return false;" class="text-sm text-gray-600 hover:text-indigo-600">{{ __('messages.cookie_settings_footer') }}</a></li>
                             @can('admin')
                             <li><a href="{{ route('admin.dashboard') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">{{ __('messages.admin_panel') }}</a></li>
                             @endcan

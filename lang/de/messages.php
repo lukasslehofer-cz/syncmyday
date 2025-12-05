@@ -429,5 +429,22 @@ return [
     'admin_consent_copy_url' => 'Admin Consent URL kopieren',
     'admin_consent_contact_admin' => 'IT-Administrator kontaktieren',
     'admin_consent_alternative' => 'Alternative: Verwenden Sie ein persönliches Microsoft-Konto (outlook.com, hotmail.com), das keine Admin-Genehmigung erfordert',
+
+    // Cookie Consent
+    'cookie_consent_title' => 'Cookie-Einstellungen',
+    'cookie_consent_text' => 'Wir verwenden Cookies, um grundlegende Website-Funktionen bereitzustellen, den Datenverkehr zu analysieren und Inhalte zu personalisieren. Sie können wählen, welche Cookie-Kategorien Sie zulassen möchten.',
+    'cookie_accept_all' => 'Alle akzeptieren',
+    'cookie_reject_all' => 'Alle ablehnen',
+    'cookie_settings' => 'Einstellungen',
+    'cookie_save_settings' => 'Einstellungen speichern',
+    'cookie_privacy_link' => 'Mehr in unserer Datenschutzerklärung',
+    'cookie_necessary' => 'Notwendige Cookies',
+    'cookie_necessary_desc' => 'Diese Cookies sind für das ordnungsgemäße Funktionieren der Website unerlässlich. Sie können nicht deaktiviert werden.',
+    'cookie_analytics' => 'Analyse-Cookies',
+    'cookie_analytics_desc' => 'Helfen uns zu verstehen, wie Besucher die Website nutzen, damit wir sie verbessern können.',
+    'cookie_marketing' => 'Marketing-Cookies',
+    'cookie_marketing_desc' => 'Werden verwendet, um relevante Anzeigen anzuzeigen und ihre Wirksamkeit zu messen.',
+    'cookie_always_active' => 'Immer aktiv',
+    'cookie_settings_footer' => 'Cookie-Einstellungen',
 ];
 

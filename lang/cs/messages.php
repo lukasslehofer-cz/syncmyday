@@ -969,4 +969,21 @@ return [
     'admin_consent_copy_url' => 'Zkopírovat URL pro admin consent',
     'admin_consent_contact_admin' => 'Kontaktovat IT administrátora',
     'admin_consent_alternative' => 'Alternativa: Použijte osobní Microsoft účet (outlook.com, hotmail.com), který nevyžaduje souhlas administrátora',
+
+    // Cookie Consent
+    'cookie_consent_title' => 'Nastavení cookies',
+    'cookie_consent_text' => 'Používáme cookies pro zajištění základní funkčnosti webu, analýzu návštěvnosti a personalizaci obsahu. Můžete si vybrat, které kategorie cookies povolíte.',
+    'cookie_accept_all' => 'Přijmout vše',
+    'cookie_reject_all' => 'Odmítnout vše',
+    'cookie_settings' => 'Nastavení',
+    'cookie_save_settings' => 'Uložit nastavení',
+    'cookie_privacy_link' => 'Více v zásadách ochrany osobních údajů',
+    'cookie_necessary' => 'Nezbytné cookies',
+    'cookie_necessary_desc' => 'Tyto cookies jsou nutné pro správné fungování webu. Nelze je vypnout.',
+    'cookie_analytics' => 'Analytické cookies',
+    'cookie_analytics_desc' => 'Pomáhají nám pochopit, jak návštěvníci používají web, abychom ho mohli vylepšovat.',
+    'cookie_marketing' => 'Marketingové cookies',
+    'cookie_marketing_desc' => 'Používají se k zobrazování relevantních reklam a měření jejich účinnosti.',
+    'cookie_always_active' => 'Vždy aktivní',
+    'cookie_settings_footer' => 'Nastavení cookies',
 ];
