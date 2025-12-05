@@ -139,8 +139,8 @@
             showSettings: false,
             preferences: {
                 necessary: true,
-                analytics: false,
-                marketing: false
+                analytics: true,
+                marketing: true
             },
             
             init() {
