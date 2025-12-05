@@ -59,10 +59,10 @@
         <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{{ __('messages.add_new_calendar') }}</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <!-- Google Calendar -->
-            <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-4 sm:p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
+            <a href="{{ route('oauth.google') }}" class="group relative overflow-hidden p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:border-blue-400 hover:shadow-xl transition transform hover:scale-105">
                 <div class="flex flex-col items-center text-center">
-                    <div class="flex-shrink-0 mb-3 sm:mb-4">
-                        <div class="h-14 w-14 sm:h-16 sm:w-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <div class="flex-shrink-0 mb-4">
+                        <div class="h-16 w-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
                             <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -72,11 +72,11 @@
                         </div>
                     </div>
                     <div>
-                        <p class="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">{{ __('messages.google_calendar') }}</p>
-                        <p class="text-xs sm:text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
+                        <p class="text-xl font-bold text-gray-900 mb-2">{{ __('messages.google_calendar') }}</p>
+                        <p class="text-sm text-gray-600">{{ __('messages.connect_via_oauth') }}</p>
                     </div>
                 </div>
-                <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
+                <div class="absolute top-4 right-4">
                     <svg class="w-6 h-6 text-blue-400 group-hover:text-blue-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>

@@ -787,7 +787,7 @@ return [
     // ============================================
     
     // Pricing Cards
-    'choose_your_plan' => 'Vyber si svůj plán',
+    'choose_your_plan' => 'Vyberte si svůj plán',
     'monthly_plan' => 'Měsíční plán',
     'yearly_plan' => 'Roční plán',
     'per_month' => 'měsíčně',
