@@ -31,8 +31,70 @@
             50% { transform: translateY(-10px); }
         }
     </style>
+    
+    {{-- Google Tag Manager - Head --}}
+    @php $gtmContainerId = config('services.gtm.container_id'); @endphp
+    @if($gtmContainerId)
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        
+        // Capture UTM parameters for campaign tracking
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {};
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function(param) {
+                const value = urlParams.get(param);
+                if (value) {
+                    utmParams[param] = value;
+                }
+            });
+            
+            if (Object.keys(utmParams).length > 0) {
+                sessionStorage.setItem('utm_params', JSON.stringify(utmParams));
+                window.dataLayer.push({ 'event': 'utm_captured', ...utmParams });
+            }
+            window.utmParams = utmParams;
+        })();
+        
+        // Function to load GTM (called after cookie consent)
+        function loadGTM() {
+            if (window.gtmLoaded) return;
+            window.gtmLoaded = true;
+            
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{ $gtmContainerId }}');
+        }
+        
+        // Check if consent already given
+        document.addEventListener('DOMContentLoaded', function() {
+            const stored = localStorage.getItem('cookie_consent');
+            if (stored) {
+                try {
+                    const preferences = JSON.parse(stored);
+                    if (preferences.analytics || preferences.marketing) {
+                        loadGTM();
+                    }
+                } catch(e) {}
+            }
+        });
+        
+        // Listen for cookie consent events
+        window.addEventListener('cookie-consent-analytics', loadGTM);
+        window.addEventListener('cookie-consent-marketing', loadGTM);
+    </script>
+    @endif
 </head>
 <body class="bg-white antialiased">
+    {{-- Google Tag Manager - Body (noscript) --}}
+    @if(config('services.gtm.container_id'))
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config('services.gtm.container_id') }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    @endif
+    
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

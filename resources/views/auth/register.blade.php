@@ -12,8 +12,90 @@
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
+    
+    {{-- Google Tag Manager - Head --}}
+    @php $gtmContainerId = config('services.gtm.container_id'); @endphp
+    @if($gtmContainerId)
+    <script>
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
+        
+        // Capture UTM parameters for campaign tracking
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const utmParams = {};
+            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function(param) {
+                const value = urlParams.get(param);
+                if (value) {
+                    utmParams[param] = value;
+                }
+            });
+            
+            if (Object.keys(utmParams).length > 0) {
+                sessionStorage.setItem('utm_params', JSON.stringify(utmParams));
+                window.dataLayer.push({ 'event': 'utm_captured', ...utmParams });
+            } else {
+                // Try to restore from session storage
+                const storedUtm = sessionStorage.getItem('utm_params');
+                if (storedUtm) {
+                    try { Object.assign(utmParams, JSON.parse(storedUtm)); } catch(e) {}
+                }
+            }
+            window.utmParams = utmParams;
+        })();
+        
+        // Function to load GTM (called after cookie consent)
+        function loadGTM() {
+            if (window.gtmLoaded) return;
+            window.gtmLoaded = true;
+            
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{ $gtmContainerId }}');
+        }
+        
+        // Check if consent already given
+        document.addEventListener('DOMContentLoaded', function() {
+            const stored = localStorage.getItem('cookie_consent');
+            if (stored) {
+                try {
+                    const preferences = JSON.parse(stored);
+                    if (preferences.analytics || preferences.marketing) {
+                        loadGTM();
+                    }
+                } catch(e) {}
+            }
+        });
+        
+        // Listen for cookie consent events
+        window.addEventListener('cookie-consent-analytics', loadGTM);
+        window.addEventListener('cookie-consent-marketing', loadGTM);
+        
+        // Helper function for tracking events
+        window.pushDataLayerEvent = function(eventName, eventData) {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ 'event': eventName, ...eventData });
+        };
+        
+        // Sign Up conversion event helper
+        window.trackSignUp = function(method, userId) {
+            window.pushDataLayerEvent('sign_up', {
+                'method': method || 'email',
+                'user_id': userId || null
+            });
+        };
+    </script>
+    @endif
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
+    {{-- Google Tag Manager - Body (noscript) --}}
+    @if(config('services.gtm.container_id'))
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config('services.gtm.container_id') }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    @endif
+    
     <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Left Side - Branding & Info -->
         <div class="lg:w-1/2 gradient-bg text-white p-12 flex flex-col justify-center relative overflow-hidden">

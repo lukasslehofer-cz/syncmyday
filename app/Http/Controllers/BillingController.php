@@ -236,6 +236,26 @@ class BillingController extends Controller
                     'is_trial' => $subscription->status === 'trialing',
                     'subscription_id' => $session->subscription,
                 ]);
+                
+                // Track purchase conversion for GTM/Analytics
+                // Get price info from the subscription
+                $interval = 'yearly';
+                $amount = 0;
+                $currency = 'EUR';
+                
+                if (isset($subscription->items->data[0]->price)) {
+                    $price = $subscription->items->data[0]->price;
+                    $amount = ($price->unit_amount ?? 0) / 100;
+                    $currency = strtoupper($price->currency ?? 'eur');
+                    $interval = ($price->recurring->interval ?? 'year') === 'month' ? 'monthly' : 'yearly';
+                }
+                
+                session()->flash('track_purchase', [
+                    'transaction_id' => $session->subscription,
+                    'value' => $amount,
+                    'currency' => $currency,
+                    'interval' => $interval,
+                ]);
             }
 
             // Check redirect parameter

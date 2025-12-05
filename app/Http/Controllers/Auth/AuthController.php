@@ -88,6 +88,12 @@ class AuthController extends Controller
             'trial_ends_at' => $user->subscription_ends_at,
         ]);
 
+        // Track sign_up conversion for GTM/Analytics
+        session()->flash('track_signup', [
+            'method' => 'email',
+            'user_id' => $user->id,
+        ]);
+
         // Redirect to email verification notice
         return redirect()->route('verification.notice')
             ->with('success', __('messages.registration_success'));

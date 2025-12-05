@@ -114,5 +114,19 @@ return [
         'number_format' => env('FAKTUROID_NUMBER_FORMAT'), // Invoice number series ID (numeric)
         'user_agent' => env('FAKTUROID_USER_AGENT', 'SyncMyDay (support@syncmyday.com)'),
     ],
+
+    // Google Tag Manager & Analytics
+    'gtm' => [
+        'container_id' => env('GTM_CONTAINER_ID'), // e.g. GTM-WM9F4PRB
+    ],
+
+    // Google Ads Conversion Tracking
+    'google_ads' => [
+        'conversion_id' => env('GOOGLE_ADS_CONVERSION_ID'), // e.g. AW-XXXXXXXXX
+        'conversions' => [
+            'signup' => env('GOOGLE_ADS_CONVERSION_LABEL_SIGNUP'), // Conversion label for registration
+            'purchase' => env('GOOGLE_ADS_CONVERSION_LABEL_PURCHASE'), // Conversion label for purchase
+        ],
+    ],
 ];
 

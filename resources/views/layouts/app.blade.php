@@ -50,8 +50,14 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
     </style>
+    
+    {{-- Google Tag Manager --}}
+    @include('partials.gtm')
+    @stack('gtm-head')
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-white to-indigo-50 antialiased">
+    @stack('gtm-body')
+    
     <!-- Navigation -->
     @auth
     <nav class="bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-0 z-50">
@@ -414,6 +420,56 @@
             </div>
         </div>
     </footer>
+    
+    {{-- Track sign_up conversion from session flash --}}
+    @if(session('track_signup'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.trackSignUp === 'function') {
+                window.trackSignUp('{{ session('track_signup.method') }}', '{{ session('track_signup.user_id') }}');
+            } else {
+                // Fallback if GTM helper not loaded yet
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'sign_up',
+                    'method': '{{ session('track_signup.method') }}',
+                    'user_id': '{{ session('track_signup.user_id') }}'
+                });
+            }
+        });
+    </script>
+    @endif
+    
+    {{-- Track purchase conversion from session flash --}}
+    @if(session('track_purchase'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.trackPurchase === 'function') {
+                window.trackPurchase(
+                    '{{ session('track_purchase.transaction_id') }}',
+                    {{ session('track_purchase.value', 0) }},
+                    '{{ session('track_purchase.currency', 'EUR') }}',
+                    '{{ session('track_purchase.interval', 'Yearly') }}'
+                );
+            } else {
+                // Fallback if GTM helper not loaded yet
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'purchase',
+                    'transaction_id': '{{ session('track_purchase.transaction_id') }}',
+                    'value': {{ session('track_purchase.value', 0) }},
+                    'currency': '{{ session('track_purchase.currency', 'EUR') }}',
+                    'items': [{
+                        'item_name': 'SyncMyDay Pro - {{ session('track_purchase.interval', 'Yearly') }}',
+                        'item_category': 'Subscription',
+                        'price': {{ session('track_purchase.value', 0) }},
+                        'quantity': 1
+                    }]
+                });
+            }
+        });
+    </script>
+    @endif
 </body>
 </html>
 

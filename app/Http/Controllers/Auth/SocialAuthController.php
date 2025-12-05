@@ -242,6 +242,12 @@ class SocialAuthController extends Controller
                     'user_id' => $user->id,
                     'email' => $user->email,
                 ]);
+                
+                // Track sign_up conversion for GTM/Analytics
+                session()->flash('track_signup', [
+                    'method' => 'google',
+                    'user_id' => $user->id,
+                ]);
             }
 
             // Login the user
@@ -572,6 +578,12 @@ class SocialAuthController extends Controller
                     Log::info('New user created via Microsoft OAuth', [
                         'user_id' => $user->id,
                         'email' => $user->email,
+                    ]);
+                    
+                    // Track sign_up conversion for GTM/Analytics
+                    session()->flash('track_signup', [
+                        'method' => 'microsoft',
+                        'user_id' => $user->id,
                     ]);
                 }
             }
