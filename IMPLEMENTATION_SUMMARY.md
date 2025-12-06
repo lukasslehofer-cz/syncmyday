@@ -34,24 +34,19 @@ Všechny plánované úpravy byly úspěšně implementovány podle plánu v `fi
 
 ---
 
-### 2. Email Verification pro klasickou registraci ✓
+### 2. Email Verification - ZRUŠENO ❌
 
-**Problém:** Všichni uživatelé měli email automaticky ověřený, včetně těch s email/password registrací.
+**Původní plán:** Implementovat email verification pro klasickou registraci.
 
-**Řešení:**
-- ✅ Odstraněn `'email_verified_at' => now()` z klasické registrace
-- ✅ Přidáno posílání verification emailu pomocí `$user->sendEmailVerificationNotification()`
-- ✅ Přidány verification routes:
-  - `GET /email/verify` - notice page (kam je user přesměrován po registraci)
-  - `GET /email/verify/{id}/{hash}` - verification link (kliknutí z emailu)
-  - `POST /email/verification-notification` - resend verification email
-- ✅ Upraven view `verify-email.blade.php` pro správný route name
-- ✅ OAuth registrace stále auto-verify (správně)
+**Důvod zrušení:** Pro trial aplikaci je lepší UX nechat uživatele začít používat aplikaci okamžitě bez čekání na verifikační email. Auto-verify zůstává pro všechny uživatele (email/password i OAuth).
 
-**Soubory:**
-- `app/Http/Controllers/Auth/AuthController.php`
-- `routes/web.php`
-- `resources/views/auth/verify-email.blade.php`
+**Finální řešení:**
+- ✅ Auto-verify zůstává aktivní: `'email_verified_at' => now()`
+- ✅ Verification routes byly přidány do `routes/web.php` (pro budoucí použití)
+- ✅ View `verify-email.blade.php` existuje (pro budoucí použití)
+- ⚠️ Verification není aktivní - všichni uživatelé mají email okamžitě ověřený
+
+**Poznámka:** Verification routes zůstávají v kódu pro případ, že by bylo potřeba aktivovat v budoucnu.
 
 ---
 
@@ -122,22 +117,16 @@ php artisan grace-period:check
 
 ## 📧 Aktualizovaný Email Flow
 
-### Pro nové uživatele (Email/Password):
-1. **Registrace** → Verification email + Welcome email
-2. **Ověření emailu** → Přístup k aplikaci
-3. **Den 2** → Onboarding - Calendar Setup
-4. **Den 7** → Onboarding - Rules Guide  
-5. **Den 14** → Onboarding - Upgrade Guide
-6. **3 dny před koncem trialu** → Trial Ending warning
-7. **1 den před koncem** → Trial Ending urgent
-8. **Den končení trialu** → Trial Expired (1. email) ✓ NOVĚ
-9. **+5 dní po expiraci** → Trial Expired Reminder ✓ NOVĚ
-10. **Po reminderu** → Už žádný email ✓ NOVĚ
-
-### Pro OAuth uživatele (Google/MS):
-1. **Registrace** → Welcome email (bez verification)
+### Pro všechny nové uživatele (Email/Password i OAuth):
+1. **Registrace** → Welcome email (email je auto-verified)
 2. **Den 2** → Onboarding - Calendar Setup
-3. ... stejné jako výše od bodu 4
+3. **Den 7** → Onboarding - Rules Guide  
+4. **Den 14** → Onboarding - Upgrade Guide
+5. **3 dny před koncem trialu** → Trial Ending warning
+6. **1 den před koncem** → Trial Ending urgent
+7. **Den končení trialu** → Trial Expired (1. email) ✓ NOVĚ
+8. **+5 dní po expiraci** → Trial Expired Reminder ✓ NOVĚ
+9. **Po reminderu** → Už žádný email ✓ NOVĚ
 
 ### Pro platící uživatele:
 - **Po platbě** → Payment Success
@@ -170,12 +159,12 @@ php artisan test:email your-email@example.com --type=trial-expired
 
 ## 📊 Statistiky
 
-- **Počet změněných souborů:** 6
+- **Počet změněných souborů:** 4
 - **Nových souborů:** 3
-- **Řádků kódu změněno:** ~300
+- **Řádků kódu změněno:** ~200
 - **Nových DB sloupců:** 2
-- **Nových routes:** 3
-- **Opravených bugů:** 3
+- **Nových routes:** 3 (připraveno pro budoucí použití)
+- **Opravených bugů:** 2 (trial expired spam, missing scheduler)
 
 ---
 
@@ -183,17 +172,15 @@ php artisan test:email your-email@example.com --type=trial-expired
 
 ### Před implementací:
 - ❌ Trial expired email se posílal každý den
-- ❌ Email verification nefungovala pro klasickou registraci
 - ❌ Grace period check nebyl ve scheduleru
 - ❌ Uživatelé byli spamováni
 
 ### Po implementaci:
 - ✅ Trial expired email se posílá 1× při expiraci
 - ✅ Reminder se posílá 1× po 5 dnech
-- ✅ Email verification funguje správně
-- ✅ OAuth uživatelé mají auto-verify
 - ✅ Grace period check běží denně
 - ✅ Žádné spamování uživatelů
+- ✅ Auto-verify zůstává aktivní pro lepší UX
 
 ---
 

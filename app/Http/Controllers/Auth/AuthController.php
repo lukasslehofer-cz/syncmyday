@@ -48,7 +48,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            // Do NOT auto-verify for email/password registration - verification email will be sent
+            'email_verified_at' => now(), // Auto-verify all users for better UX
             'locale' => app()->getLocale(),
             'timezone' => $request->timezone ?? 'UTC',
             'registration_domain' => \App\Helpers\EmailHelper::getCurrentDomain(),
@@ -56,23 +56,9 @@ class AuthController extends Controller
             'subscription_ends_at' => now()->addDays(config('services.stripe.trial_period_days')),
         ]);
 
-        // Send email verification notification
-        try {
-            $user->sendEmailVerificationNotification();
-            Log::info('Email verification sent', [
-                'user_id' => $user->id,
-                'email' => $user->email,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send email verification', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage(),
-            ]);
-        }
-
         Auth::login($user);
         
-        // Send welcome email after login
+        // Send welcome email immediately (no verification required)
         try {
             \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user));
         } catch (\Exception $e) {
@@ -94,8 +80,8 @@ class AuthController extends Controller
             'user_id' => $user->id,
         ]);
 
-        // Redirect to email verification notice
-        return redirect()->route('verification.notice')
+        // Redirect to onboarding (no verification required)
+        return redirect()->route('onboarding.start')
             ->with('success', __('messages.registration_success'));
     }
 

@@ -34,16 +34,16 @@ php artisan schedule:list
 
 **Očekávaný výsledek:**
 
-- ✓ User je vytvořen s `email_verified_at = NULL`
-- ✓ Email verification byl odeslán (zkontroluj logy)
-- ✓ Welcome email byl odeslán
-- ✓ User je přesměrován na `/email/verify` (verification notice)
-- ✓ User může znovu poslat verification email
+- ✓ User je vytvořen s `email_verified_at = NOW()` (auto-verify pro lepší UX)
+- ✓ Welcome email byl odeslán (zkontroluj logy)
+- ✓ User je přesměrován na `/onboarding/start`
+- ✓ User může okamžitě začít používat aplikaci bez čekání
 
 **Ověření v DB:**
 
 ```sql
 SELECT email, email_verified_at, created_at FROM users WHERE email = 'test@example.com';
+-- email_verified_at by měl být nastaven okamžitě
 ```
 
 ---
@@ -58,9 +58,10 @@ SELECT email, email_verified_at, created_at FROM users WHERE email = 'test@examp
 
 **Očekávaný výsledek:**
 
-- ✓ User je vytvořen s `email_verified_at = NOW()`
+- ✓ User je vytvořen s `email_verified_at = NOW()` (auto-verify)
 - ✓ Žádný verification email není odeslán
-- ✓ User je přesměrován přímo na dashboard/onboarding
+- ✓ User je přesměrován přímo na onboarding
+- ✓ Stejné chování jako email/password registrace
 
 **Ověření v DB:**
 
@@ -70,24 +71,17 @@ SELECT email, email_verified_at, oauth_provider FROM users WHERE email = 'oauth@
 
 ---
 
-### ✅ Scénář 3: Email Verification Link
+### ⚠️ Scénář 3: Email Verification - VYPNUTO
 
-**Kroky:**
+**Poznámka:** Email verification není aktivní. Všichni uživatelé mají email automaticky ověřený pro lepší UX trial aplikace.
 
-1. Po registraci (scénář 1), otevři verification email
-2. Klikni na verification link
+**Verification routes (připraveny pro budoucí použití):**
 
-**Očekávaný výsledek:**
+- `GET /email/verify` - verification notice page
+- `GET /email/verify/{id}/{hash}` - verification link
+- `POST /email/verification-notification` - resend email
 
-- ✓ Email je ověřen (`email_verified_at` je nastaven)
-- ✓ User je přesměrován na onboarding
-- ✓ Success message je zobrazen
-
-**Ověření v DB:**
-
-```sql
-SELECT email, email_verified_at FROM users WHERE email = 'test@example.com';
-```
+**Tyto routes existují v kódu, ale nejsou aktivně používány.**
 
 ---
 
@@ -296,13 +290,13 @@ php artisan test:email your-email@example.com --all
 - [ ] Po reminderu se už žádný email nepošle
 - [ ] Tracking sloupce jsou správně nastaveny v DB
 
-### Email Verification
+### Email Auto-Verify (Email Verification je vypnuto)
 
-- [ ] Email/password registrace posílá verification email
-- [ ] OAuth registrace NEposílá verification email
-- [ ] Verification link funguje
-- [ ] Resend verification funguje
-- [ ] Email calendar auto-verify funguje pro ověřený user email
+- [ ] Email/password registrace má email okamžitě ověřený (email_verified_at nastaven)
+- [ ] OAuth registrace má email okamžitě ověřený (email_verified_at nastaven)
+- [ ] Uživatelé jsou přesměrováni na onboarding, ne na verification notice
+- [ ] Uživatelé mohou okamžitě začít používat aplikaci
+- [ ] Email calendar auto-verify funguje (protože user email je vždy ověřený)
 
 ### Scheduler
 
