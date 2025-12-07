@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TrialEndingInSevenDaysMail extends Mailable
+class TrialEndingIn3DaysMail extends Mailable
 {
     use Queueable, SerializesModels;
     
@@ -38,7 +38,7 @@ class TrialEndingInSevenDaysMail extends Mailable
         
         return new Envelope(
             from: new \Illuminate\Mail\Mailables\Address($emailConfig['address'], $emailConfig['name']),
-            subject: __('emails.trial_ending_7days_subject'),
+            subject: __('emails.trial_ending_3days_subject'),
         );
     }
 
@@ -48,7 +48,7 @@ class TrialEndingInSevenDaysMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.trial-ending-7days',
+            view: 'emails.trial-ending-3days',
         );
     }
 
@@ -62,3 +62,4 @@ class TrialEndingInSevenDaysMail extends Mailable
         return [];
     }
 }
+

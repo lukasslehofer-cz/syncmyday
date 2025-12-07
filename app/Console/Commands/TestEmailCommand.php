@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\WelcomeMail;
-use App\Mail\TrialEndingInSevenDaysMail;
+use App\Mail\TrialEndingIn3DaysMail;
 use App\Mail\TrialEndingTomorrowMail;
 use App\Mail\PaymentSuccessMail;
 use App\Mail\RenewalReminderMail;
@@ -22,7 +22,7 @@ class TestEmailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-7, trial-1, payment-success, payment-failed, renewal-reminder, contact, trial-expired, account-deleted, subscription-suspended, onboarding-calendar, onboarding-rules, onboarding-upgrade)}';
+    protected $signature = 'email:test {email?} {--locale=cs : Language for emails (cs, en, de, pl, sk)} {--type=all : Type of email to send (all, welcome, verify, verify-calendar, password-reset, trial-3, trial-1, payment-success, payment-failed, renewal-reminder, contact, trial-expired, account-deleted, subscription-suspended, onboarding-calendar, onboarding-rules, onboarding-upgrade)}';
 
     /**
      * The console command description.
@@ -134,9 +134,9 @@ class TestEmailCommand extends Command
             ['name' => '3️⃣   Verify Email Calendar', 'type' => 'verify-email-calendar'],
             ['name' => '4️⃣   Password Reset', 'type' => 'password-reset'],
             ['name' => '5️⃣   Onboarding - Calendar Setup (Day 2)', 'type' => 'mailable', 'mail' => new OnboardingCalendarSetupMail($user)],
-            ['name' => '6️⃣   Onboarding - Rules Guide (Day 7)', 'type' => 'mailable', 'mail' => new OnboardingRulesGuideMail($user)],
-            ['name' => '7️⃣   Onboarding - Upgrade Guide (Day 14)', 'type' => 'mailable', 'mail' => new OnboardingUpgradeGuideMail($user)],
-            ['name' => '8️⃣   Trial Ending (7 days)', 'type' => 'mailable', 'mail' => new TrialEndingInSevenDaysMail($user)],
+            ['name' => '6️⃣   Onboarding - Rules Guide (Day 5)', 'type' => 'mailable', 'mail' => new OnboardingRulesGuideMail($user)],
+            ['name' => '7️⃣   Onboarding - Upgrade Guide (Day 8)', 'type' => 'mailable', 'mail' => new OnboardingUpgradeGuideMail($user)],
+            ['name' => '8️⃣   Trial Ending (3 days)', 'type' => 'mailable', 'mail' => new TrialEndingIn3DaysMail($user)],
             ['name' => '9️⃣   Trial Ending (1 day)', 'type' => 'mailable', 'mail' => new TrialEndingTomorrowMail($user)],
             ['name' => '🔟  Trial Expired', 'type' => 'mailable', 'mail' => new \App\Mail\TrialExpiredMail($user)],
             ['name' => '1️⃣1️⃣ Payment Success', 'type' => 'mailable', 'mail' => new PaymentSuccessMail($user, 29.00, now()->addYear()->format('d.m.Y'))],
@@ -181,8 +181,8 @@ class TestEmailCommand extends Command
             case 'welcome':
                 Mail::to($email)->send(new WelcomeMail($user));
                 break;
-            case 'trial-7':
-                Mail::to($email)->send(new TrialEndingInSevenDaysMail($user));
+            case 'trial-3':
+                Mail::to($email)->send(new TrialEndingIn3DaysMail($user));
                 break;
             case 'trial-1':
                 Mail::to($email)->send(new TrialEndingTomorrowMail($user));
@@ -221,7 +221,7 @@ class TestEmailCommand extends Command
                 return;
             default:
                 $this->error('Unknown email type: ' . $type);
-                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, onboarding-calendar, onboarding-rules, onboarding-upgrade, trial-7, trial-1, trial-expired, payment-success, payment-failed, renewal-reminder, subscription-suspended, account-deleted, contact');
+                $this->line('Available types: all, welcome, verify, verify-calendar, password-reset, onboarding-calendar, onboarding-rules, onboarding-upgrade, trial-3, trial-1, trial-expired, payment-success, payment-failed, renewal-reminder, subscription-suspended, account-deleted, contact');
                 return;
         }
         

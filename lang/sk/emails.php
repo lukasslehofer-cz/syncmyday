@@ -67,11 +67,11 @@ return [
     'welcome_signature' => 'Šťastnú synchronizáciu!',
     'welcome_team_name' => 'Tím SyncMyDay',
 
-    // Trial Ending - 7 Days
-    'trial_ending_7days_subject' => 'Vaše skúšobné obdobie končí o 7 dní',
+    // Trial Ending - 3 Days
+    'trial_ending_3days_subject' => 'Vaše skúšobné obdobie končí o 3 dni',
     'trial_ending_greeting' => 'Ahoj :name,',
-    'trial_ending_7days_intro' => 'Dúfame, že si SyncMyDay užívate! Toto je priateľská pripomienka, že vaše bezplatné skúšobné obdobie sa skončí o týždeň.',
-    'trial_ending_7days_reminder' => 'Vaše skúšobné obdobie končí o :days dní, dňa :date',
+    'trial_ending_3days_intro' => 'Dúfame, že si SyncMyDay užívate! Toto je priateľská pripomienka, že vaše bezplatné skúšobné obdobie sa skončí o 3 dni.',
+    'trial_ending_3days_reminder' => 'Vaše skúšobné obdobie končí o :days dni, dňa :date',
     'trial_ending_benefits_intro' => 'Pokračujte v užívaní týchto výhod:',
     'trial_benefit_1' => 'Neobmedzené pripojenia kalendárov',
     'trial_benefit_2' => 'Neobmedzené synchronizačné pravidlá',
@@ -246,7 +246,7 @@ return [
     'onboarding_calendar_setup_button' => 'Pripojiť kalendár',
     'onboarding_calendar_setup_outro' => 'Potrebujete pomoc? Pozrite sa do našej dokumentácie alebo odpovedzte na tento email s akýmikoľvek otázkami.',
 
-    // Onboarding - Sprievodca pravidlami (Deň 7)
+    // Onboarding - Sprievodca pravidlami (Deň 5)
     'onboarding_rules_guide_subject' => 'Ako fungujú pravidlá synchronizácie',
     'onboarding_rules_guide_greeting' => 'Ahoj :name!',
     'onboarding_rules_guide_intro' => 'Teraz, keď ste pripojili svoje kalendáre, vytvorte vaše prvé synchronizačné pravidlo a začnite automaticky synchronizovať udalosti!',
@@ -262,7 +262,7 @@ return [
     'onboarding_rules_guide_button' => 'Vytvoriť prvé pravidlo',
     'onboarding_rules_guide_outro' => 'Tip: Začnite s jednosmernou synchronizáciou a pridávajte filtre postupne!',
 
-    // Onboarding - Sprievodca upgradom (Deň 14)
+    // Onboarding - Sprievodca upgradom (Deň 8)
     'onboarding_upgrade_guide_subject' => 'Ako pokračovať s Pro verziou',
     'onboarding_upgrade_guide_greeting' => 'Ahoj :name!',
     'onboarding_upgrade_guide_intro' => 'Ste v polovici skúšobného obdobia! Dúfame, že si užívate bezproblémovú synchronizáciu kalendárov. Poďme si povedať, čo bude ďalej.',

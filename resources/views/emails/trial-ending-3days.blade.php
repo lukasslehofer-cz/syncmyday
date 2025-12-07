@@ -1,6 +1,6 @@
 @extends('emails.layout')
 
-@section('title', __('emails.trial_ending_7days_subject'))
+@section('title', __('emails.trial_ending_3days_subject'))
 
 @section('content')
     <h2 style="margin: 0 0 20px 0; padding: 0; color: #1f2937; font-size: 24px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
@@ -8,7 +8,7 @@
     </h2>
     
     <p style="margin: 0 0 16px 0; color: #4b5563; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-        {{ __('emails.trial_ending_7days_intro') }}
+        {{ __('emails.trial_ending_3days_intro') }}
     </p>
     
     <!-- Highlight Box -->
@@ -16,7 +16,7 @@
         <tr>
             <td style="background-color: #eff6ff; border-left: 4px solid #667eea; padding: 20px; border-radius: 4px;">
                 <p style="margin: 0; color: #1e40af; font-size: 16px; line-height: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
-                    <strong>{{ __('emails.trial_ending_7days_reminder', ['days' => 7, 'date' => $user->subscription_ends_at->isoFormat('LL')]) }}</strong>
+                    <strong>{{ __('emails.trial_ending_3days_reminder', ['days' => 3, 'date' => $user->subscription_ends_at->isoFormat('LL')]) }}</strong>
                 </p>
             </td>
         </tr>
@@ -72,3 +72,4 @@
         {{ __('emails.trial_ending_footer_2') }}
     </p>
 @endsection
+

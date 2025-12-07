@@ -36,10 +36,10 @@ class SendOnboardingEmails extends Command
         // Day 2: Calendar Setup Email
         $this->sendCalendarSetupEmails();
 
-        // Day 7: Rules Guide Email
+        // Day 5: Rules Guide Email
         $this->sendRulesGuideEmails();
 
-        // Day 14: Upgrade Guide Email
+        // Day 8: Upgrade Guide Email
         $this->sendUpgradeGuideEmails();
 
         $this->info('Onboarding email campaign completed!');
@@ -92,11 +92,11 @@ class SendOnboardingEmails extends Command
     }
 
     /**
-     * Send rules guide email to users on day 7 of trial
+     * Send rules guide email to users on day 5 of trial
      */
     private function sendRulesGuideEmails()
     {
-        $targetDate = now()->subDays(7)->startOfDay();
+        $targetDate = now()->subDays(5)->startOfDay();
 
         $users = User::where('subscription_tier', 'pro')
             ->whereNull('stripe_subscription_id') // Only trial users
@@ -126,12 +126,12 @@ class SendOnboardingEmails extends Command
     }
 
     /**
-     * Send upgrade guide email to users on day 14 of trial
+     * Send upgrade guide email to users on day 8 of trial
      * Only send to users without payment method
      */
     private function sendUpgradeGuideEmails()
     {
-        $targetDate = now()->subDays(14)->startOfDay();
+        $targetDate = now()->subDays(8)->startOfDay();
 
         $users = User::where('subscription_tier', 'pro')
             ->whereNull('stripe_subscription_id') // Only trial users without active subscription

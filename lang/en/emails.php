@@ -67,11 +67,11 @@ return [
     'welcome_signature' => 'Happy syncing!',
     'welcome_team_name' => 'The SyncMyDay Team',
 
-    // Trial Ending - 7 Days
-    'trial_ending_7days_subject' => 'Your Trial Ends in 7 Days',
+    // Trial Ending - 3 Days
+    'trial_ending_3days_subject' => 'Your Trial Ends in 3 Days',
     'trial_ending_greeting' => 'Hi :name,',
-    'trial_ending_7days_intro' => 'We hope you\'re enjoying SyncMyDay! This is a friendly reminder that your free trial period will end in one week.',
-    'trial_ending_7days_reminder' => 'Your trial ends in :days days on :date',
+    'trial_ending_3days_intro' => 'We hope you\'re enjoying SyncMyDay! This is a friendly reminder that your free trial period will end in 3 days.',
+    'trial_ending_3days_reminder' => 'Your trial ends in :days days on :date',
     'trial_ending_benefits_intro' => 'Continue enjoying these benefits:',
     'trial_benefit_1' => 'Unlimited calendar connections',
     'trial_benefit_2' => 'Unlimited sync rules',
@@ -269,7 +269,7 @@ return [
     'onboarding_calendar_setup_button' => 'Connect Calendar',
     'onboarding_calendar_setup_outro' => 'Need help? Check out our documentation or reply to this email with any questions.',
 
-    // Onboarding - Rules Guide (Day 7)
+    // Onboarding - Rules Guide (Day 5)
     'onboarding_rules_guide_subject' => 'How Sync Rules Work',
     'onboarding_rules_guide_greeting' => 'Hi :name!',
     'onboarding_rules_guide_intro' => 'Now that you\'ve connected your calendars, let\'s create your first sync rule to start automatically synchronizing events!',
@@ -285,7 +285,7 @@ return [
     'onboarding_rules_guide_button' => 'Create Your First Rule',
     'onboarding_rules_guide_outro' => 'Pro tip: Start with one-way sync and add filters gradually!',
 
-    // Onboarding - Upgrade Guide (Day 14)
+    // Onboarding - Upgrade Guide (Day 8)
     'onboarding_upgrade_guide_subject' => 'How to Continue with Pro',
     'onboarding_upgrade_guide_greeting' => 'Hi :name!',
     'onboarding_upgrade_guide_intro' => 'You\'re halfway through your trial! We hope you\'re enjoying seamless calendar synchronization. Let\'s talk about what happens next.',

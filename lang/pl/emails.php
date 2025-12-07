@@ -67,11 +67,11 @@ return [
     'welcome_signature' => 'Udanej synchronizacji!',
     'welcome_team_name' => 'Zespół SyncMyDay',
 
-    // Trial Ending - 7 Days
-    'trial_ending_7days_subject' => 'Twój okres próbny kończy się za 7 dni',
+    // Trial Ending - 3 Days
+    'trial_ending_3days_subject' => 'Twój okres próbny kończy się za 3 dni',
     'trial_ending_greeting' => 'Cześć :name,',
-    'trial_ending_7days_intro' => 'Mamy nadzieję, że cieszysz się korzystaniem z SyncMyDay! To przyjazne przypomnienie, że Twój bezpłatny okres próbny zakończy się za tydzień.',
-    'trial_ending_7days_reminder' => 'Twój okres próbny kończy się za :days dni, dnia :date',
+    'trial_ending_3days_intro' => 'Mamy nadzieję, że cieszysz się korzystaniem z SyncMyDay! To przyjazne przypomnienie, że Twój bezpłatny okres próbny zakończy się za 3 dni.',
+    'trial_ending_3days_reminder' => 'Twój okres próbny kończy się za :days dni, dnia :date',
     'trial_ending_benefits_intro' => 'Kontynuuj korzystanie z tych korzyści:',
     'trial_benefit_1' => 'Nieograniczone połączenia kalendarzy',
     'trial_benefit_2' => 'Nieograniczone reguły synchronizacji',
@@ -246,7 +246,7 @@ return [
     'onboarding_calendar_setup_button' => 'Podłącz kalendarz',
     'onboarding_calendar_setup_outro' => 'Potrzebujesz pomocy? Sprawdź naszą dokumentację lub odpowiedz na tego e-maila z pytaniami.',
 
-    // Onboarding - Przewodnik po regułach (Dzień 7)
+    // Onboarding - Przewodnik po regułach (Dzień 5)
     'onboarding_rules_guide_subject' => 'Jak działają reguły synchronizacji',
     'onboarding_rules_guide_greeting' => 'Cześć :name!',
     'onboarding_rules_guide_intro' => 'Teraz, gdy podłączyłeś swoje kalendarze, utwórzmy Twoją pierwszą regułę synchronizacji, aby automatycznie synchronizować wydarzenia!',
@@ -262,7 +262,7 @@ return [
     'onboarding_rules_guide_button' => 'Utwórz pierwszą regułę',
     'onboarding_rules_guide_outro' => 'Wskazówka: Zacznij od synchronizacji jednostronnej i dodawaj filtry stopniowo!',
 
-    // Onboarding - Przewodnik po upgrade (Dzień 14)
+    // Onboarding - Przewodnik po upgrade (Dzień 8)
     'onboarding_upgrade_guide_subject' => 'Jak kontynuować z Pro',
     'onboarding_upgrade_guide_greeting' => 'Cześć :name!',
     'onboarding_upgrade_guide_intro' => 'Jesteś w połowie okresu próbnego! Mamy nadzieję, że cieszysz się bezproblemową synchronizacją kalendarzy. Porozmawiajmy o tym, co będzie dalej.',

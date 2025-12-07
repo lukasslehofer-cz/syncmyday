@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\TrialEndingInSevenDaysMail;
+use App\Mail\TrialEndingIn3DaysMail;
 use App\Mail\TrialEndingTomorrowMail;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -42,7 +42,7 @@ class SendTrialEndingNotifications extends Command
 
         foreach ($usersEndingIn3Days as $user) {
             try {
-                Mail::to($user->email)->send(new TrialEndingInSevenDaysMail($user));
+                Mail::to($user->email)->send(new TrialEndingIn3DaysMail($user));
                 $this->line("✓ Sent 3-day notification to: {$user->email}");
             } catch (\Exception $e) {
                 $this->error("✗ Failed to send to {$user->email}: {$e->getMessage()}");

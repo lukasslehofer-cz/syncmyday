@@ -67,11 +67,11 @@ return [
     'welcome_signature' => 'Viel Erfolg beim Synchronisieren!',
     'welcome_team_name' => 'Das SyncMyDay Team',
 
-    // Trial Ending - 7 Days
-    'trial_ending_7days_subject' => 'Ihre Testphase endet in 7 Tagen',
+    // Trial Ending - 3 Days
+    'trial_ending_3days_subject' => 'Ihre Testphase endet in 3 Tagen',
     'trial_ending_greeting' => 'Hallo :name,',
-    'trial_ending_7days_intro' => 'Wir hoffen, dass Sie SyncMyDay genießen! Dies ist eine freundliche Erinnerung, dass Ihre kostenlose Testphase in einer Woche endet.',
-    'trial_ending_7days_reminder' => 'Ihre Testphase endet in :days Tagen am :date',
+    'trial_ending_3days_intro' => 'Wir hoffen, dass Sie SyncMyDay genießen! Dies ist eine freundliche Erinnerung, dass Ihre kostenlose Testphase in 3 Tagen endet.',
+    'trial_ending_3days_reminder' => 'Ihre Testphase endet in :days Tagen am :date',
     'trial_ending_benefits_intro' => 'Genießen Sie weiterhin diese Vorteile:',
     'trial_benefit_1' => 'Unbegrenzte Kalenderverbindungen',
     'trial_benefit_2' => 'Unbegrenzte Synchronisierungsregeln',
@@ -246,7 +246,7 @@ return [
     'onboarding_calendar_setup_button' => 'Kalender verbinden',
     'onboarding_calendar_setup_outro' => 'Benötigen Sie Hilfe? Schauen Sie sich unsere Dokumentation an oder antworten Sie auf diese E-Mail mit Ihren Fragen.',
 
-    // Onboarding - Regel-Leitfaden (Tag 7)
+    // Onboarding - Regel-Leitfaden (Tag 5)
     'onboarding_rules_guide_subject' => 'So funktionieren Synchronisierungsregeln',
     'onboarding_rules_guide_greeting' => 'Hallo :name!',
     'onboarding_rules_guide_intro' => 'Jetzt, da Sie Ihre Kalender verbunden haben, erstellen wir Ihre erste Synchronisierungsregel, um Ereignisse automatisch zu synchronisieren!',
@@ -262,7 +262,7 @@ return [
     'onboarding_rules_guide_button' => 'Erste Regel erstellen',
     'onboarding_rules_guide_outro' => 'Tipp: Beginnen Sie mit einseitiger Synchronisation und fügen Sie nach und nach Filter hinzu!',
 
-    // Onboarding - Upgrade-Leitfaden (Tag 14)
+    // Onboarding - Upgrade-Leitfaden (Tag 8)
     'onboarding_upgrade_guide_subject' => 'So geht es mit Pro weiter',
     'onboarding_upgrade_guide_greeting' => 'Hallo :name!',
     'onboarding_upgrade_guide_intro' => 'Sie sind auf halbem Weg durch Ihre Testphase! Wir hoffen, Sie genießen die nahtlose Kalendersynchronisation. Lassen Sie uns darüber sprechen, was als Nächstes passiert.',
