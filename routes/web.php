@@ -46,11 +46,12 @@ Route::post('/feedback', [App\Http\Controllers\FeedbackController::class, 'send'
 Route::prefix('help')->name('help.')->group(function () {
     Route::get('/', function () {
         $locale = app()->getLocale();
-        return view("help.index.{$locale}", [], ['locale' => $locale])
-            ->render();
-    })->name('index')->fallback(function () {
-        return view('help.index.en');
-    });
+        try {
+            return view("help.index.{$locale}", [], ['locale' => $locale]);
+        } catch (\Exception $e) {
+            return view('help.index.en');
+        }
+    })->name('index');
     
     Route::get('/faq', function () {
         $locale = app()->getLocale();
