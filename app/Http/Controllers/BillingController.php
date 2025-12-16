@@ -854,7 +854,7 @@ class BillingController extends Controller
 
             // Get Fakturoid invoices (newest first)
             $fakturoidInvoices = $user->fakturoidInvoices()
-                ->where('status', 'created')
+                ->whereIn('status', ['created', 'paid'])
                 ->orderBy('issued_at', 'desc')
                 ->get();
 

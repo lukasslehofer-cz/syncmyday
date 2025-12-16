@@ -48,11 +48,11 @@ class FakturoidInvoice extends Model
     }
 
     /**
-     * Check if invoice was successfully created
+     * Check if invoice was successfully created (and optionally paid)
      */
     public function isCreated(): bool
     {
-        return $this->status === 'created' && $this->fakturoid_id !== null;
+        return in_array($this->status, ['created', 'paid']) && $this->fakturoid_id !== null;
     }
 
     /**
