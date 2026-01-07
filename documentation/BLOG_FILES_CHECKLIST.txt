@@ -1,0 +1,82 @@
+BLOG SYSTEM - SEZNAM SOUBORŮ PRO NAHRÁNÍ NA PRODUKCI
+====================================================
+
+📁 NOVÉ SOUBORY (vytvořit na serveru):
+--------------------------------------
+
+app/Models/BlogArticle.php
+app/Models/BlogArticleTranslation.php
+app/Models/BlogCategory.php
+app/Models/BlogCategoryTranslation.php
+
+app/Http/Controllers/BlogController.php
+app/Http/Controllers/Admin/BlogAdminController.php
+
+resources/views/blog/index.blade.php
+resources/views/blog/category.blade.php
+resources/views/blog/show.blade.php
+resources/views/blog/partials/sidebar.blade.php
+
+resources/views/admin/blog/index.blade.php
+resources/views/admin/blog/create.blade.php
+resources/views/admin/blog/edit.blade.php
+
+database/migrations/2025_10_12_181658_create_blog_categories_table.php
+database/migrations/2025_10_12_181702_create_blog_articles_table.php
+
+database/seeders/BlogSeeder.php (volitelné)
+
+
+📝 AKTUALIZOVANÉ SOUBORY (nahradit na serveru):
+----------------------------------------------
+
+routes/web.php
+
+lang/cs/messages.php
+lang/de/messages.php
+lang/en/messages.php
+lang/pl/messages.php
+lang/sk/messages.php
+
+resources/views/layouts/public.blade.php
+resources/views/layouts/app.blade.php
+resources/views/layouts/legal.blade.php
+resources/views/welcome.blade.php
+
+
+📂 VYTVOŘIT ADRESÁŘE:
+--------------------
+
+public/images/blog/ (chmod 755)
+
+
+💾 DATABÁZE:
+-----------
+
+Spustit SQL: BLOG_PRODUCTION_MIGRATION.sql
+(v phpMyAdmin nebo přes SSH)
+
+
+🧹 PO NAHRÁNÍ:
+-------------
+
+1. Vyčistit cache:
+   php artisan config:clear
+   php artisan cache:clear
+   php artisan route:clear
+   php artisan view:clear
+
+2. Zkontrolovat:
+   ✓ /blog funguje
+   ✓ /admin/blog funguje
+   ✓ Odkazy v patičce fungují
+
+
+📚 DOKUMENTACE:
+--------------
+
+BLOG_PRODUCTION_DEPLOY.md - Kompletní návod na nasazení
+BLOG_IMAGES_GUIDE.md - Návod na práci s obrázky
+BLOG_CTA_INSTRUCTIONS.md - Návod na CTA bloky
+INLINE_CTA_SNIPPET.html - HTML snippet pro inline CTA
+
