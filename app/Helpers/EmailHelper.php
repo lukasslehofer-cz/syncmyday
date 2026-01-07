@@ -49,9 +49,9 @@ class EmailHelper
         
         // Get email prefix and mailer based on type
         if ($type === 'events') {
-            // Calendar blockers → Mailgun (high volume)
+            // Calendar blockers → MXroute (was Mailgun before migration)
             $prefix = 'events';
-            $mailer = 'mailgun';
+            $mailer = 'mxroute';
         } else {
             // System emails → MXroute (critical, low volume)
             $prefix = 'info';

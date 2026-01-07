@@ -336,8 +336,9 @@ Route::post('/webhooks/stripe', [BillingController::class, 'webhook'])
     ->name('webhooks.stripe');
 
 // Email webhooks (for inbound calendar emails)
-Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun'])
-    ->name('webhooks.email.mailgun');
+// DISABLED: Mailgun webhook - migrated to MXroute IMAP polling
+// Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun'])
+//     ->name('webhooks.email.mailgun');
 Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid'])
     ->name('webhooks.email.sendgrid');
 Route::post('/webhooks/email/postmark', [EmailWebhookController::class, 'postmark'])

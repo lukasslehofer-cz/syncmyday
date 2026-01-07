@@ -47,18 +47,18 @@ return [
             'verify_peer' => true,
         ],
 
-        // Mailgun - for calendar blockers (events@)
-        // High volume: calendar invitations, updates, cancellations
-        'mailgun' => [
-            'transport' => 'smtp',
-            'host' => env('MAILGUN_SMTP_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAILGUN_SMTP_PORT', 587),
-            'encryption' => env('MAILGUN_SMTP_ENCRYPTION', 'tls'),
-            'username' => env('MAILGUN_SMTP_USERNAME'),
-            'password' => env('MAILGUN_SMTP_PASSWORD'),
-            'timeout' => null,
-            'verify_peer' => true,
-        ],
+        // Mailgun - DISABLED (migrated to MXroute for all emails)
+        // Keep configuration for easy rollback if needed
+        // 'mailgun' => [
+        //     'transport' => 'smtp',
+        //     'host' => env('MAILGUN_SMTP_HOST', 'smtp.mailgun.org'),
+        //     'port' => env('MAILGUN_SMTP_PORT', 587),
+        //     'encryption' => env('MAILGUN_SMTP_ENCRYPTION', 'tls'),
+        //     'username' => env('MAILGUN_SMTP_USERNAME'),
+        //     'password' => env('MAILGUN_SMTP_PASSWORD'),
+        //     'timeout' => null,
+        //     'verify_peer' => true,
+        // ],
 
         // Fallback - legacy config (keep for backward compatibility)
         'smtp' => [
@@ -121,6 +121,19 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'events@syncmyday.eu'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Email Rate Limiting
+    |--------------------------------------------------------------------------
+    |
+    | Rate limit for outgoing emails to comply with MXroute limits.
+    | MXroute allows 400 emails/hour per mailbox. We set a safe limit of 300.
+    | Rate limiting is enforced per FROM address (mailbox).
+    |
+    */
+
+    'rate_limit_per_hour' => env('MAIL_RATE_LIMIT_PER_HOUR', 300),
 
     /*
     |--------------------------------------------------------------------------

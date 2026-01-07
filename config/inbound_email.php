@@ -16,7 +16,7 @@ return [
 
     // IMAP server configuration
     'imap' => [
-        'host' => env('INBOUND_EMAIL_HOST', 'imap.mailgun.org'),
+        'host' => env('INBOUND_EMAIL_HOST', 'bunny.mxroute.com'),
         'port' => env('INBOUND_EMAIL_PORT', 993),
         'username' => env('INBOUND_EMAIL_USERNAME'),
         'password' => env('INBOUND_EMAIL_PASSWORD'),

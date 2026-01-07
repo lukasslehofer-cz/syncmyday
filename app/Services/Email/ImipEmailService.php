@@ -196,6 +196,8 @@ class ImipEmailService
 
     /**
      * Send calendar email using Laravel Mail with Symfony message manipulation
+     * 
+     * Uses queue with rate limiting to comply with MXroute's 400/hour limit
      */
     private function sendCalendarEmail(
         string $toEmail,
@@ -208,17 +210,15 @@ class ImipEmailService
         // Get dynamic FROM address based on user's domain (events@)
         $emailConfig = \App\Helpers\EmailHelper::getEmailConfig($user, 'events');
         
-        // Use Mailgun mailer for calendar blockers (high volume)
-        Mail::mailer($emailConfig['mailer'])->send([], [], function ($message) use ($toEmail, $subject, $textBody, $icsContent, $method, $emailConfig) {
-            $message->to($toEmail)
-                ->subject($subject)
-                ->from($emailConfig['address'], $emailConfig['name']);
-            
-            // Access underlying Symfony message to build multipart
-            $message->getSymfonyMessage()->setBody(
-                $this->buildMultipartBody($textBody, $icsContent, $method)
-            );
-        });
+        // Dispatch to queue with rate limiting (300 emails/hour per mailbox)
+        \App\Jobs\SendCalendarBlockerEmail::dispatch(
+            $toEmail,
+            $subject,
+            $textBody,
+            $icsContent,
+            $method,
+            $emailConfig
+        );
     }
 
     /**

@@ -93,13 +93,14 @@ return [
         ],
     ],
 
-    // Mailgun - for calendar blockers (events@) and inbound email processing
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-        'webhook_signing_key' => env('MAILGUN_WEBHOOK_SIGNING_KEY'),
-    ],
+    // Mailgun - DISABLED (migrated to MXroute for all emails + IMAP polling)
+    // Keep configuration for easy rollback if needed
+    // 'mailgun' => [
+    //     'domain' => env('MAILGUN_DOMAIN'),
+    //     'secret' => env('MAILGUN_SECRET'),
+    //     'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+    //     'webhook_signing_key' => env('MAILGUN_WEBHOOK_SIGNING_KEY'),
+    // ],
 
     // Token encryption key (separate from app key for added security)
     'token_encryption_key' => env('TOKEN_ENCRYPTION_KEY'),

@@ -36,10 +36,10 @@ Route::post('/set-timezone', function(\Illuminate\Http\Request $request) {
     ]);
 })->name('api.set-timezone');
 
-// Mailgun Inbound Webhook
+// Mailgun Inbound Webhook - DISABLED (migrated to MXroute IMAP polling)
 // Receives calendar responses (ACCEPT/DECLINE) from email calendar systems
-Route::post('/webhook/mailgun-inbound', [
-    \App\Http\Controllers\Webhook\MailgunInboundController::class,
-    'handle'
-])->name('webhook.mailgun-inbound');
+// Route::post('/webhook/mailgun-inbound', [
+//     \App\Http\Controllers\Webhook\MailgunInboundController::class,
+//     'handle'
+// ])->name('webhook.mailgun-inbound');
 

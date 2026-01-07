@@ -1,0 +1,214 @@
+# ============================================
+# MAIL CONFIGURATION - MXroute Only
+# ============================================
+# MXroute handles ALL emails (info@ + events@)
+# Inbound emails via IMAP polling (not webhooks)
+
+# Default mail driver
+MAIL_MAILER=mxroute
+
+# ============================================
+# MXroute - All Emails (info@ + events@)
+# ============================================
+# Both system emails and calendar blockers use MXroute
+MXROUTE_HOST=bunny.mxroute.com
+MXROUTE_PORT=587
+MXROUTE_USERNAME=info@syncmyday.cz
+MXROUTE_PASSWORD="tvoje_mxroute_heslo_zde"
+MXROUTE_ENCRYPTION=tls
+
+# ============================================
+# Queue Configuration
+# ============================================
+# Queue is used for rate-limited email sending
+QUEUE_CONNECTION=database
+
+# ============================================
+# Email Rate Limiting
+# ============================================
+# MXroute limit: 400 emails/hour per mailbox
+# Safe limit: 300 emails/hour (leaves buffer)
+MAIL_RATE_LIMIT_PER_HOUR=300
+
+# ============================================
+# Inbound Email - IMAP Polling
+# ============================================
+# For processing calendar responses (ACCEPT/DECLINE/TENTATIVE)
+INBOUND_EMAIL_ENABLED=true
+INBOUND_EMAIL_HOST=bunny.mxroute.com
+INBOUND_EMAIL_PORT=993
+INBOUND_EMAIL_USERNAME=events@syncmyday.cz
+INBOUND_EMAIL_PASSWORD="tvoje_mxroute_heslo_pro_events"
+INBOUND_EMAIL_ENCRYPTION=ssl
+INBOUND_EMAIL_MAILBOX=INBOX
+INBOUND_EMAIL_PROCESSED_FOLDER=Processed
+INBOUND_EMAIL_RETENTION_DAYS=7
+
+# ============================================
+# Fallback Mail Config (Legacy)
+# ============================================
+# Keep for backward compatibility
+MAIL_HOST=bunny.mxroute.com
+MAIL_PORT=587
+MAIL_USERNAME=info@syncmyday.cz
+MAIL_PASSWORD="tvoje_mxroute_heslo_zde"
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=info@syncmyday.cz
+MAIL_FROM_NAME="SyncMyDay"
+
+# ============================================
+# INSTRUKCE
+# ============================================
+# 1. Zkopíruj tyto řádky do svého .env souboru
+# 2. Nahraď všechny hesla (kromě hostů a portů)
+# 3. MXroute hesla: z DirectAdmin → Email Accounts
+# 4. Po změně spusť: php artisan config:clear
+# 5. Spusť queue worker: php artisan queue:work --tries=5
+# 6. Testuj: php artisan app:test-email
+# 7. Testuj IMAP: php artisan app:process-inbound-emails --dry-run
+
+# ============================================
+# CO KDE ZÍSKAT
+# ============================================
+# MXroute SMTP credentials (pro info@ i events@):
+#   → DirectAdmin → Email Accounts → klikni na email
+#   → Zkopíruj: Server (např. bunny.mxroute.com)
+#   → Port: 587 (TLS) pro SMTP
+#   → Username: celá emailová adresa
+#   → Password: heslo které jsi nastavil
+
+# MXroute IMAP credentials (pro příchozí emaily):
+#   → Stejné přihlašovací údaje jako SMTP
+#   → Port: 993 (SSL) pro IMAP
+#   → Username: events@syncmyday.cz
+#   → Password: heslo pro events mailbox
+
+# ============================================
+# Multi-Domain Setup:
+# ============================================
+# V MXroute vytvoř tyto mailboxy (10x):
+#
+# syncmyday.cz:
+#   - info@syncmyday.cz (pro systémové emaily)
+#   - events@syncmyday.cz (pro kalendářové blocker emaily)
+#
+# syncmyday.sk:
+#   - info@syncmyday.sk
+#   - events@syncmyday.sk
+#
+# syncmyday.pl:
+#   - info@syncmyday.pl
+#   - events@syncmyday.pl
+#
+# syncmyday.de:
+#   - info@syncmyday.de
+#   - events@syncmyday.de
+#
+# syncmyday.eu:
+#   - info@syncmyday.eu
+#   - events@syncmyday.eu
+#
+# Pak můžeš použít JAKÝKOLIV z těchto účtů jako MXROUTE_USERNAME
+# a Laravel automaticky použije správný FROM address podle
+# domény uživatele díky EmailHelper.
+
+# ============================================
+# DNS záznamy (pro každou doménu):
+# ============================================
+# MX record:
+# @ MX 10 bunny.mxroute.com. (nebo tvůj MXroute server)
+#
+# SPF record (TXT):
+# @ TXT "v=spf1 include:mxroute.com ~all"
+#
+# DKIM record (TXT) - získáš z MXroute DirectAdmin:
+# default._domainkey TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY_HERE"
+#
+# DMARC record (TXT):
+# _dmarc TXT "v=DMARC1; p=none; rua=mailto:dmarc@syncmyday.cz"
+
+# ============================================
+# Jak funguje IMAP polling
+# ============================================
+# 1. Laravel scheduler spouští každých 5 minut:
+#    php artisan app:process-inbound-emails
+#
+# 2. Command se připojí k events@syncmyday.cz IMAP mailboxu
+#
+# 3. Načte nepřečtené emaily z INBOX
+#
+# 4. Zpracuje .ics přílohy (calendar responses)
+#
+# 5. Přesune zpracované emaily do složky "Processed"
+#
+# 6. Složka "Processed" se vyčistí po 7 dnech
+
+# ============================================
+# Scheduler nastavení (app/Console/Kernel.php)
+# ============================================
+# Na produkci musí běžet cron job:
+# * * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+#
+# Schedule běží:
+# - ProcessInboundEmailsCommand každých 5 minut
+# - CleanOldInboundEmailsCommand každý den v 2:00
+
+# ============================================
+# Rozdíly oproti Mailgun setup
+# ============================================
+# PŘED (Mailgun):
+# - events@ → Mailgun SMTP (smtp.mailgun.org)
+# - Příchozí emaily → Mailgun webhooks (real-time)
+# - Náklady: platba za Mailgun službu
+#
+# PO (MXroute only):
+# - events@ → MXroute SMTP (bunny.mxroute.com)
+# - Příchozí emaily → MXroute IMAP polling (5 min zpoždění)
+# - Náklady: žádné extra (používáte MXroute stejně)
+
+# ============================================
+# Queue & Rate Limiting
+# ============================================
+# Kalendářové blocker emaily se odesílají přes queue s rate limitingem.
+# To zajišťuje dodržení MXroute limitu 400 emailů/hodinu na jeden mailbox.
+#
+# SPUŠTĚNÍ QUEUE WORKERA:
+# Na produkci musí běžet queue worker jako daemon:
+#
+#   php artisan queue:work --tries=5 --timeout=60
+#
+# Pro Supervisor config (doporučeno na produkci):
+#
+#   [program:syncmyday-queue]
+#   command=php /path/to/project/artisan queue:work --tries=5 --timeout=60
+#   autostart=true
+#   autorestart=true
+#   user=www-data
+#   numprocs=1
+#   redirect_stderr=true
+#   stdout_logfile=/path/to/project/storage/logs/queue.log
+#
+# MONITORING:
+#   php artisan queue:monitor          # Sledovat frontu
+#   php artisan queue:failed           # Zobrazit neúspěšné joby
+#   php artisan queue:retry all        # Zopakovat neúspěšné joby
+#
+# JAK TO FUNGUJE:
+# - Kalendářové blocker emaily se přidají do fronty (jobs table)
+# - Queue worker je postupně zpracovává s rate limitem 300/hodinu
+# - Pokud je dosažen limit, job čeká a zkusí to později (backoff)
+# - Rate limit je per mailbox (events@syncmyday.cz má vlastní limit)
+# - Multi-domain setup automaticky rozdělí zátěž mezi domény
+
+# ============================================
+# POZNÁMKY
+# ============================================
+# - IMAP polling má max 5 min zpoždění (oproti real-time webhooks)
+# - MXroute nemá webhooky, proto se používá IMAP
+# - V MXroute musí existovat mailbox events@syncmyday.cz (a další domény)
+# - Všechny mailboxy musí mít složku "Processed" (vytvoří se automaticky)
+# - Mailgun konfigurace zůstává v kódu (zakomentovaná) pro snadný rollback
+# - Pro obnovení Mailgun viz: env-configs/MAILGUN_BACKUP.md
+# - Kalendářové emaily se odesílají asynchronně přes queue (rate limited)
+# - Systémové emaily (welcome, password reset) se odesílají okamžitě (synchronně)
+
