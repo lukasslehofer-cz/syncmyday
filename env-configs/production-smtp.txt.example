@@ -1,0 +1,17 @@
+# ============================================
+# Production SMTP Configuration
+# ============================================
+# NEVER commit this file with real credentials!
+# Copy to production-smtp.txt and fill in real values
+
+MAIL_MAILER=smtp
+MAIL_HOST=your_smtp_host
+MAIL_PORT=587
+MAIL_USERNAME=your_smtp_username
+MAIL_PASSWORD=your_strong_password_here
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@yourdomain.com
+MAIL_FROM_NAME="Your App Name"
+
+# IMPORTANT: Add production-smtp.txt to .gitignore!
+

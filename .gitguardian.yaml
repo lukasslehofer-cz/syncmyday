@@ -1,0 +1,27 @@
+# GitGuardian configuration
+# Ignore documentation files with example/placeholder credentials
+
+version: 2
+
+paths-ignore:
+  - "env-configs/mxroute-only.txt"           # Documentation with placeholders
+  - "env-configs/MAILGUN_BACKUP.md"          # Backup documentation
+  - "env-configs/mxroute-mailgun.txt"        # Old documentation
+  - "env-configs/mxroute-smtp.txt"           # Documentation with placeholders
+  - "env-configs/cron-secret.txt"            # Example cron secret
+  - "MIGRATION_SUMMARY.md"                   # Migration docs
+  - "env-configs/RATE_LIMITING.md"           # Technical docs
+  - "**/*.example"                           # All .example files
+  - "**/*.sample"                            # All .sample files
+
+# Exclude test files
+  - "tests/**"
+  - "**/*test*.php"
+
+# Patterns to ignore (placeholders)
+matches-ignore:
+  - name: Placeholder passwords
+    match: tvoje_mxroute_heslo|your_mxroute_password|vaše_heslo|tvuj_mailgun
+  - name: Example secrets
+    match: your-random-secret-token-here|example-secret|placeholder
+

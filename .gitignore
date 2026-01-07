@@ -3,18 +3,19 @@
 /public/hot
 /public/storage
 /storage/*.key
-# /vendor  # Commented out for shared hosting deployment (no composer available)
+/vendor
 .env
 .env.backup
 .phpunit.result.cache
+docker-compose.override.yml
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
 
 # IDE
-.idea
-.vscode
+/.idea
+/.vscode
 *.swp
 *.swo
 *~
@@ -23,26 +24,14 @@ yarn-error.log
 .DS_Store
 Thumbs.db
 
-# Logs
-/storage/logs/*.log
+# Security - NEVER commit files with real credentials!
+env-configs/development-mailtrap.txt
+env-configs/production-smtp.txt
+env-configs/*-real.txt
+env-configs/*-prod.txt
+*.credentials
+*.secrets
 
-# Cache
-/bootstrap/cache/.gitignore
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-
-# Deployment artifacts
-.env.shared-hosting
-*.tar.gz
-install.php
-
-# Backup soubory
-.env.backup*
-
-# Blog images (upload via FTP/SFTP)
-/public/images/blog/*
-!/public/images/blog/.gitignore
-
-# Documentation (AI-generated documentation files)
-/documentation
+# Local configuration
+.env.local
+.env.production.local

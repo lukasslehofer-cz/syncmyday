@@ -1,0 +1,14 @@
+# ============================================
+# Development Mail Configuration - Mailtrap
+# ============================================
+# For local development and testing
+
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@syncmyday.test
+MAIL_FROM_NAME="SyncMyDay (Dev)"
+
