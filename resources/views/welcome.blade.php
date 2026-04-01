@@ -499,7 +499,7 @@
                     <h3 class="text-sm font-semibold mb-3">{{ __('messages.legal') }}</h3>
                     <ul class="space-y-2">
                         <li><a href="{{ route('privacy') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.privacy_policy') }}</a></li>
-                        <li><a href="{{ route('terms') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.terms_of_service') }}</a></li>
+                        <li><a href="{{ route('terms') }}" class="text-sm text-gray-400 hover:text-white">{{ __('messages.terms_of_service_footer') }}</a></li>
                         <li><a href="#" onclick="openCookieSettings(); return false;" class="text-sm text-gray-400 hover:text-white">{{ __('messages.cookie_settings_footer') }}</a></li>
                     </ul>
                 </div>

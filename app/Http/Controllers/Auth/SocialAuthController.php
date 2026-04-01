@@ -104,7 +104,7 @@ class SocialAuthController extends Controller
         $client->setRedirectUri($this->getCurrentDomainUrl('/auth/google/callback'));
         $client->setScopes(config('services.google.scopes'));
         $client->setAccessType('offline');
-        $client->setPrompt('select_account consent');
+        $client->setPrompt('select_account');
         $client->setState($state);
         
         return redirect($client->createAuthUrl());

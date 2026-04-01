@@ -25,6 +25,7 @@ return [
     'what_youll_get' => 'Co otrzymasz:',
     'i_agree_to' => 'Zgadzam się z',
     'terms_of_service' => 'Warunkami świadczenia usług',
+    'terms_of_service_footer' => 'Warunki świadczenia usług',
     'privacy_policy' => 'Polityką prywatności',
     'and' => 'i',
     'must_be_at_least_8_chars' => 'Musi mieć co najmniej 8 znaków',

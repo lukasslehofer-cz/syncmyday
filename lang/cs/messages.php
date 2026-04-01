@@ -25,6 +25,7 @@ return [
     'what_youll_get' => 'Co získáte:',
     'i_agree_to' => 'Souhlasím s',
     'terms_of_service' => 'Podmínkami služby',
+    'terms_of_service_footer' => 'Obchodní podmínky',
     'privacy_policy' => 'Zásadami ochrany osobních údajů',
     'and' => 'a',
     'must_be_at_least_8_chars' => 'Musí mít alespoň 8 znaků',

@@ -103,11 +103,11 @@
                     </svg>
                 </button>
                 <div x-show="open === 'payment-1'" x-collapse class="px-6 pb-4">
-                    <p>New users get <strong>31 days of full Pro access</strong> completely free:</p>
+                    <p>New users get <strong>14 days of full Pro access</strong> completely free:</p>
                     <ul>
                         <li>You'll need to add a payment method during registration</li>
                         <li>No charges during the trial period</li>
-                        <li>After 31 days, you'll be charged the annual subscription fee</li>
+                        <li>After 14 days, you'll be charged the annual subscription fee</li>
                         <li>Cancel anytime before trial ends to avoid charges</li>
                     </ul>
                 </div>

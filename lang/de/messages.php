@@ -25,6 +25,7 @@ return [
     'what_youll_get' => 'Was Sie erhalten:',
     'i_agree_to' => 'Ich stimme den',
     'terms_of_service' => 'Nutzungsbedingungen',
+    'terms_of_service_footer' => 'Nutzungsbedingungen',
     'privacy_policy' => 'Datenschutzrichtlinien',
     'and' => 'und',
     'must_be_at_least_8_chars' => 'Muss mindestens 8 Zeichen lang sein',
