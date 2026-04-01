@@ -74,7 +74,7 @@ class CalDavController extends Controller
                 session([
                     'caldav_url' => $result['url'],
                     'caldav_username' => $validated['apple_id'],
-                    'caldav_password' => $validated['app_password'],
+                    'caldav_password' => encrypt($validated['app_password']),
                     'caldav_email' => $validated['apple_id'],
                     'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
                     'caldav_calendars' => $result['calendars'],
@@ -134,7 +134,7 @@ class CalDavController extends Controller
                 session([
                     'caldav_url' => $validated['url'],
                     'caldav_username' => $validated['username'],
-                    'caldav_password' => $validated['password'],
+                    'caldav_password' => encrypt($validated['password']),
                     'caldav_email' => $validated['email'] ?? $validated['username'],
                     'caldav_principal_url' => $result['calendar_home_url'] ?? $result['principal_url'],
                     'caldav_calendars' => $result['calendars'],
@@ -193,7 +193,7 @@ class CalDavController extends Controller
         // Get credentials from session
         $url = session('caldav_url');
         $username = session('caldav_username');
-        $password = session('caldav_password');
+        $password = session('caldav_password') ? decrypt(session('caldav_password')) : null;
         $email = session('caldav_email');
         $principalUrl = session('caldav_principal_url');
         $allCalendars = session('caldav_calendars', []);

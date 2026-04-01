@@ -13,14 +13,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // Core synchronization and maintenance tasks
-        $schedule->command('calendars:sync')->everyFiveMinutes();
-        $schedule->command('webhooks:renew')->everySixHours();
+        $schedule->command('calendars:sync')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('webhooks:renew')->everySixHours()->withoutOverlapping();
         $schedule->command('logs:clean')->daily();
-        $schedule->command('connections:check')->hourly();
-        $schedule->command('sync:clean-orphaned-rules --force')->dailyAt('02:30'); // Clean orphaned sync rules at 2:30 AM
-        
+        $schedule->command('connections:check')->hourly()->withoutOverlapping();
+        $schedule->command('sync:clean-orphaned-rules --force')->dailyAt('02:30');
+
         // Inbound email processing
-        $schedule->command('app:process-inbound-emails')->everyFiveMinutes();
+        $schedule->command('app:process-inbound-emails')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('app:clean-old-inbound-emails')->dailyAt('03:00'); // Clean old emails at 3 AM
         
         // Trial management
