@@ -124,27 +124,6 @@ Route::prefix('blog')->name('blog.')->group(function () {
     Route::get('/{slug}', [App\Http\Controllers\BlogController::class, 'show'])->name('show');
 });
 
-// Debug routes for session testing (REMOVE IN PRODUCTION!)
-Route::get('/debug-session', function () {
-    return response()->json([
-        'session_id' => session()->getId(),
-        'session_driver' => config('session.driver'),
-        'session_secure' => config('session.secure'),
-        'session_domain' => config('session.domain'),
-        'session_same_site' => config('session.same_site'),
-        'app_url' => config('app.url'),
-        'app_env' => config('app.env'),
-        'https' => request()->secure(),
-        'test_value' => session('test_key', 'not_set'),
-        'storage_writable' => is_writable(storage_path('framework/sessions')),
-    ]);
-});
-
-Route::get('/debug-session-set', function () {
-    session(['test_key' => 'session_works_' . now()]);
-    return 'Session value set. Visit /debug-session to verify.';
-});
-
 // Authentication
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -339,14 +318,17 @@ Route::post('/webhooks/stripe', [BillingController::class, 'webhook'])
 // DISABLED: Mailgun webhook - migrated to MXroute IMAP polling
 // Route::post('/webhooks/email/mailgun', [EmailWebhookController::class, 'mailgun'])
 //     ->name('webhooks.email.mailgun');
-Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid'])
-    ->name('webhooks.email.sendgrid');
-Route::post('/webhooks/email/postmark', [EmailWebhookController::class, 'postmark'])
-    ->name('webhooks.email.postmark');
+// DISABLED: SendGrid/Postmark webhooks - migrated to MXroute IMAP polling
+// Route::post('/webhooks/email/sendgrid', [EmailWebhookController::class, 'sendgrid'])
+//     ->name('webhooks.email.sendgrid');
+// Route::post('/webhooks/email/postmark', [EmailWebhookController::class, 'postmark'])
+//     ->name('webhooks.email.postmark');
 
 // Health check
 Route::get('/health', [AdminController::class, 'health'])->name('health');
 
 // Cron endpoint (for shared hosting)
-Route::get('/cron/run', [\App\Http\Controllers\CronController::class, 'run'])->name('cron.run');
+Route::get('/cron/run', [\App\Http\Controllers\CronController::class, 'run'])
+    ->middleware('throttle:5,1')
+    ->name('cron.run');
 

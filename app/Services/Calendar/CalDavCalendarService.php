@@ -46,9 +46,11 @@ class CalDavCalendarService
             'password' => $password,
         ]);
         
-        // Fix SSL certificate issues on shared hosting
-        $this->client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
-        $this->client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+        // SSL verification - disable only when explicitly configured (e.g. shared hosting without proper CA bundle)
+        if (!config('services.caldav.verify_ssl', true)) {
+            $this->client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+            $this->client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+        }
         
         Log::channel('sync')->debug('CalDAV client initialized', [
             'connection_id' => $connection->id,
@@ -75,9 +77,10 @@ class CalDavCalendarService
                 'password' => $appPassword,
             ]);
             
-            // Fix SSL certificate issues on shared hosting
-            $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
-            $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+            if (!config('services.caldav.verify_ssl', true)) {
+                $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+                $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+            }
             
             Log::info('iCloud discovery: Step 1 - Finding principal', [
                 'apple_id' => $appleId,
@@ -260,9 +263,10 @@ class CalDavCalendarService
                 'password' => $password,
             ]);
             
-            // Fix SSL certificate issues on shared hosting
-            $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
-            $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+            if (!config('services.caldav.verify_ssl', true)) {
+                $client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+                $client->addCurlSetting(CURLOPT_SSL_VERIFYHOST, false);
+            }
             
             // Try to discover principal URL
             $response = $client->propfind('', [

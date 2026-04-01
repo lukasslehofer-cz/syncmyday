@@ -433,6 +433,15 @@ class BillingController extends Controller
             ]);
             return;
         }
+
+        // Idempotency: skip if we already processed this Stripe invoice
+        if (FakturoidInvoice::where('stripe_invoice_id', $invoice->id)->exists()) {
+            Log::info('Stripe invoice already processed, skipping', [
+                'user_id' => $user->id,
+                'stripe_invoice_id' => $invoice->id,
+            ]);
+            return;
+        }
         
         // Get subscription to determine next billing date and interval
         $nextBillingDate = null;

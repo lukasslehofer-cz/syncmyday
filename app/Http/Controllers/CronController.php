@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class CronController extends Controller
 {
@@ -19,17 +20,12 @@ class CronController extends Controller
     {
         // Security check - verify secret token
         $cronSecret = config('app.cron_secret');
-        
-        if (empty($cronSecret)) {
-            return response()->json([
-                'error' => 'CRON_SECRET not configured'
-            ], 500);
-        }
-        
-        if ($request->input('token') !== $cronSecret) {
-            return response()->json([
-                'error' => 'Unauthorized'
-            ], 401);
+
+        if (empty($cronSecret) || $request->input('token') !== $cronSecret) {
+            Log::warning('Cron endpoint unauthorized access attempt', [
+                'ip' => $request->ip(),
+            ]);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
         
         // Run scheduled tasks

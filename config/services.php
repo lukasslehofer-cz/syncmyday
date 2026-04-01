@@ -102,6 +102,11 @@ return [
     //     'webhook_signing_key' => env('MAILGUN_WEBHOOK_SIGNING_KEY'),
     // ],
 
+    // CalDAV settings
+    'caldav' => [
+        'verify_ssl' => env('CALDAV_VERIFY_SSL', true),
+    ],
+
     // Token encryption key (separate from app key for added security)
     'token_encryption_key' => env('TOKEN_ENCRYPTION_KEY'),
 

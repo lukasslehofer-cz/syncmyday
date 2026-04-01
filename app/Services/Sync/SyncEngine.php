@@ -757,12 +757,27 @@ class SyncEngine
                         Log::channel('sync')->error('❌ CRITICAL: Mapping not found in DB after duplicate error!', [
                             'rule_id' => $rule->id,
                             'source_event_id' => $sourceEventId,
+                            'blocker_id' => $blockerId,
                             'transaction_id' => $transactionId,
                         ]);
-                        
+
+                        // Clean up orphaned blocker event created in calendar API
+                        try {
+                            $targetService->deleteBlocker($target->target_calendar_id, $blockerId);
+                            Log::channel('sync')->info('Cleaned up orphaned blocker after race condition', [
+                                'blocker_id' => $blockerId,
+                                'target_calendar_id' => $target->target_calendar_id,
+                            ]);
+                        } catch (\Exception $cleanupException) {
+                            Log::channel('sync')->warning('Failed to clean up orphaned blocker', [
+                                'blocker_id' => $blockerId,
+                                'error' => $cleanupException->getMessage(),
+                            ]);
+                        }
+
                         // Check if rule still exists before logging
                         $ruleExists = SyncRule::where('id', $rule->id)->exists();
-                        
+
                         // Log error safely (rule might have been deleted)
                         SyncLog::logSync(
                             $rule->user_id,
@@ -773,10 +788,10 @@ class SyncEngine
                             null,
                             $start,
                             $end,
-                            'Mapping not found after race condition',
+                            'Mapping not found after race condition (orphaned blocker cleaned up)',
                             $transactionId
                         );
-                        
+
                         // Return instead of throwing exception (which can't be logged if rule is deleted)
                         return;
                     }
