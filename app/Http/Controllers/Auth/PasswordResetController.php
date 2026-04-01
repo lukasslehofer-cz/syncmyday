@@ -28,16 +28,21 @@ class PasswordResetController extends Controller
     public function sendResetLink(Request $request)
     {
         $request->validate([
-            'email' => ['required', 'email', 'exists:users,email'],
+            'email' => ['required', 'email'],
         ]);
 
         $user = User::where('email', $request->email)->first();
 
+        // Always show the same message to prevent user enumeration
+        $successMessage = __('messages.password_reset_link_sent');
+
+        if (!$user) {
+            return back()->with('success', $successMessage);
+        }
+
         // Check if user is OAuth-only (without password)
         if ($user->isOAuthUser() && !$user->password) {
-            return back()->withErrors([
-                'email' => 'This account uses ' . $user->getOAuthProviderName() . ' login. Please use the "Continue with ' . $user->getOAuthProviderName() . '" button on the login page.',
-            ])->onlyInput('email');
+            return back()->with('success', $successMessage);
         }
 
         // Generate reset token
@@ -56,7 +61,7 @@ class PasswordResetController extends Controller
         // Send email
         Mail::to($user->email)->send(new PasswordResetMail($user, $token));
 
-        return back()->with('success', __('messages.password_reset_link_sent'));
+        return back()->with('success', $successMessage);
     }
 
     /**

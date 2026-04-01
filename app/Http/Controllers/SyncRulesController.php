@@ -83,7 +83,6 @@ class SyncRulesController extends Controller
 
         Log::info('Sync rule store attempt', [
             'user_id' => auth()->id(),
-            'request_data' => $request->all(),
         ]);
 
         $validated = $request->validate([

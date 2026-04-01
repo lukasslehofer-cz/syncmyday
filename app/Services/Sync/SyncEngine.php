@@ -310,7 +310,10 @@ class SyncEngine
         // - Delta query returns only changed events (not all events)
         // - Comparing these few events with all mappings incorrectly detects deletions
         // - Example: Delta returns 9 events, we have 13 mappings → thinks 4 were deleted!
-        if (!$hadSyncToken && ($stats['events_processed'] > 0 || !empty($sourceEventIds))) {
+        $hasMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
+            ->where('source_connection_id', $sourceConnection->id)
+            ->exists();
+        if (!$hadSyncToken && ($stats['events_processed'] > 0 || !empty($sourceEventIds) || $hasMappings)) {
             Log::channel('sync')->debug('Running deleted events detection (full sync only)', [
                 'rule_id' => $rule->id,
                 'source_event_ids_count' => count($sourceEventIds),
@@ -960,6 +963,18 @@ class SyncEngine
                 'email_calendar_id' => $targetEmailConnection->id,
                 'target_email' => $targetEmailConnection->target_email,
             ]);
+            SyncLog::logSync(
+                $rule->user_id,
+                $rule->id,
+                'error',
+                'source_to_target',
+                null,
+                null,
+                null,
+                null,
+                'Email target not verified: ' . $targetEmailConnection->target_email,
+                $transactionId
+            );
             return;
         }
         
@@ -1579,18 +1594,22 @@ class SyncEngine
             'deleted_event_ids' => $deletedMappings->pluck('source_event_id')->toArray(),
         ]);
         
+        // Pre-load targets indexed by connection ID to avoid N+1 queries
+        $targetsByKey = $rule->targets->keyBy(function ($target) {
+            return $target->target_connection_id
+                ? 'conn:' . $target->target_connection_id
+                : 'email:' . $target->target_email_connection_id;
+        });
+
         // Process each deleted mapping
         foreach ($deletedMappings as $mapping) {
             $transactionId = \Str::uuid()->toString();
-            
-            // Find the target for this mapping
-            $target = $rule->targets()->where(function ($query) use ($mapping) {
-                if ($mapping->target_connection_id) {
-                    $query->where('target_connection_id', $mapping->target_connection_id);
-                } else {
-                    $query->where('target_email_connection_id', $mapping->target_email_connection_id);
-                }
-            })->first();
+
+            // Find the target for this mapping from pre-loaded collection
+            $targetKey = $mapping->target_connection_id
+                ? 'conn:' . $mapping->target_connection_id
+                : 'email:' . $mapping->target_email_connection_id;
+            $target = $targetsByKey->get($targetKey);
             
             if (!$target) {
                 Log::channel('sync')->warning('Target not found for deleted mapping', [
