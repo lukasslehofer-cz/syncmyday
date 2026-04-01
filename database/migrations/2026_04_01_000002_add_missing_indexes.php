@@ -8,11 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Prevent duplicate webhook subscriptions for the same calendar
+        // Speed up webhook subscription lookups by connection + calendar
         Schema::table('webhook_subscriptions', function (Blueprint $table) {
-            $table->unique(
+            $table->index(
                 ['calendar_connection_id', 'calendar_id'],
-                'webhook_connection_calendar_unique'
+                'webhook_connection_calendar_index'
             );
         });
 
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('webhook_subscriptions', function (Blueprint $table) {
-            $table->dropUnique('webhook_connection_calendar_unique');
+            $table->dropIndex('webhook_connection_calendar_index');
         });
 
         Schema::table('sync_event_mappings', function (Blueprint $table) {
