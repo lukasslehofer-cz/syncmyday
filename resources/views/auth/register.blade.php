@@ -13,88 +13,89 @@
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
     
-    {{-- Google Tag Manager - Head --}}
-    @php $gtmContainerId = config('services.gtm.container_id'); @endphp
-    @if($gtmContainerId)
+    {{-- Google Analytics --}}
     <script>
-        // Initialize dataLayer
-        window.dataLayer = window.dataLayer || [];
-        
-        // Capture UTM parameters for campaign tracking
-        (function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const utmParams = {};
-            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function(param) {
-                const value = urlParams.get(param);
-                if (value) {
-                    utmParams[param] = value;
-                }
-            });
-            
-            if (Object.keys(utmParams).length > 0) {
-                sessionStorage.setItem('utm_params', JSON.stringify(utmParams));
-                window.dataLayer.push({ 'event': 'utm_captured', ...utmParams });
-            } else {
-                // Try to restore from session storage
-                const storedUtm = sessionStorage.getItem('utm_params');
-                if (storedUtm) {
-                    try { Object.assign(utmParams, JSON.parse(storedUtm)); } catch(e) {}
-                }
-            }
-            window.utmParams = utmParams;
-        })();
-        
-        // Function to load GTM (called after cookie consent)
-        function loadGTM() {
-            if (window.gtmLoaded) return;
-            window.gtmLoaded = true;
-            
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','{{ $gtmContainerId }}');
+        function loadGA() {
+            if (window.gaLoaded) return;
+            window.gaLoaded = true;
+
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8DVXSB7DJK';
+            document.head.appendChild(script);
+
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-8DVXSB7DJK');
         }
-        
-        // Check if consent already given
+
         document.addEventListener('DOMContentLoaded', function() {
-            const stored = localStorage.getItem('cookie_consent');
+            var stored = localStorage.getItem('cookie_consent');
             if (stored) {
                 try {
-                    const preferences = JSON.parse(stored);
-                    if (preferences.analytics || preferences.marketing) {
-                        loadGTM();
-                    }
+                    var preferences = JSON.parse(stored);
+                    if (preferences.analytics || preferences.marketing) { loadGA(); }
                 } catch(e) {}
             }
         });
-        
-        // Listen for cookie consent events
-        window.addEventListener('cookie-consent-analytics', loadGTM);
-        window.addEventListener('cookie-consent-marketing', loadGTM);
-        
-        // Helper function for tracking events
-        window.pushDataLayerEvent = function(eventName, eventData) {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ 'event': eventName, ...eventData });
-        };
-        
-        // Sign Up conversion event helper
+
+        window.addEventListener('cookie-consent-analytics', function() { loadGA(); });
+        window.addEventListener('cookie-consent-marketing', function() { loadGA(); });
+
         window.trackSignUp = function(method, userId) {
-            window.pushDataLayerEvent('sign_up', {
-                'method': method || 'email',
-                'user_id': userId || null
-            });
+            if (typeof window.gtag === 'function') {
+                window.gtag('event', 'sign_up', {
+                    method: method || 'email',
+                    user_id: userId || null
+                });
+            }
         };
     </script>
-    @endif
+
+    {{-- Meta Pixel --}}
+    <script>
+        function loadMetaPixel() {
+            if (window.metaPixelLoaded) return;
+            window.metaPixelLoaded = true;
+
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '26269284699419129');
+            fbq('track', 'PageView');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var stored = localStorage.getItem('cookie_consent');
+            if (stored) {
+                try {
+                    var preferences = JSON.parse(stored);
+                    if (preferences.marketing) { loadMetaPixel(); }
+                } catch(e) {}
+            }
+        });
+
+        window.addEventListener('cookie-consent-marketing', function() {
+            loadMetaPixel();
+        });
+
+        window.trackMetaSignUp = function(method, userId, eventId) {
+            if (typeof fbq === 'function') {
+                var params = {content_name: method || 'email', status: true};
+                var options = eventId ? {eventID: eventId} : {};
+                fbq('track', 'CompleteRegistration', params, options);
+            }
+        };
+    </script>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
-    {{-- Google Tag Manager - Body (noscript) --}}
-    @if(config('services.gtm.container_id'))
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config('services.gtm.container_id') }}"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    @endif
     
     <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Left Side - Branding & Info -->

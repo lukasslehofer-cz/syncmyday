@@ -74,10 +74,15 @@ class AuthController extends Controller
             'trial_ends_at' => $user->subscription_ends_at,
         ]);
 
-        // Track sign_up conversion for GTM/Analytics
+        // Track sign_up conversion
+        $metaEventId = app(\App\Services\MetaConversionsApiService::class)->sendEvent('CompleteRegistration', $request, $user, [
+            'content_name' => 'email',
+            'status' => true,
+        ]);
         session()->flash('track_signup', [
             'method' => 'email',
             'user_id' => $user->id,
+            'meta_event_id' => $metaEventId,
         ]);
 
         // Redirect to onboarding (no verification required)

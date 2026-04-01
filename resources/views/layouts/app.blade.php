@@ -51,12 +51,16 @@
         }
     </style>
     
-    {{-- Google Tag Manager --}}
+    {{-- Google Analytics --}}
     @include('partials.gtm')
     @stack('gtm-head')
+
+    {{-- Meta Pixel --}}
+    @include('partials.meta-pixel')
+    @stack('meta-head')
 </head>
 <body class="bg-gradient-to-br from-gray-50 via-white to-indigo-50 antialiased">
-    @stack('gtm-body')
+    @stack('meta-body')
     
     <!-- Navigation -->
     @auth
@@ -425,25 +429,23 @@
     @if(session('track_signup'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Google Analytics
             if (typeof window.trackSignUp === 'function') {
                 window.trackSignUp('{{ session('track_signup.method') }}', '{{ session('track_signup.user_id') }}');
-            } else {
-                // Fallback if GTM helper not loaded yet
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    'event': 'sign_up',
-                    'method': '{{ session('track_signup.method') }}',
-                    'user_id': '{{ session('track_signup.user_id') }}'
-                });
+            }
+            // Meta Pixel (with CAPI deduplication)
+            if (typeof window.trackMetaSignUp === 'function') {
+                window.trackMetaSignUp('{{ session('track_signup.method') }}', '{{ session('track_signup.user_id') }}', '{{ session('track_signup.meta_event_id') }}');
             }
         });
     </script>
     @endif
-    
+
     {{-- Track purchase conversion from session flash --}}
     @if(session('track_purchase'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Google Analytics
             if (typeof window.trackPurchase === 'function') {
                 window.trackPurchase(
                     '{{ session('track_purchase.transaction_id') }}',
@@ -451,21 +453,15 @@
                     '{{ session('track_purchase.currency', 'EUR') }}',
                     '{{ session('track_purchase.interval', 'Yearly') }}'
                 );
-            } else {
-                // Fallback if GTM helper not loaded yet
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push({
-                    'event': 'purchase',
-                    'transaction_id': '{{ session('track_purchase.transaction_id') }}',
-                    'value': {{ session('track_purchase.value', 0) }},
-                    'currency': '{{ session('track_purchase.currency', 'EUR') }}',
-                    'items': [{
-                        'item_name': 'SyncMyDay Pro - {{ session('track_purchase.interval', 'Yearly') }}',
-                        'item_category': 'Subscription',
-                        'price': {{ session('track_purchase.value', 0) }},
-                        'quantity': 1
-                    }]
-                });
+            }
+            // Meta Pixel (with CAPI deduplication)
+            if (typeof window.trackMetaPurchase === 'function') {
+                window.trackMetaPurchase(
+                    '{{ session('track_purchase.transaction_id') }}',
+                    {{ session('track_purchase.value', 0) }},
+                    '{{ session('track_purchase.currency', 'EUR') }}',
+                    '{{ session('track_purchase.meta_event_id') }}'
+                );
             }
         });
     </script>

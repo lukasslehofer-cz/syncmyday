@@ -12,6 +12,71 @@
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
+
+    {{-- Google Analytics --}}
+    <script>
+        function loadGA() {
+            if (window.gaLoaded) return;
+            window.gaLoaded = true;
+
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8DVXSB7DJK';
+            document.head.appendChild(script);
+
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('js', new Date());
+            gtag('config', 'G-8DVXSB7DJK');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var stored = localStorage.getItem('cookie_consent');
+            if (stored) {
+                try {
+                    var preferences = JSON.parse(stored);
+                    if (preferences.analytics || preferences.marketing) { loadGA(); }
+                } catch(e) {}
+            }
+        });
+
+        window.addEventListener('cookie-consent-analytics', function() { loadGA(); });
+        window.addEventListener('cookie-consent-marketing', function() { loadGA(); });
+    </script>
+
+    {{-- Meta Pixel --}}
+    <script>
+        function loadMetaPixel() {
+            if (window.metaPixelLoaded) return;
+            window.metaPixelLoaded = true;
+
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window, document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '26269284699419129');
+            fbq('track', 'PageView');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var stored = localStorage.getItem('cookie_consent');
+            if (stored) {
+                try {
+                    var preferences = JSON.parse(stored);
+                    if (preferences.marketing) { loadMetaPixel(); }
+                } catch(e) {}
+            }
+        });
+
+        window.addEventListener('cookie-consent-marketing', function() {
+            loadMetaPixel();
+        });
+    </script>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 min-h-screen">
     <div class="min-h-screen flex flex-col lg:flex-row">

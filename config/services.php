@@ -121,9 +121,9 @@ return [
         'user_agent' => env('FAKTUROID_USER_AGENT', 'SyncMyDay (support@syncmyday.com)'),
     ],
 
-    // Google Tag Manager & Analytics
-    'gtm' => [
-        'container_id' => env('GTM_CONTAINER_ID'), // e.g. GTM-WM9F4PRB
+    // Google Analytics
+    'ga' => [
+        'measurement_id' => env('GA_MEASUREMENT_ID', 'G-8DVXSB7DJK'),
     ],
 
     // Google Ads Conversion Tracking
@@ -133,6 +133,12 @@ return [
             'signup' => env('GOOGLE_ADS_CONVERSION_LABEL_SIGNUP'), // Conversion label for registration
             'purchase' => env('GOOGLE_ADS_CONVERSION_LABEL_PURCHASE'), // Conversion label for purchase
         ],
+    ],
+
+    // Meta Conversions API
+    'meta_capi' => [
+        'access_token' => env('META_CAPI_ACCESS_TOKEN'),
+        'pixel_id' => env('META_CAPI_PIXEL_ID', '26269284699419129'),
     ],
 ];
 

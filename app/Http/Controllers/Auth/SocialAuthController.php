@@ -243,10 +243,15 @@ class SocialAuthController extends Controller
                     'email' => $user->email,
                 ]);
                 
-                // Track sign_up conversion for GTM/Analytics
+                // Track sign_up conversion
+                $metaEventId = app(\App\Services\MetaConversionsApiService::class)->sendEvent('CompleteRegistration', $request, $user, [
+                    'content_name' => 'google',
+                    'status' => true,
+                ]);
                 session()->flash('track_signup', [
                     'method' => 'google',
                     'user_id' => $user->id,
+                    'meta_event_id' => $metaEventId,
                 ]);
             }
 
@@ -580,10 +585,15 @@ class SocialAuthController extends Controller
                         'email' => $user->email,
                     ]);
                     
-                    // Track sign_up conversion for GTM/Analytics
+                    // Track sign_up conversion
+                    $metaEventId = app(\App\Services\MetaConversionsApiService::class)->sendEvent('CompleteRegistration', $request, $user, [
+                        'content_name' => 'microsoft',
+                        'status' => true,
+                    ]);
                     session()->flash('track_signup', [
                         'method' => 'microsoft',
                         'user_id' => $user->id,
+                        'meta_event_id' => $metaEventId,
                     ]);
                 }
             }

@@ -250,11 +250,16 @@ class BillingController extends Controller
                     $interval = ($price->recurring->interval ?? 'year') === 'month' ? 'monthly' : 'yearly';
                 }
                 
+                $metaEventId = app(\App\Services\MetaConversionsApiService::class)->sendEvent('Purchase', $request, $user, [
+                    'value' => $amount,
+                    'currency' => $currency,
+                ]);
                 session()->flash('track_purchase', [
                     'transaction_id' => $session->subscription,
                     'value' => $amount,
                     'currency' => $currency,
                     'interval' => $interval,
+                    'meta_event_id' => $metaEventId,
                 ]);
             }
 
