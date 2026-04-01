@@ -35,3 +35,4 @@ env-configs/*-prod.txt
 # Local configuration
 .env.local
 .env.production.local
+CLAUDE.md

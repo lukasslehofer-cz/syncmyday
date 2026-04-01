@@ -35,7 +35,7 @@ class SyncCalendarsCommand extends Command
         
         // Build query for active sync rules
         $query = SyncRule::where('is_active', true)
-            ->with(['sourceConnection', 'targets.targetConnection']);
+            ->with(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection']);
 
         // Filter by specific rule
         if ($ruleId = $this->option('rule_id')) {
@@ -63,8 +63,13 @@ class SyncCalendarsCommand extends Command
         
         foreach ($rules as $rule) {
             try {
+                // Email-sourced rules are triggered by incoming emails, not by periodic sync
+                if ($rule->isEmailSource()) {
+                    continue;
+                }
+
                 // CRITICAL: Check if source connection still exists
-                if (!$rule->sourceConnection) {
+                if (!$rule->sourceConnection && !$rule->sourceEmailConnection) {
                     $this->error("  ❌ Rule #{$rule->id}: Source connection is missing (orphaned rule)");
                     
                     Log::error('Orphaned sync rule detected - source connection missing', [
