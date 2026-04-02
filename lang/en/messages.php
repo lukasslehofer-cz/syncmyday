@@ -320,7 +320,7 @@ return [
     'manage_subscription_description' => 'Manage your subscription, payment method and invoices',
     'get_first_month_free' => 'Get 14 days free!',
     'try_full_functionality' => 'Try full functionality without any limitations',
-    'no_credit_card_required' => 'Credit card required but will not be charged during trial',
+    'no_credit_card_required' => 'No credit card required during trial',
     'cancel_anytime' => 'Cancel anytime',
     'one_plan_for_all' => 'One plan for all',
     'first_month_free' => '14 days FREE',
