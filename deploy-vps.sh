@@ -83,6 +83,7 @@ fi
 echo -e "${YELLOW}📦 Instaluji závislosti (Composer)...${NC}"
 export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction
+composer dump-autoload --no-dev --optimize --no-interaction
 echo -e "${GREEN}✓ Závislosti nainstalovány${NC}"
 
 # 5. DATABASE MIGRATIONS
@@ -108,14 +109,53 @@ echo -e "${GREEN}✓ Cache obnovena${NC}"
 # 8. PERMISSIONS
 echo -e "${YELLOW}🔒 Nastavuji oprávnění...${NC}"
 chmod -R 775 storage bootstrap/cache
-chmod 600 .env 2>/dev/null || true
+# .env must be readable by the worker/web user (www-data).
+# root:www-data 640 keeps it private but lets the group read.
+if [ -f .env ]; then
+    chown root:www-data .env 2>/dev/null || true
+    chmod 640 .env 2>/dev/null || true
+fi
 echo -e "${GREEN}✓ Oprávnění nastavena${NC}"
 
 # 9. RESTART QUEUE WORKERS (Supervisor)
 echo -e "${YELLOW}♻️  Restartuji queue workers...${NC}"
 if command -v supervisorctl &> /dev/null; then
-    sudo supervisorctl restart syncmyday-worker:* || echo "⚠️  Supervisor restart failed (může být OK)"
-    echo -e "${GREEN}✓ Queue workers restartovány${NC}"
+    # Auto-detect supervisor groups matching syncmyday*
+    WORKER_GROUPS=$(sudo supervisorctl status 2>/dev/null \
+        | awk '/^syncmyday/ {print $1}' \
+        | sed 's/:.*//' \
+        | sort -u)
+
+    if [ -n "$WORKER_GROUPS" ]; then
+        for group in $WORKER_GROUPS; do
+            echo -e "${YELLOW}   Restartuji: ${group}${NC}"
+            sudo supervisorctl restart "${group}:*" >/dev/null 2>&1 \
+                || sudo supervisorctl restart "${group}" >/dev/null 2>&1 \
+                || echo -e "${YELLOW}   ⚠  Restart ${group} selhal${NC}"
+        done
+        echo -e "${GREEN}✓ Queue workers restartovány${NC}"
+    elif ls /etc/supervisor/conf.d/syncmyday*.conf >/dev/null 2>&1; then
+        # Config exists but not loaded - reread/update and try again
+        echo -e "${YELLOW}   Detekována nová supervisor konfigurace - načítám...${NC}"
+        sudo supervisorctl reread >/dev/null 2>&1 || true
+        sudo supervisorctl update >/dev/null 2>&1 || true
+        WORKER_GROUPS=$(sudo supervisorctl status 2>/dev/null \
+            | awk '/^syncmyday/ {print $1}' \
+            | sed 's/:.*//' \
+            | sort -u)
+        if [ -n "$WORKER_GROUPS" ]; then
+            for group in $WORKER_GROUPS; do
+                sudo supervisorctl start "${group}:*" >/dev/null 2>&1 \
+                    || sudo supervisorctl start "${group}" >/dev/null 2>&1 || true
+            done
+            echo -e "${GREEN}✓ Queue workers spuštěny${NC}"
+        else
+            echo -e "${YELLOW}⚠  Supervisor config existuje, ale žádný syncmyday program nenalezen${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠  Žádný syncmyday supervisor config - přeskakuji${NC}"
+        echo -e "${YELLOW}   Pro nastavení workerů viz PRODUCTION_SETUP.md${NC}"
+    fi
 else
     echo -e "${YELLOW}⚠  Supervisor nenalezen - přeskakuji restart workers${NC}"
 fi
