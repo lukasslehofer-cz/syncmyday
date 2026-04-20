@@ -334,26 +334,17 @@ class SyncEngine
             ]);
         }
 
-        // Mark initial sync as completed if this rule has email targets
-        // This enables sending emails for subsequent changes
         if (!$rule->initial_sync_completed) {
-            $hasEmailTargets = $rule->targets->contains(function ($target) {
-                return $target->isEmailTarget();
-            });
-            
-            if ($hasEmailTargets) {
-                $rule->update([
-                    'initial_sync_completed' => true,
-                    'last_triggered_at' => now(),
-                ]);
-                
-                Log::channel('sync')->debug('Initial sync completed for rule with email targets', [
-                    'rule_id' => $rule->id,
-                    'processed_events' => $stats['events_processed'],
-                ]);
-            } else {
-                $rule->update(['last_triggered_at' => now()]);
-            }
+            $rule->update([
+                'initial_sync_completed' => true,
+                'last_triggered_at' => now(),
+            ]);
+
+            Log::channel('sync')->debug('Initial sync completed', [
+                'rule_id' => $rule->id,
+                'processed_events' => $stats['events_processed'],
+                'has_email_targets' => $rule->targets->contains(fn ($t) => $t->isEmailTarget()),
+            ]);
         } else {
             $rule->update(['last_triggered_at' => now()]);
         }
