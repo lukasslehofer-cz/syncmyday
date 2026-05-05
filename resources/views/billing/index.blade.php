@@ -20,8 +20,8 @@
         $endTimestamp = null;
         if ($isCancelling && isset($subscription->cancel_at)) {
             $endTimestamp = $subscription->cancel_at;
-        } elseif (isset($subscription->current_period_end)) {
-            $endTimestamp = $subscription->current_period_end;
+        } else {
+            $endTimestamp = $subscription->items->data[0]->current_period_end ?? $subscription->current_period_end ?? null;
         }
         
         // Format date
