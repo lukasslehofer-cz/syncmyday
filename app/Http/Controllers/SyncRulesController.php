@@ -6,9 +6,7 @@ use App\Models\CalendarConnection;
 use App\Models\EmailCalendarConnection;
 use App\Models\SyncRule;
 use App\Models\SyncRuleTarget;
-use App\Models\WebhookSubscription;
-use App\Services\Calendar\GoogleCalendarService;
-use App\Services\Calendar\MicrosoftCalendarService;
+use App\Services\WebhookSubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -517,78 +515,9 @@ class SyncRulesController extends Controller
             ->with('success', __('messages.sync_rule_deleted'));
     }
 
-    /**
-     * Ensure webhook subscription exists for calendar
-     */
     private function ensureWebhookSubscription(CalendarConnection $connection, string $calendarId): void
     {
-        // CalDAV and Apple (which uses CalDAV) don't support webhooks - they use polling instead
-        if (in_array($connection->provider, ['caldav', 'apple'])) {
-            Log::info('Skipping webhook creation for CalDAV/Apple (uses polling)', [
-                'connection_id' => $connection->id,
-                'calendar_id' => $calendarId,
-                'provider' => $connection->provider,
-            ]);
-            return;
-        }
-        
-        // Skip webhooks for localhost (requires HTTPS)
-        $appUrl = config('app.url');
-        if (str_contains($appUrl, 'localhost') || str_contains($appUrl, '127.0.0.1')) {
-            Log::info('Skipping webhook creation for localhost', [
-                'connection_id' => $connection->id,
-                'calendar_id' => $calendarId,
-                'note' => 'Webhooks require HTTPS. Use ngrok or deploy to production for real-time sync.',
-            ]);
-            return;
-        }
-
-        // Check if subscription already exists
-        $existing = WebhookSubscription::where('calendar_connection_id', $connection->id)
-            ->where('calendar_id', $calendarId)
-            ->where('status', 'active')
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if ($existing) {
-            return; // Already have active subscription
-        }
-
-        // Try to create new subscription
-        try {
-            $webhookUrl = config('app.url') . "/webhooks/{$connection->provider}/{$connection->id}";
-
-            if ($connection->provider === 'google') {
-                $service = app(GoogleCalendarService::class);
-            } else {
-                $service = app(MicrosoftCalendarService::class);
-            }
-
-            $service->initializeWithConnection($connection);
-            $subscriptionData = $service->createWebhook($calendarId, $webhookUrl);
-
-            WebhookSubscription::create([
-                'calendar_connection_id' => $connection->id,
-                'provider_subscription_id' => $subscriptionData['subscription_id'],
-                'resource_id' => $subscriptionData['resource_id'],
-                'calendar_id' => $calendarId,
-                'expires_at' => $subscriptionData['expires_at'],
-                'status' => 'active',
-            ]);
-
-            Log::info('Webhook subscription created', [
-                'connection_id' => $connection->id,
-                'calendar_id' => $calendarId,
-            ]);
-        } catch (\Exception $e) {
-            // Webhook creation failed - log but don't fail the whole rule creation
-            Log::warning('Failed to create webhook subscription', [
-                'connection_id' => $connection->id,
-                'calendar_id' => $calendarId,
-                'error' => $e->getMessage(),
-                'note' => 'Sync will work via polling instead of real-time webhooks',
-            ]);
-        }
+        app(WebhookSubscriptionService::class)->ensureSubscription($connection, $calendarId);
     }
 }
 
