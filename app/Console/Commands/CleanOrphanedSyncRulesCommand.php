@@ -124,6 +124,7 @@ class CleanOrphanedSyncRulesCommand extends Command
                     'target_id' => $target->id,
                     'rule_id' => $target->sync_rule_id,
                     'target_connection_id' => $target->target_connection_id,
+                    'target_email_connection_id' => $target->target_email_connection_id,
                 ]);
                 
                 $target->delete();
@@ -142,30 +143,72 @@ class CleanOrphanedSyncRulesCommand extends Command
     }
     
     /**
-     * Find sync rules where source_connection_id doesn't exist in calendar_connections
+     * Find sync rules whose source connection no longer exists.
+     *
+     * A rule's source is either an API CalendarConnection (source_connection_id)
+     * or an EmailCalendarConnection (source_email_connection_id). Treat the rule
+     * as orphaned when the FK that IS set points to a missing row, or when both
+     * FKs are NULL (malformed row).
      */
     private function findOrphanedSourceRules()
     {
-        return SyncRule::whereNotNull('source_connection_id')
-            ->whereNotExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('calendar_connections')
-                    ->whereColumn('calendar_connections.id', 'sync_rules.source_connection_id');
+        return SyncRule::where(function ($q) {
+                // API source set but the calendar_connection is gone
+                $q->whereNotNull('source_connection_id')
+                  ->whereNotExists(function ($sub) {
+                      $sub->select(DB::raw(1))
+                          ->from('calendar_connections')
+                          ->whereColumn('calendar_connections.id', 'sync_rules.source_connection_id');
+                  });
+            })
+            ->orWhere(function ($q) {
+                // Email source set but the email_calendar_connection is gone
+                $q->whereNotNull('source_email_connection_id')
+                  ->whereNotExists(function ($sub) {
+                      $sub->select(DB::raw(1))
+                          ->from('email_calendar_connections')
+                          ->whereColumn('email_calendar_connections.id', 'sync_rules.source_email_connection_id');
+                  });
+            })
+            ->orWhere(function ($q) {
+                // Neither source set — malformed row
+                $q->whereNull('source_connection_id')
+                  ->whereNull('source_email_connection_id');
             })
             ->get();
     }
-    
+
     /**
-     * Find sync rule targets where target_connection_id doesn't exist
+     * Find sync rule targets whose target connection no longer exists.
+     *
+     * Same logic as sources: a target is either an API CalendarConnection
+     * (target_connection_id) or an EmailCalendarConnection (target_email_connection_id).
+     * Only the FK that IS set must be validated — otherwise email targets, which
+     * leave target_connection_id NULL by design, get incorrectly flagged as orphans.
      */
     private function findOrphanedTargetRules()
     {
-        return SyncRuleTarget::whereNotExists(function ($query) {
-            $query->select(DB::raw(1))
-                ->from('calendar_connections')
-                ->whereColumn('calendar_connections.id', 'sync_rule_targets.target_connection_id');
-        })
-        ->get();
+        return SyncRuleTarget::where(function ($q) {
+                $q->whereNotNull('target_connection_id')
+                  ->whereNotExists(function ($sub) {
+                      $sub->select(DB::raw(1))
+                          ->from('calendar_connections')
+                          ->whereColumn('calendar_connections.id', 'sync_rule_targets.target_connection_id');
+                  });
+            })
+            ->orWhere(function ($q) {
+                $q->whereNotNull('target_email_connection_id')
+                  ->whereNotExists(function ($sub) {
+                      $sub->select(DB::raw(1))
+                          ->from('email_calendar_connections')
+                          ->whereColumn('email_calendar_connections.id', 'sync_rule_targets.target_email_connection_id');
+                  });
+            })
+            ->orWhere(function ($q) {
+                $q->whereNull('target_connection_id')
+                  ->whereNull('target_email_connection_id');
+            })
+            ->get();
     }
     
     /**
@@ -185,27 +228,43 @@ class CleanOrphanedSyncRulesCommand extends Command
             $this->newLine();
             $this->warn('📋 Rules with missing source connection:');
             $this->table(
-                ['Rule ID', 'User ID', 'Missing Source Connection ID', 'Created At'],
-                $orphanedSourceRules->map(fn($rule) => [
-                    $rule->id,
-                    $rule->user_id,
-                    $rule->source_connection_id,
-                    $rule->created_at->format('Y-m-d H:i:s'),
-                ])->toArray()
+                ['Rule ID', 'User ID', 'Source Type', 'Missing ID', 'Created At'],
+                $orphanedSourceRules->map(function ($rule) {
+                    [$type, $missingId] = $rule->source_connection_id
+                        ? ['api', $rule->source_connection_id]
+                        : ($rule->source_email_connection_id
+                            ? ['email', $rule->source_email_connection_id]
+                            : ['none', 'N/A']);
+                    return [
+                        $rule->id,
+                        $rule->user_id,
+                        $type,
+                        $missingId,
+                        $rule->created_at->format('Y-m-d H:i:s'),
+                    ];
+                })->toArray()
             );
         }
-        
+
         if ($orphanedTargetRules->isNotEmpty()) {
             $this->newLine();
             $this->warn('📋 Targets with missing connection:');
             $this->table(
-                ['Target ID', 'Rule ID', 'Missing Connection ID', 'Created At'],
-                $orphanedTargetRules->map(fn($target) => [
-                    $target->id,
-                    $target->sync_rule_id,
-                    $target->target_connection_id,
-                    $target->created_at->format('Y-m-d H:i:s'),
-                ])->toArray()
+                ['Target ID', 'Rule ID', 'Target Type', 'Missing ID', 'Created At'],
+                $orphanedTargetRules->map(function ($target) {
+                    [$type, $missingId] = $target->target_connection_id
+                        ? ['api', $target->target_connection_id]
+                        : ($target->target_email_connection_id
+                            ? ['email', $target->target_email_connection_id]
+                            : ['none', 'N/A']);
+                    return [
+                        $target->id,
+                        $target->sync_rule_id,
+                        $type,
+                        $missingId,
+                        $target->created_at->format('Y-m-d H:i:s'),
+                    ];
+                })->toArray()
             );
         }
         
