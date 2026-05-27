@@ -2,18 +2,18 @@
 
 namespace App\Observers;
 
-use App\Models\SyncRule;
 use App\Models\SyncEventMapping;
+use App\Models\SyncRule;
+use App\Services\Calendar\CalDavCalendarService;
 use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
-use App\Services\Calendar\CalDavCalendarService;
 use Illuminate\Support\Facades\Log;
 
 class SyncRuleObserver
 {
     /**
      * Handle the SyncRule "deleting" event.
-     * 
+     *
      * Clean up all blockers created by this sync rule AND its child rules.
      * This is important because CASCADE delete in DB doesn't trigger observer for child rules.
      */
@@ -24,20 +24,20 @@ class SyncRuleObserver
             'user_id' => $rule->user_id,
         ]);
 
-        // IMPORTANT: If this is a main rule (parent_rule_id IS NULL), 
+        // IMPORTANT: If this is a main rule (parent_rule_id IS NULL),
         // also clean up blockers for child rules (reverse rules)
         // because CASCADE delete won't trigger their observer
-        // 
+        //
         // Note: We need to check in DB, not rely on $rule->parent_rule_id
         // because it might not be loaded
         $childRules = SyncRule::where('parent_rule_id', $rule->id)->get();
-        
+
         if ($childRules->isNotEmpty()) {
             Log::info("Found {$childRules->count()} child rule(s), cleaning up their blockers first", [
                 'main_rule_id' => $rule->id,
                 'child_rule_ids' => $childRules->pluck('id')->toArray(),
             ]);
-            
+
             foreach ($childRules as $childRule) {
                 $this->cleanupBlockersForRule($childRule);
             }
@@ -46,7 +46,7 @@ class SyncRuleObserver
         // Clean up blockers for this rule
         $this->cleanupBlockersForRule($rule);
     }
-    
+
     /**
      * Clean up all blockers for a specific rule
      */
@@ -61,9 +61,10 @@ class SyncRuleObserver
         $mappings = SyncEventMapping::where('sync_rule_id', $rule->id)
             ->with(['targetConnection', 'targetEmailConnection'])
             ->get();
-        
+
         if ($mappings->isEmpty()) {
             Log::info('No blockers to clean up for this sync rule');
+
             return;
         }
 
@@ -72,34 +73,35 @@ class SyncRuleObserver
         // Separate API calendar mappings from email mappings
         $apiMappings = $mappings->whereNotNull('target_connection_id');
         $emailMappings = $mappings->whereNotNull('target_email_connection_id');
-        
+
         $deletedCount = 0;
         $errorCount = 0;
-        
+
         // Process API calendar mappings (Google, Microsoft, Apple/CalDAV)
         $grouped = $apiMappings->groupBy('target_connection_id');
-        
+
         foreach ($grouped as $connectionId => $connectionMappings) {
             $targetConnection = $connectionMappings->first()->targetConnection;
-            
-            if (!$targetConnection) {
+
+            if (! $targetConnection) {
                 Log::warning('Target connection not found', [
                     'connection_id' => $connectionId,
                 ]);
+
                 continue;
             }
-            
+
             try {
                 // Initialize service for this target connection
-                $service = match($targetConnection->provider) {
+                $service = match ($targetConnection->provider) {
                     'google' => app(GoogleCalendarService::class),
                     'microsoft' => app(MicrosoftCalendarService::class),
                     'caldav', 'apple' => app(CalDavCalendarService::class),
                     default => throw new \Exception("Unsupported provider: {$targetConnection->provider}"),
                 };
-                
+
                 $service->initializeWithConnection($targetConnection);
-                
+
                 foreach ($connectionMappings as $index => $mapping) {
                     try {
                         // Delete the blocker in the calendar
@@ -107,20 +109,20 @@ class SyncRuleObserver
                             $mapping->target_calendar_id,
                             $mapping->target_event_id
                         );
-                        
+
                         $deletedCount++;
-                        
+
                         Log::debug('Blocker deleted', [
                             'mapping_id' => $mapping->id,
                             'target_event_id' => $mapping->target_event_id,
                         ]);
-                        
+
                         // Throttle: Sleep 200ms between deletes to respect API rate limits
                         // This prevents hitting Google/Microsoft rate limits when deleting many blockers
                         if ($index < $connectionMappings->count() - 1) {
                             usleep(200000); // 200ms = 5 requests/second max
                         }
-                        
+
                     } catch (\Exception $e) {
                         $errorCount++;
                         Log::warning('Failed to delete blocker during rule cleanup', [
@@ -130,7 +132,7 @@ class SyncRuleObserver
                         ]);
                     }
                 }
-                
+
             } catch (\Exception $e) {
                 $errorCount += $connectionMappings->count();
                 Log::error('Failed to initialize service for rule cleanup', [
@@ -139,23 +141,35 @@ class SyncRuleObserver
                 ]);
             }
         }
-        
+
         // Process email calendar mappings (send CANCEL iMIP emails)
         if ($emailMappings->isNotEmpty()) {
             $imipService = app(\App\Services\Email\ImipEmailService::class);
-            
+
             foreach ($emailMappings as $mapping) {
                 $targetEmailConnection = $mapping->targetEmailConnection;
-                
-                if (!$targetEmailConnection || !$targetEmailConnection->target_email) {
+
+                if (! $targetEmailConnection || ! $targetEmailConnection->target_email) {
                     $errorCount++;
                     Log::warning('Target email connection not found or invalid', [
                         'mapping_id' => $mapping->id,
                         'target_email_connection_id' => $mapping->target_email_connection_id,
                     ]);
+
                     continue;
                 }
-                
+
+                // Skip CANCEL for past/unknown events — CANCEL for an event that
+                // already happened is meaningless and just spams the user's inbox.
+                if (! $mapping->event_end || $mapping->event_end->isPast()) {
+                    Log::debug('Skipping CANCEL for past/unknown event', [
+                        'mapping_id' => $mapping->id,
+                        'event_end' => $mapping->event_end?->toIso8601String(),
+                    ]);
+
+                    continue;
+                }
+
                 try {
                     // Send CANCEL iMIP to remove blocker from email calendar
                     $imipService->sendBlockerInvitation(
@@ -163,20 +177,20 @@ class SyncRuleObserver
                         $targetEmailConnection->target_email,
                         $mapping->target_event_id,
                         'Cancelled',
-                        new \DateTime(),
-                        new \DateTime(),
+                        $mapping->event_start->toDateTime(),
+                        $mapping->event_end->toDateTime(),
                         'CANCEL',
                         $mapping->sequence ?? 0
                     );
-                    
+
                     $deletedCount++;
-                    
+
                     Log::debug('Email blocker cancelled', [
                         'mapping_id' => $mapping->id,
                         'target_email' => $targetEmailConnection->target_email,
                         'target_event_id' => $mapping->target_event_id,
                     ]);
-                    
+
                 } catch (\Exception $e) {
                     $errorCount++;
                     Log::warning('Failed to cancel email blocker during rule cleanup', [
@@ -187,7 +201,7 @@ class SyncRuleObserver
                 }
             }
         }
-        
+
         Log::info('Sync rule cleanup completed', [
             'rule_id' => $rule->id,
             'deleted' => $deletedCount,
@@ -199,7 +213,7 @@ class SyncRuleObserver
 
     /**
      * Handle the SyncRule "deleted" event.
-     * 
+     *
      * Log the deletion to sync_logs for Recent Activity dashboard
      */
     public function deleted(SyncRule $rule)
@@ -208,7 +222,7 @@ class SyncRuleObserver
             'rule_id' => $rule->id,
             'user_id' => $rule->user_id,
         ]);
-        
+
         // Log to SyncLog for Recent Activity display
         // This creates a user-visible log entry that sync rule was deleted
         // Note: Using NULL for sync_rule_id because the rule was already deleted from DB
@@ -226,4 +240,3 @@ class SyncRuleObserver
         );
     }
 }
-
