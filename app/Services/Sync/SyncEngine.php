@@ -3,19 +3,19 @@
 namespace App\Services\Sync;
 
 use App\Models\CalendarConnection;
-use App\Models\SyncRule;
-use App\Models\SyncLog;
 use App\Models\SyncEventMapping;
+use App\Models\SyncLog;
+use App\Models\SyncRule;
+use App\Services\Calendar\CalDavCalendarService;
 use App\Services\Calendar\GoogleCalendarService;
 use App\Services\Calendar\MicrosoftCalendarService;
-use App\Services\Calendar\CalDavCalendarService;
 use App\Services\Email\ImipEmailService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
  * Sync Engine
- * 
+ *
  * Core synchronization logic that:
  * 1. Fetches changed events from source calendar
  * 2. Applies filters based on sync rules
@@ -26,8 +26,11 @@ use Illuminate\Support\Str;
 class SyncEngine
 {
     private GoogleCalendarService $googleService;
+
     private MicrosoftCalendarService $microsoftService;
+
     private CalDavCalendarService $calDavService;
+
     private ImipEmailService $imipEmail;
 
     public function __construct(
@@ -56,12 +59,13 @@ class SyncEngine
                 'last_sync_at' => $connection->last_sync_at->toDateTimeString(),
                 'seconds_ago' => $connection->last_sync_at->diffInSeconds(now()),
             ]);
+
             return;
         }
-        
+
         // Eager load user for timezone access in Microsoft service
         $connection->load('user');
-        
+
         Log::channel('sync')->info('Syncing connection', [
             'connection_id' => $connection->id,
             'provider' => $connection->provider,
@@ -73,7 +77,7 @@ class SyncEngine
             ->where('is_active', true)
             ->with(['targets.targetConnection.user', 'targets.targetEmailConnection'])
             ->get();
-        
+
         Log::channel('sync')->info('Found sync rules for connection', [
             'connection_id' => $connection->id,
             'rule_count' => $rules->count(),
@@ -90,7 +94,7 @@ class SyncEngine
 
                 // Check if rule still exists (might have been deleted during async processing)
                 $ruleExists = SyncRule::where('id', $rule->id)->exists();
-                
+
                 SyncLog::logSync(
                     $rule->user_id,
                     $ruleExists ? $rule->id : null,
@@ -102,8 +106,8 @@ class SyncEngine
                     null,
                     $e->getMessage()
                 );
-                
-                if (!$ruleExists) {
+
+                if (! $ruleExists) {
                     Log::channel('sync')->warning('Rule was deleted during processing', [
                         'rule_id' => $rule->id,
                         'user_id' => $rule->user_id,
@@ -121,20 +125,21 @@ class SyncEngine
     public function syncRule(SyncRule $rule, CalendarConnection $sourceConnection): void
     {
         // Check if user has active subscription (soft-lock for expired trials)
-        if (!$rule->user->hasActiveSubscription()) {
+        if (! $rule->user->hasActiveSubscription()) {
             Log::channel('sync')->warning('Sync skipped - user subscription expired', [
                 'rule_id' => $rule->id,
                 'user_id' => $rule->user_id,
             ]);
+
             return;
         }
-        
+
         // OPTIMIZATION: Eager load all targets and their connections to prevent N+1 queries
         $rule->load([
             'targets.targetConnection',
-            'targets.targetEmailConnection'
+            'targets.targetEmailConnection',
         ]);
-        
+
         // Track sync statistics and start time
         $startTime = microtime(true);
         $stats = [
@@ -144,13 +149,13 @@ class SyncEngine
             'events_deleted' => 0,
             'missing_start_end' => 0,
         ];
-        
+
         Log::channel('sync')->debug('Starting sync rule', [
             'rule_id' => $rule->id,
             'source_calendar_id' => $rule->source_calendar_id,
             'target_count' => $rule->targets->count(),
         ]);
-        
+
         // Initialize source service
         $sourceService = $this->getService($sourceConnection);
         $sourceService->initializeWithConnection($sourceConnection);
@@ -167,15 +172,15 @@ class SyncEngine
         if ($rule->initial_sync_completed && $subscription) {
             $syncTokenToUse = $subscription->sync_token;
         }
-        
-        $hadSyncToken = !empty($syncTokenToUse);
+
+        $hadSyncToken = ! empty($syncTokenToUse);
 
         Log::channel('sync')->debug('Sync token status before fetch', [
             'rule_id' => $rule->id,
             'has_subscription' => $subscription !== null,
             'initial_sync_completed' => $rule->initial_sync_completed,
             'had_sync_token' => $hadSyncToken,
-            'sync_token_preview' => $syncTokenToUse ? substr($syncTokenToUse, 0, 50) . '...' : null,
+            'sync_token_preview' => $syncTokenToUse ? substr($syncTokenToUse, 0, 50).'...' : null,
             'note' => $rule->initial_sync_completed ? 'Using delta link for incremental sync' : 'Forcing full sync for initial sync',
         ]);
 
@@ -186,9 +191,9 @@ class SyncEngine
             $rule->source_calendar_id,
             $syncTokenToUse
         );
-        
+
         $stats['events_fetched'] = count($changedData['events'] ?? []);
-        
+
         Log::channel('sync')->debug('Fetched events from source', [
             'rule_id' => $rule->id,
             'provider' => $sourceConnection->provider,
@@ -197,17 +202,17 @@ class SyncEngine
             'had_sync_token' => $hadSyncToken,
             'received_sync_token' => isset($changedData['sync_token']),
         ]);
-        
+
         // Update sync token
         if ($subscription && isset($changedData['sync_token'])) {
             $subscription->update(['sync_token' => $changedData['sync_token']]);
-            
+
             Log::channel('sync')->debug('Sync token saved to database', [
                 'subscription_id' => $subscription->id,
                 'connection_id' => $sourceConnection->id,
                 'calendar_id' => $rule->source_calendar_id,
             ]);
-        } elseif ($subscription && !isset($changedData['sync_token'])) {
+        } elseif ($subscription && ! isset($changedData['sync_token'])) {
             // No sync token = delta link expired/invalid
             // RESET to null to force full sync next time
             if ($subscription->sync_token !== null) {
@@ -218,7 +223,7 @@ class SyncEngine
                     'calendar_id' => $rule->source_calendar_id,
                 ]);
             }
-        } elseif (!$subscription) {
+        } elseif (! $subscription) {
             Log::channel('sync')->warning('No webhook subscription found - cannot save sync token', [
                 'connection_id' => $sourceConnection->id,
                 'calendar_id' => $rule->source_calendar_id,
@@ -231,17 +236,18 @@ class SyncEngine
         foreach ($changedData['events'] as $event) {
             $sourceEventIds[] = $this->getEventId($event);
         }
-        
+
         $existingMappings = collect();
-        if (!empty($sourceEventIds)) {
+        if (! empty($sourceEventIds)) {
             $existingMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
                 ->whereIn('source_event_id', $sourceEventIds)
                 ->get()
                 ->groupBy(function ($mapping) {
                     // Group by source_event_id and target key for quick lookup
-                    $targetKey = $mapping->target_connection_id 
+                    $targetKey = $mapping->target_connection_id
                         ? "{$mapping->target_connection_id}:{$mapping->target_calendar_id}"
                         : "email:{$mapping->target_email_connection_id}";
+
                     return "{$mapping->source_event_id}|{$targetKey}";
                 });
         }
@@ -251,20 +257,20 @@ class SyncEngine
         $futureMonths = config('sync.time_range.future_months', 6);
         $timeMin = now()->subDays($pastDays);
         $timeMax = now()->addMonths($futureMonths);
-        
+
         foreach ($changedData['events'] as $event) {
             // Filter by time range even for incremental syncs
             $eventStart = $this->getEventStart($event, $sourceConnection->provider);
-            
+
             // EARLY RETURN: Skip Microsoft events without start/end datetime
             // These are usually:
             // - Deleted events with @removed flag (but missing actual event data)
             // - Metadata objects from delta query
             // - Malformed events that can't be processed
-            if (!$eventStart && $sourceConnection->provider === 'microsoft') {
+            if (! $eventStart && $sourceConnection->provider === 'microsoft') {
                 $stats['missing_start_end']++;
                 $stats['events_skipped']++;
-                
+
                 Log::channel('sync')->debug('Microsoft event missing start/end datetime, skipping', [
                     'event_id' => $this->getEventId($event),
                     'has_start_key' => isset($event['start']),
@@ -272,20 +278,21 @@ class SyncEngine
                     'is_removed' => isset($event['@removed']) || isset($event['@odata.removed']),
                     'event_keys' => array_keys($event),
                 ]);
-                
+
                 continue; // Skip this event entirely
             }
-            
+
             // Skip events without start time (for any provider)
-            if (!$eventStart) {
+            if (! $eventStart) {
                 $stats['events_skipped']++;
                 Log::channel('sync')->warning('Event missing start time, skipping', [
                     'event_id' => $this->getEventId($event),
                     'provider' => $sourceConnection->provider,
                 ]);
+
                 continue;
             }
-            
+
             // Skip events outside our sync range
             if ($eventStart < $timeMin || $eventStart > $timeMax) {
                 $stats['events_skipped']++;
@@ -295,9 +302,10 @@ class SyncEngine
                     'time_min' => $timeMin->format('Y-m-d H:i:s'),
                     'time_max' => $timeMax->format('Y-m-d H:i:s'),
                 ]);
+
                 continue;
             }
-            
+
             // Process valid event
             $this->processEvent($event, $rule, $sourceService, $sourceConnection, $existingMappings);
             $stats['events_processed']++;
@@ -313,12 +321,12 @@ class SyncEngine
         $hasMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
             ->where('source_connection_id', $sourceConnection->id)
             ->exists();
-        if (!$hadSyncToken && ($stats['events_processed'] > 0 || !empty($sourceEventIds) || $hasMappings)) {
+        if (! $hadSyncToken && ($stats['events_processed'] > 0 || ! empty($sourceEventIds) || $hasMappings)) {
             Log::channel('sync')->debug('Running deleted events detection (full sync only)', [
                 'rule_id' => $rule->id,
                 'source_event_ids_count' => count($sourceEventIds),
             ]);
-            
+
             $stats['events_deleted'] = $this->detectDeletedEventsByMappingComparison(
                 $rule,
                 $sourceEventIds,
@@ -334,7 +342,7 @@ class SyncEngine
             ]);
         }
 
-        if (!$rule->initial_sync_completed) {
+        if (! $rule->initial_sync_completed) {
             $rule->update([
                 'initial_sync_completed' => true,
                 'last_triggered_at' => now(),
@@ -348,7 +356,7 @@ class SyncEngine
         } else {
             $rule->update(['last_triggered_at' => now()]);
         }
-        
+
         // Log sync summary
         $duration = round((microtime(true) - $startTime) * 1000); // milliseconds
         Log::channel('sync')->info('Sync completed', [
@@ -382,21 +390,23 @@ class SyncEngine
         // Check if this is our own blocker - skip to prevent loops
         if ($sourceService->isOurBlocker($event)) {
             Log::channel('sync')->debug('Skipping own blocker (by category/tag)', ['event_id' => $sourceEventId]);
+
             return;
         }
-        
+
         // ADDITIONAL ANTI-LOOP: Check if this event is a target blocker we just created
         // This catches blockers before they're marked with category/tag (race condition)
         $isTargetBlocker = SyncEventMapping::where('target_event_id', $sourceEventId)
             ->where('target_connection_id', $sourceConnection->id)
             ->where('target_calendar_id', $rule->source_calendar_id)
             ->exists();
-        
+
         if ($isTargetBlocker) {
             Log::channel('sync')->debug('Skipping target blocker (by mapping)', [
                 'event_id' => $sourceEventId,
                 'calendar_id' => $rule->source_calendar_id,
             ]);
+
             return;
         }
 
@@ -412,12 +422,13 @@ class SyncEngine
         ]);
 
         // Apply filters
-        if (!$isDeleted && !$rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
+        if (! $isDeleted && ! $rule->shouldSyncEvent($this->normalizeEvent($event, $sourceConnection->provider))) {
             // Don't log filtered events to DB - would spam dashboard
             Log::channel('sync')->debug('Event filtered out by rules', [
                 'event_id' => $sourceEventId,
                 'rule_id' => $rule->id,
             ]);
+
             return;
         }
 
@@ -476,8 +487,8 @@ class SyncEngine
                     $e->getMessage(),
                     $transactionId
                 );
-                
-                if (!$ruleExists) {
+
+                if (! $ruleExists) {
                     Log::channel('sync')->warning('Rule was deleted during processing', [
                         'rule_id' => $rule->id,
                         'user_id' => $rule->user_id,
@@ -512,7 +523,7 @@ class SyncEngine
             ->where('source_calendar_id', $target->target_calendar_id)
             ->where('source_connection_id', $target->target_connection_id)
             ->exists();
-        
+
         if ($isBlockerLoop) {
             Log::channel('sync')->info('Skipping event to prevent sync loop', [
                 'source_event_id' => $sourceEventId,
@@ -520,7 +531,7 @@ class SyncEngine
                 'target_calendar_id' => $target->target_calendar_id,
                 'rule_id' => $rule->id,
             ]);
-            
+
             SyncLog::logSync(
                 $rule->user_id,
                 $rule->id,
@@ -533,16 +544,16 @@ class SyncEngine
                 'Loop prevention: event is already a blocker from target calendar',
                 $transactionId
             );
-            
+
             return; // Skip this event to prevent loop
         }
 
         // Check if we already have a mapping for this event -> target
         // OPTIMIZATION: Use pre-loaded mappings if available
-        $mappingKey = $target->target_connection_id 
+        $mappingKey = $target->target_connection_id
             ? "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}"
             : "{$sourceEventId}|email:{$target->target_email_connection_id}";
-        
+
         $foundInCache = $existingMappings && isset($existingMappings[$mappingKey]);
         $mapping = $foundInCache
             ? $existingMappings[$mappingKey]->first()
@@ -552,9 +563,9 @@ class SyncEngine
                 $target->target_connection_id,
                 $target->target_calendar_id
             );
-        
+
         // 🔍 ANOMALY DETECTION: Log only suspicious cases
-        if (!$foundInCache && $mapping !== null) {
+        if (! $foundInCache && $mapping !== null) {
             // SUSPICIOUS: Mapping exists in DB but NOT in cache
             // This could indicate cache invalidation issue or parallel execution
             Log::channel('sync')->warning('⚠️ CACHE MISS: Mapping exists in DB but not in cache', [
@@ -575,60 +586,60 @@ class SyncEngine
             $needsUpdate = false;
             $maxTimestamp = new \DateTime('2038-01-01');
             $debugInfo = [];
-            
+
             // Check if start/end time changed
             $mappingStart = $mapping->event_start;
             $mappingEnd = $mapping->event_end;
-            
+
             if ($mappingStart && $start && $start <= $maxTimestamp) {
                 // Normalize both to UTC for comparison
                 $mappingStartUtc = clone $mappingStart;
                 $mappingStartUtc->setTimezone(new \DateTimeZone('UTC'));
                 $startUtc = clone $start;
                 $startUtc->setTimezone(new \DateTimeZone('UTC'));
-                
+
                 // Compare timestamps (allow 1 minute tolerance for rounding)
                 $diffStart = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
-                
+
                 $debugInfo['start_diff_seconds'] = $diffStart;
                 $debugInfo['old_start_utc'] = $mappingStartUtc->format('c');
                 $debugInfo['new_start_utc'] = $startUtc->format('c');
-                
+
                 if ($diffStart > 60) {
                     $needsUpdate = true;
                     $debugInfo['reason'] = 'start_time_changed';
                 }
-            } elseif (!$mappingStart && $start) {
+            } elseif (! $mappingStart && $start) {
                 $needsUpdate = true;
                 $debugInfo['reason'] = 'no_old_start';
             }
-            
+
             if ($mappingEnd && $end && $end <= $maxTimestamp) {
                 // Normalize both to UTC for comparison
                 $mappingEndUtc = clone $mappingEnd;
                 $mappingEndUtc->setTimezone(new \DateTimeZone('UTC'));
                 $endUtc = clone $end;
                 $endUtc->setTimezone(new \DateTimeZone('UTC'));
-                
+
                 $diffEnd = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
-                
+
                 $debugInfo['end_diff_seconds'] = $diffEnd;
                 $debugInfo['old_end_utc'] = $mappingEndUtc->format('c');
                 $debugInfo['new_end_utc'] = $endUtc->format('c');
-                
+
                 if ($diffEnd > 60) {
                     $needsUpdate = true;
-                    if (!isset($debugInfo['reason'])) {
+                    if (! isset($debugInfo['reason'])) {
                         $debugInfo['reason'] = 'end_time_changed';
                     }
                 }
-            } elseif (!$mappingEnd && $end) {
+            } elseif (! $mappingEnd && $end) {
                 $needsUpdate = true;
-                if (!isset($debugInfo['reason'])) {
+                if (! isset($debugInfo['reason'])) {
                     $debugInfo['reason'] = 'no_old_end';
                 }
             }
-            
+
             if ($needsUpdate) {
                 // Event time changed - update the blocker
                 try {
@@ -640,39 +651,39 @@ class SyncEngine
                         $end,
                         $transactionId
                     );
-                    
+
                     // Update mapping timestamps (store in UTC to avoid timezone issues)
                     $startToStore = null;
                     $endToStore = null;
-                    
+
                     if ($start && $start <= $maxTimestamp) {
                         $startToStore = clone $start;
                         $startToStore->setTimezone(new \DateTimeZone('UTC'));
                     }
-                    
+
                     if ($end && $end <= $maxTimestamp) {
                         $endToStore = clone $end;
                         $endToStore->setTimezone(new \DateTimeZone('UTC'));
                     }
-                    
+
                     $mapping->update([
                         'event_start' => $startToStore,
                         'event_end' => $endToStore,
                     ]);
-                    
+
                     $blockerId = $mapping->target_event_id;
                     $action = 'updated';
-                    
+
                     $debugInfo['event_id'] = $sourceEventId;
                     Log::channel('sync')->info('Blocker updated due to time change', $debugInfo);
-                    
+
                 } catch (\Exception $e) {
                     // If update fails (e.g., blocker was manually deleted), create new one
                     Log::channel('sync')->warning('Failed to update blocker, creating new one', [
                         'target_event_id' => $mapping->target_event_id,
                         'error' => $e->getMessage(),
                     ]);
-                    
+
                     $mapping->delete(); // Remove stale mapping
                     $mapping = null; // Will create new one below
                 }
@@ -682,11 +693,12 @@ class SyncEngine
                     'event_id' => $sourceEventId,
                     'blocker_id' => $mapping->target_event_id,
                 ]);
+
                 return; // Early return - don't log anything
             }
         }
 
-        if (!$mapping) {
+        if (! $mapping) {
             // No mapping exists - create new blocker
             $blockerId = $targetService->createBlocker(
                 $target->target_calendar_id,
@@ -699,20 +711,20 @@ class SyncEngine
             // Create mapping (handle Y2038 problem for dates beyond 2038)
             // Store times in UTC to avoid timezone conversion issues
             $maxTimestamp = new \DateTime('2038-01-01');
-            
+
             $startToStore = null;
             $endToStore = null;
-            
+
             if ($start && $start <= $maxTimestamp) {
                 $startToStore = clone $start;
                 $startToStore->setTimezone(new \DateTimeZone('UTC'));
             }
-            
+
             if ($end && $end <= $maxTimestamp) {
                 $endToStore = clone $end;
                 $endToStore->setTimezone(new \DateTimeZone('UTC'));
             }
-            
+
             try {
                 $newMapping = SyncEventMapping::create([
                     'sync_rule_id' => $rule->id,
@@ -739,15 +751,15 @@ class SyncEngine
                         'error_code' => $e->getCode(),
                         'transaction_id' => $transactionId,
                     ]);
-                    
+
                     $newMapping = SyncEventMapping::findMapping(
                         $rule->id,
                         $sourceEventId,
                         $target->target_connection_id,
                         $target->target_calendar_id
                     );
-                    
-                    if (!$newMapping) {
+
+                    if (! $newMapping) {
                         Log::channel('sync')->error('❌ CRITICAL: Mapping not found in DB after duplicate error!', [
                             'rule_id' => $rule->id,
                             'source_event_id' => $sourceEventId,
@@ -793,7 +805,7 @@ class SyncEngine
                     throw $e; // Re-throw if it's a different error
                 }
             }
-            
+
             // Add to cache to prevent duplicate creation when rule has multiple targets
             $mappingKey = "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}";
             $existingMappings[$mappingKey] = collect([$newMapping]);
@@ -825,7 +837,7 @@ class SyncEngine
         $existingMappings = null
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
-        
+
         Log::channel('sync')->info('Looking for mapping to delete', [
             'source_event_id' => $sourceEventId,
             'rule_id' => $rule->id,
@@ -833,13 +845,13 @@ class SyncEngine
             'target_calendar_id' => $target->target_calendar_id,
             'transaction_id' => $transactionId,
         ]);
-        
+
         // Find the mapping
         // OPTIMIZATION: Use pre-loaded mappings if available
-        $mappingKey = $target->target_connection_id 
+        $mappingKey = $target->target_connection_id
             ? "{$sourceEventId}|{$target->target_connection_id}:{$target->target_calendar_id}"
             : "{$sourceEventId}|email:{$target->target_email_connection_id}";
-        
+
         $mapping = $existingMappings && isset($existingMappings[$mappingKey])
             ? $existingMappings[$mappingKey]->first()
             : SyncEventMapping::findMapping(
@@ -857,22 +869,22 @@ class SyncEngine
                 'target_calendar_id' => $target->target_calendar_id,
                 'transaction_id' => $transactionId,
             ]);
-            
+
             try {
                 // Delete the blocker in target calendar
                 $targetService->deleteBlocker(
                     $target->target_calendar_id,
                     $mapping->target_event_id
                 );
-                
+
                 Log::channel('sync')->info('Blocker deleted successfully in target', [
                     'target_event_id' => $mapping->target_event_id,
                     'target_calendar_id' => $target->target_calendar_id,
                 ]);
-                
+
                 // Delete the mapping
                 $mapping->delete();
-                
+
                 SyncLog::logSync(
                     $rule->user_id,
                     $rule->id,
@@ -893,10 +905,10 @@ class SyncEngine
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
-                
+
                 // Still delete the mapping
                 $mapping->delete();
-                
+
                 SyncLog::logSync(
                     $rule->user_id,
                     $rule->id,
@@ -934,22 +946,24 @@ class SyncEngine
         $existingMappings = null
     ): void {
         $targetEmailConnection = $target->targetEmailConnection;
-        
-        if (!$targetEmailConnection || $targetEmailConnection->status !== 'active') {
+
+        if (! $targetEmailConnection || $targetEmailConnection->status !== 'active') {
             Log::channel('sync')->warning('Email target not active', [
                 'target_email_connection_id' => $target->target_email_connection_id,
             ]);
+
             return;
         }
-        
-        if (!$targetEmailConnection->target_email) {
+
+        if (! $targetEmailConnection->target_email) {
             Log::channel('sync')->warning('Email calendar has no target_email configured', [
                 'email_calendar_id' => $targetEmailConnection->id,
             ]);
+
             return;
         }
-        
-        if (!$targetEmailConnection->hasVerifiedTargetEmail()) {
+
+        if (! $targetEmailConnection->hasVerifiedTargetEmail()) {
             Log::channel('sync')->warning('Email calendar target_email not verified', [
                 'email_calendar_id' => $targetEmailConnection->id,
                 'target_email' => $targetEmailConnection->target_email,
@@ -963,12 +977,13 @@ class SyncEngine
                 null,
                 null,
                 null,
-                'Email target not verified: ' . $targetEmailConnection->target_email,
+                'Email target not verified: '.$targetEmailConnection->target_email,
                 $transactionId
             );
+
             return;
         }
-        
+
         $sourceEventId = $this->getEventId($sourceEvent);
         $start = $this->getEventStart($sourceEvent, $sourceConnection->provider);
         $end = $this->getEventEnd($sourceEvent, $sourceConnection->provider);
@@ -976,7 +991,7 @@ class SyncEngine
         // Check if we already have a mapping for this event -> email target
         // OPTIMIZATION: Use pre-loaded mappings if available
         $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
-        
+
         $foundInCache = $existingMappings && isset($existingMappings[$mappingKey]);
         $mapping = $foundInCache
             ? $existingMappings[$mappingKey]->first()
@@ -985,9 +1000,9 @@ class SyncEngine
                 'source_event_id' => $sourceEventId,
                 'target_email_connection_id' => $target->target_email_connection_id,
             ])->first();
-        
+
         // 🔍 ANOMALY DETECTION: Log only suspicious cases
-        if (!$foundInCache && $mapping !== null) {
+        if (! $foundInCache && $mapping !== null) {
             // SUSPICIOUS: Email mapping exists in DB but NOT in cache
             Log::channel('sync')->warning('⚠️ CACHE MISS: Email mapping exists in DB but not in cache', [
                 'rule_id' => $rule->id,
@@ -998,36 +1013,36 @@ class SyncEngine
                 'transaction_id' => $transactionId,
             ]);
         }
-        
+
         // Generate a stable event UID for iMIP
-        $eventUid = 'syncmyday-' . $rule->id . '-' . md5($sourceEventId);
+        $eventUid = 'syncmyday-'.$rule->id.'-'.md5($sourceEventId);
         $sequence = $mapping ? ($mapping->sequence ?? 0) : 0;
         $action = 'created';
         $maxTimestamp = new \DateTime('2038-01-01');
 
         // BATCH MODE for initial sync: Create mapping but don't send email
         // This prevents flooding user's inbox with hundreds of emails on first sync
-        if (!$rule->initial_sync_completed && !$mapping) {
+        if (! $rule->initial_sync_completed && ! $mapping) {
             Log::channel('sync')->debug('Initial sync batch mode - creating mapping without sending email', [
                 'rule_id' => $rule->id,
                 'source_event_id' => $sourceEventId,
                 'target_email' => $targetEmailConnection->target_email,
             ]);
-            
+
             // Store times in UTC
             $startToStore = null;
             $endToStore = null;
-            
+
             if ($start && $start <= $maxTimestamp) {
                 $startToStore = clone $start;
                 $startToStore->setTimezone(new \DateTimeZone('UTC'));
             }
-            
+
             if ($end && $end <= $maxTimestamp) {
                 $endToStore = clone $end;
                 $endToStore->setTimezone(new \DateTimeZone('UTC'));
             }
-            
+
             // Create mapping without sending email
             try {
                 $newMapping = SyncEventMapping::create([
@@ -1055,30 +1070,30 @@ class SyncEngine
                         'error_code' => $e->getCode(),
                         'transaction_id' => $transactionId,
                     ]);
-                    
+
                     $newMapping = SyncEventMapping::where([
                         'sync_rule_id' => $rule->id,
                         'source_event_id' => $sourceEventId,
                         'target_email_connection_id' => $target->target_email_connection_id,
                     ])->first();
-                    
-                    if (!$newMapping) {
+
+                    if (! $newMapping) {
                         Log::channel('sync')->error('❌ CRITICAL: Email mapping not found in DB after duplicate error!', [
                             'rule_id' => $rule->id,
                             'source_event_id' => $sourceEventId,
                             'transaction_id' => $transactionId,
                         ]);
-                        throw new \Exception("Email mapping not found after race condition");
+                        throw new \Exception('Email mapping not found after race condition');
                     }
                 } else {
                     throw $e; // Re-throw if it's a different error
                 }
             }
-            
+
             // Add to cache to prevent duplicate creation when rule has multiple targets
             $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
             $existingMappings[$mappingKey] = collect([$newMapping]);
-            
+
             return; // Skip sending email during initial sync
         }
 
@@ -1087,7 +1102,7 @@ class SyncEngine
             $needsUpdate = false;
             $mappingStart = $mapping->event_start;
             $mappingEnd = $mapping->event_end;
-            
+
             // Check if start/end time changed
             if ($mappingStart && $start && $start <= $maxTimestamp) {
                 // Normalize both to UTC for comparison
@@ -1095,33 +1110,33 @@ class SyncEngine
                 $mappingStartUtc->setTimezone(new \DateTimeZone('UTC'));
                 $startUtc = clone $start;
                 $startUtc->setTimezone(new \DateTimeZone('UTC'));
-                
+
                 $diffStart = abs($mappingStartUtc->getTimestamp() - $startUtc->getTimestamp());
-                
+
                 if ($diffStart > 60) {
                     $needsUpdate = true;
                 }
-            } elseif (!$mappingStart && $start) {
+            } elseif (! $mappingStart && $start) {
                 $needsUpdate = true;
             }
-            
+
             if ($mappingEnd && $end && $end <= $maxTimestamp) {
                 // Normalize both to UTC for comparison
                 $mappingEndUtc = clone $mappingEnd;
                 $mappingEndUtc->setTimezone(new \DateTimeZone('UTC'));
                 $endUtc = clone $end;
                 $endUtc->setTimezone(new \DateTimeZone('UTC'));
-                
+
                 $diffEnd = abs($mappingEndUtc->getTimestamp() - $endUtc->getTimestamp());
-                
+
                 if ($diffEnd > 60) {
                     $needsUpdate = true;
                 }
-            } elseif (!$mappingEnd && $end) {
+            } elseif (! $mappingEnd && $end) {
                 $needsUpdate = true;
             }
-            
-            if (!$needsUpdate) {
+
+            if (! $needsUpdate) {
                 // No changes - skip sending email
                 Log::channel('sync')->debug('Email blocker unchanged, skipping iMIP', [
                     'event_id' => $sourceEventId,
@@ -1129,9 +1144,10 @@ class SyncEngine
                     'start_diff' => $diffStart ?? 0,
                     'end_diff' => $diffEnd ?? 0,
                 ]);
+
                 return;
             }
-            
+
             $action = 'updated';
         }
 
@@ -1152,17 +1168,17 @@ class SyncEngine
                 // Store times in UTC to avoid timezone conversion issues
                 $startToStore = null;
                 $endToStore = null;
-                
+
                 if ($start && $start <= $maxTimestamp) {
                     $startToStore = clone $start;
                     $startToStore->setTimezone(new \DateTimeZone('UTC'));
                 }
-                
+
                 if ($end && $end <= $maxTimestamp) {
                     $endToStore = clone $end;
                     $endToStore->setTimezone(new \DateTimeZone('UTC'));
                 }
-                
+
                 if ($mapping) {
                     // Update existing mapping
                     $mapping->update([
@@ -1170,7 +1186,7 @@ class SyncEngine
                         'event_end' => $endToStore,
                         'sequence' => $sequence + 1,
                     ]);
-                    
+
                     Log::channel('sync')->info('Email blocker updated', [
                         'event_id' => $sourceEventId,
                         'target_email' => $targetEmailConnection->target_email,
@@ -1204,30 +1220,30 @@ class SyncEngine
                                 'error_code' => $e->getCode(),
                                 'transaction_id' => $transactionId,
                             ]);
-                            
+
                             $newMapping = SyncEventMapping::where([
                                 'sync_rule_id' => $rule->id,
                                 'source_event_id' => $sourceEventId,
                                 'target_email_connection_id' => $target->target_email_connection_id,
                             ])->first();
-                            
-                            if (!$newMapping) {
+
+                            if (! $newMapping) {
                                 Log::channel('sync')->error('❌ CRITICAL: Email mapping not found in DB after duplicate error!', [
                                     'rule_id' => $rule->id,
                                     'source_event_id' => $sourceEventId,
                                     'transaction_id' => $transactionId,
                                 ]);
-                                throw new \Exception("Email mapping not found after race condition");
+                                throw new \Exception('Email mapping not found after race condition');
                             }
                         } else {
                             throw $e; // Re-throw if it's a different error
                         }
                     }
-                    
+
                     // Add to cache to prevent duplicate creation when rule has multiple targets
                     $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
                     $existingMappings[$mappingKey] = collect([$newMapping]);
-                    
+
                     Log::channel('sync')->info('Email blocker created and mapping saved', [
                         'event_id' => $sourceEventId,
                         'target_email' => $targetEmailConnection->target_email,
@@ -1271,11 +1287,11 @@ class SyncEngine
         $existingMappings = null
     ): void {
         $sourceEventId = $this->getEventId($sourceEvent);
-        
+
         // Find the mapping
         // OPTIMIZATION: Use pre-loaded mappings if available
         $mappingKey = "{$sourceEventId}|email:{$target->target_email_connection_id}";
-        
+
         $mapping = $existingMappings && isset($existingMappings[$mappingKey])
             ? $existingMappings[$mappingKey]->first()
             : SyncEventMapping::where([
@@ -1286,13 +1302,13 @@ class SyncEngine
 
         if ($mapping) {
             $targetEmailConnection = $target->targetEmailConnection;
-            
+
             if ($targetEmailConnection && $targetEmailConnection->target_email) {
                 try {
                     // Get event times from mapping (might be null for old events)
-                    $start = $mapping->event_start ?? new \DateTime();
+                    $start = $mapping->event_start ?? new \DateTime;
                     $end = $mapping->event_end ?? new \DateTime('+1 hour');
-                    
+
                     // Send CANCEL iMIP email
                     $this->imipEmail->sendCancellation(
                         $targetEmailConnection,
@@ -1303,13 +1319,13 @@ class SyncEngine
                         $end,
                         $mapping->sequence ?? 0
                     );
-                    
+
                     Log::channel('sync')->info('Email blocker deleted', [
                         'event_id' => $sourceEventId,
                         'target_email' => $targetEmailConnection->target_email,
                         'event_uid' => $mapping->target_event_id,
                     ]);
-                    
+
                     SyncLog::logSync(
                         $rule->user_id,
                         $rule->id,
@@ -1329,7 +1345,7 @@ class SyncEngine
                     ]);
                 }
             }
-            
+
             // Delete mapping regardless of email send success
             $mapping->delete();
         }
@@ -1348,6 +1364,7 @@ class SyncEngine
             return $service->getChangedEvents($calendarId, $syncToken);
         } else {
             $result = $service->getChangedEvents($calendarId, $syncToken);
+
             return [
                 'events' => $result['events'],
                 'sync_token' => $result['delta_link'] ?? $syncToken,
@@ -1360,7 +1377,7 @@ class SyncEngine
      */
     private function getService(CalendarConnection $connection)
     {
-        return match($connection->provider) {
+        return match ($connection->provider) {
             'google' => $this->googleService,
             'microsoft' => $this->microsoftService,
             'caldav', 'apple' => $this->calDavService, // Apple uses CalDAV protocol
@@ -1373,19 +1390,19 @@ class SyncEngine
      */
     private function normalizeEvent($event, string $provider): array
     {
-        return match($provider) {
+        return match ($provider) {
             'google' => $this->normalizeGoogleEvent($event),
             'microsoft' => $this->normalizeMicrosoftEvent($event),
             'caldav', 'apple' => $this->normalizeCalDavEvent($event), // Apple uses CalDAV protocol
             default => throw new \Exception("Unsupported provider for normalization: {$provider}"),
         };
     }
-    
+
     private function normalizeGoogleEvent($event): array
     {
         $isAllDay = $event->getStart()->getDate() !== null;
         $transparency = $event->getTransparency();
-        
+
         // All-day events should always be considered 'busy' by default
         // This allows users to control them via the 'ignore_all_day' filter
         // Only non-all-day events respect the transparency setting
@@ -1394,7 +1411,7 @@ class SyncEngine
         } else {
             $showAs = $transparency === 'transparent' ? 'free' : 'busy';
         }
-        
+
         return [
             'id' => $event->getId(),
             'start' => $event->getStart()->getDateTime() ?? $event->getStart()->getDate(),
@@ -1404,18 +1421,18 @@ class SyncEngine
             'showAs' => $showAs,
         ];
     }
-    
+
     private function normalizeMicrosoftEvent($event): array
     {
         // Defensive: Check if event has start/end (may be missing for deleted/malformed events)
-        if (!isset($event['start']['dateTime']) || !isset($event['end']['dateTime'])) {
+        if (! isset($event['start']['dateTime']) || ! isset($event['end']['dateTime'])) {
             Log::channel('sync')->warning('Microsoft event missing start/end datetime', [
                 'event_id' => $event['id'] ?? 'unknown',
                 'has_start' => isset($event['start']),
                 'has_end' => isset($event['end']),
                 'event_keys' => array_keys($event),
             ]);
-            
+
             // Return minimal structure with dummy dates to prevent crashes
             return [
                 'id' => $event['id'] ?? 'unknown',
@@ -1426,16 +1443,16 @@ class SyncEngine
                 'showAs' => 'free',
             ];
         }
-        
+
         $isAllDay = $event['isAllDay'] ?? false;
-        
+
         // Same logic for Microsoft: all-day events are 'busy' by default
         if ($isAllDay) {
             $showAs = 'busy';
         } else {
             $showAs = $event['showAs'] ?? 'busy';
         }
-        
+
         return [
             'id' => $event['id'],
             'start' => $event['start']['dateTime'],
@@ -1445,7 +1462,7 @@ class SyncEngine
             'showAs' => $showAs,
         ];
     }
-    
+
     private function normalizeCalDavEvent($event): array
     {
         // CalDAV events are already normalized in CalDavCalendarService::parseVEvent()
@@ -1467,9 +1484,9 @@ class SyncEngine
     private function getEventStart($event, string $provider): ?\DateTime
     {
         try {
-            return match($provider) {
+            return match ($provider) {
                 'google' => new \DateTime($event->getStart()->getDateTime() ?? $event->getStart()->getDate()),
-                'microsoft' => isset($event['start']['dateTime']) 
+                'microsoft' => isset($event['start']['dateTime'])
                     ? $this->parseMicrosoftDateTime($event['start']['dateTime'], $event['start']['timeZone'] ?? null)
                     : null,
                 'caldav', 'apple' => $event['start'], // Already DateTime object
@@ -1483,9 +1500,9 @@ class SyncEngine
     private function getEventEnd($event, string $provider): ?\DateTime
     {
         try {
-            return match($provider) {
+            return match ($provider) {
                 'google' => new \DateTime($event->getEnd()->getDateTime() ?? $event->getEnd()->getDate()),
-                'microsoft' => isset($event['end']['dateTime']) 
+                'microsoft' => isset($event['end']['dateTime'])
                     ? $this->parseMicrosoftDateTime($event['end']['dateTime'], $event['end']['timeZone'] ?? null)
                     : null,
                 'caldav', 'apple' => $event['end'], // Already DateTime object
@@ -1504,53 +1521,53 @@ class SyncEngine
     private function parseMicrosoftDateTime(string $dateTimeString, ?string $timeZone): \DateTime
     {
         // If no timezone provided, assume UTC
-        if (!$timeZone) {
+        if (! $timeZone) {
             return new \DateTime($dateTimeString, new \DateTimeZone('UTC'));
         }
-        
+
         // Microsoft uses Windows timezone names (e.g. "Central Europe Standard Time")
         // PHP needs IANA timezone names (e.g. "Europe/Prague")
         // For simplicity and consistency, we interpret the time AS-IS but explicitly in UTC
         // This is because Microsoft API already handles timezone conversion for us
-        
+
         // Create DateTime explicitly in UTC timezone
         // The dateTime from Microsoft is already in the specified timezone,
         // but we want to treat it as UTC for internal storage
         $dt = new \DateTime($dateTimeString, new \DateTimeZone('UTC'));
-        
+
         return $dt;
     }
 
     private function isEventDeleted($event, string $provider): bool
     {
-        $isDeleted = match($provider) {
+        $isDeleted = match ($provider) {
             'google' => $event->getStatus() === 'cancelled',
-            'microsoft' => (isset($event['@removed']) && $event['@removed']) || 
+            'microsoft' => (isset($event['@removed']) && $event['@removed']) ||
                           (isset($event['@odata.removed']) && $event['@odata.removed']),
             'caldav', 'apple' => isset($event['status']) && $event['status'] === 'cancelled',
             default => false,
         };
-        
+
         if ($isDeleted) {
             Log::channel('sync')->debug('Event detected as deleted', [
                 'event_id' => $this->getEventId($event),
                 'provider' => $provider,
             ]);
         }
-        
+
         return $isDeleted;
     }
 
     /**
      * Detect deleted events by comparing existing mappings with current events
-     * 
+     *
      * This is necessary because:
      * - Google: Doesn't return deleted events in full sync (when no syncToken)
      * - Microsoft: Doesn't return deleted events in Delta Query (despite @odata.removed in docs)
-     * 
+     *
      * We compare all existing mappings with the current list of event IDs.
      * Any mapping whose source_event_id is NOT in the current list = deleted event.
-     * 
+     *
      * @return int Number of deleted events processed
      */
     private function detectDeletedEventsByMappingComparison(
@@ -1564,32 +1581,52 @@ class SyncEngine
         $allMappings = SyncEventMapping::where('sync_rule_id', $rule->id)
             ->where('source_connection_id', $sourceConnection->id)
             ->get();
-        
+
         if ($allMappings->isEmpty()) {
             return 0;
         }
-        
+
+        // Defensive guard: if the fetch returned <50% of known mappings, treat as
+        // incomplete (likely a delta response misclassified as full sync) and skip
+        // cleanup. Otherwise we'd send mass false-positive CANCEL for still-existing
+        // events. Mappings are preserved and re-checked on next sync.
+        $mappingCount = $allMappings->count();
+        $fetchCount = count($currentEventIds);
+        if ($fetchCount > 0 && $fetchCount < $mappingCount * 0.5) {
+            Log::channel('sync')->warning('Skipping orphan detection — fetch looks incomplete', [
+                'rule_id' => $rule->id,
+                'provider' => $sourceConnection->provider,
+                'fetch_count' => $fetchCount,
+                'mapping_count' => $mappingCount,
+                'note' => 'Will retry on next sync. Mappings preserved.',
+            ]);
+
+            return 0;
+        }
+
         // Find mappings for events that are NOT in current event list
         $deletedMappings = $allMappings->filter(function ($mapping) use ($currentEventIds) {
-            return !in_array($mapping->source_event_id, $currentEventIds);
+            return ! in_array($mapping->source_event_id, $currentEventIds);
         });
-        
+
         if ($deletedMappings->isEmpty()) {
             return 0;
         }
-        
-        Log::channel('sync')->debug('Detected deleted events by mapping comparison', [
+
+        Log::channel('sync')->info('Detected deleted events by mapping comparison', [
             'rule_id' => $rule->id,
             'provider' => $sourceConnection->provider,
+            'fetch_count' => $fetchCount,
+            'mapping_count' => $mappingCount,
             'deleted_count' => $deletedMappings->count(),
             'deleted_event_ids' => $deletedMappings->pluck('source_event_id')->toArray(),
         ]);
-        
+
         // Pre-load targets indexed by connection ID to avoid N+1 queries
         $targetsByKey = $rule->targets->keyBy(function ($target) {
             return $target->target_connection_id
-                ? 'conn:' . $target->target_connection_id
-                : 'email:' . $target->target_email_connection_id;
+                ? 'conn:'.$target->target_connection_id
+                : 'email:'.$target->target_email_connection_id;
         });
 
         // Process each deleted mapping
@@ -1598,41 +1635,53 @@ class SyncEngine
 
             // Find the target for this mapping from pre-loaded collection
             $targetKey = $mapping->target_connection_id
-                ? 'conn:' . $mapping->target_connection_id
-                : 'email:' . $mapping->target_email_connection_id;
+                ? 'conn:'.$mapping->target_connection_id
+                : 'email:'.$mapping->target_email_connection_id;
             $target = $targetsByKey->get($targetKey);
-            
-            if (!$target) {
+
+            if (! $target) {
                 Log::channel('sync')->warning('Target not found for deleted mapping', [
                     'mapping_id' => $mapping->id,
                     'source_event_id' => $mapping->source_event_id,
                 ]);
+
                 continue;
             }
-            
+
             try {
                 if ($target->isEmailTarget()) {
-                    // Delete blocker in email target
-                    Log::channel('sync')->debug('Deleting orphaned blocker in email target', [
-                        'source_event_id' => $mapping->source_event_id,
-                        'target_email_connection_id' => $target->target_email_connection_id,
-                        'transaction_id' => $transactionId,
-                    ]);
-                    
-                    // Send cancellation email
-                    $targetEmail = $target->targetEmailConnection;
-                    if ($targetEmail && $targetEmail->target_email) {
-                        $imipService = app(\App\Services\Email\ImipEmailService::class);
-                        $imipService->sendBlockerInvitation(
-                            $targetEmail,
-                            $targetEmail->target_email,
-                            $mapping->target_event_id,
-                            'Cancelled',
-                            new \DateTime(),
-                            new \DateTime(),
-                            'CANCEL',
-                            $mapping->sequence ?? 0
-                        );
+                    // Skip CANCEL for past/unknown events — CANCEL for an event
+                    // that already happened just spams the user's inbox.
+                    if (! $mapping->event_end || $mapping->event_end->isPast()) {
+                        Log::channel('sync')->debug('Skipping CANCEL for past/unknown event in orphan cleanup', [
+                            'mapping_id' => $mapping->id,
+                            'event_end' => $mapping->event_end?->toIso8601String(),
+                            'transaction_id' => $transactionId,
+                        ]);
+                    } else {
+                        Log::channel('sync')->info('Deleting orphaned blocker in email target', [
+                            'source_event_id' => $mapping->source_event_id,
+                            'target_email_connection_id' => $target->target_email_connection_id,
+                            'transaction_id' => $transactionId,
+                        ]);
+
+                        // Send cancellation email with the real DTSTART/DTEND
+                        // from the mapping so iMIP clients (Gmail, Outlook) can
+                        // pair the CANCEL with the original REQUEST by UID+time.
+                        $targetEmail = $target->targetEmailConnection;
+                        if ($targetEmail && $targetEmail->target_email) {
+                            $imipService = app(\App\Services\Email\ImipEmailService::class);
+                            $imipService->sendBlockerInvitation(
+                                $targetEmail,
+                                $targetEmail->target_email,
+                                $mapping->target_event_id,
+                                'Cancelled',
+                                $mapping->event_start->toDateTime(),
+                                $mapping->event_end->toDateTime(),
+                                'CANCEL',
+                                $mapping->sequence ?? 0
+                            );
+                        }
                     }
                 } else {
                     // Delete blocker in API target
@@ -1644,16 +1693,16 @@ class SyncEngine
                         'target_provider' => $target->targetConnection->provider,
                         'transaction_id' => $transactionId,
                     ]);
-                    
+
                     $targetService = $this->getService($target->targetConnection);
                     $targetService->initializeWithConnection($target->targetConnection);
-                    
+
                     try {
                         $targetService->deleteBlocker(
                             $target->target_calendar_id,
                             $mapping->target_event_id
                         );
-                        
+
                         Log::channel('sync')->debug('Orphaned blocker deleted successfully', [
                             'target_event_id' => $mapping->target_event_id,
                         ]);
@@ -1664,10 +1713,10 @@ class SyncEngine
                         ]);
                     }
                 }
-                
+
                 // Delete the mapping
                 $mapping->delete();
-                
+
                 SyncLog::logSync(
                     $rule->user_id,
                     $rule->id,
@@ -1680,7 +1729,7 @@ class SyncEngine
                     'Detected as deleted in full sync',
                     $transactionId
                 );
-                
+
             } catch (\Exception $e) {
                 Log::channel('sync')->error('Failed to process deleted mapping', [
                     'mapping_id' => $mapping->id,
@@ -1690,8 +1739,7 @@ class SyncEngine
                 ]);
             }
         }
-        
+
         return $deletedMappings->count();
     }
 }
-
