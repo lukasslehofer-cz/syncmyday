@@ -1301,13 +1301,29 @@ class SyncEngine
             ])->first();
 
         if ($mapping) {
+            // Skip CANCEL for past/unknown events — Outlook can't pair a CANCEL
+            // for an event that already happened, and we'd just spam the inbox.
+            // The mapping is still removed below.
+            if (! $mapping->event_end || $mapping->event_end->isPast()) {
+                Log::channel('sync')->info('Skipping CANCEL for past/unknown event in delete flow', [
+                    'mapping_id' => $mapping->id,
+                    'source_event_id' => $sourceEventId,
+                    'event_end' => $mapping->event_end?->toIso8601String(),
+                    'transaction_id' => $transactionId,
+                ]);
+                $mapping->delete();
+
+                return;
+            }
+
             $targetEmailConnection = $target->targetEmailConnection;
 
             if ($targetEmailConnection && $targetEmailConnection->target_email) {
                 try {
-                    // Get event times from mapping (might be null for old events)
-                    $start = $mapping->event_start ?? new \DateTime;
-                    $end = $mapping->event_end ?? new \DateTime('+1 hour');
+                    // Use real DTSTART/DTEND from mapping so iMIP clients can pair
+                    // the CANCEL with the original REQUEST by UID + time.
+                    $start = $mapping->event_start->toDateTime();
+                    $end = $mapping->event_end->toDateTime();
 
                     // Send CANCEL iMIP email
                     $this->imipEmail->sendCancellation(

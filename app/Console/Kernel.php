@@ -19,24 +19,25 @@ class Kernel extends ConsoleKernel
         $schedule->command('logs:clean')->daily();
         $schedule->command('connections:check')->hourly()->withoutOverlapping();
         $schedule->command('sync:clean-orphaned-rules --force')->dailyAt('02:30');
+        $schedule->command('sync:cleanup-stale-mappings')->dailyAt('02:45');
 
         // Inbound email processing
         $schedule->command('app:process-inbound-emails')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('app:clean-old-inbound-emails')->dailyAt('03:00'); // Clean old emails at 3 AM
-        
+
         // Trial management
         $schedule->command('trial:send-ending-notifications')->dailyAt('09:00');
         $schedule->command('trial:expire')->dailyAt('00:00');
-        
+
         // Subscription renewal reminders
         $schedule->command('subscription:send-renewal-reminders')->dailyAt('09:30');
-        
+
         // Grace period management (for failed payments)
         $schedule->command('grace-period:check')->dailyAt('01:00');
-        
+
         // Onboarding emails
         $schedule->command('onboarding:send-emails')->dailyAt('10:00');
-        
+
         // Fakturoid integration
         $schedule->command('fakturoid:retry-failed')->daily();
     }
@@ -51,4 +52,3 @@ class Kernel extends ConsoleKernel
         require base_path('routes/console.php');
     }
 }
-
