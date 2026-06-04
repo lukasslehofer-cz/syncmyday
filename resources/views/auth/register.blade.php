@@ -13,46 +13,9 @@
         .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
     
-    {{-- Google Analytics --}}
-    <script>
-        function loadGA() {
-            if (window.gaLoaded) return;
-            window.gaLoaded = true;
-
-            var script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8DVXSB7DJK';
-            document.head.appendChild(script);
-
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            gtag('config', 'G-8DVXSB7DJK');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var stored = localStorage.getItem('cookie_consent');
-            if (stored) {
-                try {
-                    var preferences = JSON.parse(stored);
-                    if (preferences.analytics || preferences.marketing) { loadGA(); }
-                } catch(e) {}
-            }
-        });
-
-        window.addEventListener('cookie-consent-analytics', function() { loadGA(); });
-        window.addEventListener('cookie-consent-marketing', function() { loadGA(); });
-
-        window.trackSignUp = function(method, userId) {
-            if (typeof window.gtag === 'function') {
-                window.gtag('event', 'sign_up', {
-                    method: method || 'email',
-                    user_id: userId || null
-                });
-            }
-        };
-    </script>
+    {{-- Google Analytics (Consent Mode v2) --}}
+    @include('partials.gtm')
+    @stack('gtm-head')
 
     {{-- Meta Pixel --}}
     <script>

@@ -189,7 +189,11 @@
             },
             
             loadScripts() {
-                // Dispatch events for conditional script loading
+                // Google Consent Mode v2: always signal the current choice
+                // (granted or denied) so GA can model conversions either way.
+                window.dispatchEvent(new CustomEvent('cookie-consent-updated', { detail: this.preferences }));
+
+                // Conditional script loading (Meta Pixel) - only on granted consent
                 if (this.preferences.analytics) {
                     window.dispatchEvent(new CustomEvent('cookie-consent-analytics'));
                 }

@@ -32,52 +32,9 @@
         }
     </style>
     
-    {{-- Google Analytics --}}
-    <script>
-        // Capture UTM parameters for campaign tracking
-        (function() {
-            var urlParams = new URLSearchParams(window.location.search);
-            var utmParams = {};
-            ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].forEach(function(param) {
-                var value = urlParams.get(param);
-                if (value) { utmParams[param] = value; }
-            });
-
-            if (Object.keys(utmParams).length > 0) {
-                sessionStorage.setItem('utm_params', JSON.stringify(utmParams));
-            }
-            window.utmParams = utmParams;
-        })();
-
-        function loadGA() {
-            if (window.gaLoaded) return;
-            window.gaLoaded = true;
-
-            var script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-8DVXSB7DJK';
-            document.head.appendChild(script);
-
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('js', new Date());
-            gtag('config', 'G-8DVXSB7DJK');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var stored = localStorage.getItem('cookie_consent');
-            if (stored) {
-                try {
-                    var preferences = JSON.parse(stored);
-                    if (preferences.analytics || preferences.marketing) { loadGA(); }
-                } catch(e) {}
-            }
-        });
-
-        window.addEventListener('cookie-consent-analytics', function() { loadGA(); });
-        window.addEventListener('cookie-consent-marketing', function() { loadGA(); });
-    </script>
+    {{-- Google Analytics (Consent Mode v2) --}}
+    @include('partials.gtm')
+    @stack('gtm-head')
 
     {{-- Meta Pixel --}}
     <script>
