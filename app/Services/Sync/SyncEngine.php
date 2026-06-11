@@ -435,6 +435,23 @@ class SyncEngine
         // Sync to all targets
         foreach ($rule->targets as $target) {
             try {
+                // Skip API targets whose connection is permanently broken (expired/revoked).
+                // Otherwise every sync retries token refresh on a dead connection, hammering the
+                // provider's token endpoint and flooding the log with "Target sync failed".
+                // The user is notified to reconnect via ConnectionsCheckCommand. Transient 'error'
+                // connections are NOT skipped so they recover on the next sync.
+                if (! $target->isEmailTarget()) {
+                    $tc = $target->targetConnection;
+                    if ($tc && in_array($tc->status, ['expired', 'revoked'], true)) {
+                        Log::channel('sync')->debug('Skipping target with broken connection', [
+                            'target_connection_id' => $tc->id,
+                            'status' => $tc->status,
+                        ]);
+
+                        continue;
+                    }
+                }
+
                 if ($target->isEmailTarget()) {
                     // Target is an email calendar - send iMIP
                     if ($isDeleted) {

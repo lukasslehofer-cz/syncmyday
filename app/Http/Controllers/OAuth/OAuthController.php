@@ -22,11 +22,11 @@ class OAuthController extends Controller
         if (isset($tokens['access_token'])) {
             $accessToken = $tokens['access_token'];
             $tokenParts = explode('.', $accessToken);
-            
+
             if (count($tokenParts) === 3) {
                 try {
                     $payload = json_decode(base64_decode(strtr($tokenParts[1], '-_', '+/')), true);
-                    
+
                     // Check tenant ID - personal accounts use specific tenant ID
                     if (isset($payload['tid'])) {
                         $tenantId = $payload['tid'];
@@ -38,7 +38,7 @@ class OAuthController extends Controller
                             return 'personal';
                         }
                     }
-                    
+
                     // Check issuer
                     if (isset($payload['iss'])) {
                         if (str_contains($payload['iss'], 'consumers')) {
@@ -52,36 +52,36 @@ class OAuthController extends Controller
                 }
             }
         }
-        
+
         // Fallback: Check email domain for known personal account patterns
         $personalDomains = ['outlook.com', 'hotmail.com', 'live.com', 'msn.com'];
         $emailDomain = strtolower(substr(strrchr($email, '@'), 1));
-        
+
         if (in_array($emailDomain, $personalDomains)) {
             return 'personal';
         }
-        
+
         // If we can't determine, assume work/school account
         return 'work';
     }
-    
+
     /**
      * Redirect to Google OAuth
      */
     public function redirectToGoogle(GoogleCalendarService $service)
     {
         $state = Str::random(40);
-        
+
         // Check if coming from account settings (for connecting as backup login method)
         $fromAccountSettings = request()->is('account/connect/*');
-        
+
         // Store state in cache instead of session (works with SameSite=lax cookies)
         Cache::put("oauth_state_{$state}", [
             'action' => 'calendar_connect',
             'from_account' => $fromAccountSettings,
             'created_at' => now(),
         ], now()->addMinutes(10));
-        
+
         return redirect($service->getAuthUrl($state));
     }
 
@@ -93,16 +93,17 @@ class OAuthController extends Controller
         // Verify state from cache (not session - works with SameSite=lax)
         $state = $request->state;
         $stateData = Cache::get("oauth_state_{$state}");
-        
-        if (!$stateData) {
+
+        if (! $stateData) {
             Log::warning('OAuth state not found or expired', [
                 'state' => $state,
                 'user_id' => auth()->id(),
             ]);
+
             return redirect()->route('dashboard')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
-        
+
         // Delete state from cache (one-time use)
         Cache::forget("oauth_state_{$state}");
 
@@ -117,23 +118,23 @@ class OAuthController extends Controller
                 'user_id' => auth()->id(),
                 'from_account' => $fromAccountSettings,
             ]);
-            
+
             $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
-            
+
             return redirect()->route($redirectRoute)
                 ->with('warning', __('messages.oauth_cancelled'));
         }
 
         // Check if code is present
-        if (!$request->has('code')) {
+        if (! $request->has('code')) {
             Log::error('Google OAuth callback missing code', [
                 'request' => $request->all(),
                 'user_id' => auth()->id(),
                 'from_account' => $fromAccountSettings,
             ]);
-            
+
             $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
-            
+
             return redirect()->route($redirectRoute)
                 ->with('error', __('messages.oauth_failed'));
         }
@@ -141,19 +142,19 @@ class OAuthController extends Controller
         try {
             // Exchange code for tokens
             $tokens = $service->handleCallback($request->code);
-            
+
             // Temporarily set access token directly on the Google client
-            $client = new \Google\Client();
+            $client = new \Google\Client;
             $client->setAccessToken($tokens);
             $calendarService = new \Google\Service\Calendar($client);
-            
+
             // Get account info
             $primaryCalendar = $calendarService->calendars->get('primary');
             $accountInfo = [
                 'id' => $primaryCalendar->getId(),
                 'email' => $primaryCalendar->getId(),
             ];
-            
+
             // Get available calendars
             $calendarList = $calendarService->calendarList->listCalendarList();
             $calendars = [];
@@ -169,21 +170,21 @@ class OAuthController extends Controller
             // If from account settings, directly save the connection
             if ($fromAccountSettings) {
                 $this->saveConnection('google', $accountInfo, $tokens, $calendars);
-                
+
                 $user = auth()->user();
-                if (!$user->oauth_provider) {
+                if (! $user->oauth_provider) {
                     // User doesn't have OAuth yet, add Google as OAuth provider
                     $user->update([
                         'oauth_provider' => 'google',
                         'oauth_provider_id' => $accountInfo['id'],
                         'oauth_provider_email' => $accountInfo['email'],
                     ]);
-                    
+
                     Log::info('Added Google OAuth to password-only account', [
                         'user_id' => $user->id,
                     ]);
                 }
-                
+
                 return redirect()->route('account.index')
                     ->with('success', 'Google connected successfully! You can now login with Google.');
             }
@@ -216,17 +217,17 @@ class OAuthController extends Controller
     public function redirectToMicrosoft(MicrosoftCalendarService $service)
     {
         $state = Str::random(40);
-        
+
         // Check if coming from account settings (for connecting as backup login method)
         $fromAccountSettings = request()->is('account/connect/*');
-        
+
         // Store state in cache instead of session (works with SameSite=lax cookies)
         Cache::put("oauth_state_{$state}", [
             'action' => 'calendar_connect',
             'from_account' => $fromAccountSettings,
             'created_at' => now(),
         ], now()->addMinutes(10));
-        
+
         return redirect($service->getAuthUrl($state));
     }
 
@@ -238,16 +239,17 @@ class OAuthController extends Controller
         // Verify state from cache (not session - works with SameSite=lax)
         $state = $request->state;
         $stateData = Cache::get("oauth_state_{$state}");
-        
-        if (!$stateData) {
+
+        if (! $stateData) {
             Log::warning('OAuth state not found or expired', [
                 'state' => $state,
                 'user_id' => auth()->id(),
             ]);
+
             return redirect()->route('dashboard')
                 ->with('error', __('messages.oauth_state_mismatch'));
         }
-        
+
         // Delete state from cache (one-time use)
         Cache::forget("oauth_state_{$state}");
 
@@ -262,23 +264,23 @@ class OAuthController extends Controller
                 'user_id' => auth()->id(),
                 'from_account' => $fromAccountSettings,
             ]);
-            
+
             $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
-            
+
             return redirect()->route($redirectRoute)
                 ->with('warning', __('messages.oauth_cancelled'));
         }
 
         // Check if code is present
-        if (!$request->has('code')) {
+        if (! $request->has('code')) {
             Log::error('Microsoft OAuth callback missing code', [
                 'request' => $request->all(),
                 'user_id' => auth()->id(),
                 'from_account' => $fromAccountSettings,
             ]);
-            
+
             $redirectRoute = $fromAccountSettings ? 'account.index' : 'connections.index';
-            
+
             return redirect()->route($redirectRoute)
                 ->with('error', __('messages.oauth_failed'));
         }
@@ -286,7 +288,7 @@ class OAuthController extends Controller
         try {
             // Exchange code for tokens
             $tokens = $service->handleCallback($request->code);
-            
+
             Log::info('Microsoft OAuth - Token received', [
                 'has_access_token' => isset($tokens['access_token']),
                 'has_refresh_token' => isset($tokens['refresh_token']),
@@ -294,11 +296,11 @@ class OAuthController extends Controller
                 'scope' => $tokens['scope'] ?? 'not provided',
                 'token_type' => $tokens['token_type'] ?? 'unknown',
             ]);
-            
+
             // Temporarily use Graph API directly
-            $graph = new \Microsoft\Graph\Graph();
+            $graph = new \Microsoft\Graph\Graph;
             $graph->setAccessToken($tokens['access_token']);
-            
+
             // Get account info
             Log::info('Microsoft OAuth - Calling /me...');
             $user = $graph->createRequest('GET', '/me')
@@ -308,16 +310,16 @@ class OAuthController extends Controller
                 'id' => $user->getId(),
                 'email' => $user->getUserPrincipalName(),
             ];
-            
+
             // Detect account type
             $accountType = $this->detectMicrosoftAccountType($accountInfo['email'], $tokens);
-            
+
             Log::info('Microsoft OAuth - /me succeeded', [
                 'user_id' => $accountInfo['id'],
                 'email' => $accountInfo['email'],
                 'account_type' => $accountType,
             ]);
-            
+
             // Debug: Parse JWT token to see claims
             if (isset($tokens['access_token'])) {
                 $tokenParts = explode('.', $tokens['access_token']);
@@ -336,20 +338,20 @@ class OAuthController extends Controller
                     }
                 }
             }
-            
+
             // Get available calendars
             Log::info('Microsoft OAuth - Calling /me/calendars...');
-            
+
             // Try direct HTTP request to get detailed error
             try {
                 $response = \Illuminate\Support\Facades\Http::withToken($tokens['access_token'])
                     ->get('https://graph.microsoft.com/v1.0/me/calendars');
-                
+
                 Log::info('Microsoft OAuth - /me/calendars HTTP response', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-                
+
                 // Check if this is a "no mailbox" error (401 with empty body)
                 if ($response->status() === 401 && empty(trim($response->body()))) {
                     Log::warning('Microsoft OAuth - No mailbox detected (401 with empty body)', [
@@ -357,7 +359,7 @@ class OAuthController extends Controller
                         'email' => $accountInfo['email'],
                         'account_type' => $accountType,
                     ]);
-                    
+
                     // Check if it's a work account without Exchange license
                     if ($accountType === 'work') {
                         return redirect()->route('connections.index')
@@ -367,14 +369,14 @@ class OAuthController extends Controller
                             ->with('error', __('messages.microsoft_no_mailbox_personal'));
                     }
                 }
-                
+
                 if ($response->successful()) {
                     $calendarList = $graph->createRequest('GET', '/me/calendars')
                         ->setReturnType(\Microsoft\Graph\Model\Calendar::class)
                         ->execute();
                     Log::info('Microsoft OAuth - /me/calendars succeeded');
                 } else {
-                    throw new \Exception('Calendar API returned: ' . $response->status() . ' - ' . $response->body());
+                    throw new \Exception('Calendar API returned: '.$response->status().' - '.$response->body());
                 }
             } catch (\Exception $e) {
                 Log::error('Microsoft OAuth - /me/calendars detailed error', [
@@ -395,21 +397,21 @@ class OAuthController extends Controller
             // If from account settings, directly save the connection
             if ($fromAccountSettings) {
                 $this->saveConnection('microsoft', $accountInfo, $tokens, $calendars);
-                
+
                 $user = auth()->user();
-                if (!$user->oauth_provider) {
+                if (! $user->oauth_provider) {
                     // User doesn't have OAuth yet, add Microsoft as OAuth provider
                     $user->update([
                         'oauth_provider' => 'microsoft',
                         'oauth_provider_id' => $accountInfo['id'],
                         'oauth_provider_email' => $accountInfo['email'],
                     ]);
-                    
+
                     Log::info('Added Microsoft OAuth to password-only account', [
                         'user_id' => $user->id,
                     ]);
                 }
-                
+
                 return redirect()->route('account.index')
                     ->with('success', 'Microsoft connected successfully! You can now login with Microsoft.');
             }
@@ -434,14 +436,14 @@ class OAuthController extends Controller
             } elseif (str_contains($e->getMessage(), '401 Unauthorized')) {
                 $is401 = true;
             }
-            
+
             // If 401 on work account and we have account info, handle admin consent
             if ($is401 && isset($accountType) && $accountType === 'work' && isset($accountInfo)) {
                 Log::info('Microsoft OAuth - Work account 401 detected, redirecting to admin consent', [
                     'user_id' => auth()->id(),
                     'email' => $accountInfo['email'] ?? 'unknown',
                 ]);
-                
+
                 // Create a pending connection record to track state
                 $connection = CalendarConnection::updateOrCreate(
                     [
@@ -458,13 +460,13 @@ class OAuthController extends Controller
                         'selected_calendar_id' => null,
                     ]
                 );
-                
+
                 // Build admin consent URL
                 $clientId = config('services.microsoft.client_id');
                 $currentUrl = rtrim(url('/'), '/');
-                $redirectUri = $currentUrl . '/admin-consent/microsoft/callback';
+                $redirectUri = $currentUrl.'/admin-consent/microsoft/callback';
                 $scopes = implode(' ', config('services.microsoft.scopes'));
-                
+
                 $adminConsentUrl = sprintf(
                     'https://login.microsoftonline.com/organizations/v2.0/adminconsent?client_id=%s&redirect_uri=%s&scope=%s&state=%s',
                     $clientId,
@@ -472,16 +474,16 @@ class OAuthController extends Controller
                     urlencode($scopes),
                     $connection->id // Pass connection ID for callback
                 );
-                
+
                 Log::info('Microsoft OAuth - Redirecting to admin consent screen', [
                     'connection_id' => $connection->id,
                     'admin_consent_url' => $adminConsentUrl,
                 ]);
-                
+
                 // Redirect directly to admin consent screen
                 return redirect($adminConsentUrl);
             }
-            
+
             Log::error('Microsoft OAuth failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -502,7 +504,7 @@ class OAuthController extends Controller
         $accountInfo = session('oauth_account_info');
         $calendars = session('oauth_calendars', []);
 
-        if (!$provider || !$accountInfo) {
+        if (! $provider || ! $accountInfo) {
             return redirect()->route('connections.index')
                 ->with('error', __('messages.session_expired'));
         }
@@ -517,12 +519,12 @@ class OAuthController extends Controller
         }
 
         // If no primary found, use first calendar
-        if (!$primaryCalendarId && count($calendars) > 0) {
+        if (! $primaryCalendarId && count($calendars) > 0) {
             $primaryCalendarId = $calendars[0]['id'];
         }
 
         // Suggested name based on provider
-        $suggestedName = __('messages.' . $provider . '_calendar');
+        $suggestedName = __('messages.'.$provider.'_calendar');
 
         return view('connections.complete-oauth', [
             'provider' => $provider,
@@ -549,7 +551,7 @@ class OAuthController extends Controller
         $tokens = session('oauth_tokens');
         $calendars = session('oauth_calendars', []);
 
-        if (!$provider || !$accountInfo || !$tokens) {
+        if (! $provider || ! $accountInfo || ! $tokens) {
             return redirect()->route('connections.index')
                 ->with('error', __('messages.session_expired'));
         }
@@ -557,9 +559,9 @@ class OAuthController extends Controller
         try {
             // Save connection
             $connection = $this->saveConnection(
-                $provider, 
-                $accountInfo, 
-                $tokens, 
+                $provider,
+                $accountInfo,
+                $tokens,
                 $calendars,
                 $validated['name'],
                 $validated['selected_calendar_id']
@@ -595,24 +597,24 @@ class OAuthController extends Controller
      * Save calendar connection (shared method)
      */
     private function saveConnection(
-        string $provider, 
-        array $accountInfo, 
-        array $tokens, 
+        string $provider,
+        array $accountInfo,
+        array $tokens,
         array $calendars,
         ?string $name = null,
         ?string $selectedCalendarId = null
     ): CalendarConnection {
         // Set default name if not provided
         if ($name === null) {
-            $name = __('messages.' . $provider . '_calendar');
+            $name = __('messages.'.$provider.'_calendar');
         }
-        
+
         // Try to update or create connection with retry logic for race conditions
         $maxAttempts = 3;
         $attempt = 0;
         $connection = null;
-        
-        while ($attempt < $maxAttempts && !$connection) {
+
+        while ($attempt < $maxAttempts && ! $connection) {
             try {
                 // Find or create new connection (don't save yet)
                 $connection = CalendarConnection::firstOrNew([
@@ -620,7 +622,7 @@ class OAuthController extends Controller
                     'provider' => $provider,
                     'provider_account_id' => $accountInfo['id'],
                 ]);
-                
+
                 // Set all attributes
                 $connection->name = $name;
                 $connection->provider_email = $accountInfo['email'];
@@ -629,16 +631,17 @@ class OAuthController extends Controller
                 $connection->token_expires_at = now()->addSeconds($tokens['expires_in'] ?? 3600);
                 $connection->status = 'active';
                 $connection->last_error = null;
-                
+                $connection->reconnection_email_sent_at = null;
+
                 // Set encrypted tokens BEFORE saving
                 $connection->setAccessToken($tokens['access_token']);
                 if (isset($tokens['refresh_token'])) {
                     $connection->setRefreshToken($tokens['refresh_token']);
                 }
-                
+
                 // Now save everything at once
                 $connection->save();
-                
+
             } catch (\Illuminate\Database\QueryException $e) {
                 // Handle duplicate key error (race condition)
                 if ($e->getCode() === '23000' || str_contains($e->getMessage(), 'Duplicate entry')) {
@@ -647,15 +650,15 @@ class OAuthController extends Controller
                         'user_id' => auth()->id(),
                         'provider' => $provider,
                     ]);
-                    
+
                     // Clear any transaction state and try to load existing connection
                     \DB::rollBack();
                     $connection = null;
-                    
+
                     // Wait a moment and try again with fresh query
                     usleep(100000); // 100ms
                     $attempt++;
-                    
+
                     if ($attempt >= $maxAttempts) {
                         // Last attempt - force update using updateOrCreate
                         $connection = CalendarConnection::updateOrCreate(
@@ -672,9 +675,10 @@ class OAuthController extends Controller
                                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
                                 'status' => 'active',
                                 'last_error' => null,
+                                'reconnection_email_sent_at' => null,
                             ]
                         );
-                        
+
                         // Set tokens after updateOrCreate
                         $connection->setAccessToken($tokens['access_token']);
                         if (isset($tokens['refresh_token'])) {
@@ -712,25 +716,25 @@ class OAuthController extends Controller
             case 401:
                 return __('messages.calendar_connection_unauthorized', [
                     'provider' => $provider,
-                    'hint' => __('messages.calendar_unauthorized_hint')
+                    'hint' => __('messages.calendar_unauthorized_hint'),
                 ]);
-            
+
             case 403:
                 return __('messages.calendar_connection_forbidden', [
                     'provider' => $provider,
-                    'hint' => __('messages.calendar_forbidden_hint')
+                    'hint' => __('messages.calendar_forbidden_hint'),
                 ]);
-            
+
             case 404:
                 return __('messages.calendar_connection_not_found', [
                     'provider' => $provider,
                 ]);
-            
+
             case 429:
                 return __('messages.calendar_connection_rate_limit', [
                     'provider' => $provider,
                 ]);
-            
+
             case 500:
             case 502:
             case 503:
@@ -772,4 +776,3 @@ class OAuthController extends Controller
         ]);
     }
 }
-

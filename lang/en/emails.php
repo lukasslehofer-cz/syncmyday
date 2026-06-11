@@ -300,6 +300,14 @@ return [
     'onboarding_upgrade_guide_button' => 'Activate Pro Now',
     'onboarding_upgrade_guide_outro' => 'Questions about pricing or features? Just reply to this email - we\'re here to help!',
 
+    // Calendar Connection Expired (reconnect needed)
+    'calendar_connection_expired_subject' => 'Action needed: reconnect your calendar',
+    'calendar_connection_expired_greeting' => 'Hello :name,',
+    'calendar_connection_expired_intro' => 'One of your connected calendars has stopped syncing because its access has expired or was revoked. Until you reconnect it, events for this account won\'t be synchronized.',
+    'calendar_connection_expired_explanation' => 'This usually happens when access was revoked, a password changed, or your organization\'s security policy now requires you to sign in again. Reconnecting takes just a moment.',
+    'calendar_connection_expired_button' => 'Reconnect calendar',
+    'calendar_connection_expired_footer' => 'If you no longer use this calendar, you can simply remove it from your connections.',
+
     // Common
     'closing' => 'Best regards,',
     'team_name' => 'The SyncMyDay Team',

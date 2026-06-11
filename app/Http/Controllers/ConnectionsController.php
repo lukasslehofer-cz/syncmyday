@@ -19,12 +19,12 @@ class ConnectionsController extends Controller
         // Get active connections (excluding those pending admin approval)
         $connections = auth()->user()
             ->calendarConnections()
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('status', '!=', 'error')
-                      ->orWhere(function($q) {
-                          $q->where('status', 'error')
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'error')
                             ->where('last_error', 'not like', '%Admin consent required%');
-                      });
+                    });
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -32,9 +32,9 @@ class ConnectionsController extends Controller
         // Get pending connections (those waiting for admin approval)
         $pendingConnections = auth()->user()
             ->calendarConnections()
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('status', 'error')
-                      ->where('last_error', 'like', '%Admin consent required%');
+                    ->where('last_error', 'like', '%Admin consent required%');
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -74,9 +74,9 @@ class ConnectionsController extends Controller
             ->get();
 
         // Get sync rules where this connection is target
-        $syncRulesAsTarget = \App\Models\SyncRule::whereHas('targets', function($query) use ($connection) {
-                $query->where('target_connection_id', $connection->id);
-            })
+        $syncRulesAsTarget = \App\Models\SyncRule::whereHas('targets', function ($query) use ($connection) {
+            $query->where('target_connection_id', $connection->id);
+        })
             ->with(['sourceConnection', 'sourceEmailConnection', 'targets.targetConnection', 'targets.targetEmailConnection'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -88,10 +88,10 @@ class ConnectionsController extends Controller
         $sentBlockers = \App\Models\SyncEventMapping::where('source_connection_id', $connection->id)->count();
 
         // Statistics - Last sync event
-        $lastSyncEvent = \App\Models\SyncEventMapping::where(function($query) use ($connection) {
-                $query->where('source_connection_id', $connection->id)
-                      ->orWhere('target_connection_id', $connection->id);
-            })
+        $lastSyncEvent = \App\Models\SyncEventMapping::where(function ($query) use ($connection) {
+            $query->where('source_connection_id', $connection->id)
+                ->orWhere('target_connection_id', $connection->id);
+        })
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -118,7 +118,7 @@ class ConnectionsController extends Controller
 
         // Find primary calendar if selected_calendar_id not set
         $selectedCalendarId = $connection->selected_calendar_id;
-        if (!$selectedCalendarId && $connection->available_calendars) {
+        if (! $selectedCalendarId && $connection->available_calendars) {
             foreach ($connection->available_calendars as $calendar) {
                 if ($calendar['primary'] ?? false) {
                     $selectedCalendarId = $calendar['id'];
@@ -126,7 +126,7 @@ class ConnectionsController extends Controller
                 }
             }
             // If no primary found, use first calendar
-            if (!$selectedCalendarId && count($connection->available_calendars) > 0) {
+            if (! $selectedCalendarId && count($connection->available_calendars) > 0) {
                 $selectedCalendarId = $connection->available_calendars[0]['id'];
             }
         }
@@ -192,12 +192,12 @@ class ConnectionsController extends Controller
         // Log webhook subscriptions before attempting to stop them
         $webhookSubscriptions = $connection->webhookSubscriptions()->get();
         $webhookCount = $webhookSubscriptions->count();
-        
+
         Log::info('Stopping webhook subscriptions before deleting connection', [
             'connection_id' => $connection->id,
             'provider' => $connection->provider,
             'webhook_count' => $webhookCount,
-            'subscriptions' => $webhookSubscriptions->map(function($sub) {
+            'subscriptions' => $webhookSubscriptions->map(function ($sub) {
                 return [
                     'id' => $sub->id,
                     'channel_id' => $sub->provider_subscription_id,
@@ -208,7 +208,7 @@ class ConnectionsController extends Controller
                 ];
             })->toArray(),
         ]);
-        
+
         if ($webhookCount === 0) {
             Log::warning('No webhook subscriptions found in database - channel may still be active on provider side', [
                 'connection_id' => $connection->id,
@@ -220,7 +220,7 @@ class ConnectionsController extends Controller
         // Stop all webhook subscriptions for this connection
         $stoppedCount = 0;
         $failedCount = 0;
-        
+
         foreach ($webhookSubscriptions as $subscription) {
             try {
                 if ($connection->provider === 'google') {
@@ -232,7 +232,7 @@ class ConnectionsController extends Controller
                     $service->initializeWithConnection($connection);
                     $service->stopWebhook($subscription->provider_subscription_id);
                 }
-                
+
                 $stoppedCount++;
                 Log::info('Webhook stopped successfully', [
                     'connection_id' => $connection->id,
@@ -240,7 +240,7 @@ class ConnectionsController extends Controller
                     'channel_id' => $subscription->provider_subscription_id,
                     'calendar_id' => $subscription->calendar_id,
                 ]);
-                
+
             } catch (\Exception $e) {
                 $failedCount++;
                 Log::warning('Failed to stop webhook during connection deletion', [
@@ -253,7 +253,7 @@ class ConnectionsController extends Controller
                 ]);
             }
         }
-        
+
         Log::info('Webhook cleanup completed', [
             'connection_id' => $connection->id,
             'total' => $webhookCount,
@@ -297,6 +297,7 @@ class ConnectionsController extends Controller
                 'available_calendars' => $calendars,
                 'status' => 'active',
                 'last_error' => null,
+                'reconnection_email_sent_at' => null,
             ]);
 
             return redirect()->route('connections.index')
@@ -318,4 +319,3 @@ class ConnectionsController extends Controller
         }
     }
 }
-

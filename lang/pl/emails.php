@@ -277,6 +277,14 @@ return [
     'onboarding_upgrade_guide_button' => 'Aktywuj Pro teraz',
     'onboarding_upgrade_guide_outro' => 'Pytania o ceny lub funkcje? Po prostu odpowiedz na tego e-maila - jesteśmy tu, aby pomóc!',
 
+    // Połączenie kalendarza wygasło (wymagane ponowne połączenie)
+    'calendar_connection_expired_subject' => 'Wymagane działanie: połącz ponownie swój kalendarz',
+    'calendar_connection_expired_greeting' => 'Witaj :name,',
+    'calendar_connection_expired_intro' => 'Jeden z połączonych kalendarzy przestał się synchronizować, ponieważ dostęp wygasł lub został cofnięty. Dopóki nie połączysz go ponownie, wydarzenia tego konta nie będą synchronizowane.',
+    'calendar_connection_expired_explanation' => 'Zwykle dzieje się tak, gdy dostęp został cofnięty, zmieniono hasło lub polityka bezpieczeństwa Twojej organizacji wymaga teraz ponownego zalogowania. Ponowne połączenie zajmuje tylko chwilę.',
+    'calendar_connection_expired_button' => 'Połącz ponownie kalendarz',
+    'calendar_connection_expired_footer' => 'Jeśli już nie korzystasz z tego kalendarza, możesz po prostu usunąć go z połączeń.',
+
     // Wspólne
     'closing' => 'Pozdrowienia,',
     'team_name' => 'Zespół SyncMyDay',

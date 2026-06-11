@@ -161,7 +161,13 @@ class MicrosoftCalendarService
             );
 
         if (! $response->successful()) {
-            $connection->update(['status' => 'expired', 'last_error' => $response->body()]);
+            // Distinguish permanent auth failures (invalid_grant: revoked consent, password
+            // change, Conditional Access block / AADSTS53003) from transient ones. Permanent
+            // failures mark the connection 'expired' so the user is prompted to reconnect;
+            // transient ones use 'error' and keep being retried on the next sync.
+            $error = $response->json('error');
+            $status = $error === 'invalid_grant' ? 'expired' : 'error';
+            $connection->update(['status' => $status, 'last_error' => $response->body()]);
             throw new \Exception('Token refresh failed: '.$response->body());
         }
 

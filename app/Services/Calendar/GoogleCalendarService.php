@@ -2,8 +2,8 @@
 
 namespace App\Services\Calendar;
 
-use App\Models\CalendarConnection;
 use App\Helpers\CacheHelper;
+use App\Models\CalendarConnection;
 use Google\Client as GoogleClient;
 use Google\Service\Calendar as GoogleCalendar;
 use Google\Service\Calendar\Channel;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Google Calendar Service
- * 
+ *
  * Handles all interactions with Google Calendar API:
  * - OAuth token management
  * - Calendar operations (list, get events)
@@ -22,30 +22,33 @@ use Illuminate\Support\Facades\Log;
 class GoogleCalendarService
 {
     private GoogleClient $client;
+
     private ?GoogleCalendar $service = null;
+
     private ?CalendarConnection $currentConnection = null;
 
     // Google API rate limits: 1,000,000 queries/day, ~1000 queries/100 seconds per user
     // Increased from 100 to 350 to better utilize Google's actual capacity (~600/min)
     // This prevents false rate limit errors while staying well below Google's limits
     private const RATE_LIMIT_MAX = 350; // Max requests per minute per connection
+
     private const RATE_LIMIT_DECAY = 1; // 1 minute window
 
     public function __construct()
     {
-        $this->client = new GoogleClient();
+        $this->client = new GoogleClient;
         $this->client->setClientId(config('services.google.client_id'));
         $this->client->setClientSecret(config('services.google.client_secret'));
-        
+
         // Use current domain for redirect URI (multi-domain support)
         $configRedirect = config('services.google.redirect');
         $this->client->setRedirectUri($this->replaceWithCurrentDomain($configRedirect));
-        
+
         $this->client->setScopes(config('services.google.scopes'));
         $this->client->setAccessType('offline');
         $this->client->setPrompt('select_account consent'); // Always show account picker + consent to get refresh token
     }
-    
+
     /**
      * Replace APP_URL in redirect URI with current domain
      */
@@ -55,13 +58,13 @@ class GoogleCalendarService
         if (app()->runningInConsole()) {
             return $uri;
         }
-        
+
         $appUrl = rtrim(config('app.url'), '/');
         $currentUrl = rtrim(url('/'), '/');
-        
+
         return str_replace($appUrl, $currentUrl, $uri);
     }
-    
+
     /**
      * Execute API call with rate limiting
      */
@@ -69,23 +72,23 @@ class GoogleCalendarService
     {
         if ($this->currentConnection) {
             $identifier = "google_api:{$this->currentConnection->id}";
-            
+
             // Check rate limit
-            if (!CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
+            if (! CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
                 Log::channel('sync')->warning('Google API rate limit exceeded', [
                     'connection_id' => $this->currentConnection->id,
                     'operation' => $operation,
                 ]);
-                
+
                 // Wait a bit and retry once
                 sleep(1);
-                
-                if (!CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
+
+                if (! CacheHelper::checkRateLimit($identifier, self::RATE_LIMIT_MAX, self::RATE_LIMIT_DECAY)) {
                     throw new \Exception("Google API rate limit exceeded for connection {$this->currentConnection->id}");
                 }
             }
         }
-        
+
         try {
             return $callback();
         } catch (\Google\Service\Exception $e) {
@@ -95,12 +98,13 @@ class GoogleCalendarService
                     'connection_id' => $this->currentConnection?->id,
                     'operation' => $operation,
                 ]);
-                
+
                 // Back off and retry after delay
                 sleep(5);
+
                 return $callback();
             }
-            
+
             throw $e;
         }
     }
@@ -111,6 +115,7 @@ class GoogleCalendarService
     public function getAuthUrl(string $state): string
     {
         $this->client->setState($state);
+
         return $this->client->createAuthUrl();
     }
 
@@ -120,9 +125,9 @@ class GoogleCalendarService
     public function handleCallback(string $code): array
     {
         $token = $this->client->fetchAccessTokenWithAuthCode($code);
-        
+
         if (isset($token['error'])) {
-            throw new \Exception('OAuth error: ' . $token['error']);
+            throw new \Exception('OAuth error: '.$token['error']);
         }
 
         return $token;
@@ -134,7 +139,7 @@ class GoogleCalendarService
     public function initializeWithConnection(CalendarConnection $connection): void
     {
         $this->currentConnection = $connection;
-        
+
         $this->client->setAccessToken([
             'access_token' => $connection->getAccessToken(),
             'refresh_token' => $connection->getRefreshToken(),
@@ -144,10 +149,14 @@ class GoogleCalendarService
         // Refresh token if expired
         if ($this->client->isAccessTokenExpired() && $connection->getRefreshToken()) {
             $newToken = $this->client->fetchAccessTokenWithRefreshToken($connection->getRefreshToken());
-            
+
             if (isset($newToken['error'])) {
-                $connection->update(['status' => 'expired', 'last_error' => $newToken['error']]);
-                throw new \Exception('Token refresh failed: ' . $newToken['error']);
+                // Permanent auth failures (invalid_grant: revoked/expired refresh token) mark the
+                // connection 'expired' so the user is prompted to reconnect; transient/unknown
+                // failures use 'error' and keep being retried on the next sync.
+                $status = $newToken['error'] === 'invalid_grant' ? 'expired' : 'error';
+                $connection->update(['status' => $status, 'last_error' => $newToken['error']]);
+                throw new \Exception('Token refresh failed: '.$newToken['error']);
             }
 
             // Update connection with new token
@@ -187,6 +196,7 @@ class GoogleCalendarService
     public function getAccountInfo(): array
     {
         $calendar = $this->service->calendars->get('primary');
+
         return [
             'id' => $calendar->getId(),
             'email' => $calendar->getId(), // For Google, calendar ID is usually the email
@@ -220,7 +230,7 @@ class GoogleCalendarService
             ]);
 
             $createdEvent = $this->service->events->insert($calendarId, $event);
-            
+
             Log::channel('sync')->info('Google blocker created', [
                 'calendar_id' => $calendarId,
                 'event_id' => $createdEvent->getId(),
@@ -233,7 +243,7 @@ class GoogleCalendarService
 
     /**
      * Update a blocker event
-     * 
+     *
      * OPTIMIZATION: Creates a new Event object instead of fetching existing one.
      * This reduces API calls from 2 (GET + UPDATE) to 1 (UPDATE only).
      * Google Calendar API allows partial updates - we only need to specify fields we're changing.
@@ -255,7 +265,7 @@ class GoogleCalendarService
             ]);
 
             $this->service->events->update($calendarId, $eventId, $event);
-            
+
             Log::channel('sync')->info('Google blocker updated', [
                 'calendar_id' => $calendarId,
                 'event_id' => $eventId,
@@ -273,31 +283,32 @@ class GoogleCalendarService
             'calendar_id' => $calendarId,
             'event_id' => $eventId,
         ]);
-        
+
         try {
             $this->rateLimitedCall('deleteBlocker', function () use ($calendarId, $eventId) {
                 $this->service->events->delete($calendarId, $eventId);
             });
-            
+
             Log::channel('sync')->debug('Google blocker deleted successfully', [
                 'calendar_id' => $calendarId,
                 'event_id' => $eventId,
             ]);
-            
+
         } catch (\Google\Service\Exception $e) {
             $errorCode = $e->getCode();
             $errorBody = json_decode($e->getMessage(), true);
             $reason = $errorBody['error']['errors'][0]['reason'] ?? null;
-            
+
             // 410 = already deleted (OK)
             if ($errorCode === 410) {
                 Log::channel('sync')->debug('Google blocker already deleted', [
                     'calendar_id' => $calendarId,
                     'event_id' => $eventId,
                 ]);
+
                 return;
             }
-            
+
             // 403 rateLimitExceeded = will retry later, don't fail
             if ($errorCode === 403 && $reason === 'rateLimitExceeded') {
                 Log::channel('sync')->warning('Google rate limit hit during blocker cleanup - skipping', [
@@ -305,9 +316,10 @@ class GoogleCalendarService
                     'event_id' => $eventId,
                     'note' => 'Event will be cleaned up on next sync or manually',
                 ]);
+
                 return;
             }
-            
+
             // Other errors - log but don't throw (allow rule deletion to continue)
             Log::channel('sync')->warning('Failed to delete Google blocker - continuing anyway', [
                 'calendar_id' => $calendarId,
@@ -315,7 +327,7 @@ class GoogleCalendarService
                 'error_code' => $errorCode,
                 'error' => $e->getMessage(),
             ]);
-            
+
         } catch (\Exception $e) {
             // Unexpected error - log but don't throw
             Log::channel('sync')->warning('Unexpected error deleting Google blocker', [
@@ -332,11 +344,12 @@ class GoogleCalendarService
     public function isOurBlocker($event): bool
     {
         $props = $event->getExtendedProperties();
-        if (!$props) {
+        if (! $props) {
             return false;
         }
-        
+
         $private = $props->getPrivate();
+
         return isset($private['syncmyday']) && $private['syncmyday'] === 'true';
     }
 
@@ -365,7 +378,7 @@ class GoogleCalendarService
      */
     public function stopWebhook(string $subscriptionId, string $resourceId): void
     {
-        $channel = new Channel();
+        $channel = new Channel;
         $channel->setId($subscriptionId);
         $channel->setResourceId($resourceId);
 
@@ -378,47 +391,47 @@ class GoogleCalendarService
     public function getChangedEvents(string $calendarId, ?string $syncToken = null): array
     {
         return $this->rateLimitedCall('getChangedEvents', function () use ($calendarId, $syncToken) {
-        $optParams = [
-            'singleEvents' => true,
-            'orderBy' => 'startTime',
-        ];
-
-        if ($syncToken) {
-            // Incremental sync: use sync token (gets only changes)
-            $optParams['syncToken'] = $syncToken;
-        } else {
-            // Full sync: apply time range filters
-            $pastDays = config('sync.time_range.past_days', 7);
-            $futureMonths = config('sync.time_range.future_months', 6);
-            
-            $optParams['timeMin'] = now()->subDays($pastDays)->toRfc3339String();
-            $optParams['timeMax'] = now()->addMonths($futureMonths)->toRfc3339String();
-            
-            Log::channel('sync')->debug('Google full sync with time range', [
-                'calendar_id' => $calendarId,
-                'time_min' => $optParams['timeMin'],
-                'time_max' => $optParams['timeMax'],
-            ]);
-        }
-
-        try {
-            $events = $this->service->events->listEvents($calendarId, $optParams);
-            
-            return [
-                'events' => iterator_to_array($events->getItems()),
-                'sync_token' => $events->getNextSyncToken(),
+            $optParams = [
+                'singleEvents' => true,
+                'orderBy' => 'startTime',
             ];
-        } catch (\Google\Service\Exception $e) {
-            // If sync token is invalid, do a full sync
-            if ($e->getCode() === 410) {
-                Log::channel('sync')->warning('Google sync token expired, doing full sync', [
+
+            if ($syncToken) {
+                // Incremental sync: use sync token (gets only changes)
+                $optParams['syncToken'] = $syncToken;
+            } else {
+                // Full sync: apply time range filters
+                $pastDays = config('sync.time_range.past_days', 7);
+                $futureMonths = config('sync.time_range.future_months', 6);
+
+                $optParams['timeMin'] = now()->subDays($pastDays)->toRfc3339String();
+                $optParams['timeMax'] = now()->addMonths($futureMonths)->toRfc3339String();
+
+                Log::channel('sync')->debug('Google full sync with time range', [
                     'calendar_id' => $calendarId,
+                    'time_min' => $optParams['timeMin'],
+                    'time_max' => $optParams['timeMax'],
                 ]);
-                return $this->getChangedEvents($calendarId, null);
             }
-            throw $e;
-        }
+
+            try {
+                $events = $this->service->events->listEvents($calendarId, $optParams);
+
+                return [
+                    'events' => iterator_to_array($events->getItems()),
+                    'sync_token' => $events->getNextSyncToken(),
+                ];
+            } catch (\Google\Service\Exception $e) {
+                // If sync token is invalid, do a full sync
+                if ($e->getCode() === 410) {
+                    Log::channel('sync')->warning('Google sync token expired, doing full sync', [
+                        'calendar_id' => $calendarId,
+                    ]);
+
+                    return $this->getChangedEvents($calendarId, null);
+                }
+                throw $e;
+            }
         });
     }
 }
-

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\Encryption\TokenEncryptionService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\Encryption\TokenEncryptionService;
 
 class CalendarConnection extends Model
 {
@@ -24,6 +24,7 @@ class CalendarConnection extends Model
         'selected_calendar_id',
         'status',
         'last_error',
+        'reconnection_email_sent_at',
         'last_sync_at',
         'caldav_url',
         'caldav_username',
@@ -35,6 +36,7 @@ class CalendarConnection extends Model
     protected $casts = [
         'token_expires_at' => 'datetime',
         'last_sync_at' => 'datetime',
+        'reconnection_email_sent_at' => 'datetime',
         'available_calendars' => 'array',
     ];
 
@@ -68,11 +70,12 @@ class CalendarConnection extends Model
     public function getAccessToken(): ?string
     {
         // CalDAV connections don't use OAuth tokens
-        if (!$this->access_token_encrypted) {
+        if (! $this->access_token_encrypted) {
             return null;
         }
-        
+
         $encryptionService = app(TokenEncryptionService::class);
+
         return $encryptionService->decrypt($this->access_token_encrypted);
     }
 
@@ -81,11 +84,12 @@ class CalendarConnection extends Model
      */
     public function getRefreshToken(): ?string
     {
-        if (!$this->refresh_token_encrypted) {
+        if (! $this->refresh_token_encrypted) {
             return null;
         }
-        
+
         $encryptionService = app(TokenEncryptionService::class);
+
         return $encryptionService->decrypt($this->refresh_token_encrypted);
     }
 
@@ -103,11 +107,12 @@ class CalendarConnection extends Model
      */
     public function setRefreshToken(?string $token): void
     {
-        if (!$token) {
+        if (! $token) {
             $this->refresh_token_encrypted = null;
+
             return;
         }
-        
+
         $encryptionService = app(TokenEncryptionService::class);
         $this->refresh_token_encrypted = $encryptionService->encrypt($token);
     }
@@ -117,10 +122,10 @@ class CalendarConnection extends Model
      */
     public function isTokenExpired(): bool
     {
-        if (!$this->token_expires_at) {
+        if (! $this->token_expires_at) {
             return false;
         }
-        
+
         return $this->token_expires_at->subMinutes(5)->isPast();
     }
 
@@ -129,7 +134,6 @@ class CalendarConnection extends Model
      */
     public function isHealthy(): bool
     {
-        return $this->status === 'active' && !$this->isTokenExpired();
+        return $this->status === 'active' && ! $this->isTokenExpired();
     }
 }
-

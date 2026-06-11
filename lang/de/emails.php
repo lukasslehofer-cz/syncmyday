@@ -300,6 +300,14 @@ return [
     'onboarding_upgrade_guide_button' => 'Pro jetzt aktivieren',
     'onboarding_upgrade_guide_outro' => 'Fragen zu Preisen oder Funktionen? Antworten Sie einfach auf diese E-Mail - wir sind hier, um zu helfen!',
 
+    // Kalenderverbindung abgelaufen (erneutes Verbinden erforderlich)
+    'calendar_connection_expired_subject' => 'Aktion erforderlich: Verbinden Sie Ihren Kalender erneut',
+    'calendar_connection_expired_greeting' => 'Hallo :name,',
+    'calendar_connection_expired_intro' => 'Einer Ihrer verbundenen Kalender wird nicht mehr synchronisiert, da der Zugriff abgelaufen ist oder widerrufen wurde. Bis Sie ihn erneut verbinden, werden Termine dieses Kontos nicht synchronisiert.',
+    'calendar_connection_expired_explanation' => 'Dies passiert in der Regel, wenn der Zugriff widerrufen wurde, ein Passwort geändert wurde oder die Sicherheitsrichtlinie Ihrer Organisation jetzt eine erneute Anmeldung erfordert. Das erneute Verbinden dauert nur einen Moment.',
+    'calendar_connection_expired_button' => 'Kalender erneut verbinden',
+    'calendar_connection_expired_footer' => 'Wenn Sie diesen Kalender nicht mehr verwenden, können Sie ihn einfach aus Ihren Verbindungen entfernen.',
+
     // Gemeinsam
     'closing' => 'Mit freundlichen Grüßen,',
     'team_name' => 'Das SyncMyDay Team',

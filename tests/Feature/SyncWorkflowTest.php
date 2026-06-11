@@ -35,14 +35,20 @@ class SyncWorkflowTest extends TestCase
             'status' => 'active',
         ]);
 
+        // The controller triggers an initial sync after creation; stub it so the test
+        // doesn't make a real Google API call.
+        $this->mock(SyncEngine::class, function ($mock) {
+            $mock->shouldReceive('syncRule')->andReturnNull();
+        });
+
         // Create sync rule
         $this->actingAs($user);
-        
+
         $response = $this->post('/sync-rules', [
-            'source_connection_id' => $sourceConnection->id,
-            'source_calendar_id' => 'primary',
+            'name' => 'Test Rule',
+            'source_type_and_id' => 'api-'.$sourceConnection->id,
             'target_connections' => [
-                ['connection_id' => $targetConnection->id, 'calendar_id' => 'calendar1'],
+                ['type_and_id' => 'api-'.$targetConnection->id],
             ],
             'direction' => 'one_way',
             'blocker_title' => 'Busy — Test',
@@ -50,7 +56,7 @@ class SyncWorkflowTest extends TestCase
         ]);
 
         $response->assertRedirect('/sync-rules');
-        
+
         $this->assertDatabaseHas('sync_rules', [
             'user_id' => $user->id,
             'source_connection_id' => $sourceConnection->id,

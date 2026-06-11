@@ -300,6 +300,14 @@ return [
     'onboarding_upgrade_guide_button' => 'Aktivovať Pro teraz',
     'onboarding_upgrade_guide_outro' => 'Máte otázky ohľadom cien alebo funkcií? Stačí odpovedať na tento email - sme tu, aby sme vám pomohli!',
 
+    // Pripojenie kalendára vypršalo (nutné znova pripojiť)
+    'calendar_connection_expired_subject' => 'Vyžaduje sa akcia: znova pripojte svoj kalendár',
+    'calendar_connection_expired_greeting' => 'Dobrý deň :name,',
+    'calendar_connection_expired_intro' => 'Jeden z vašich pripojených kalendárov prestal synchronizovať, pretože vypršal alebo bol odvolaný prístup. Kým ho znova nepripojíte, udalosti tohto účtu sa nebudú synchronizovať.',
+    'calendar_connection_expired_explanation' => 'K tomu zvyčajne dôjde, keď bol prístup odvolaný, došlo k zmene hesla, alebo bezpečnostná politika vašej organizácie teraz vyžaduje opätovné prihlásenie. Opätovné pripojenie zaberie len chvíľku.',
+    'calendar_connection_expired_button' => 'Znova pripojiť kalendár',
+    'calendar_connection_expired_footer' => 'Ak tento kalendár už nepoužívate, môžete ho jednoducho odstrániť zo svojich pripojení.',
+
     // Spoločné
     'closing' => 'S pozdravom,',
     'team_name' => 'Tím SyncMyDay',
