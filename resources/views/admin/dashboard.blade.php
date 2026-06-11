@@ -75,7 +75,12 @@
             <h3 class="font-semibold text-gray-900 mb-2">Sync Logs</h3>
             <p class="text-sm text-gray-600">View synchronization logs</p>
         </a>
-        
+
+        <a href="{{ route('admin.emails') }}" class="bg-white rounded-lg shadow p-6 hover:bg-gray-50">
+            <h3 class="font-semibold text-gray-900 mb-2">Odeslané e-maily</h3>
+            <p class="text-sm text-gray-600">Přehled odeslaných e-mailů a náhled</p>
+        </a>
+
         <a href="{{ route('health') }}" target="_blank" class="bg-white rounded-lg shadow p-6 hover:bg-gray-50">
             <h3 class="font-semibold text-gray-900 mb-2">Health Check</h3>
             <p class="text-sm text-gray-600">System health status</p>

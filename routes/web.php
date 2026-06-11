@@ -289,7 +289,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/connections', [AdminController::class, 'connections'])->name('connections');
         Route::get('/webhooks', [AdminController::class, 'webhooks'])->name('webhooks');
         Route::get('/logs', [AdminController::class, 'logs'])->name('logs');
-        
+        Route::get('/emails', [AdminController::class, 'emails'])->name('emails');
+        Route::get('/emails/{sentEmail}', [AdminController::class, 'emailDetails'])->name('email-details');
+
         // Blog admin
         Route::prefix('blog')->name('blog.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\BlogAdminController::class, 'index'])->name('index');

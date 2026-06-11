@@ -491,7 +491,7 @@ return [
     'payment_info_3' => 'Full access to all Pro features.',
     'faq' => 'Frequently Asked Questions',
     'faq_trial_month' => 'What happens during the free trial?',
-    'faq_trial_month_answer' => 'You get full access to all Pro features for 14 days completely free. No credit card required during trial (unless you want automatic renewal).',
+    'faq_trial_month_answer' => 'You get full access to all Pro features for 14 days completely free. No Potřeboduring trial (unless you want automatic renewal).',
     'faq_cancel_anytime' => 'Can I cancel anytime?',
     'faq_cancel_anytime_answer' => 'Yes! You can cancel your subscription at any time. You\'ll keep access until the end of your paid period.',
     'faq_payment_methods' => 'What payment methods do you accept?',

@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('webhooks:renew')->everySixHours()->withoutOverlapping();
         $schedule->command('webhooks:backfill')->dailyAt('04:00')->withoutOverlapping();
         $schedule->command('logs:clean')->daily();
+        $schedule->command('emails:clean')->daily();
         $schedule->command('connections:check')->hourly()->withoutOverlapping();
         $schedule->command('sync:clean-orphaned-rules --force')->dailyAt('02:30');
         $schedule->command('sync:cleanup-stale-mappings')->dailyAt('02:45');

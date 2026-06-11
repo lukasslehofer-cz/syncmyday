@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Listeners\LogSentEmail;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -34,7 +37,9 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\SyncRule::observe(\App\Observers\SyncRuleObserver::class);
         \App\Models\EmailCalendarConnection::observe(\App\Observers\EmailCalendarConnectionObserver::class);
 
+        // Record sent system/transactional emails for the admin overview
+        Event::listen(MessageSent::class, [LogSentEmail::class, 'handle']);
+
         // Note: SendWelcomeEmail listener removed - welcome email now sent immediately upon registration
     }
 }
-

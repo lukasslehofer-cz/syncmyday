@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\CalendarConnection;
 use App\Models\EmailCalendarConnection;
-use App\Models\SyncRule;
+use App\Models\SentEmail;
 use App\Models\SyncLog;
+use App\Models\SyncRule;
+use App\Models\User;
 use App\Models\WebhookSubscription;
 use Illuminate\Http\Request;
 
@@ -110,6 +111,34 @@ class AdminController extends Controller
     }
 
     /**
+     * List sent system/transactional emails
+     */
+    public function emails(Request $request)
+    {
+        $query = SentEmail::orderBy('sent_at', 'desc');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('to_email', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%");
+            });
+        }
+
+        $emails = $query->paginate(50);
+
+        return view('admin.emails.index', compact('emails'));
+    }
+
+    /**
+     * Show a single sent email with preview
+     */
+    public function emailDetails(SentEmail $sentEmail)
+    {
+        return view('admin.emails.show', compact('sentEmail'));
+    }
+
+    /**
      * Health check endpoint
      */
     public function health()
@@ -120,7 +149,7 @@ class AdminController extends Controller
             'queue' => $this->checkQueue(),
         ];
 
-        $allHealthy = !in_array(false, $checks);
+        $allHealthy = ! in_array(false, $checks);
 
         return response()->json([
             'status' => $allHealthy ? 'healthy' : 'unhealthy',
@@ -133,6 +162,7 @@ class AdminController extends Controller
     {
         try {
             \DB::connection()->getPdo();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -143,6 +173,7 @@ class AdminController extends Controller
     {
         try {
             \Redis::ping();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -156,10 +187,10 @@ class AdminController extends Controller
             $failedJobs = \DB::table('failed_jobs')
                 ->where('failed_at', '>', now()->subHours(1))
                 ->count();
+
             return $failedJobs === 0;
         } catch (\Exception $e) {
             return false;
         }
     }
 }
-
